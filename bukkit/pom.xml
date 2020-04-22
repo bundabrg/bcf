@@ -60,6 +60,7 @@
             <groupId>au.com.grieve.bcf</groupId>
             <artifactId>common</artifactId>
             <version>${project.parent.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
