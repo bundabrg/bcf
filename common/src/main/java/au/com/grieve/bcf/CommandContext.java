@@ -23,63 +23,24 @@
 
 package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.utils.ReflectUtils;
 import lombok.Getter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class CommandRoot {
+public class CommandContext implements Cloneable {
     @Getter
-    final BaseCommand command;
-
-    @Getter
-    final CommandManager manager;
+    List<Parser> switches = new ArrayList<>();
 
     @Getter
-    final List<BaseCommand> subCommands = new ArrayList<>();
+    List<Parser> parsers = new ArrayList<>();
 
-    CommandRoot(CommandManager manager, BaseCommand command) {
-        this.manager = manager;
-        this.command = command;
-    }
+    public Object clone() throws CloneNotSupportedException {
+        CommandContext clone = (CommandContext) super.clone();
 
-    /**
-     * Add sub command
-     *
-     * @param cmd
-     */
-    public void addSubCommand(BaseCommand cmd) {
-        // Lookup all parent classes till it reaches our command
-        List<Class<?>> parents = new ArrayList<>();
-        for (Class<?> parent : ReflectUtils.getAllSuperClasses(cmd.getClass())) {
-            parents.add(parent);
-            if (parent == this.getClass()) {
-                break;
-            }
-        }
-        Collections.reverse(parents);
+        // Clone Data
+        clone.switches = new ArrayList<>(switches);
 
-        ParserNode node;
-
-        // Add a parser for each parent class
-        for (Class<?> parent : parents) {
-
-        }
-
-
-    }
-
-    /**
-     * Parse the arguments and return an executor
-     */
-    CommandExecute parseExecute(String[] args, CommandContext context) {
-
-
-    }
-
-    List<String> parseComplete(String[] args, CommandContext context) {
-
+        return clone;
     }
 }

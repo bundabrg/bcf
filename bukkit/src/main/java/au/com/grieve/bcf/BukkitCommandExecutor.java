@@ -23,6 +23,30 @@
 
 package au.com.grieve.bcf;
 
-public class BukkitCommand extends BaseCommand {
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
+public class BukkitCommandExecutor extends Command {
+
+    final BukkitCommandRoot commandRoot;
+
+    public BukkitCommandExecutor(String name, BukkitCommandRoot commandRoot) {
+        super(name);
+        this.commandRoot = commandRoot;
+    }
+
+    @Override
+    public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
+        commandRoot.execute(sender, alias, args);
+        return true;
+    }
+
+
+    @Override
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
+        return commandRoot.complete(sender, alias, args);
+    }
 }
