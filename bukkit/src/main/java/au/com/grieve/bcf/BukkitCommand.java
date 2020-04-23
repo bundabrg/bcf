@@ -23,14 +23,30 @@
 
 package au.com.grieve.bcf;
 
-import lombok.Getter;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-public abstract class BaseCommand {
-    @Getter
-    final Map<Method, MethodData> methodData = new HashMap<>();
+public class BukkitCommand extends Command {
 
+    final BukkitCommandRoot commandRoot;
+
+    public BukkitCommand(String name, BukkitCommandRoot commandRoot) {
+        super(name);
+        this.commandRoot = commandRoot;
+    }
+
+    @Override
+    public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
+        commandRoot.execute(sender, alias, args);
+        return true;
+    }
+
+
+    @Override
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
+        return commandRoot.complete(sender, alias, args);
+    }
 }

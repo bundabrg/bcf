@@ -24,39 +24,22 @@
 package au.com.grieve.bcf;
 
 import lombok.Getter;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
-public class BukkitRootCommand extends Command implements RootCommand {
-    private final ParserNode node = new ParserNode();
+public class CommandRoot {
+    @Getter
+    final BaseCommand command;
 
     @Getter
-    private final CommandManager manager;
+    final CommandManager manager;
 
-    protected BukkitRootCommand(CommandManager manager, String name) {
-        super(name);
+    @Getter
+    final List<BaseCommand> subCommands = new ArrayList<>();
+
+    CommandRoot(CommandManager manager, BaseCommand command) {
         this.manager = manager;
-    }
-
-    @Override
-    public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-        BukkitParserContext context = new BukkitParserContext(manager, sender);
-        manager.execute(node, String.join(" ", args), context, Collections.singletonList(sender));
-        return true;
-    }
-
-    @Override
-    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
-        BukkitParserContext context = new BukkitParserContext(manager, sender);
-        return manager.getComplete(node, String.join(" ", args), context);
-    }
-
-    @Override
-    public ParserNode getNode() {
-        return node;
+        this.command = command;
     }
 }

@@ -23,14 +23,46 @@
 
 package au.com.grieve.bcf;
 
+
+import au.com.grieve.bcf.annotations.Arg;
 import lombok.Getter;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public abstract class BaseCommand {
+/**
+ * Represents the data of a Node in the ParserNode Tree
+ */
+public class MethodData {
     @Getter
-    final Map<Method, MethodData> methodData = new HashMap<>();
+    final List<String> args = new ArrayList<>();
+
+    @Getter
+    final Method method;
+
+    public MethodData(Method method) {
+        // Make sure method is inside a BaseCommand class
+        if (!method.getDeclaringClass().isAssignableFrom(BaseCommand.class)) {
+            throw new IllegalArgumentException("Method is not in a class assignable from BaseCommand");
+        }
+
+        this.method = method;
+
+        Arg[] classArgs = method.getDeclaringClass().getAnnotationsByType(Arg.class);
+
+        for (Arg arg : method.getAnnotationsByType(Arg.class)) {
+            if (classArgs.length == 0) {
+                args.add(arg.value());
+            }
+
+            // Containing class arguments are prefixed to each of our arguments
+            args.addAll(Arrays.stream(classArgs)
+                    .map(a -> a.value() + " " + arg.value())
+                    .collect(Collectors.toList()));
+        }
+    }
 
 }

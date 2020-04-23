@@ -23,14 +23,22 @@
 
 package au.com.grieve.bcf;
 
-import lombok.Getter;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class BaseCommand {
-    @Getter
-    final Map<Method, MethodData> methodData = new HashMap<>();
+public class BukkitCommandRoot extends CommandRoot {
+    BukkitCommandRoot(CommandManager manager, BaseCommand command) {
+        super(manager, command);
+    }
 
+    public void execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
+
+    }
+
+    public @NotNull List<String> complete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
+        return new ArrayList<>();
+    }
 }

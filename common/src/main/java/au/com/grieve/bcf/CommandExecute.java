@@ -23,7 +23,42 @@
 
 package au.com.grieve.bcf;
 
-public interface RootCommand {
+import lombok.Getter;
 
-    ParserNode getNode();
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class CommandExecute {
+    @Getter
+    final ParserMethod method;
+
+    @Getter
+    final List<Object> parameters = new ArrayList<>();
+
+    public CommandExecute(ParserMethod method, List<Object> parameters) {
+        this.method = method;
+        this.parameters.addAll(parameters);
+    }
+
+    public CommandExecute(ParserMethod method) {
+        this(method, new ArrayList<>());
+    }
+
+    /**
+     * Execute method, prepending args and filling missing parameters with null
+     */
+    public Object invoke(Object... args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        List<Object> param = new ArrayList<>(Arrays.asList(args));
+        param.addAll(parameters);
+
+        // Fill out extra parameters with null
+        while (param.size() < method.getMethod().getParameterCount()) {
+            param.add(null);
+        }
+
+        return method.invoke(param);
+
+    }
 }

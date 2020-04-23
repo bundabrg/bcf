@@ -29,7 +29,11 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class ParserNode implements Iterable<ParserNode> {
 
@@ -50,6 +54,11 @@ public class ParserNode implements Iterable<ParserNode> {
     @Getter
     @Setter
     ParserMethod error;
+
+    // Permissions
+    @Getter
+    final List<String> permissions = new ArrayList<>();
+
 
     public ParserNode() {
         this.children = new ArrayList<>();

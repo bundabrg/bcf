@@ -23,14 +23,31 @@
 
 package au.com.grieve.bcf;
 
+import au.com.grieve.bcf.annotations.Permission;
 import lombok.Getter;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public abstract class BaseCommand {
+public class BukkitMethodData extends MethodData {
     @Getter
-    final Map<Method, MethodData> methodData = new HashMap<>();
+    final List<String> permissions = new ArrayList<>();
+
+    public BukkitMethodData(Method method) {
+        super(method);
+
+        // Class Permissions are added to our own
+        permissions.addAll(Arrays.stream(method.getDeclaringClass().getAnnotationsByType(Permission.class))
+                .map(Permission::value)
+                .collect(Collectors.toList()));
+
+        permissions.addAll(Arrays.stream(method.getAnnotationsByType(Permission.class))
+                .map(Permission::value)
+                .collect(Collectors.toList()));
+    }
+
 
 }
