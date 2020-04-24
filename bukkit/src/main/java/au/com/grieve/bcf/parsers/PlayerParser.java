@@ -97,13 +97,13 @@ public class PlayerParser extends SingleParser {
             case "online":
                 return Bukkit.getOnlinePlayers().stream()
                         .map(HumanEntity::getName)
-                        .filter(s -> s.startsWith(getInput()))
+                        .filter(s -> s.toLowerCase().startsWith(getInput().toLowerCase()))
                         .limit(20)
                         .collect(Collectors.toList());
             case "offline":
                 return Arrays.stream(Bukkit.getOfflinePlayers())
                         .map(OfflinePlayer::getName).filter(Objects::nonNull)
-                        .filter(s -> s.startsWith(getInput()))
+                        .filter(s -> s.toLowerCase().startsWith(getInput().toLowerCase()))
                         .limit(20)
                         .collect(Collectors.toList());
         }

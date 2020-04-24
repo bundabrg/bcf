@@ -27,11 +27,14 @@ import au.com.grieve.bcf.annotations.Arg;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
 import au.com.grieve.bcf.exceptions.ParserNoResultException;
 import au.com.grieve.bcf.exceptions.ParserRequiredArgumentException;
+import au.com.grieve.bcf.exceptions.SwitchNotFoundException;
 import lombok.Getter;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class BaseCommand {
 
@@ -47,29 +50,108 @@ public abstract class BaseCommand {
         for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
             List<String> currentInput = new ArrayList<>(input);
             List<ArgNode> currentArgs = ArgNode.parse(classArgs.value());
+            CommandContext currentContext = context.clone();
+            System.err.println("init class: " + currentArgs);
 
 
             try {
-                parseArg(commandRoot, currentArgs, currentInput, context, false);
+                parseArg(commandRoot, currentArgs, currentInput, currentContext, false);
             } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException e) {
-                System.err.println("End of chain: input:" + currentInput + ", nodes:" + currentArgs);
-                break;
+                // End of chain so save completions
+                ret.addAll(e.getParser().getCompletions());
+                continue;
+            } catch (SwitchNotFoundException e) {
+                // List switch options
+                ret.addAll(currentContext.getSwitches().stream()
+                        .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
+                                .filter(sw -> sw.toLowerCase().startsWith(e.getSwitchName().toLowerCase()))
+                                .limit(1)
+                        )
+                        .map(s -> "-" + s)
+                        .limit(20)
+                        .collect(Collectors.toList())
+                );
+                continue;
             }
             System.err.println("In chain: input:" + currentInput + ", nodes:" + currentArgs);
+
+            // Process methods
+            ret.addAll(completeMethods(commandRoot, currentInput, currentContext));
+        }
+        System.err.println("out");
+        return ret;
+    }
+
+    /**
+     * Completion for methods
+     */
+    List<String> completeMethods(CommandRoot commandRoot, List<String> input, CommandContext context) {
+        List<String> ret = new ArrayList<>();
+        for (Method method : getClass().getDeclaredMethods()) {
+            for (Arg methodArgs : method.getAnnotationsByType(Arg.class)) {
+                List<String> currentInput = new ArrayList<>(input);
+                List<ArgNode> currentArgs = ArgNode.parse(methodArgs.value());
+                CommandContext currentContext = context.clone();
+                System.err.println("method(" + method.getName() + "): " + currentArgs);
+
+                try {
+                    parseArg(commandRoot, currentArgs, currentInput, currentContext, false);
+                } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException e) {
+                    // End of chain so save completions
+                    ret.addAll(e.getParser().getCompletions());
+                    continue;
+                } catch (SwitchNotFoundException e) {
+                    // List switch options
+                    ret.addAll(currentContext.getSwitches().stream()
+                            .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
+                                    .filter(sw -> sw.toLowerCase().startsWith(e.getSwitchName().toLowerCase()))
+                                    .limit(1)
+                            )
+                            .map(s -> "-" + s)
+                            .limit(20)
+                            .collect(Collectors.toList())
+                    );
+                    System.err.println("Look for switch using input: " + e.getSwitchName() + " - avail: " + currentContext.getSwitches());
+                    continue;
+                }
+                System.err.println("m-in chain: input:" + currentInput + ", nodes:" + currentArgs);
+            }
         }
         return ret;
     }
 
-    Method[] getMethods(CommandRoot commandRoot, List<String> input, CommandContext context) {
-        return getClass().getDeclaredMethods();
-    }
-
-    void parseArg(CommandRoot commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context) throws ParserNoResultException, ParserInvalidResultException, ParserRequiredArgumentException {
+    void parseArg(CommandRoot commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context) throws ParserNoResultException, ParserInvalidResultException, ParserRequiredArgumentException, SwitchNotFoundException {
         parseArg(commandRoot, argNodes, input, context, true);
     }
 
-    void parseArg(CommandRoot commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context, boolean defaults) throws ParserRequiredArgumentException, ParserInvalidResultException, ParserNoResultException {
+    void parseSwitches(CommandRoot commandRoot, List<String> input, CommandContext context, boolean defaults) throws SwitchNotFoundException, ParserRequiredArgumentException, ParserInvalidResultException, ParserNoResultException {
+        while (input.size() > 0 && input.get(0).startsWith("-")) {
+            String name = input.remove(0).substring(1);
+            Parser parser = context.getSwitches().stream()
+                    .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
+                            .filter(sw -> sw.toLowerCase().equals(name.toLowerCase()))
+                            .limit(1)
+                            .map(sw -> s)
+                    )
+                    .findFirst()
+                    .orElse(null);
+
+            System.err.println("Parsing switch: " + name + " - " + parser);
+
+            if (parser == null) {
+                throw new SwitchNotFoundException(name);
+            }
+
+            parser.parse(input, defaults);
+            parser.getResult();
+        }
+    }
+
+    void parseArg(CommandRoot commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context, boolean defaults) throws ParserRequiredArgumentException, ParserInvalidResultException, ParserNoResultException, SwitchNotFoundException {
         for (ArgNode node : argNodes) {
+            System.err.println("Parsing: " + node + " with input: " + input);
+
+
             Parser parser = commandRoot.getParser(node, context);
             if (parser == null) {
                 break;
@@ -79,16 +161,16 @@ public abstract class BaseCommand {
             if (node.getParameters().containsKey("switch")) {
                 context.getSwitches().add(parser);
             } else {
-                if (input.size() > 0 && input.get(0).startsWith("-")) {
-                    // return switch complete
-                    System.err.println("Switch stuff");
-                    break;
-                }
+                // Handle switches
+                parseSwitches(commandRoot, input, context, defaults);
 
                 parser.parse(input, defaults);
                 parser.getResult();
             }
         }
+
+        // Handle any remaining switches
+        parseSwitches(commandRoot, input, context, defaults);
     }
 
 }

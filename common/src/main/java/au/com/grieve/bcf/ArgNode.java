@@ -83,21 +83,18 @@ public class ArgNode {
 
             switch (state) {
                 case NAME:
-                    switch (" (,".indexOf(c)) {
+                    switch (" (".indexOf(c)) {
                         case 0:
                             if (name.length() > 0) {
                                 result.add(new ArgNode(name.toString()));
-                                return result;
+                                name = new StringBuilder();
+                                break;
                             }
                             break;
                         case 1:
                             state = State.PARAM_KEY;
                             parameters = new HashMap<>();
                             key = new StringBuilder();
-                            break;
-                        case 2:
-                            result.add(new ArgNode(name.toString()));
-                            name = new StringBuilder();
                             break;
                         default:
                             name.append(c);
@@ -124,6 +121,7 @@ public class ArgNode {
                         case 1:
                             parameters.put(key.toString().trim(), value.toString().trim());
                             result.add(new ArgNode(name.toString(), parameters));
+                            name = new StringBuilder();
                             state = State.PARAM_END;
                             break;
                         case 2:
@@ -172,6 +170,8 @@ public class ArgNode {
                             state = State.PARAM_KEY;
                             break;
                         case 1:
+                            result.add(new ArgNode(name.toString(), parameters));
+                            name = new StringBuilder();
                             state = State.PARAM_END;
                             break;
                     }
@@ -180,7 +180,8 @@ public class ArgNode {
                     //noinspection SwitchStatementWithTooFewBranches
                     switch (" ".indexOf(c)) {
                         case 0:
-                            return result;
+                            state = State.NAME;
+                            break;
                     }
                     break;
             }

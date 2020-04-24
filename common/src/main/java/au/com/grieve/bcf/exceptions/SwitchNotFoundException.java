@@ -21,33 +21,16 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.exceptions;
 
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class CommandContext implements Cloneable {
+public class SwitchNotFoundException extends Exception {
     @Getter
-    List<Parser> switches = new ArrayList<>();
+    final String switchName;
 
-    @Getter
-    List<Parser> parsers = new ArrayList<>();
-
-    public CommandContext clone() {
-        CommandContext clone = null;
-        try {
-            clone = (CommandContext) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        // Clone Data
-        clone.getSwitches().addAll(switches);
-        clone.getParsers().addAll(parsers);
-
-        return clone;
+    public SwitchNotFoundException(String switchName) {
+        this.switchName = switchName;
     }
+
 }

@@ -78,8 +78,15 @@ public abstract class CommandManager {
     }
 
     public Parser getParser(ArgNode argNode, CommandContext context) {
+        Class<? extends Parser> cls;
+        if (argNode.getName().startsWith("@")) {
+            cls = getParsers().getOrDefault(argNode.getName().substring(1), LiteralParser.class);
+        } else {
+            cls = LiteralParser.class;
+        }
+
         try {
-            return getParsers().getOrDefault(argNode.getName(), LiteralParser.class)
+            return cls
                     .getConstructor(CommandManager.class, ArgNode.class, CommandContext.class)
                     .newInstance(this, argNode, context);
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
