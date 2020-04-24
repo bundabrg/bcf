@@ -23,32 +23,30 @@
 
 package au.com.grieve.bcf;
 
-import lombok.Data;
-import lombok.Getter;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Data
-public class ParserContext implements Cloneable {
+public class BukkitCommandExecutor extends Command {
 
-    private final CommandManager manager;
-    @Getter
-    private List<Parser> switches = new ArrayList<>();
-    @Getter
-    private List<Parser> parsers = new ArrayList<>();
+    final BukkitCommandRoot commandRoot;
 
-    public ParserContext(CommandManager manager) {
-        this.manager = manager;
+    public BukkitCommandExecutor(String name, BukkitCommandRoot commandRoot) {
+        super(name);
+        this.commandRoot = commandRoot;
     }
 
-    public Object clone() throws CloneNotSupportedException {
-        ParserContext clone = (ParserContext) super.clone();
-
-        // Clone Data
-        clone.switches = new ArrayList<>(switches);
-
-        return clone;
+    @Override
+    public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
+        commandRoot.execute(sender, alias, args);
+        return true;
     }
 
+
+    @Override
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
+        return commandRoot.complete(sender, alias, args);
+    }
 }

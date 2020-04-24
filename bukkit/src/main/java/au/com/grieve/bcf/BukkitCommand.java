@@ -21,20 +21,8 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.parsers;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.ArgNode;
-import au.com.grieve.bcf.CommandContext;
-import au.com.grieve.bcf.CommandManager;
+public class BukkitCommand extends BaseCommand {
 
-public class StringParser extends SingleParser {
-
-    public StringParser(CommandManager manager, ArgNode node, CommandContext context) {
-        super(manager, node, context);
-    }
-
-    @Override
-    protected Object result() {
-        return getInput();
-    }
 }

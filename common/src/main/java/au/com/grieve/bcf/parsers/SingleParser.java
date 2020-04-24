@@ -23,10 +23,10 @@
 
 package au.com.grieve.bcf.parsers;
 
+import au.com.grieve.bcf.ArgNode;
+import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.Parser;
-import au.com.grieve.bcf.ParserContext;
-import au.com.grieve.bcf.ParserNode;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
 import au.com.grieve.bcf.exceptions.ParserNoResultException;
 import au.com.grieve.bcf.exceptions.ParserRequiredArgumentException;
@@ -34,7 +34,6 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Supports a single argument parser
@@ -43,29 +42,24 @@ public abstract class SingleParser extends Parser {
     @Getter
     private String input;
 
-    public SingleParser(CommandManager manager, ParserNode node, ParserContext context) {
-        super(manager, node, context);
+    public SingleParser(CommandManager manager, ArgNode argNode, CommandContext context) {
+        super(manager, argNode, context);
     }
 
     @Override
-    public String parse(String input) throws ParserRequiredArgumentException {
+    public void parse(List<String> input, boolean defaults) throws ParserRequiredArgumentException {
         parsed = true;
-        if (input == null) {
-            Map<String, String> parameters = node.getData().getParameters();
-
+        if (input == null || input.size() == 0) {
             // Check if a default is provided or if its not required
-            if (!parameters.containsKey("default") && parameters.getOrDefault("required", "true").equals("true")) {
-                throw new ParserRequiredArgumentException();
+            if (!defaults || (getParameter("default") == null && getParameter("required", "true").equals("true"))) {
+                throw new ParserRequiredArgumentException(this);
             }
 
-            this.input = parameters.getOrDefault("default", null);
-            return null;
+            this.input = getParameter("default");
+            return;
         }
 
-        String[] result = input.split(" ", 2);
-
-        this.input = result[0];
-        return result.length > 1 ? result[1] : null;
+        this.input = input.remove(0);
     }
 
     @Override

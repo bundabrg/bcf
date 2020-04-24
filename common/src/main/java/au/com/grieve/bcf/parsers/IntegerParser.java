@@ -23,38 +23,35 @@
 
 package au.com.grieve.bcf.parsers;
 
+import au.com.grieve.bcf.ArgNode;
+import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.ParserContext;
-import au.com.grieve.bcf.ParserNode;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class IntegerParser extends SingleParser {
 
-    public IntegerParser(CommandManager manager, ParserNode node, ParserContext context) {
-        super(manager, node, context);
+    public IntegerParser(CommandManager manager, ArgNode argNode, CommandContext context) {
+        super(manager, argNode, context);
     }
 
     @Override
     protected List<String> complete() {
-        Map<String, String> parameters = getNode().getData().getParameters();
-
-        if (parameters.containsKey("max")) {
+        if (getParameter("max") != null) {
             int min;
             int max;
 
             try {
-                max = Integer.parseInt(parameters.get("max"));
+                max = Integer.parseInt(getParameter("max"));
             } catch (NumberFormatException e) {
                 return super.complete();
             }
 
             try {
-                min = Integer.parseInt(parameters.getOrDefault("min", "0"));
+                min = Integer.parseInt(getParameter("min", "0"));
             } catch (NumberFormatException e) {
                 min = 0;
             }
@@ -76,20 +73,20 @@ public class IntegerParser extends SingleParser {
         try {
             result = Integer.parseInt(getInput());
 
-            if (getNode().getData().getParameters().containsKey("min")) {
-                if (result < Integer.parseInt(getNode().getData().getParameters().get("min"))) {
-                    throw new ParserInvalidResultException();
+            if (getParameter("min") != null) {
+                if (result < Integer.parseInt(getParameter("min"))) {
+                    throw new ParserInvalidResultException(this);
                 }
             }
 
-            if (getNode().getData().getParameters().containsKey("max")) {
-                if (result > Integer.parseInt(getNode().getData().getParameters().get("max"))) {
-                    throw new ParserInvalidResultException();
+            if (getParameter("max") != null) {
+                if (result > Integer.parseInt(getParameter("max"))) {
+                    throw new ParserInvalidResultException(this);
                 }
             }
 
         } catch (NumberFormatException e) {
-            throw new ParserInvalidResultException();
+            throw new ParserInvalidResultException(this);
         }
 
         return result;

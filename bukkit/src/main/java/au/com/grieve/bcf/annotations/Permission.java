@@ -21,30 +21,19 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.parsers;
-
-import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.ParserContext;
-import au.com.grieve.bcf.ParserNode;
-
-/**
- * A NullParser does not affect any of its inputs
- */
-public class NullParser extends SingleParser {
+package au.com.grieve.bcf.annotations;
 
 
-    public NullParser(CommandManager manager, ParserNode node, ParserContext context) {
-        super(manager, node, context);
-        defaultParameters.put("suppress", "true");
-    }
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    @Override
-    public String parse(String input) {
-        return input;
-    }
-
-    @Override
-    protected Object result() {
-        return null;
-    }
+@Repeatable(Permissions.class)
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface Permission {
+    String value();
 }
+

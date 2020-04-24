@@ -24,18 +24,30 @@
 package au.com.grieve.bcf;
 
 import lombok.Getter;
-import org.bukkit.command.CommandSender;
 
-public class BukkitParserContext extends ParserContext {
+import java.util.ArrayList;
+import java.util.List;
 
-    // Bukkit Command Sender
-    @SuppressWarnings("unused")
+public class CommandContext implements Cloneable {
     @Getter
-    private final CommandSender sender;
+    List<Parser> switches = new ArrayList<>();
 
-    public BukkitParserContext(CommandManager manager, CommandSender sender) {
-        super(manager);
+    @Getter
+    List<Parser> parsers = new ArrayList<>();
 
-        this.sender = sender;
+    public CommandContext clone() {
+        CommandContext clone = null;
+        try {
+            clone = (CommandContext) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        // Clone Data
+        clone.getSwitches().addAll(switches);
+        clone.getParsers().addAll(parsers);
+
+        return clone;
     }
 }

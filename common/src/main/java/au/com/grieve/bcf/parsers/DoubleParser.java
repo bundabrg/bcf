@@ -23,14 +23,14 @@
 
 package au.com.grieve.bcf.parsers;
 
+import au.com.grieve.bcf.ArgNode;
+import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.ParserContext;
-import au.com.grieve.bcf.ParserNode;
 
 public class DoubleParser extends SingleParser {
 
-    public DoubleParser(CommandManager manager, ParserNode node, ParserContext context) {
-        super(manager, node, context);
+    public DoubleParser(CommandManager manager, ArgNode argNode, CommandContext context) {
+        super(manager, argNode, context);
     }
 
     @Override

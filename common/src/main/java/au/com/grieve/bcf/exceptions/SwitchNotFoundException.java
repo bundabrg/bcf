@@ -21,42 +21,16 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.exceptions;
 
 import lombok.Getter;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.List;
-
-public class BukkitRootCommand extends Command implements RootCommand {
-    private final ParserNode node = new ParserNode();
-
+public class SwitchNotFoundException extends Exception {
     @Getter
-    private final CommandManager manager;
+    final String switchName;
 
-    protected BukkitRootCommand(CommandManager manager, String name) {
-        super(name);
-        this.manager = manager;
+    public SwitchNotFoundException(String switchName) {
+        this.switchName = switchName;
     }
 
-    @Override
-    public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-        BukkitParserContext context = new BukkitParserContext(manager, sender);
-        manager.execute(node, String.join(" ", args), context, Collections.singletonList(sender));
-        return true;
-    }
-
-    @Override
-    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
-        BukkitParserContext context = new BukkitParserContext(manager, sender);
-        return manager.getComplete(node, String.join(" ", args), context);
-    }
-
-    @Override
-    public ParserNode getNode() {
-        return node;
-    }
 }

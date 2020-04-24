@@ -23,9 +23,9 @@
 
 package au.com.grieve.bcf.parsers;
 
+import au.com.grieve.bcf.ArgNode;
+import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.ParserContext;
-import au.com.grieve.bcf.ParserNode;
 import au.com.grieve.bcf.exceptions.ParserNoResultException;
 
 import java.util.ArrayList;
@@ -43,8 +43,8 @@ import java.util.List;
 public class LiteralParser extends SingleParser {
 
 
-    public LiteralParser(CommandManager manager, ParserNode node, ParserContext context) {
-        super(manager, node, context);
+    public LiteralParser(CommandManager manager, ArgNode argNode, CommandContext context) {
+        super(manager, argNode, context);
         defaultParameters.put("suppress", "true");
     }
 
@@ -52,15 +52,13 @@ public class LiteralParser extends SingleParser {
     protected List<String> complete() {
         List<String> result = new ArrayList<>();
 
-        for (String alias : node.getData().getName().split("\\|")) {
+        for (String alias : argNode.getName().split("\\|")) {
             if (alias.equals("*")) {
                 result.add(getInput());
-                return result;
-            }
-
-            if (alias.startsWith(getInput())) {
+//                return result;
+            } else if (alias.startsWith(getInput())) {
                 result.add(alias);
-                return result;
+//                return result;
             }
         }
 
@@ -69,7 +67,7 @@ public class LiteralParser extends SingleParser {
 
     @Override
     protected Object result() throws ParserNoResultException {
-        for (String alias : node.getData().getName().split("\\|")) {
+        for (String alias : argNode.getName().split("\\|")) {
             if (alias.equals("*")) {
                 return getInput();
             }
@@ -79,6 +77,6 @@ public class LiteralParser extends SingleParser {
             }
         }
 
-        throw new ParserNoResultException();
+        throw new ParserNoResultException(this);
     }
 }

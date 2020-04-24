@@ -23,5 +23,10 @@
 
 package au.com.grieve.bcf.exceptions;
 
+import au.com.grieve.bcf.Parser;
+
 public class ParserNoResultException extends ParserException {
+    public ParserNoResultException(Parser parser) {
+        super(parser);
+    }
 }

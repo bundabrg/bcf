@@ -38,23 +38,24 @@ public abstract class Parser {
     @Getter
     protected final CommandManager manager;
     @Getter
-    protected final ParserNode node;
-    @Getter
-    protected final ParserContext context;
+    protected final CommandContext context;
     @Getter
     protected final Map<String, String> defaultParameters = new HashMap<>();
 
     @Getter
     protected boolean parsed = false;
 
+    @Getter
+    protected ArgNode argNode;
+
     // Cache
     protected List<String> completions;
     protected Object result;
 
-    public Parser(CommandManager manager, ParserNode node, ParserContext context) {
+    public Parser(CommandManager manager, ArgNode argNode, CommandContext context) {
         this.manager = manager;
-        this.node = node;
         this.context = context;
+        this.argNode = argNode;
     }
 
     public List<String> getCompletions() {
@@ -78,11 +79,7 @@ public abstract class Parser {
     }
 
     public String getParameter(String key, String def) {
-        if (node.getData() != null) {
-            return node.getData().getParameters().getOrDefault(key, defaultParameters.getOrDefault(key, def));
-        }
-
-        return defaultParameters.getOrDefault(key, def);
+        return argNode.getParameters().getOrDefault(key, defaultParameters.getOrDefault(key, def));
     }
 
     // default methods
@@ -97,14 +94,13 @@ public abstract class Parser {
     /**
      * Take input and return the unused data
      */
-    public String parse(String input) throws ParserRequiredArgumentException {
+    public void parse(List<String> input, boolean defaults) throws ParserRequiredArgumentException {
         parsed = true;
-        return input;
     }
 
     @Override
     public String toString() {
-        return getClass().getName() + "(node=" + node + ", " +
+        return getClass().getName() + "(argNode=" + argNode + ", " +
                 "context=" + context + ", " +
                 "defaultParameters=" + defaultParameters + ", " +
                 "parsed=" + parsed + ")";

@@ -23,7 +23,27 @@
 
 package au.com.grieve.bcf;
 
-public interface RootCommand {
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
-    ParserNode getNode();
+import java.util.Arrays;
+import java.util.List;
+
+public class BukkitCommandRoot extends CommandRoot {
+    BukkitCommandRoot(CommandManager manager, Class<? extends BaseCommand> command) {
+        super(manager, command);
+    }
+
+    public void execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
+        BukkitCommandContext context = new BukkitCommandContext(sender);
+        CommandExecute commandExecute = command.execute(this, Arrays.asList(args), context);
+        if (commandExecute != null) {
+            commandExecute.invoke(sender);
+        }
+    }
+
+    public @NotNull List<String> complete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
+        BukkitCommandContext context = new BukkitCommandContext(sender);
+        return command.complete(this, Arrays.asList(args), context);
+    }
 }
