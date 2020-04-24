@@ -26,10 +26,12 @@ package au.com.grieve.bcf;
 import au.com.grieve.bcf.annotations.Command;
 import au.com.grieve.bcf.parsers.DoubleParser;
 import au.com.grieve.bcf.parsers.IntegerParser;
+import au.com.grieve.bcf.parsers.LiteralParser;
 import au.com.grieve.bcf.parsers.StringParser;
 import au.com.grieve.bcf.utils.ReflectUtils;
+import lombok.Getter;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +41,10 @@ import java.util.stream.Stream;
 
 public abstract class CommandManager {
 
+    @Getter
     protected final Map<Class<? extends BaseCommand>, CommandRoot> commandRoots = new HashMap<>();
+
+    @Getter
     protected final Map<String, Class<? extends Parser>> parsers = new HashMap<>();
 
     public CommandManager() {
@@ -49,17 +54,17 @@ public abstract class CommandManager {
         registerParser("double", DoubleParser.class);
     }
 
-    public void registerCommand(BaseCommand cmd) {
+    public void registerCommand(Class<? extends BaseCommand> cmd) {
         // Lookup all parent classes
-        List<Class<?>> parents = Stream.of(ReflectUtils.getAllSuperClasses(cmd.getClass()))
+        List<Class<?>> parents = Stream.of(ReflectUtils.getAllSuperClasses(cmd))
                 .filter(BaseCommand.class::isAssignableFrom)
                 .filter(c -> c != BaseCommand.class)
                 .collect(Collectors.toList());
         Collections.reverse(parents);
 
         // If our class has a command, we are a CommandRoot
-        if (cmd.getClass().getAnnotation(Command.class) != null) {
-            commandRoots.put(cmd.getClass(), createCommandRoot(cmd));
+        if (cmd.getAnnotation(Command.class) != null) {
+            commandRoots.put(cmd, createCommandRoot(cmd));
         }
 
         // Find all commandRoots and add us to them as a sub command
@@ -67,22 +72,24 @@ public abstract class CommandManager {
             CommandRoot c = commandRoots.getOrDefault(cls, null);
 
             if (c != null) {
-                c.getSubCommands().add(cmd);
+                c.addSubCommand(cmd);
             }
         }
+    }
 
-        // Register all Methods
-        for (Method m : cmd.getClass().getDeclaredMethods()) {
-            cmd.getMethodData().put(m, createMethodData(m));
+    public Parser getParser(ArgNode argNode, CommandContext context) {
+        try {
+            return getParsers().getOrDefault(argNode.getName(), LiteralParser.class)
+                    .getConstructor(CommandManager.class, ArgNode.class, CommandContext.class)
+                    .newInstance(this, argNode, context);
+        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
-    CommandRoot createCommandRoot(BaseCommand cmd) {
+    CommandRoot createCommandRoot(Class<? extends BaseCommand> cmd) {
         return new CommandRoot(this, cmd);
-    }
-
-    MethodData createMethodData(Method m) {
-        return new MethodData(m);
     }
 
     public void registerParser(String name, Class<? extends Parser> parser) {

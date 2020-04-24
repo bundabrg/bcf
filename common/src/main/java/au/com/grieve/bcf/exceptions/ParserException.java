@@ -23,17 +23,22 @@
 
 package au.com.grieve.bcf.exceptions;
 
+import au.com.grieve.bcf.Parser;
+
 public class ParserException extends Exception {
 
-    public ParserException() {
-        this(null, null);
+    final Parser parser;
+
+    public ParserException(Parser parser) {
+        this(parser, null, null);
     }
 
-    public ParserException(String message) {
-        this(message, null);
+    public ParserException(Parser parser, String message) {
+        this(parser, message, null);
     }
 
-    public ParserException(String message, Throwable err) {
+    public ParserException(Parser parser, String message, Throwable err) {
         super(message, err);
+        this.parser = parser;
     }
 }

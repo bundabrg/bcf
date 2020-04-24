@@ -26,15 +26,14 @@ package au.com.grieve.bcf;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 
-public class BukkitParserContext extends ParserContext {
+public class BukkitCommandContext extends CommandContext {
 
     // Bukkit Command Sender
-    @SuppressWarnings("unused")
     @Getter
     private final CommandSender sender;
 
-    public BukkitParserContext(CommandManager manager, CommandSender sender) {
-        super(manager);
+    public BukkitCommandContext(CommandSender sender) {
+        super();
 
         this.sender = sender;
     }

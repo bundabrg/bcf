@@ -26,11 +26,10 @@ package au.com.grieve.bcf;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BukkitCommandRoot extends CommandRoot {
-    BukkitCommandRoot(CommandManager manager, BaseCommand command) {
+    BukkitCommandRoot(CommandManager manager, Class<? extends BaseCommand> command) {
         super(manager, command);
     }
 
@@ -39,6 +38,7 @@ public class BukkitCommandRoot extends CommandRoot {
     }
 
     public @NotNull List<String> complete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-        return new ArrayList<>();
+        BukkitCommandContext context = new BukkitCommandContext(sender);
+        return parseComplete(args, context);
     }
 }

@@ -71,16 +71,11 @@ public class BukkitCommandManager extends CommandManager {
     }
 
     @Override
-    MethodData createMethodData(Method m) {
-        return new BukkitMethodData(m);
-    }
-
-    @Override
-    CommandRoot createCommandRoot(BaseCommand cmd) {
+    CommandRoot createCommandRoot(Class<? extends BaseCommand> cmd) {
         BukkitCommandRoot cr = new BukkitCommandRoot(this, cmd);
 
         // Get Name and Aliases
-        Command commandAnnotation = cmd.getClass().getAnnotation(Command.class);
+        Command commandAnnotation = cmd.getAnnotation(Command.class);
 
         if (commandAnnotation == null) {
             return cr;
@@ -88,7 +83,7 @@ public class BukkitCommandManager extends CommandManager {
 
         String[] aliases = commandAnnotation.value().split("\\|");
         if (aliases.length == 0) {
-            aliases = new String[]{cmd.getClass().getSimpleName().toLowerCase()};
+            aliases = new String[]{cmd.getSimpleName().toLowerCase()};
         }
 
         // Register with Bukkit

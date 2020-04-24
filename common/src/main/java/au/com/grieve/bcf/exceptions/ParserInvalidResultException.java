@@ -23,13 +23,15 @@
 
 package au.com.grieve.bcf.exceptions;
 
+import au.com.grieve.bcf.Parser;
+
 public class ParserInvalidResultException extends ParserException {
 
-    public ParserInvalidResultException() {
-        super();
+    public ParserInvalidResultException(Parser parser) {
+        super(parser);
     }
 
-    public ParserInvalidResultException(String message) {
-        super(message);
+    public ParserInvalidResultException(Parser parser, String message) {
+        super(parser, message);
     }
 }

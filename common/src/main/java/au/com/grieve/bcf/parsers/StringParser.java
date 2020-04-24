@@ -23,13 +23,13 @@
 
 package au.com.grieve.bcf.parsers;
 
+import au.com.grieve.bcf.ArgNode;
+import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.ParserContext;
-import au.com.grieve.bcf.ParserNode;
 
 public class StringParser extends SingleParser {
 
-    public StringParser(CommandManager manager, ParserNode node, ParserContext context) {
+    public StringParser(CommandManager manager, ArgNode node, CommandContext context) {
         super(manager, node, context);
     }
 

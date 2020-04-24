@@ -23,10 +23,10 @@
 
 package au.com.grieve.bcf.parsers;
 
-import au.com.grieve.bcf.BukkitParserContext;
+import au.com.grieve.bcf.ArgNode;
+import au.com.grieve.bcf.BukkitCommandContext;
+import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.ParserContext;
-import au.com.grieve.bcf.ParserNode;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -51,18 +51,18 @@ import java.util.stream.Collectors;
  */
 public class PlayerParser extends SingleParser {
 
-    public PlayerParser(CommandManager manager, ParserNode node, ParserContext context) {
-        super(manager, node, context);
+    public PlayerParser(CommandManager manager, ArgNode argNode, CommandContext context) {
+        super(manager, argNode, context);
     }
 
     @Override
     protected Object result() throws ParserInvalidResultException {
-        switch (getNode().getData().getParameters().getOrDefault("mode", "offline")) {
+        switch (getParameter("mode", "offline")) {
             case "online":
                 if (getInput().equals("%self")) {
-                    CommandSender sender = ((BukkitParserContext) context).getSender();
+                    CommandSender sender = ((BukkitCommandContext) context).getSender();
                     if (sender instanceof ConsoleCommandSender) {
-                        throw new ParserInvalidResultException("When console a player name is required");
+                        throw new ParserInvalidResultException(this, "When console a player name is required");
                     }
                     return sender;
                 }
@@ -70,30 +70,30 @@ public class PlayerParser extends SingleParser {
                 return Bukkit.getOnlinePlayers().stream()
                         .filter(p -> p.getName().toLowerCase().equals(getInput().toLowerCase()))
                         .findFirst()
-                        .orElseThrow(() -> new ParserInvalidResultException("No such player can be found online"));
+                        .orElseThrow(() -> new ParserInvalidResultException(this, "No such player can be found online"));
             case "offline":
                 if (getInput().equals("%self")) {
-                    CommandSender sender = ((BukkitParserContext) context).getSender();
+                    CommandSender sender = ((BukkitCommandContext) context).getSender();
                     if (sender instanceof ConsoleCommandSender) {
-                        throw new ParserInvalidResultException("When console a player name is required");
+                        throw new ParserInvalidResultException(this, "When console a player name is required");
                     }
 
-                    return Bukkit.getOfflinePlayer(((Player) ((BukkitParserContext) context).getSender()).getUniqueId());
+                    return Bukkit.getOfflinePlayer(((Player) ((BukkitCommandContext) context).getSender()).getUniqueId());
                 }
 
                 return Arrays.stream(Bukkit.getOfflinePlayers())
                         .filter(p -> p.getName() != null)
                         .filter(p -> Objects.equals(p.getName().toLowerCase(), getInput().toLowerCase()))
                         .findFirst()
-                        .orElseThrow(() -> new ParserInvalidResultException("No such player can be found"));
+                        .orElseThrow(() -> new ParserInvalidResultException(this, "No such player can be found"));
         }
 
-        throw new ParserInvalidResultException("Invalid mode: " + getNode().getData().getParameters().get("mode"));
+        throw new ParserInvalidResultException(this, "Invalid mode: " + getParameter("mode"));
     }
 
     @Override
     protected List<String> complete() {
-        switch (getNode().getData().getParameters().getOrDefault("mode", "offline")) {
+        switch (getParameter("mode", "offline")) {
             case "online":
                 return Bukkit.getOnlinePlayers().stream()
                         .map(HumanEntity::getName)

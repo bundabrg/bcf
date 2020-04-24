@@ -33,27 +33,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ParserNodeData {
+public class ArgNode {
     @Getter
     final String name;
     @Getter
     final Map<String, String> parameters = new HashMap<>();
 
 
-    public ParserNodeData(String name) {
+    public ArgNode(String name) {
         this.name = name;
     }
 
-    public ParserNodeData(String name, Map<String, String> parameters) {
+    public ArgNode(String name, Map<String, String> parameters) {
         this(name);
         this.parameters.putAll(parameters);
+    }
+
+    public static List<ArgNode> parse(String input) {
+        return parse(new StringReader(input));
     }
 
     /**
      * Parse a string and return new Data Nodes
      */
-    public static List<ParserNodeData> parse(StringReader reader) {
-        List<ParserNodeData> result = new ArrayList<>();
+    public static List<ArgNode> parse(StringReader reader) {
+        List<ArgNode> result = new ArrayList<>();
 
         State state = State.NAME;
         StringBuilder name = new StringBuilder();
@@ -82,7 +86,7 @@ public class ParserNodeData {
                     switch (" (,".indexOf(c)) {
                         case 0:
                             if (name.length() > 0) {
-                                result.add(new ParserNodeData(name.toString()));
+                                result.add(new ArgNode(name.toString()));
                                 return result;
                             }
                             break;
@@ -92,7 +96,7 @@ public class ParserNodeData {
                             key = new StringBuilder();
                             break;
                         case 2:
-                            result.add(new ParserNodeData(name.toString()));
+                            result.add(new ArgNode(name.toString()));
                             name = new StringBuilder();
                             break;
                         default:
@@ -119,7 +123,7 @@ public class ParserNodeData {
                             break;
                         case 1:
                             parameters.put(key.toString().trim(), value.toString().trim());
-                            result.add(new ParserNodeData(name.toString(), parameters));
+                            result.add(new ArgNode(name.toString(), parameters));
                             state = State.PARAM_END;
                             break;
                         case 2:
@@ -184,7 +188,7 @@ public class ParserNodeData {
         } while (true);
 
         if (state == State.NAME && name.length() > 0) {
-            result.add(new ParserNodeData(name.toString()));
+            result.add(new ArgNode(name.toString()));
         }
 
         return result;
@@ -196,11 +200,11 @@ public class ParserNodeData {
             return true;
         }
 
-        if (!(obj instanceof ParserNodeData)) {
+        if (!(obj instanceof ArgNode)) {
             return false;
         }
 
-        ParserNodeData data = (ParserNodeData) obj;
+        ArgNode data = (ArgNode) obj;
 
         return data.getName().equals(name);
     }

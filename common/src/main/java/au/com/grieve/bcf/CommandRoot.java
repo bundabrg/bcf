@@ -26,9 +26,11 @@ package au.com.grieve.bcf;
 import au.com.grieve.bcf.utils.ReflectUtils;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CommandRoot {
     @Getter
@@ -37,37 +39,55 @@ public class CommandRoot {
     @Getter
     final CommandManager manager;
 
-    @Getter
-    final List<BaseCommand> subCommands = new ArrayList<>();
+    //final List<BaseCommand> subCommands = new ArrayList<>();
 
-    CommandRoot(CommandManager manager, BaseCommand command) {
+    @Getter
+    protected final Map<Class<?>, BaseCommand> commandMap = new HashMap<>();
+
+
+    CommandRoot(CommandManager manager, Class<? extends BaseCommand> cmd) {
         this.manager = manager;
+        BaseCommand command = null;
+        try {
+            command = cmd.getConstructor().newInstance();
+            commandMap.put(cmd, command);
+        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
         this.command = command;
+
     }
 
-    /**
-     * Add sub command
-     *
-     * @param cmd
-     */
-    public void addSubCommand(BaseCommand cmd) {
+    public void addSubCommand(Class<? extends BaseCommand> cmd) {
         // Lookup all parent classes till it reaches our command
-        List<Class<?>> parents = new ArrayList<>();
-        for (Class<?> parent : ReflectUtils.getAllSuperClasses(cmd.getClass())) {
-            parents.add(parent);
-            if (parent == this.getClass()) {
+        BaseCommand current = command;
+        for (Class<?> cls : ReflectUtils.getAllSuperClasses(cmd)) {
+            if (!cls.isAssignableFrom(BaseCommand.class)) {
+                break;
+            }
+
+            if (!commandMap.containsKey(cls)) {
+                try {
+                    commandMap.put(cls, (BaseCommand) cls.getConstructor().newInstance());
+                } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                    e.printStackTrace();
+                    break;
+                }
+            }
+            BaseCommand c = commandMap.get(cls);
+            if (!c.getChildren().contains(current)) {
+                c.getChildren().add(current);
+            }
+            current = c;
+
+            if (cls == command.getClass()) {
                 break;
             }
         }
-        Collections.reverse(parents);
+    }
 
-        ParserNode node;
-
-        // Add a parser for each parent class
-        for (Class<?> parent : parents) {
-
-        }
-
+    Parser getParser(ArgNode argNode, CommandContext context) {
+        return manager.getParser(argNode, context);
 
     }
 
@@ -75,11 +95,10 @@ public class CommandRoot {
      * Parse the arguments and return an executor
      */
     CommandExecute parseExecute(String[] args, CommandContext context) {
-
-
+        return null;
     }
 
     List<String> parseComplete(String[] args, CommandContext context) {
-
+        return command.complete(this, Arrays.asList(args), context);
     }
 }
