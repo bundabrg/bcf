@@ -41,17 +41,74 @@ public abstract class BaseCommand {
     @Getter
     final List<BaseCommand> children = new ArrayList<>();
 
+    CommandExecute execute(CommandRoot commandRoot, List<String> input, CommandContext context) {
+        // Go through class Args first
+        for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
+            List<String> currentInput = new ArrayList<>(input);
+            List<ArgNode> currentArgs = ArgNode.parse(classArgs.value());
+            CommandContext currentContext = context.clone();
+
+
+            try {
+                parseArg(commandRoot, currentArgs, currentInput, currentContext);
+            } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException | SwitchNotFoundException e) {
+                continue;
+            }
+
+            // Process methods
+            CommandExecute ret = executeMethods(commandRoot, currentInput, currentContext);
+            if (ret != null) {
+                return ret;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Execution for methods
+     */
+    CommandExecute executeMethods(CommandRoot commandRoot, List<String> input, CommandContext context) {
+        for (Method method : getClass().getDeclaredMethods()) {
+            for (Arg methodArgs : method.getAnnotationsByType(Arg.class)) {
+                List<String> currentInput = new ArrayList<>(input);
+                List<ArgNode> currentArgs = ArgNode.parse(methodArgs.value());
+                CommandContext currentContext = context.clone();
+
+                try {
+                    parseArg(commandRoot, currentArgs, currentInput, currentContext);
+
+                    if (currentInput.size() > 0) {
+                        continue;
+                    }
+
+
+                    // No more input so see if we can parse all parsers and get their results
+                    List<Object> results = new ArrayList<>();
+                    for (Parser parser : currentContext.getParsers()) {
+                        if (!parser.isParsed()) {
+                            parser.parse(null, true);
+                        }
+                        if (!parser.getParameter("suppress", "false").equals("true")) {
+                            results.add(parser.getResult());
+                        }
+                    }
+                    return new CommandExecute(this, method, results);
+                } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException | SwitchNotFoundException ignored) {
+                }
+            }
+        }
+        return null;
+    }
 
     List<String> complete(CommandRoot commandRoot, List<String> input, CommandContext context) {
         List<String> ret = new ArrayList<>();
-        System.err.println("Initial Input: " + input);
 
         // Go through class Args first
         for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
             List<String> currentInput = new ArrayList<>(input);
             List<ArgNode> currentArgs = ArgNode.parse(classArgs.value());
             CommandContext currentContext = context.clone();
-            System.err.println("init class: " + currentArgs);
 
 
             try {
@@ -73,12 +130,10 @@ public abstract class BaseCommand {
                 );
                 continue;
             }
-            System.err.println("In chain: input:" + currentInput + ", nodes:" + currentArgs);
 
             // Process methods
             ret.addAll(completeMethods(commandRoot, currentInput, currentContext));
         }
-        System.err.println("out");
         return ret;
     }
 
@@ -92,14 +147,12 @@ public abstract class BaseCommand {
                 List<String> currentInput = new ArrayList<>(input);
                 List<ArgNode> currentArgs = ArgNode.parse(methodArgs.value());
                 CommandContext currentContext = context.clone();
-                System.err.println("method(" + method.getName() + "): " + currentArgs);
 
                 try {
                     parseArg(commandRoot, currentArgs, currentInput, currentContext, false);
                 } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException e) {
                     // End of chain so save completions
                     ret.addAll(e.getParser().getCompletions());
-                    continue;
                 } catch (SwitchNotFoundException e) {
                     // List switch options
                     ret.addAll(currentContext.getSwitches().stream()
@@ -111,10 +164,7 @@ public abstract class BaseCommand {
                             .limit(20)
                             .collect(Collectors.toList())
                     );
-                    System.err.println("Look for switch using input: " + e.getSwitchName() + " - avail: " + currentContext.getSwitches());
-                    continue;
                 }
-                System.err.println("m-in chain: input:" + currentInput + ", nodes:" + currentArgs);
             }
         }
         return ret;
@@ -136,7 +186,6 @@ public abstract class BaseCommand {
                     .findFirst()
                     .orElse(null);
 
-            System.err.println("Parsing switch: " + name + " - " + parser);
 
             if (parser == null) {
                 throw new SwitchNotFoundException(name);
@@ -148,14 +197,16 @@ public abstract class BaseCommand {
     }
 
     void parseArg(CommandRoot commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context, boolean defaults) throws ParserRequiredArgumentException, ParserInvalidResultException, ParserNoResultException, SwitchNotFoundException {
-        for (ArgNode node : argNodes) {
-            System.err.println("Parsing: " + node + " with input: " + input);
+        while (argNodes.size() > 0) {
+            ArgNode node = argNodes.remove(0);
 
 
             Parser parser = commandRoot.getParser(node, context);
             if (parser == null) {
                 break;
             }
+
+            context.getParsers().add(parser);
 
             // Take care of switches first
             if (node.getParameters().containsKey("switch")) {

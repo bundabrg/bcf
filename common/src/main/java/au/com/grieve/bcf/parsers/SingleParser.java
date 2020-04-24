@@ -49,7 +49,7 @@ public abstract class SingleParser extends Parser {
     @Override
     public void parse(List<String> input, boolean defaults) throws ParserRequiredArgumentException {
         parsed = true;
-        if (input.size() == 0) {
+        if (input == null || input.size() == 0) {
             // Check if a default is provided or if its not required
             if (!defaults || (getParameter("default") == null && getParameter("required", "true").equals("true"))) {
                 throw new ParserRequiredArgumentException(this);

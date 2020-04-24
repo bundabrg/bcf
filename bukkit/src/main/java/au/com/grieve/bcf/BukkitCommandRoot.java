@@ -26,6 +26,7 @@ package au.com.grieve.bcf;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class BukkitCommandRoot extends CommandRoot {
@@ -34,11 +35,13 @@ public class BukkitCommandRoot extends CommandRoot {
     }
 
     public void execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-
+        BukkitCommandContext context = new BukkitCommandContext(sender);
+        CommandExecute commandExecute = command.execute(this, Arrays.asList(args), context);
+        commandExecute.invoke(sender);
     }
 
     public @NotNull List<String> complete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         BukkitCommandContext context = new BukkitCommandContext(sender);
-        return parseComplete(args, context);
+        return command.complete(this, Arrays.asList(args), context);
     }
 }

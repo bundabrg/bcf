@@ -27,9 +27,7 @@ import au.com.grieve.bcf.utils.ReflectUtils;
 import lombok.Getter;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CommandRoot {
@@ -91,14 +89,5 @@ public class CommandRoot {
 
     }
 
-    /**
-     * Parse the arguments and return an executor
-     */
-    CommandExecute parseExecute(String[] args, CommandContext context) {
-        return null;
-    }
 
-    List<String> parseComplete(String[] args, CommandContext context) {
-        return command.complete(this, Arrays.asList(args), context);
-    }
 }
