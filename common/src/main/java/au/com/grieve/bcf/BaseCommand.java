@@ -42,18 +42,29 @@ public abstract class BaseCommand {
     final List<BaseCommand> children = new ArrayList<>();
 
     CommandExecute execute(CommandRoot commandRoot, List<String> input, CommandContext context) {
-        // Go through class Args first
-        for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
-            List<String> currentInput = new ArrayList<>(input);
-            List<ArgNode> currentArgs = ArgNode.parse(classArgs.value());
-            CommandContext currentContext = context.clone();
+        // Go through class Args first if they exist
+        if (getClass().getAnnotationsByType(Arg.class).length > 0) {
+            for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
+                List<String> currentInput = new ArrayList<>(input);
+                List<ArgNode> currentArgs = ArgNode.parse(classArgs.value());
+                CommandContext currentContext = context.clone();
 
 
-            try {
-                parseArg(commandRoot, currentArgs, currentInput, currentContext);
-            } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException | SwitchNotFoundException e) {
-                continue;
+                try {
+                    parseArg(commandRoot, currentArgs, currentInput, currentContext);
+                } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException | SwitchNotFoundException e) {
+                    continue;
+                }
+
+                // Process methods
+                CommandExecute ret = executeMethods(commandRoot, currentInput, currentContext);
+                if (ret != null) {
+                    return ret;
+                }
             }
+        } else {
+            List<String> currentInput = new ArrayList<>(input);
+            CommandContext currentContext = context.clone();
 
             // Process methods
             CommandExecute ret = executeMethods(commandRoot, currentInput, currentContext);
@@ -105,31 +116,39 @@ public abstract class BaseCommand {
         List<String> ret = new ArrayList<>();
 
         // Go through class Args first
-        for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
-            List<String> currentInput = new ArrayList<>(input);
-            List<ArgNode> currentArgs = ArgNode.parse(classArgs.value());
-            CommandContext currentContext = context.clone();
+        if (getClass().getAnnotationsByType(Arg.class).length > 0) {
+            for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
+                List<String> currentInput = new ArrayList<>(input);
+                List<ArgNode> currentArgs = ArgNode.parse(classArgs.value());
+                CommandContext currentContext = context.clone();
 
 
-            try {
-                parseArg(commandRoot, currentArgs, currentInput, currentContext, false);
-            } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException e) {
-                // End of chain so save completions
-                ret.addAll(e.getParser().getCompletions());
-                continue;
-            } catch (SwitchNotFoundException e) {
-                // List switch options
-                ret.addAll(currentContext.getSwitches().stream()
-                        .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
-                                .filter(sw -> sw.toLowerCase().startsWith(e.getSwitchName().toLowerCase()))
-                                .limit(1)
-                        )
-                        .map(s -> "-" + s)
-                        .limit(20)
-                        .collect(Collectors.toList())
-                );
-                continue;
+                try {
+                    parseArg(commandRoot, currentArgs, currentInput, currentContext, false);
+                } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException e) {
+                    // End of chain so save completions
+                    ret.addAll(e.getParser().getCompletions());
+                    continue;
+                } catch (SwitchNotFoundException e) {
+                    // List switch options
+                    ret.addAll(currentContext.getSwitches().stream()
+                            .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
+                                    .filter(sw -> sw.toLowerCase().startsWith(e.getSwitchName().toLowerCase()))
+                                    .limit(1)
+                            )
+                            .map(s -> "-" + s)
+                            .limit(20)
+                            .collect(Collectors.toList())
+                    );
+                    continue;
+                }
+
+                // Process methods
+                ret.addAll(completeMethods(commandRoot, currentInput, currentContext));
             }
+        } else {
+            List<String> currentInput = new ArrayList<>(input);
+            CommandContext currentContext = context.clone();
 
             // Process methods
             ret.addAll(completeMethods(commandRoot, currentInput, currentContext));

@@ -37,7 +37,9 @@ public class BukkitCommandRoot extends CommandRoot {
     public void execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         BukkitCommandContext context = new BukkitCommandContext(sender);
         CommandExecute commandExecute = command.execute(this, Arrays.asList(args), context);
-        commandExecute.invoke(sender);
+        if (commandExecute != null) {
+            commandExecute.invoke(sender);
+        }
     }
 
     public @NotNull List<String> complete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
