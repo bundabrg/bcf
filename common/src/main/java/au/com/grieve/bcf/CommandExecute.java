@@ -42,16 +42,20 @@ public class CommandExecute {
     @Getter
     final List<Object> parameters = new ArrayList<>();
 
-    public CommandExecute(BaseCommand command, Method method, List<Object> parameters) {
+    @Getter
+    final CommandContext context;
+
+    public CommandExecute(BaseCommand command, Method method, List<Object> parameters, CommandContext context) {
         this.command = command;
         this.method = method;
         if (parameters != null) {
             this.parameters.addAll(parameters);
         }
+        this.context = context;
     }
 
-    public CommandExecute(BaseCommand command, Method method) {
-        this(command, method, null);
+    public CommandExecute(BaseCommand command, Method method, CommandContext context) {
+        this(command, method, null, context);
     }
 
     /**

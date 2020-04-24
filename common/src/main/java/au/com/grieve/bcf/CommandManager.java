@@ -71,6 +71,8 @@ public abstract class CommandManager {
         for (Class<?> cls : parents) {
             CommandRoot c = commandRoots.getOrDefault(cls, null);
 
+            System.err.println("cls: " + cls.getName() + " : " + c);
+
             if (c != null) {
                 c.addSubCommand(cmd);
             }

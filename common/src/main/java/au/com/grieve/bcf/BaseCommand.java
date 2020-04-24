@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public abstract class BaseCommand {
@@ -42,6 +43,8 @@ public abstract class BaseCommand {
     final List<BaseCommand> children = new ArrayList<>();
 
     CommandExecute execute(CommandRoot commandRoot, List<String> input, CommandContext context) {
+        List<CommandExecute> commandExecutes = new ArrayList<>();
+
         // Go through class Args first if they exist
         if (getClass().getAnnotationsByType(Arg.class).length > 0) {
             for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
@@ -57,29 +60,44 @@ public abstract class BaseCommand {
                 }
 
                 // Process methods
-                CommandExecute ret = executeMethods(commandRoot, currentInput, currentContext);
-                if (ret != null) {
-                    return ret;
+                commandExecutes.add(executeMethods(commandRoot, currentInput, currentContext));
+
+                // Check each child class as well
+                for (BaseCommand child : getChildren()) {
+                    commandExecutes.add(child.execute(commandRoot, currentInput, currentContext));
                 }
+
             }
         } else {
             List<String> currentInput = new ArrayList<>(input);
             CommandContext currentContext = context.clone();
 
             // Process methods
-            CommandExecute ret = executeMethods(commandRoot, currentInput, currentContext);
-            if (ret != null) {
-                return ret;
+            commandExecutes.add(executeMethods(commandRoot, currentInput, currentContext));
+
+            // Check each child class as well
+            for (BaseCommand child : getChildren()) {
+                commandExecutes.add(child.execute(commandRoot, currentInput, currentContext));
             }
         }
 
-        return null;
+        // Return best execute
+        CommandExecute best = null;
+        for (CommandExecute testExecute : commandExecutes.stream().filter(Objects::nonNull).collect(Collectors.toList())) {
+            if (best == null || best.getContext().getParsers().size() < testExecute.getContext().getParsers().size()) {
+                best = testExecute;
+            }
+        }
+
+        return best;
     }
 
     /**
      * Execution for methods
      */
     CommandExecute executeMethods(CommandRoot commandRoot, List<String> input, CommandContext context) {
+        List<CommandExecute> commandExecutes = new ArrayList<>();
+
         for (Method method : getClass().getDeclaredMethods()) {
             for (Arg methodArgs : method.getAnnotationsByType(Arg.class)) {
                 List<String> currentInput = new ArrayList<>(input);
@@ -104,12 +122,21 @@ public abstract class BaseCommand {
                             results.add(parser.getResult());
                         }
                     }
-                    return new CommandExecute(this, method, results);
+                    commandExecutes.add(new CommandExecute(this, method, results, currentContext));
                 } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException | SwitchNotFoundException ignored) {
                 }
             }
         }
-        return null;
+
+        // Return best execute
+        CommandExecute best = null;
+        for (CommandExecute testExecute : commandExecutes.stream().filter(Objects::nonNull).collect(Collectors.toList())) {
+            if (best == null || best.getContext().getParsers().size() < testExecute.getContext().getParsers().size()) {
+                best = testExecute;
+            }
+        }
+
+        return best;
     }
 
     List<String> complete(CommandRoot commandRoot, List<String> input, CommandContext context) {
@@ -145,6 +172,11 @@ public abstract class BaseCommand {
 
                 // Process methods
                 ret.addAll(completeMethods(commandRoot, currentInput, currentContext));
+
+                // Check each child class as well
+                for (BaseCommand child : getChildren()) {
+                    ret.addAll(child.complete(commandRoot, currentInput, currentContext));
+                }
             }
         } else {
             List<String> currentInput = new ArrayList<>(input);
@@ -152,6 +184,11 @@ public abstract class BaseCommand {
 
             // Process methods
             ret.addAll(completeMethods(commandRoot, currentInput, currentContext));
+
+            // Check each child class as well
+            for (BaseCommand child : getChildren()) {
+                ret.addAll(child.complete(commandRoot, currentInput, currentContext));
+            }
         }
         return ret;
     }

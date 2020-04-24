@@ -57,10 +57,19 @@ public class CommandRoot {
     }
 
     public void addSubCommand(Class<? extends BaseCommand> cmd) {
+        System.err.println(command.getClass().getName() + ":addSubCommand:" + cmd);
         // Lookup all parent classes till it reaches our command
-        BaseCommand current = command;
+        if (!commandMap.containsKey(cmd)) {
+            try {
+                commandMap.put(cmd, (BaseCommand) cmd.getConstructor().newInstance());
+            } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        BaseCommand current = commandMap.get(cmd);
+
         for (Class<?> cls : ReflectUtils.getAllSuperClasses(cmd)) {
-            if (!cls.isAssignableFrom(BaseCommand.class)) {
+            if (!BaseCommand.class.isAssignableFrom(cls)) {
                 break;
             }
 
