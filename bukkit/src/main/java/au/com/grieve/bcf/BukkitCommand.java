@@ -23,6 +23,27 @@
 
 package au.com.grieve.bcf;
 
+import au.com.grieve.bcf.annotations.Default;
+import au.com.grieve.bcf.annotations.Error;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.command.CommandSender;
+
 public class BukkitCommand extends BaseCommand {
 
+    // Default Error
+    @Error
+    void onError(CommandSender sender, String message) {
+        sender.spigot().sendMessage(
+                new ComponentBuilder(message).color(ChatColor.RED).create()
+        );
+    }
+
+    // Default Default
+    @Default
+    void onDefault(CommandSender sender) {
+        sender.spigot().sendMessage(
+                new ComponentBuilder("Invalid Command").color(ChatColor.RED).create()
+        );
+    }
 }
