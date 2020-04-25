@@ -40,8 +40,7 @@ public class BukkitCommandExecutor extends Command {
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-        commandRoot.execute(sender, alias, args);
-        return true;
+        return commandRoot.execute(sender, alias, args);
     }
 
 
