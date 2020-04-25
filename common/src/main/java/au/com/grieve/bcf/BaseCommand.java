@@ -24,6 +24,8 @@
 package au.com.grieve.bcf;
 
 import au.com.grieve.bcf.annotations.Arg;
+import au.com.grieve.bcf.annotations.Default;
+import au.com.grieve.bcf.annotations.Error;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
 import au.com.grieve.bcf.exceptions.ParserNoResultException;
 import au.com.grieve.bcf.exceptions.ParserRequiredArgumentException;
@@ -33,6 +35,7 @@ import lombok.Getter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,6 +44,64 @@ public abstract class BaseCommand {
 
     @Getter
     final List<BaseCommand> children = new ArrayList<>();
+
+    @Getter
+    final Method errorMethod;
+
+    @Getter
+    final Method defaultMethod;
+
+    public BaseCommand() {
+        Method errorMethod = null;
+        Method defaultMethod = null;
+
+        // Check if we have an error Method
+        for (Method method : getClass().getDeclaredMethods()) {
+            if (errorMethod == null && method.getAnnotation(Error.class) != null) {
+                errorMethod = method;
+                continue;
+            }
+
+            if (defaultMethod == null && method.getAnnotation(Default.class) != null) {
+                defaultMethod = method;
+            }
+        }
+
+        this.errorMethod = errorMethod;
+        this.defaultMethod = defaultMethod;
+    }
+
+    CommandExecute getErrorExecute(CommandRoot commandRoot, String message, CommandContext context) {
+        BaseCommand cmd = this;
+        while (cmd.getErrorMethod() == null) {
+            cmd = commandRoot.getCommandMap().get(cmd.getClass().getSuperclass());
+            if (cmd == null) {
+                break;
+            }
+        }
+
+        if (cmd != null && cmd.getErrorMethod() != null) {
+            return new CommandExecute(this, cmd.getErrorMethod(), Collections.singletonList(message), context);
+        }
+
+        return null;
+    }
+
+    CommandExecute getDefaultExecute(CommandRoot commandRoot, CommandContext context) {
+        BaseCommand cmd = this;
+        while (cmd.getDefaultMethod() == null) {
+            cmd = commandRoot.getCommandMap().get(cmd.getClass().getSuperclass());
+            if (cmd == null) {
+                break;
+            }
+        }
+
+        if (cmd != null && cmd.getDefaultMethod() != null) {
+            return new CommandExecute(this, cmd.getDefaultMethod(), context);
+        }
+
+        return null;
+    }
 
     CommandExecute execute(CommandRoot commandRoot, List<String> input, CommandContext context) {
         List<CommandExecute> commandExecutes = new ArrayList<>();
@@ -55,7 +116,13 @@ public abstract class BaseCommand {
 
                 try {
                     parseArg(commandRoot, currentArgs, currentInput, currentContext);
-                } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException | SwitchNotFoundException e) {
+                } catch (ParserNoResultException | ParserRequiredArgumentException e) {
+                    continue;
+                } catch (SwitchNotFoundException e) {
+                    commandExecutes.add(getErrorExecute(commandRoot, "Invalid switch: " + e.getSwitchName(), currentContext));
+                    continue;
+                } catch (ParserInvalidResultException e) {
+                    commandExecutes.add(getErrorExecute(commandRoot, e.getMessage(), currentContext));
                     continue;
                 }
 
@@ -87,6 +154,11 @@ public abstract class BaseCommand {
             if (best == null || best.getContext().getParsers().size() < testExecute.getContext().getParsers().size()) {
                 best = testExecute;
             }
+        }
+
+        // If we have no best then send to default
+        if (best == null) {
+            best = getDefaultExecute(commandRoot, context);
         }
 
         return best;
@@ -123,7 +195,11 @@ public abstract class BaseCommand {
                         }
                     }
                     commandExecutes.add(new CommandExecute(this, method, results, currentContext));
-                } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException | SwitchNotFoundException ignored) {
+                } catch (ParserNoResultException | ParserRequiredArgumentException ignored) {
+                } catch (SwitchNotFoundException e) {
+                    commandExecutes.add(getErrorExecute(commandRoot, "Invalid switch: " + e.getSwitchName(), currentContext));
+                } catch (ParserInvalidResultException e) {
+                    commandExecutes.add(getErrorExecute(commandRoot, e.getMessage(), currentContext));
                 }
             }
         }
@@ -135,6 +211,12 @@ public abstract class BaseCommand {
                 best = testExecute;
             }
         }
+
+//        // If we have no best then send to default
+//        if (best == null) {
+//            System.err.println(getClass().getName() + ":em no best");
+//            best = getDefaultExecute(commandRoot, context);
+//        }
 
         return best;
     }
@@ -153,8 +235,10 @@ public abstract class BaseCommand {
                 try {
                     parseArg(commandRoot, currentArgs, currentInput, currentContext, false);
                 } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException e) {
-                    // End of chain so save completions
-                    ret.addAll(e.getParser().getCompletions());
+                    // End of chain so save completions if no more input
+                    if (currentInput.size() == 0) {
+                        ret.addAll(e.getParser().getCompletions());
+                    }
                     continue;
                 } catch (SwitchNotFoundException e) {
                     // List switch options
@@ -207,8 +291,10 @@ public abstract class BaseCommand {
                 try {
                     parseArg(commandRoot, currentArgs, currentInput, currentContext, false);
                 } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException e) {
-                    // End of chain so save completions
-                    ret.addAll(e.getParser().getCompletions());
+                    // End of chain so save completion if no more input
+                    if (currentInput.size() == 0) {
+                        ret.addAll(e.getParser().getCompletions());
+                    }
                 } catch (SwitchNotFoundException e) {
                     // List switch options
                     ret.addAll(currentContext.getSwitches().stream()
