@@ -40,12 +40,20 @@ public class BukkitCommandExecutor extends Command {
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-        return commandRoot.execute(sender, alias, args);
+        if (testPermission(sender)) {
+            return commandRoot.execute(sender, alias, args);
+        }
+        return false;
     }
 
 
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
         return commandRoot.complete(sender, alias, args);
+    }
+
+    @Override
+    public boolean testPermissionSilent(@NotNull CommandSender target) {
+        return commandRoot.testPermission(target);
     }
 }

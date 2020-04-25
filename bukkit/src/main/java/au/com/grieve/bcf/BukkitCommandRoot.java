@@ -48,4 +48,8 @@ public class BukkitCommandRoot extends CommandRoot {
         BukkitCommandContext context = new BukkitCommandContext(sender);
         return command.complete(this, Arrays.asList(args), context);
     }
+
+    public boolean testPermission(@NotNull CommandSender sender) {
+        return ((BukkitCommand) command).testPermission(sender);
+    }
 }

@@ -52,23 +52,30 @@ public class BukkitCommand extends BaseCommand {
         );
     }
 
-    CommandExecute execute(CommandRoot commandRoot, List<String> input, CommandContext context) {
+    /**
+     * Return true if class permits permission of sender
+     */
+    public boolean testPermission(CommandSender sender) {
         Permission[] permissions = getClass().getAnnotationsByType(Permission.class);
-        BukkitCommandContext bukkitCommandContext = (BukkitCommandContext) context;
+        if (permissions.length == 0) {
+            return true;
+        }
 
-        if (permissions.length > 0) {
-            // Check Sender has any permissions
-            for (Permission permission : permissions) {
-                if (bukkitCommandContext.getSender().hasPermission(permission.value())) {
-                    return super.execute(commandRoot, input, context);
-                }
+        // Check Sender has any permissions
+        for (Permission permission : permissions) {
+            if (sender.hasPermission(permission.value())) {
+                return true;
             }
+        }
+        return false;
+    }
 
+    CommandExecute execute(CommandRoot commandRoot, List<String> input, CommandContext context) {
+        if (!testPermission(((BukkitCommandContext) context).getSender())) {
             return null;
         }
 
         return super.execute(commandRoot, input, context);
-
     }
 
     CommandExecute executeMethod(Method method, CommandRoot commandRoot, List<String> input, CommandContext context) {
