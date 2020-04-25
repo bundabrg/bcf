@@ -34,12 +34,14 @@ public class BukkitCommandRoot extends CommandRoot {
         super(manager, command);
     }
 
-    public void execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         BukkitCommandContext context = new BukkitCommandContext(sender);
         CommandExecute commandExecute = command.execute(this, Arrays.asList(args), context);
         if (commandExecute != null) {
             commandExecute.invoke(sender);
+            return true;
         }
+        return false;
     }
 
     public @NotNull List<String> complete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
