@@ -25,9 +25,14 @@ package au.com.grieve.bcf;
 
 import au.com.grieve.bcf.annotations.Default;
 import au.com.grieve.bcf.annotations.Error;
+import au.com.grieve.bcf.annotations.Permission;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.CommandSender;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BukkitCommand extends BaseCommand {
 
@@ -46,4 +51,44 @@ public class BukkitCommand extends BaseCommand {
                 new ComponentBuilder("Invalid Command").color(ChatColor.RED).create()
         );
     }
+
+    List<String> complete(CommandRoot commandRoot, List<String> input, CommandContext context) {
+
+        Permission[] permissions = getClass().getAnnotationsByType(Permission.class);
+        BukkitCommandContext bukkitCommandContext = (BukkitCommandContext) context;
+
+        if (permissions.length > 0) {
+            // Check Sender has any permissions
+            for (Permission permission : permissions) {
+                if (bukkitCommandContext.getSender().hasPermission(permission.value())) {
+                    return super.complete(commandRoot, input, context);
+                }
+            }
+
+            return new ArrayList<>();
+        }
+
+        return super.complete(commandRoot, input, context);
+    }
+
+    @Override
+    List<String> completeMethod(Method method, CommandRoot commandRoot, List<String> input, CommandContext context) {
+        Permission[] permissions = method.getAnnotationsByType(Permission.class);
+        BukkitCommandContext bukkitCommandContext = (BukkitCommandContext) context;
+
+        if (permissions.length > 0) {
+            // Check Sender has any permissions
+            for (Permission permission : permissions) {
+                if (bukkitCommandContext.getSender().hasPermission(permission.value())) {
+                    return super.completeMethod(method, commandRoot, input, context);
+                }
+            }
+
+            return new ArrayList<>();
+        }
+
+        return super.completeMethod(method, commandRoot, input, context);
+    }
+
+
 }
