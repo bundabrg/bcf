@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -280,6 +281,11 @@ public abstract class BaseCommand {
                 ret.addAll(child.complete(commandRoot, currentInput, currentContext));
             }
         }
+
+        // Remove duplicates and order alphabetically
+        ret = new ArrayList<>(new HashSet<>(ret));
+        ret.sort((s1, s2) -> s1.toLowerCase().compareTo(s2));
+
         return ret;
     }
 
@@ -300,11 +306,25 @@ public abstract class BaseCommand {
                 if (currentInput.size() == 0) {
                     ret.addAll(e.getParser().getCompletions());
                 }
+
             } catch (SwitchNotFoundException e) {
                 // List switch options
                 ret.addAll(currentContext.getSwitches().stream()
                         .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
                                 .filter(sw -> sw.toLowerCase().startsWith(e.getSwitchName().toLowerCase()))
+                                .limit(1)
+                        )
+                        .map(s -> "-" + s)
+                        .limit(20)
+                        .collect(Collectors.toList())
+                );
+                continue;
+            }
+
+            if (currentInput.stream().allMatch(s -> s.equals("")) && (input.size() == 0 || input.get(input.size() - 1).equals(""))) {
+                // Add switches
+                ret.addAll(currentContext.getSwitches().stream()
+                        .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
                                 .limit(1)
                         )
                         .map(s -> "-" + s)
@@ -336,6 +356,8 @@ public abstract class BaseCommand {
             if (parser == null) {
                 throw new SwitchNotFoundException(name);
             }
+
+            context.getSwitches().remove(parser);
 
             parser.parse(input, defaults);
             parser.getResult();
