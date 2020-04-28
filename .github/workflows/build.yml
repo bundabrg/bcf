@@ -27,8 +27,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Update plugin version
-        run: sed -i "/^version:.*/ s/-dev$/-b${GITHUB_RUN_NUMBER}/" src/main/resources/plugin.yml && echo ${{ github.ref }}
+      #      - name: Update plugin version
+      #        run: sed -i "/^version:.*/ s/-dev$/-b${GITHUB_RUN_NUMBER}/" src/main/resources/plugin.yml && echo ${{ github.ref }}
 
       - name: Build with Maven
         run: |
