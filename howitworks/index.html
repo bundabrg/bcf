@@ -1,0 +1,554 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <link rel="canonical" href="https://github.com/Bundabrg/bcf/howitworks/">
+      
+      
+        <meta name="author" content="Bundabrg">
+      
+      <link rel="shortcut icon" href="../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-5.1.3">
+    
+    
+      
+        <title>How it works - bcf</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.62d34fff.min.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/palette.c8acc6db.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#3f51b5">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../css/mkpdf.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#example" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="https://github.com/Bundabrg/bcf" title="bcf" class="md-header-nav__button md-logo" aria-label="bcf">
+      
+  <img src="../img/header_logo.png" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" /></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            bcf
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              How it works
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/Bundabrg/bcf" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Bundabrg/bcf
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://github.com/Bundabrg/bcf" title="bcf" class="md-nav__button md-logo" aria-label="bcf">
+      
+  <img src="../img/header_logo.png" alt="logo">
+
+    </a>
+    bcf
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/Bundabrg/bcf" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Bundabrg/bcf
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Introduction" class="md-nav__link">
+      Introduction
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        How it works
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,9H17V7H3V9M3,13H17V11H3V13M3,17H17V15H3V17M19,17H21V15H19V17M19,7V9H21V7H19M19,13H21V11H19V13Z" /></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="How it works" class="md-nav__link md-nav__link--active">
+      How it works
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parsers" class="md-nav__link">
+    Parsers
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../annotations/" title="Annotations" class="md-nav__link">
+      Annotations
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../parsers/" title="Parsers" class="md-nav__link">
+      Parsers
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../contributing/" title="Contributing" class="md-nav__link">
+      Contributing
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parsers" class="md-nav__link">
+    Parsers
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  
+                
+                
+                  <h1>How it works</h1>
+                
+                <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
+<p>When someone is typing a command or executing it we can see it as being a list of words. Lets look at
+the following fictional command:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="err">/sudo tp notch ~ ~25 ~ -world nether</span>
+</code></pre></div>
+</td></tr></table>
+
+<p>The command can be viewed as a list of words and can be broken down into:</p>
+<ul>
+<li><code>sudo</code> - The main command itself</li>
+<li><code>tp</code> - A sub-command</li>
+<li><code>notch</code> - A players name</li>
+<li><code>~ ~25 ~</code> - a Location</li>
+<li><code>-world nether</code> - a named parameter defining the world</li>
+</ul>
+<p>We call the full command string the <code>input</code>.</p>
+<p>We could define our class as follows to handle this particular command (ignore the @Arg for the moment)</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;sudo&quot;</span><span class="p">)</span>
+<span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;tp @world(switch=world, required=false) @player(required=true, mode=online) @location&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">doTeleport</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">World</span> <span class="n">world</span><span class="p">,</span> <span class="n">Player</span> <span class="n">player</span><span class="p">,</span> <span class="n">Location</span> <span class="n">location</span><span class="p">)</span> <span class="p">{</span>
+       <span class="p">.</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>This shows the following interesting things:</p>
+<ol>
+<li>
+<p>The parameters the method receives are fully resolved objects and not just the input strings. This means the method does
+not have to deal with all the complexity of providing command completion nor need to perform any validation. If
+a command is not valid then it won't reach the method and may instead match another more specific
+method or it will raise an error.</p>
+</li>
+<li>
+<p><code>sudo</code> and <code>tp</code> are not passed to the method and are only interesting so far as part of deciding which
+method to call.</p>
+</li>
+<li>
+<p>There is an extra parameter to the method <code>sender</code> which represents the command sender (player or console)</p>
+</li>
+<li>
+<p>The argument <code>player</code> consumes a single word from the input, <code>notch</code>, and returns a Player object representing an online player.</p>
+</li>
+<li>
+<p>The argument <code>location</code> consumes 3 words from the input, <code>~ ~25 ~</code>, and returns a Location object</p>
+</li>
+<li>
+<p>The argument <code>world</code> is special as it is designated as a <code>switch</code> in the @Arg and thus is a named parameter. A named parameter can appear anywhere in
+the input as long as it comes at or after the point it is defined (in @Arg its defined right after <code>tp</code>) and if the input contains
+its name prefixed with a <code>-</code>. So this parameter consumes <code>-world nether</code> and will return a World object.</p>
+</li>
+</ol>
+<p>What happens whilst someone is entering the command?</p>
+<ol>
+<li>
+<p>After typing <code>/sudo</code> an auto-complete of <code>tp</code> will show.</p>
+</li>
+<li>
+<p>After entering <code>tp</code> an auto-complete list of online players is shown and is filtered as the player types. A <code>-world</code> is
+also shown as an option when there is no partial player name entered.</p>
+</li>
+<li>
+<p>After filling in the player name, if it is valid, a location autocomplete will show using the players existing position
+if needed. A <code>-world</code> is also shown as an option when there is no partial location entered.</p>
+</li>
+<li>
+<p>After filling in the location, if it is valid, a <code>-world</code> is shown. The player can choose to hit enter to not fill
+it in (as its not a required parameter) or they can type <code>-world</code> in which case a list of worlds are provided as part
+of the auto-complete. Note that they could have entered this in at any time after entering <code>tp</code>.</p>
+</li>
+</ol>
+<h2 id="parsers">Parsers<a class="headerlink" href="#parsers" title="Permanent link">&para;</a></h2>
+<p>The magic happens through the use of a <code>Parser</code> that understands both how to consume 0 or more words from the input into
+a fully resolved object but also how to auto-complete partial inputs.</p>
+<p>The annotation <code>@Arg</code> defines a chain of parsers to be used when consuming input. Only once all the required parsers are
+consumed will a method be invoked.</p>
+<p>A parser is typically defined by adding an <code>@</code> and its name to the <code>@Arg</code> string, and each additional parser is separated 
+by a space.</p>
+<p>There is one special parser of note called the <code>LiteralParser</code> and it does not start with an <code>@</code>. You will note in the 
+example above we have <code>tp</code> in arg. This is a <code>LiteralParser</code> and it will consume its own name from the input without
+passing anything to the method. A <code>LiteralParser</code> can also provide multiple aliases by separating each alias with a <code>|</code>. So
+in our example above we could have defined the sub-command as <code>teleport|tp</code>.  In this case it would accept either 
+as input and will show both during autocomplete.</p>
+<p>A parser can have parameters that define its behaviour. These are passed by adding a list of value=key pairs after the
+parser name inside <code>(</code> and <code>)</code> brackets. In the example above <code>@world</code> and <code>@player</code> both have defined parameters whereas
+the <code>@location</code> parser does not.</p>
+<p>Many parsers will have common parameters. For example all parsers have a <code>required</code> boolean to determine if it is
+a required argument. They also all have a <code>default</code> which is provided when no input is provided for that parser.</p>
+<p>A special parameter called <code>switch</code> is used on the <code>@world</code> parser. This turns the <code>@world</code> into a named parameter instead
+of a positional parameter which means it can be provided in the input anywhere after it is defined as long as the input
+contains the special sequence <code>-</code> followed by any of the names defined in the switch. For <code>@world</code> only a single name
+was given so entering <code>-world</code> would then trigger that parser to consume the next input(s). Multiple aliases can be
+defined by separating each alias with a <code>|</code>. An example would be <code>@world(switch=world|w)</code> and would allow either <code>-w</code> or
+<code>-world</code>.</p>
+<p>Some parsers have unique parameters. For example the <code>@player</code> parser used in the example has a <code>mode</code> parameter that defines
+if the player should currently be online or can be any player (offline). This affects what is shown in auto-complete as well
+as if the input is valid.</p>
+<p>A Parser will typically consume 1 word from the input but it is possible for a Parser to consume no words as it may rely
+on data from a previous Parser or on something entirely unrelated to input, and as in the case of the <code>@location</code> parser in the example 
+it can consume multiple words from the input.</p>
+<p>Finally a BukkitCommand derived class will always provide a CommandSender parameter as a method's first parameter.  This will be either
+the console or the player who is executing the command.</p>
+                
+                  
+                    
+
+<hr>
+<div class="md-source-date">
+  <small>
+    
+      Last update: <span class='timeago' datetime='1588095926000' locale='en'></span>
+    
+  </small>
+</div>
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href=".." title="Introduction" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Introduction
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../annotations/" title="Annotations" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Annotations
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" /></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright (C) 2020 PortalNetwork Developers
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/vendor.f81b9e8b.min.js"></script>
+      <script src="../assets/javascripts/bundle.23546af0.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: ["instant"],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.58d22e8e.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.0-beta.2/timeago.min.js"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.0-beta.2/timeago.locales.min.js"></script>
+          <script>
+            var nodes = document.querySelectorAll('.timeago');
+            var locale = nodes[0].getAttribute('locale');
+            timeago.render(nodes, locale);
+          </script>
+        </body>
+</html>

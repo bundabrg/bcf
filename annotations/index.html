@@ -1,0 +1,783 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <link rel="canonical" href="https://github.com/Bundabrg/bcf/annotations/">
+      
+      
+        <meta name="author" content="Bundabrg">
+      
+      <link rel="shortcut icon" href="../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-5.1.3">
+    
+    
+      
+        <title>Annotations - bcf</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.62d34fff.min.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/palette.c8acc6db.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#3f51b5">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../css/mkpdf.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#common" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="https://github.com/Bundabrg/bcf" title="bcf" class="md-header-nav__button md-logo" aria-label="bcf">
+      
+  <img src="../img/header_logo.png" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" /></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            bcf
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Annotations
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/Bundabrg/bcf" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Bundabrg/bcf
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://github.com/Bundabrg/bcf" title="bcf" class="md-nav__button md-logo" aria-label="bcf">
+      
+  <img src="../img/header_logo.png" alt="logo">
+
+    </a>
+    bcf
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/Bundabrg/bcf" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Bundabrg/bcf
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Introduction" class="md-nav__link">
+      Introduction
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../howitworks/" title="How it works" class="md-nav__link">
+      How it works
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Annotations
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,9H17V7H3V9M3,13H17V11H3V13M3,17H17V15H3V17M19,17H21V15H19V17M19,7V9H21V7H19M19,13H21V11H19V13Z" /></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="Annotations" class="md-nav__link md-nav__link--active">
+      Annotations
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#common" class="md-nav__link">
+    Common
+  </a>
+  
+    <nav class="md-nav" aria-label="Common">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arg" class="md-nav__link">
+    @Arg
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command" class="md-nav__link">
+    @Command
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default" class="md-nav__link">
+    @Default
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error" class="md-nav__link">
+    @Error
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bukkit" class="md-nav__link">
+    Bukkit
+  </a>
+  
+    <nav class="md-nav" aria-label="Bukkit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#permission" class="md-nav__link">
+    @Permission
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../parsers/" title="Parsers" class="md-nav__link">
+      Parsers
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../contributing/" title="Contributing" class="md-nav__link">
+      Contributing
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#common" class="md-nav__link">
+    Common
+  </a>
+  
+    <nav class="md-nav" aria-label="Common">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arg" class="md-nav__link">
+    @Arg
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command" class="md-nav__link">
+    @Command
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default" class="md-nav__link">
+    @Default
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error" class="md-nav__link">
+    @Error
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bukkit" class="md-nav__link">
+    Bukkit
+  </a>
+  
+    <nav class="md-nav" aria-label="Bukkit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#permission" class="md-nav__link">
+    @Permission
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  
+                
+                
+                  <h1>Annotations</h1>
+                
+                <p>In Java an annotation is something that can be added onto a Class, Method, Variable or even a method parameter.</p>
+<p>Most annotations we use can be added to the Class itself, the Method, or both and they are called its <code>Target</code>.  Generally an annotation on a class
+will affect all the methods inside the class as well as any in any derived classes. </p>
+<p>Most annotation can also be used multiple times. For example you can add <code>@Arg</code> more than one to the same method
+and when completing/executing a command each <code>@Arg</code> will be checked in turn.  Each annotation has its own rules
+to define what multiples of itself does.</p>
+<h2 id="common">Common<a class="headerlink" href="#common" title="Permanent link">&para;</a></h2>
+<p>These annotations are available for all execution environments.</p>
+<h3 id="arg">@Arg<a class="headerlink" href="#arg" title="Permanent link">&para;</a></h3>
+<p><strong>Target</strong>: <code>Class</code>, <code>Method</code></p>
+<p><strong>Value</strong>: <code>String</code></p>
+<p><strong>Multiple</strong>: allowed</p>
+<p>Provides a list of <code>Parsers</code> that will consume input and can provide command completions for partial input. Each parser 
+starts with an <code>@</code> prefixed to its name along with optional parameters defined inside braces after the parser definition.
+Any bare strings are treated with as <code>LiteralParser</code> and will accept its own name(s) without providing any
+output to the invoked method.</p>
+<p>If a command is executed then the winning <code>@Arg</code> will then invoke the method with fully resolved objects, each
+parser consuming the input and optionally returning an object to be provided as a parameter to the method.</p>
+<p>When consuming input, the <code>@Arg</code> on a class (if any) will first process the input, with the remaining input then going to
+any defined on its <code>Methods</code>. Any Classes that extend the class will also receive the remaining input in which case they
+go through the same steps.</p>
+<p>Multiple <code>@Arg</code> will be checked in turn and can be thought of as multiple choices.</p>
+<p>More details about Parsers will be provided in <a href="../parsers/">Parsers</a></p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;sub1&quot;</span><span class="p">)</span>
+<span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;sub2&quot;</span><span class="p">)</span>
+<span class="kd">class</span> <span class="nc">SubCommand</span> <span class="kd">extends</span> <span class="n">MainCommand</span> <span class="p">{</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd2&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd3&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cmd2</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+This shows two classes, one extending the other, and multiple @Arg at several points.</p>
+<p>The following are all valid commands:</p>
+<ul>
+<li><code>/mycmd cmd1</code></li>
+<li><code>/mycmd sub1 cmd2</code></li>
+<li><code>/mycmd sub1 cmd3</code></li>
+<li><code>/mycmd sub2 cmd2</code></li>
+<li><code>/mycmd sub2 cmd3</code></li>
+</ul>
+</div>
+<h3 id="command">@Command<a class="headerlink" href="#command" title="Permanent link">&para;</a></h3>
+<p><strong>Target</strong>: <code>Class</code></p>
+<p><strong>Value</strong>: <code>String</code></p>
+<p><strong>Multiple</strong>: allowed</p>
+<p>Defines a top level command and if possible will be registered with the execution environment. Aliases to the same
+command can be added by separating the value with <code>|</code>. This can be used to create top-level commands that jump straight to a deeply nested
+sub command.</p>
+<p>Multiple <code>@Commands</code> will register multiple top level commands.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd|mc&quot;</span><span class="p">)</span>
+<span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;qc&quot;</span><span class="p">)</span>
+<span class="kd">class</span> <span class="nc">SubCommand</span> <span class="kd">extends</span> <span class="n">MainCommand</span> <span class="p">{</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd3&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cmd2</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+Here 2 top level commands are registered. <code>/mycmd</code> and <code>/qc</code>. An alias <code>/mc</code> is also available for <code>/mycmd</code>.</p>
+<p>Valid commands are:</p>
+<ul>
+<li><code>/mycmd cmd1</code></li>
+<li><code>/mc cmd1</code></li>
+<li><code>/mycmd cmd3</code></li>
+<li><code>/qc cmd3</code></li>
+</ul>
+</div>
+<h3 id="default">@Default<a class="headerlink" href="#default" title="Permanent link">&para;</a></h3>
+<p><strong>Target</strong>: <code>Method</code></p>
+<p><strong>Value</strong>: <code>None</code></p>
+<p><strong>Multiple</strong>: not allowed</p>
+<p>Signifies what method to call when needing to invoke a <code>Default</code> method for a Class and any of its child classes (unless
+overridden in that class with its own <code>@Default</code>)</p>
+<p>When processing input if we do not find any winning method for a class then a <code>Default</code> method will be executed. If
+none are found in a class then its parent class will be searched until it ends up with the built in <code>Default</code> that shows
+a "Invalid Command" message.</p>
+<p>This can be used to provide help for unknown commands or can be used to redefine what is shown on no match.</p>
+<p>The method must not take any additional parameters apart from those provided by default.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Default</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onDefault</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sender</span><span class="p">.</span><span class="na">spigot</span><span class="p">().</span><span class="na">sendMessage</span><span class="p">(</span>
+                <span class="k">new</span> <span class="n">ComponentBuilder</span><span class="p">(</span><span class="s">&quot;Some help&quot;</span><span class="p">).</span><span class="na">color</span><span class="p">(</span><span class="n">ChatColor</span><span class="p">.</span><span class="na">YELLOW</span><span class="p">).</span><span class="na">create</span><span class="p">()</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;sub&quot;</span><span class="p">)</span>
+<span class="kd">class</span> <span class="nc">SubCommand</span> <span class="kd">extends</span> <span class="n">MainCommand</span> <span class="p">{</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd2&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cmd2</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Default</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onDefault</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sender</span><span class="p">.</span><span class="na">spigot</span><span class="p">().</span><span class="na">sendMessage</span><span class="p">(</span>
+                <span class="k">new</span> <span class="n">ComponentBuilder</span><span class="p">(</span><span class="s">&quot;Sub Help&quot;</span><span class="p">).</span><span class="na">color</span><span class="p">(</span><span class="n">ChatColor</span><span class="p">.</span><span class="na">RED</span><span class="p">).</span><span class="na">create</span><span class="p">()</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+When attempting to execute the invalid command: <code>/mycmd sub unknown</code> a message "Sub Help" in red will
+be shown.</p>
+<p>When attempting to execute the invalid command: <code>/mycmd unknown</code> a message "Some help" in yellow will
+be shown.</p>
+</div>
+<h3 id="error">@Error<a class="headerlink" href="#error" title="Permanent link">&para;</a></h3>
+<p><strong>Target</strong>: <code>Method</code></p>
+<p><strong>Value</strong>: <code>None</code></p>
+<p><strong>Multiple</strong>: not allowed</p>
+<p>Signifies what method to call when needing to invoke an <code>Error</code> method for any errors in a Class and any of its child classes (unless
+overridden in that class with its own <code>@Error</code>)</p>
+<p>When processing input if an error is encountered it will be passed to a <code>Error</code> method. If none are found in a class then its
+parent will be searched until it ends with the built in <code>Error</code> that will show the error in red.</p>
+<p>This can be used to customize how errors are handled.</p>
+<p>The method must take a string argument containing the error message.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1 @int(max=3)&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Error</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onError</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">String</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sender</span><span class="p">.</span><span class="na">spigot</span><span class="p">().</span><span class="na">sendMessage</span><span class="p">(</span>
+                <span class="k">new</span> <span class="n">ComponentBuilder</span><span class="p">(</span><span class="n">message</span><span class="p">).</span><span class="na">color</span><span class="p">(</span><span class="n">ChatColor</span><span class="p">.</span><span class="na">YELLOW</span><span class="p">).</span><span class="na">create</span><span class="p">()</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;sub&quot;</span><span class="p">)</span>
+<span class="kd">class</span> <span class="nc">SubCommand</span> <span class="kd">extends</span> <span class="n">MainCommand</span> <span class="p">{</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd2 @int(max=3)&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cmd2</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Error</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onError</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">String</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sender</span><span class="p">.</span><span class="na">spigot</span><span class="p">().</span><span class="na">sendMessage</span><span class="p">(</span>
+                <span class="k">new</span> <span class="n">ComponentBuilder</span><span class="p">(</span><span class="n">message</span><span class="p">).</span><span class="na">color</span><span class="p">(</span><span class="n">ChatColor</span><span class="p">.</span><span class="na">GREEN</span><span class="p">).</span><span class="na">create</span><span class="p">()</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+When attempting to execute the command: <code>/mycmd sub cmd2 10</code> an error message "Number must be smaller or equal to 3" 
+will be shown in green.</p>
+<p>When attempting to execute the invalid command: <code>/mycmd cmd1 10</code> a message "Number must be smaller or equal to 3" in yellow will
+be shown.</p>
+</div>
+<h2 id="bukkit">Bukkit<a class="headerlink" href="#bukkit" title="Permanent link">&para;</a></h2>
+<p>These annotations are available for Bukkit environments.</p>
+<h3 id="permission">@Permission<a class="headerlink" href="#permission" title="Permanent link">&para;</a></h3>
+<p><strong>Target</strong>: <code>Class</code>, <code>Method</code></p>
+<p><strong>Value</strong>: <code>String</code></p>
+<p><strong>Multiple</strong>: allowed</p>
+<p>Provides the permissions the command sender must have for a class or method to be considered.</p>
+<p>When multiple <code>@Permission</code> is found on the same Target then it will accept any of those permissions. This can be thought of as
+an <code>OR</code> condition.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Permission</span><span class="p">(</span><span class="s">&quot;mycmd.perm1&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd2&quot;</span><span class="p">)</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+            <span class="p">...</span>
+        <span class="p">}</span> 
+<span class="p">}</span>
+
+<span class="nd">@Permission</span><span class="p">(</span><span class="s">&quot;mycmd.perm1&quot;</span><span class="p">)</span>
+<span class="nd">@Permission</span><span class="p">(</span><span class="s">&quot;mycmd.perm2&quot;</span><span class="p">)</span>
+<span class="kd">class</span> <span class="nc">SubCommand</span> <span class="kd">extends</span> <span class="n">MainCommand</span> <span class="p">{</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd3&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cmd2</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd4&quot;</span><span class="p">)</span>
+    <span class="nd">@Permission</span><span class="p">(</span><span class="s">&quot;mycmd.perm2&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cmd2</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+A user with <code>mycmd.perm1</code> will be able to access the following commands:</p>
+<ul>
+<li><code>/mycmd cmd1</code></li>
+<li><code>/mycmd cmd2</code></li>
+<li><code>/mycmd cmd3</code></li>
+</ul>
+<p>A user with <code>mycmd.perm2</code> will be able to access the followinig commands:</p>
+<ul>
+<li><code>/mycmd cmd1</code></li>
+<li><code>/mycmd cmd3</code></li>
+<li><code>/mycmd cmd4</code> </li>
+</ul>
+</div>
+                
+                  
+                    
+
+<hr>
+<div class="md-source-date">
+  <small>
+    
+      Last update: <span class='timeago' datetime='1588095926000' locale='en'></span>
+    
+  </small>
+</div>
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../howitworks/" title="How it works" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                How it works
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../parsers/" title="Parsers" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Parsers
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" /></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright (C) 2020 PortalNetwork Developers
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/vendor.f81b9e8b.min.js"></script>
+      <script src="../assets/javascripts/bundle.23546af0.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: ["instant"],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.58d22e8e.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.0-beta.2/timeago.min.js"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.0-beta.2/timeago.locales.min.js"></script>
+          <script>
+            var nodes = document.querySelectorAll('.timeago');
+            var locale = nodes[0].getAttribute('locale');
+            timeago.render(nodes, locale);
+          </script>
+        </body>
+</html>
