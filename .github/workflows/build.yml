@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir -p build/output
           mvn -B package --file pom.xml && \
-            cp target/PortalNetwork-*.jar build/output/
+            cp bukkit/target/bcf-bukkit-*.jar build/output/
 
       - name: Publish to Maven Repo
         if: github.ref == 'refs/heads/master'
@@ -119,7 +119,7 @@ jobs:
           for asset in ./build/binary/*.jar; do
             assets+=("-a" "$asset")
           done
-          assets+=("-a" "build/docs/pdf/documentation.pdf#PortalNetwork-Documentation.pdf")
+          assets+=("-a" "build/docs/pdf/documentation.pdf#bcf-Documentation.pdf")
 
           tag_name="${GITHUB_REF##*/}"
           hub release create \
@@ -128,7 +128,7 @@ jobs:
             "$tag_name" << EOF
           Release $tag_name
 
-          [Online Documentation](https://bundabrg.github.io/PortalNetwork)
+          [Online Documentation](https://bundabrg.github.io/bcf)
 
           Since Last Release:
           $(git log $(git describe --tags --abbrev=0 HEAD^^^ 2> /dev/null || git rev-list --max-parents=0 HEAD)..HEAD --graph --pretty=format:'%h %d %s [%an]' --abbrev-commit)

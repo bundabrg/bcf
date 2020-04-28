@@ -47,7 +47,8 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <finalName>bcf-${project.artifactId}-${project.version}</finalName>
                         </configuration>
                     </execution>
                 </executions>
