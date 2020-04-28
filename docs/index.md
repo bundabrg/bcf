@@ -1,3 +1,5 @@
+![Logo](img/title.png)
+
 ## What is bcf
 
 `bcf` is a Command Management tool suitable for use in Bukkit/Spigot/PaperMC, though it may support other platforms 
