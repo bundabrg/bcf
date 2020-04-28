@@ -75,4 +75,6 @@ plugins:
 
 nav:
   - Introduction: index.md
+  - How it works: howitworks.md
+  - Annotations: annotations.md
   - Contributing: contributing.md
