@@ -5,7 +5,6 @@
 ![HitCount](http://hits.dwyl.com/bundabrg/portalnetwork.svg)
 
 ![Workflow](https://github.com/bundabrg/bcf/workflows/build/badge.svg)
-![Workflow](https://github.com/bundabrg/bcf/workflows/docs/badge.svg)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Bundabrg/bcf/graphs/commit-activity)
 [![GitHub contributors](https://img.shields.io/github/contributors/Bundabrg/bcf)](https://GitHub.com/Bundabrg/bcf/graphs/contributors/)
 [![GitHub issues](https://img.shields.io/github/issues/Bundabrg/bcf)](https://GitHub.com/Bundabrg/bcf/issues/)
