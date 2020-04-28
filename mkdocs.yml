@@ -77,4 +77,5 @@ nav:
   - Introduction: index.md
   - How it works: howitworks.md
   - Annotations: annotations.md
+  - Parsers: parsers.md
   - Contributing: contributing.md
