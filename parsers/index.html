@@ -1,616 +1,400 @@
 
+<!DOCTYPE html>
 
-
-<!doctype html>
-<html lang="en" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-      
-        <link rel="canonical" href="https://github.com/Bundabrg/bcf/parsers/">
-      
-      
-        <meta name="author" content="Bundabrg">
-      
-      <link rel="shortcut icon" href="../img/favicon.ico">
-      <meta name="generator" content="mkdocs-1.1, mkdocs-material-5.1.3">
-    
-    
-      
-        <title>Parsers - bcf</title>
-      
-    
-    
-      <link rel="stylesheet" href="../assets/stylesheets/main.62d34fff.min.css">
-      
-        <link rel="stylesheet" href="../assets/stylesheets/palette.c8acc6db.min.css">
-      
-      
-        
-        
-        <meta name="theme-color" content="#3f51b5">
-      
-    
-    
-    
-      
-        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
-      
-    
-    
-    
-      <link rel="stylesheet" href="../css/mkpdf.css">
-    
-    
-      
-    
-    
-  </head>
-  
-  
-    
-    
-    <body dir="ltr" data-md-color-primary="indigo" data-md-color-accent="indigo">
-  
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#common" class="md-skip">
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<link href="https://github.com/Bundabrg/bcf/parsers/" rel="canonical"/>
+<meta content="Bundabrg" name="author"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<meta content="mkdocs-1.1, mkdocs-material-5.1.3" name="generator"/>
+<title>Parsers - bcf</title>
+<link href="../assets/stylesheets/main.62d34fff.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/palette.c8acc6db.min.css" rel="stylesheet"/>
+<meta content="#3f51b5" name="theme-color"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&amp;display=fallback" rel="stylesheet"/>
+<style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+<link href="../css/mkpdf.css" rel="stylesheet"/>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="indigo" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#common">
           Skip to content
         </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-      <header class="md-header" data-md-component="header">
-  <nav class="md-header-nav md-grid" aria-label="Header">
-    <a href="https://github.com/Bundabrg/bcf" title="bcf" class="md-header-nav__button md-logo" aria-label="bcf">
-      
-  <img src="../img/header_logo.png" alt="logo">
-
-    </a>
-    <label class="md-header-nav__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" /></svg>
-    </label>
-    <div class="md-header-nav__title" data-md-component="header-title">
-      
-        <div class="md-header-nav__ellipsis">
-          <span class="md-header-nav__topic md-ellipsis">
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header-nav md-grid">
+<a aria-label="bcf" class="md-header-nav__button md-logo" href="https://github.com/Bundabrg/bcf" title="bcf">
+<img alt="logo" src="../img/header_logo.png"/>
+</a>
+<label class="md-header-nav__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"></path></svg>
+</label>
+<div class="md-header-nav__title" data-md-component="header-title">
+<div class="md-header-nav__ellipsis">
+<span class="md-header-nav__topic md-ellipsis">
             bcf
           </span>
-          <span class="md-header-nav__topic md-ellipsis">
+<span class="md-header-nav__topic md-ellipsis">
             
               Parsers
             
           </span>
-        </div>
-      
-    </div>
-    
-      <label class="md-header-nav__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
-      </label>
-      
+</div>
+</div>
+<label class="md-header-nav__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"></path></svg>
+</label>
 <div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
-      <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
-      </label>
-      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
-      </button>
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" data-md-state="active" name="query" placeholder="Search" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"></path></svg>
+</label>
+<button aria-label="Clear" class="md-search__icon md-icon" data-md-component="search-reset" tabindex="-1" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"></path></svg>
+</button>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
-        </div>
-      </div>
-    </div>
-  </div>
+<ol class="md-search-result__list"></ol>
 </div>
-    
-    
-      <div class="md-header-nav__source">
-        
-<a href="https://github.com/Bundabrg/bcf" title="Go to repository" class="md-source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
-  </div>
-  <div class="md-source__repository">
+</div>
+</div>
+</div>
+</div>
+<div class="md-header-nav__source">
+<a class="md-source" href="https://github.com/Bundabrg/bcf" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
     Bundabrg/bcf
   </div>
 </a>
-      </div>
-    
-  </nav>
+</div>
+</nav>
 </header>
-    
-    <div class="md-container" data-md-component="container">
-      
-        
-      
-      
-        
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
-            
-              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="https://github.com/Bundabrg/bcf" title="bcf" class="md-nav__button md-logo" aria-label="bcf">
-      
-  <img src="../img/header_logo.png" alt="logo">
-
-    </a>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="bcf" class="md-nav__button md-logo" href="https://github.com/Bundabrg/bcf" title="bcf">
+<img alt="logo" src="../img/header_logo.png"/>
+</a>
     bcf
   </label>
-  
-    <div class="md-nav__source">
-      
-<a href="https://github.com/Bundabrg/bcf" title="Go to repository" class="md-source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
-  </div>
-  <div class="md-source__repository">
+<div class="md-nav__source">
+<a class="md-source" href="https://github.com/Bundabrg/bcf" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
     Bundabrg/bcf
   </div>
 </a>
-    </div>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href=".." title="Introduction" class="md-nav__link">
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href=".." title="Introduction">
       Introduction
     </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="../howitworks/" title="How it works" class="md-nav__link">
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../howitworks/" title="How it works">
       How it works
     </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="../annotations/" title="Annotations" class="md-nav__link">
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../annotations/" title="Annotations">
       Annotations
     </a>
-  </li>
-
-    
-      
-      
-      
-
-  
-
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
         Parsers
         <span class="md-nav__icon md-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,9H17V7H3V9M3,13H17V11H3V13M3,17H17V15H3V17M19,17H21V15H19V17M19,7V9H21V7H19M19,13H21V11H19V13Z" /></svg>
-        </span>
-      </label>
-    
-    <a href="./" title="Parsers" class="md-nav__link md-nav__link--active">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3,9H17V7H3V9M3,13H17V11H3V13M3,17H17V15H3V17M19,17H21V15H19V17M19,7V9H21V7H19M19,13H21V11H19V13Z"></path></svg>
+</span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./" title="Parsers">
       Parsers
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
-      </span>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"></path></svg>
+</span>
       Table of contents
     </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#common" class="md-nav__link">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#common">
     Common
   </a>
-  
-    <nav class="md-nav" aria-label="Common">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#common-parameters" class="md-nav__link">
+<nav aria-label="Common" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#common-parameters">
     Common Parameters
   </a>
-  
-    <nav class="md-nav" aria-label="Common Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#default" class="md-nav__link">
+<nav aria-label="Common Parameters" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#default">
     default
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#required" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#required">
     required
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#suppress" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#suppress">
     suppress
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#switch" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#switch">
     switch
   </a>
-  
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#literal" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#literal">
     Literal
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#double" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#double">
     @Double
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#int" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#int">
     @Int
   </a>
-  
-    <nav class="md-nav" aria-label="@Int">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#min" class="md-nav__link">
+<nav aria-label="@Int" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#min">
     min
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#max" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#max">
     max
   </a>
-  
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#string" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#string">
     @String
   </a>
-  
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#bukkit" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#bukkit">
     Bukkit
   </a>
-  
-    <nav class="md-nav" aria-label="Bukkit">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#player" class="md-nav__link">
+<nav aria-label="Bukkit" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#player">
     @Player
   </a>
-  
-    <nav class="md-nav" aria-label="@Player">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mode" class="md-nav__link">
+<nav aria-label="@Player" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#mode">
     mode
   </a>
-  
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
+</ul>
 </nav>
-    
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="../contributing/" title="Contributing" class="md-nav__link">
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../contributing/" title="Contributing">
       Contributing
     </a>
-  </li>
-
-    
-  </ul>
+</li>
+</ul>
 </nav>
-                  </div>
-                </div>
-              </div>
-            
-            
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
-      </span>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"></path></svg>
+</span>
       Table of contents
     </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#common" class="md-nav__link">
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#common">
     Common
   </a>
-  
-    <nav class="md-nav" aria-label="Common">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#common-parameters" class="md-nav__link">
+<nav aria-label="Common" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#common-parameters">
     Common Parameters
   </a>
-  
-    <nav class="md-nav" aria-label="Common Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#default" class="md-nav__link">
+<nav aria-label="Common Parameters" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#default">
     default
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#required" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#required">
     required
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#suppress" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#suppress">
     suppress
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#switch" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#switch">
     switch
   </a>
-  
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#literal" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#literal">
     Literal
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#double" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#double">
     @Double
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#int" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#int">
     @Int
   </a>
-  
-    <nav class="md-nav" aria-label="@Int">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#min" class="md-nav__link">
+<nav aria-label="@Int" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#min">
     min
   </a>
-  
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#max" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#max">
     max
   </a>
-  
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#string" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#string">
     @String
   </a>
-  
 </li>
-        
-      </ul>
-    </nav>
-  
+</ul>
+</nav>
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#bukkit" class="md-nav__link">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#bukkit">
     Bukkit
   </a>
-  
-    <nav class="md-nav" aria-label="Bukkit">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#player" class="md-nav__link">
+<nav aria-label="Bukkit" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#player">
     @Player
   </a>
-  
-    <nav class="md-nav" aria-label="@Player">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mode" class="md-nav__link">
+<nav aria-label="@Player" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#mode">
     mode
   </a>
-  
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
+</ul>
 </nav>
-                  </div>
-                </div>
-              </div>
-            
-          
-          <div class="md-content">
-            <article class="md-content__inner md-typeset">
-              
-                
-                
-                  
-                
-                
-                  <h1>Parsers</h1>
-                
-                <p>A <code>Parser</code> is something with a name that can consume 0 or more words from the input and can produce 0 or 1 objects
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content">
+<article class="md-content__inner md-typeset"><a class="md-content__icon pdf-download-btn" download href="../pdf/documentation.pdf" title="Download"><i class="fa fas fa-download"></i><small> PDF</small></a>
+<h1>Parsers</h1>
+<p>A <code>Parser</code> is something with a name that can consume 0 or more words from the input and can produce 0 or 1 objects
 to be passed as a parameter to a method.  It can also use partial input to provide command completion.</p>
 <p>Parsers are provided in a space separated <code>@Arg</code> annotation string to the Class and/or Method.</p>
 <p>The format of the parser definition in the <code>@Arg</code> string is:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="err">@parsername(key=value, ...) @nextparser...</span>
 </code></pre></div>
 </td></tr></table>
-
 <p>Where:</p>
 <ul>
 <li><code>@parsername</code> - the name of the parser to user. If it does not start with <code>@</code> then it will be treated as a <code>Literal</code> Parser.</li>
 <li><code>(key=value, ...)</code> - optional parameters can be passed to the parser to define its behaviour. If no parameters are required
 then the braces can be left off as well.</li>
 </ul>
-<h2 id="common">Common<a class="headerlink" href="#common" title="Permanent link">&para;</a></h2>
+<h2 id="common">Common<a class="headerlink" href="#common" title="Permanent link">¶</a></h2>
 <p>These parsers are available for all execution environments</p>
-<h3 id="common-parameters">Common Parameters<a class="headerlink" href="#common-parameters" title="Permanent link">&para;</a></h3>
+<h3 id="common-parameters">Common Parameters<a class="headerlink" href="#common-parameters" title="Permanent link">¶</a></h3>
 <p>There are some parameters that are common to most Parsers and will be listed here.</p>
-<h4 id="default">default<a class="headerlink" href="#default" title="Permanent link">&para;</a></h4>
+<h4 id="default">default<a class="headerlink" href="#default" title="Permanent link">¶</a></h4>
 <p>Provide a default value if none is provided through input. Note that any input at all will stop the
 default being provided and invalid input will correctly show an error.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">"mycmd"</span><span class="p">)</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
 
-    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1 @int(default=3)&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">"cmd1 @int(default=3)"</span><span class="p">)</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myCmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">Integer</span> <span class="n">myNum</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">...</span>
     <span class="p">}</span>
@@ -620,25 +404,25 @@ The command <code>/mycmd cmd1</code> will provide 3 to <code>myNum</code> variab
 <p>The command <code>/mycmd cmd1 10</code> will provide 10 to <code>myNum</code> variable.</p>
 <p>The command <code>/mycmd cmd1 aaa</code> will display the error "Invalid Number: a"</p>
 </div>
-<h4 id="required">required<a class="headerlink" href="#required" title="Permanent link">&para;</a></h4>
+<h4 id="required">required<a class="headerlink" href="#required" title="Permanent link">¶</a></h4>
 <p>If set to true will require a value to be provided either through input or through a <code>default</code> parameter.</p>
 <p>If set to false (default) then missing input without a <code>default</code> will return a null object to the method.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">"mycmd"</span><span class="p">)</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
 
-    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1 @int(required=true, default=3)&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">"cmd1 @int(required=true, default=3)"</span><span class="p">)</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myCmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">Integer</span> <span class="n">myNum</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">...</span>
     <span class="p">}</span>
 
-    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd2 @int(required=true)&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">"cmd2 @int(required=true)"</span><span class="p">)</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myCmd2</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">Integer</span> <span class="n">myNum</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">...</span>
     <span class="p">}</span>
 
-    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd3 @int(required=false)&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">"cmd3 @int(required=false)"</span><span class="p">)</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myCmd3</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">Integer</span> <span class="n">myNum</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">...</span>
     <span class="p">}</span>
@@ -649,14 +433,14 @@ The command <code>/mycmd cmd1</code> will succeed and provide <code>3</code> for
 <p>The command <code>/mycmd cmd2</code> will show an error "A number is required"</p>
 <p>The command <code>/mycmd cmd3</code> will succeed and provide null for variable <code>myNum</code></p>
 </div>
-<h4 id="suppress">suppress<a class="headerlink" href="#suppress" title="Permanent link">&para;</a></h4>
+<h4 id="suppress">suppress<a class="headerlink" href="#suppress" title="Permanent link">¶</a></h4>
 <p>If set to true then this parser will not return any object to a method but otherwise will behave the same</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">"mycmd"</span><span class="p">)</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
 
-    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1 @int(suppress=true, required=true)&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">"cmd1 @int(suppress=true, required=true)"</span><span class="p">)</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myCmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">...</span>
     <span class="p">}</span>
@@ -665,7 +449,7 @@ The command <code>/mycmd cmd1</code> will succeed and provide <code>3</code> for
 The command <code>/mycmd cmd1 5</code> will execute the method with no additional parameters.</p>
 <p>The command <code>/mycmd cmd1</code> will return a required parameter error due to the <code>required=true</code> parameter.</p>
 </div>
-<h4 id="switch">switch<a class="headerlink" href="#switch" title="Permanent link">&para;</a></h4>
+<h4 id="switch">switch<a class="headerlink" href="#switch" title="Permanent link">¶</a></h4>
 <p>The presence of this parameter will make a Parser into a named parameter instead of a positional one. It
 lists the name(s) of the switch separated by a <code>|</code>.</p>
 <p>From the point it is defined it will consume input only if the input has a <code>-</code> with one of the names
@@ -674,10 +458,10 @@ will be provided to the method in the order it is defined in the <code>@Arg</cod
 <p>Full command completion is provided for both the name(s) of the switch as well as its values.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">"mycmd"</span><span class="p">)</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
 
-    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1 @int(switch=test|t, required=false) param1 param2 param3&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">"cmd1 @int(switch=test|t, required=false) param1 param2 param3"</span><span class="p">)</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myCmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">Integer</span> <span class="n">myNum</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">...</span>
     <span class="p">}</span>
@@ -694,7 +478,7 @@ The following are all valid:</p>
 <p>All but the last will return <code>3</code> to the variable <code>myNum</code>.</p>
 <p>The last command will return <code>null</code> to the variable <code>myNum</code>.</p>
 </div>
-<h3 id="literal">Literal<a class="headerlink" href="#literal" title="Permanent link">&para;</a></h3>
+<h3 id="literal">Literal<a class="headerlink" href="#literal" title="Permanent link">¶</a></h3>
 <p><strong>Consumes</strong>: 1</p>
 <p><strong>Returns</strong>: <code>String</code> (if <code>suppress</code> is <code>false</code>)</p>
 <p><strong>Completions</strong>: <code>yes</code></p>
@@ -705,10 +489,10 @@ provide any parameter to the method. Multiple options can be provided by separat
 <p>Command completion will show all the options provided.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">"mycmd"</span><span class="p">)</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
 
-    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1|c1 param1 param2|p2(suppress=false) param3&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">"cmd1|c1 param1 param2|p2(suppress=false) param3"</span><span class="p">)</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myCmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">String</span> <span class="n">p2</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">...</span>
     <span class="p">}</span>
@@ -723,17 +507,17 @@ The following are all valid commands:</p>
 </ul>
 <p>The method parameter <code>p2</code> will be filled in with either <code>param2</code> or <code>p2</code>.</p>
 </div>
-<h3 id="double">@Double<a class="headerlink" href="#double" title="Permanent link">&para;</a></h3>
+<h3 id="double">@Double<a class="headerlink" href="#double" title="Permanent link">¶</a></h3>
 <p><strong>Consumes</strong>: 1</p>
 <p><strong>Returns</strong>: <code>Double</code></p>
 <p><strong>Completions</strong>: <code>no</code></p>
 <p>This Parser will try to read a floating point number from input and will return it as a <code>Double</code></p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">"mycmd"</span><span class="p">)</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
 
-    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1 @double&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">"cmd1 @double"</span><span class="p">)</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myCmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">Double</span> <span class="n">p1</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">...</span>
     <span class="p">}</span>
@@ -742,7 +526,7 @@ The following are all valid commands:</p>
 The command: <code>/mycmd cmd1 1.5</code> will provided the method parmeter <code>p1</code> with a Double with value <code>1.5</code></p>
 <p>The command <code>/mycmd cmd1 aaa</code> will return an error.</p>
 </div>
-<h3 id="int">@Int<a class="headerlink" href="#int" title="Permanent link">&para;</a></h3>
+<h3 id="int">@Int<a class="headerlink" href="#int" title="Permanent link">¶</a></h3>
 <p><strong>Consumes</strong>: 1</p>
 <p><strong>Returns</strong>: <code>Integer</code></p>
 <p><strong>Completions</strong>: <code>sometimes</code></p>
@@ -750,16 +534,16 @@ The command: <code>/mycmd cmd1 1.5</code> will provided the method parmeter <cod
 <p>If a <code>max</code> parameter is provided then completion will show up to 20 numbers between <code>min</code> and <code>max</code>. If
 <code>min</code> is not defined but <code>max</code> is then <code>min</code> will be considered to be 0 for completion only but will not
 affect execution.</p>
-<h4 id="min">min<a class="headerlink" href="#min" title="Permanent link">&para;</a></h4>
+<h4 id="min">min<a class="headerlink" href="#min" title="Permanent link">¶</a></h4>
 <p>Set the minimum value accepted. Defaults to no minimum.</p>
-<h4 id="max">max<a class="headerlink" href="#max" title="Permanent link">&para;</a></h4>
+<h4 id="max">max<a class="headerlink" href="#max" title="Permanent link">¶</a></h4>
 <p>Set the maximum value accepted. Defaults to no maximum.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">"mycmd"</span><span class="p">)</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
 
-    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1 @int(min=4,max=10)&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">"cmd1 @int(min=4,max=10)"</span><span class="p">)</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myCmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">Integer</span> <span class="n">p1</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">...</span>
     <span class="p">}</span>
@@ -769,7 +553,7 @@ The command: <code>/mycmd cmd1 6</code> will provided the method parmeter <code>
 <p>The command <code>/mycmd cmd1 100</code> will return an error.</p>
 <p>The command <code>/mycmd cmd1 aaa</code> will return an error.</p>
 </div>
-<h3 id="string">@String<a class="headerlink" href="#string" title="Permanent link">&para;</a></h3>
+<h3 id="string">@String<a class="headerlink" href="#string" title="Permanent link">¶</a></h3>
 <p><strong>Consumes</strong>: 1</p>
 <p><strong>Returns</strong>: <code>String</code></p>
 <p><strong>Completions</strong>: <code>no</code></p>
@@ -777,10 +561,10 @@ The command: <code>/mycmd cmd1 6</code> will provided the method parmeter <code>
 <p>No completions will be provided.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">"mycmd"</span><span class="p">)</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
 
-    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1 @string @string&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">"cmd1 @string @string"</span><span class="p">)</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myCmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">String</span> <span class="n">p1</span><span class="p">,</span> <span class="n">String</span> <span class="n">p2</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">...</span>
     <span class="p">}</span>
@@ -789,16 +573,16 @@ The command: <code>/mycmd cmd1 6</code> will provided the method parmeter <code>
 The command: <code>/mycmd cmd1 foo bar</code> will provided the String <code>foo</code> for method parmaeter <code>p1</code> and <code>bar</code> for method 
 parameter <code>p2</code></p>
 </div>
-<h2 id="bukkit">Bukkit<a class="headerlink" href="#bukkit" title="Permanent link">&para;</a></h2>
+<h2 id="bukkit">Bukkit<a class="headerlink" href="#bukkit" title="Permanent link">¶</a></h2>
 <p>These parsers are available for the Bukkit execution environment</p>
-<h3 id="player">@Player<a class="headerlink" href="#player" title="Permanent link">&para;</a></h3>
+<h3 id="player">@Player<a class="headerlink" href="#player" title="Permanent link">¶</a></h3>
 <p><strong>Consumes</strong>: 1</p>
 <p><strong>Returns</strong>: <code>Player</code>, <code>OfflinePlayer</code></p>
 <p><strong>Completions</strong>: <code>yes</code></p>
 <p>Reads in a player name and will return either a <code>Player</code> or <code>OfflinePlayer</code> depending on the setting of the <code>mode</code> parameter.</p>
 <p>A value of <code>%self</code> will refer to the command sender. This is useful to provide as a <code>default</code>. When the command
 sender is the console then an error will be returned "When console a player name is required".</p>
-<h4 id="mode">mode<a class="headerlink" href="#mode" title="Permanent link">&para;</a></h4>
+<h4 id="mode">mode<a class="headerlink" href="#mode" title="Permanent link">¶</a></h4>
 <p>Can be either <code>online</code> or <code>offline</code> (default). </p>
 <p>When <code>mode</code> is <code>online</code> then completion will only show currently online players and when executing will only accept a player
 that is online.  Returns a <code>Player</code> object to the method.</p>
@@ -806,109 +590,82 @@ that is online.  Returns a <code>Player</code> object to the method.</p>
 that the player exists.  Returns an</code>OfflinePlayer` object to the method.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">"mycmd"</span><span class="p">)</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">MainCommand</span> <span class="kd">extends</span> <span class="n">BukkitCommand</span> <span class="p">{</span>
 
-    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1 @player(default=%self, mode=online&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">"cmd1 @player(default=%self, mode=online"</span><span class="p">)</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myCmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">Player</span> <span class="n">player</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">...</span>
     <span class="p">}</span>
 
-    <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1 @player(mode=offline&quot;</span><span class="p">)</span>
+    <span class="nd">@Arg</span><span class="p">(</span><span class="s">"cmd1 @player(mode=offline"</span><span class="p">)</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myCmd1</span><span class="p">(</span><span class="n">CommandSender</span> <span class="n">sender</span><span class="p">,</span> <span class="n">OfflinePlayer</span> <span class="n">player</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">...</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-
 </div>
-                
-                  
-                    
-
-<hr>
+<hr/>
 <div class="md-source-date">
-  <small>
+<small>
     
-      Last update: <span class='timeago' datetime='1588095926000' locale='en'></span>
-    
-  </small>
+      Last update: <span class="timeago" datetime="1588096310000" locale="en"></span>
+</small>
 </div>
-                  
-                
-              
-              
-                
-
-
-              
-            </article>
-          </div>
-        </div>
-      </main>
-      
-        
+</article>
+</div>
+</div>
+</main>
 <footer class="md-footer">
-  
-    <div class="md-footer-nav">
-      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
-        
-          <a href="../annotations/" title="Annotations" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
-            <div class="md-footer-nav__button md-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" /></svg>
-            </div>
-            <div class="md-footer-nav__title">
-              <div class="md-ellipsis">
-                <span class="md-footer-nav__direction">
+<div class="md-footer-nav">
+<nav aria-label="Footer" class="md-footer-nav__inner md-grid">
+<a class="md-footer-nav__link md-footer-nav__link--prev" href="../annotations/" rel="prev" title="Annotations">
+<div class="md-footer-nav__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"></path></svg>
+</div>
+<div class="md-footer-nav__title">
+<div class="md-ellipsis">
+<span class="md-footer-nav__direction">
                   Previous
                 </span>
                 Annotations
               </div>
-            </div>
-          </a>
-        
-        
-          <a href="../contributing/" title="Contributing" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
-            <div class="md-footer-nav__title">
-              <div class="md-ellipsis">
-                <span class="md-footer-nav__direction">
+</div>
+</a>
+<a class="md-footer-nav__link md-footer-nav__link--next" href="../contributing/" rel="next" title="Contributing">
+<div class="md-footer-nav__title">
+<div class="md-ellipsis">
+<span class="md-footer-nav__direction">
                   Next
                 </span>
                 Contributing
               </div>
-            </div>
-            <div class="md-footer-nav__button md-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" /></svg>
-            </div>
-          </a>
-        
-      </nav>
-    </div>
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-footer-copyright">
-        
-          <div class="md-footer-copyright__highlight">
+</div>
+<div class="md-footer-nav__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z"></path></svg>
+</div>
+</a>
+</nav>
+</div>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-footer-copyright">
+<div class="md-footer-copyright__highlight">
             Copyright (C) 2020 PortalNetwork Developers
           </div>
         
         Made with
-        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+        <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
           Material for MkDocs
         </a>
-      </div>
-      
-    </div>
-  </div>
+</div>
+</div>
+</div>
 </footer>
-      
-    </div>
-    
-      <script src="../assets/javascripts/vendor.f81b9e8b.min.js"></script>
-      <script src="../assets/javascripts/bundle.23546af0.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
-      
-      <script>
+</div>
+<script src="../assets/javascripts/vendor.f81b9e8b.min.js"></script>
+<script src="../assets/javascripts/bundle.23546af0.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+<script>
         app = initialize({
           base: "..",
           features: ["instant"],
@@ -917,15 +674,12 @@ that the player exists.  Returns an</code>OfflinePlayer` object to the method.</
           }, typeof search !== "undefined" && search)
         })
       </script>
-      
-    
-  
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.0-beta.2/timeago.min.js"></script>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.0-beta.2/timeago.locales.min.js"></script>
-          <script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.0-beta.2/timeago.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.0-beta.2/timeago.locales.min.js"></script>
+<script>
             var nodes = document.querySelectorAll('.timeago');
             var locale = nodes[0].getAttribute('locale');
             timeago.render(nodes, locale);
           </script>
-        </body>
+</body>
 </html>
