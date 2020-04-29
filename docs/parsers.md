@@ -283,7 +283,7 @@ Can be either `online` or `offline` (default).
 When `mode` is `online` then completion will only show currently online players and when executing will only accept a player
 that is online.  Returns a `Player` object to the method.
 
-When `mode` is `offline` then completion will show all players, online and offlline` and when executing will validate
+When `mode` is `offline` then completion will show all players, online and offlline, and when executing will validate
 that the player exists.  Returns an `OfflinePlayer` object to the method.
 
 !!! example
