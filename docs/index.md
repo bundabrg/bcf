@@ -252,7 +252,7 @@ the command will be rejected.  Designating a switch parameter means it is no lon
                     <relocations>
                         <relocation>
                             <pattern>au.com.grieve.bcf</pattern>
-                            <shadedPattern>${project.groupId}.bcf</shadedPattern>
+                            <shadedPattern>${project.groupId}.${project.artifactId}.bcf</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
