@@ -27,8 +27,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      #      - name: Update plugin version
-      #        run: sed -i "/^version:.*/ s/-dev$/-b${GITHUB_RUN_NUMBER}/" src/main/resources/plugin.yml && echo ${{ github.ref }}
+      - name: Updating Version for Release
+        if: startsWith(github.ref,'refs/tags/v')
+        run: |
+          # Remove v from front
+          TAG="${GITHUB_REF##*/}"
+          MAVEN_VERSION="${TAG/v/}"
+
+          # Set Maven Version
+          mvn -B versions:set -DnewVersion=${MAVEN_VERSION}
+
+      #          # Set Plugin Version
+      #          sed -i "/^version:.*/ s/^version:.*/version: \"${MAVEN_VERSION}\"/" src/main/resources/plugin.yml
+
+      #      - name: Update Version for Developmental Build
+      #        if: "!startsWith(github.ref,'refs/tags/v')"
+      #        run: |
+      #          sed -i "/^version:.*/ s/-dev$/-b${GITHUB_RUN_NUMBER}/" src/main/resources/plugin.yml
 
       - name: Build with Maven
         run: |
