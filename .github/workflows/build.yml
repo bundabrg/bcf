@@ -168,7 +168,7 @@ jobs:
           --shm-size=2g \
           -v $(pwd)/config.yml:/app/config/config.yml \
           -v $(pwd)/build:/app/build \
-          registry.worldguard.com.au/bgrieve/spigot_tools:feature-resource-revision app resource add-version \
+          registry.worldguard.com.au/bgrieve/spigot_tools:latest app resource add-version \
           bcf-command-formatter.78093 \
           "https://github.com/${GITHUB_REPOSITORY}/releases/tag/${tag_name}" \
           ${tag_name} \
