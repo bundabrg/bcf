@@ -2,7 +2,7 @@
 
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 [![GitHub release](https://img.shields.io/github/release/Bundabrg/bcf)](https://GitHub.com/Bundabrg/bcf/releases/)
-[![GitHub commits](https://img.shields.io/github/commits-since/Bundabrg/bcf/v1.2.0.svg)](https://GitHub.com/Bundabrg/bcf/commit/)
+[![GitHub commits](https://img.shields.io/github/commits-since/Bundabrg/bcf/latest)](https://GitHub.com/Bundabrg/bcf/commit/)
 [![Github all releases](https://img.shields.io/github/downloads/Bundabrg/bcf/total.svg)](https://GitHub.com/Bundabrg/bcf/releases/)
 ![HitCount](http://hits.dwyl.com/bundabrg/portalnetwork.svg)
 
