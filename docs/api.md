@@ -121,15 +121,26 @@ and must consume 0 or more of them.
 
 A custom parser should extend `Parser` or a class derived from this.
 
+The parser is registered by calling the `registerParser` method on the `CommandManager` and from that point its name
+prefixed with `@` can be used in an `@Arg` string.
+
+!!! example
+    ```java
+    bcf.registerParser("myparser", MyParser.class);
+    ```
+
+### Overrides
+
 The three important methods to provide are:
 
 1. `parse` - Consume input words
 
-2. `getCompletions` - Return list of completions for the input
+2. `compete` - Return list of completions for the input
 
-3. `getResult` - Return a concrete object for the input
+3. `result` - Return a concrete object for the input
 
-### parse
+
+#### parse
 
 !!! definition
     ```java
@@ -153,11 +164,11 @@ throw a `ParserRequiredArgumentException`
     `SingleParser` which handles this method for you. Make use of `getInput()` to get the consumed
     input.
     
-### getCompletions
+#### complete
 
 !!! definition
     ```java
-    public List<String> getCompletions() {
+    protected List<String> complete() {
         ...
     }
     ```
@@ -166,3 +177,20 @@ Return a list of completions for the consumed input ideally filtering it by what
 entered and limiting it to a maximum of 20 items.  If no completions are available then
 return an empty list.
 
+The results are cached.
+
+
+#### result
+
+!!! definition
+    ```java
+    protected Object result() throws ParserInvalidResultException {
+        ...
+    }
+    ```
+
+Return a concrete Object for the input consumed.  If there is no valid result for the input then
+this must throw a `ParserInvalidResultException` which will cause it to be rejected as a valid
+command candidate.
+
+The results are cached.

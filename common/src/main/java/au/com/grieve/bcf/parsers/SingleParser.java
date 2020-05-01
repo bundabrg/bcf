@@ -28,7 +28,6 @@ import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
-import au.com.grieve.bcf.exceptions.ParserNoResultException;
 import au.com.grieve.bcf.exceptions.ParserRequiredArgumentException;
 import lombok.Getter;
 
@@ -72,7 +71,7 @@ public abstract class SingleParser extends Parser {
     }
 
     @Override
-    public Object getResult() throws ParserInvalidResultException, ParserNoResultException {
+    public Object getResult() throws ParserInvalidResultException {
         if (input == null) {
             return null;
         }
