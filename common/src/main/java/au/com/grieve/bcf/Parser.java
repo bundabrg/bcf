@@ -24,7 +24,6 @@
 package au.com.grieve.bcf;
 
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
-import au.com.grieve.bcf.exceptions.ParserNoResultException;
 import au.com.grieve.bcf.exceptions.ParserRequiredArgumentException;
 import lombok.Getter;
 
@@ -65,7 +64,7 @@ public abstract class Parser {
         return completions;
     }
 
-    public Object getResult() throws ParserInvalidResultException, ParserNoResultException {
+    public Object getResult() throws ParserInvalidResultException {
         if (result == null) {
             result = result();
         }
@@ -89,7 +88,7 @@ public abstract class Parser {
     }
 
     // abstract methods
-    protected abstract Object result() throws ParserInvalidResultException, ParserNoResultException;
+    protected abstract Object result() throws ParserInvalidResultException;
 
     /**
      * Take input and return the unused data

@@ -26,7 +26,7 @@ package au.com.grieve.bcf.parsers;
 import au.com.grieve.bcf.ArgNode;
 import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.exceptions.ParserNoResultException;
+import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +66,7 @@ public class LiteralParser extends SingleParser {
     }
 
     @Override
-    protected Object result() throws ParserNoResultException {
+    protected Object result() throws ParserInvalidResultException {
         for (String alias : argNode.getName().split("\\|")) {
             if (alias.equals("*")) {
                 return getInput();
@@ -77,6 +77,6 @@ public class LiteralParser extends SingleParser {
             }
         }
 
-        throw new ParserNoResultException(this);
+        throw new ParserInvalidResultException(this, "Invalid Command");
     }
 }

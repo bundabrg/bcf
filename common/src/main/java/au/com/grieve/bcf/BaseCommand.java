@@ -27,7 +27,6 @@ import au.com.grieve.bcf.annotations.Arg;
 import au.com.grieve.bcf.annotations.Default;
 import au.com.grieve.bcf.annotations.Error;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
-import au.com.grieve.bcf.exceptions.ParserNoResultException;
 import au.com.grieve.bcf.exceptions.ParserRequiredArgumentException;
 import au.com.grieve.bcf.exceptions.SwitchNotFoundException;
 import lombok.Getter;
@@ -117,7 +116,7 @@ public abstract class BaseCommand {
 
                 try {
                     parseArg(commandRoot, currentArgs, currentInput, currentContext);
-                } catch (ParserNoResultException | ParserRequiredArgumentException e) {
+                } catch (ParserRequiredArgumentException e) {
                     continue;
                 } catch (SwitchNotFoundException e) {
                     commandExecutes.add(getErrorExecute(commandRoot, "Invalid switch: " + e.getSwitchName(), currentContext));
@@ -199,7 +198,7 @@ public abstract class BaseCommand {
                     }
                 }
                 commandExecutes.add(new CommandExecute(this, method, results, currentContext));
-            } catch (ParserNoResultException | ParserRequiredArgumentException ignored) {
+            } catch (ParserRequiredArgumentException ignored) {
             } catch (SwitchNotFoundException e) {
                 commandExecutes.add(getErrorExecute(commandRoot, "Invalid switch: " + e.getSwitchName(), currentContext));
             } catch (ParserInvalidResultException e) {
@@ -237,7 +236,7 @@ public abstract class BaseCommand {
 
                 try {
                     parseArg(commandRoot, currentArgs, currentInput, currentContext, false);
-                } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException e) {
+                } catch (ParserRequiredArgumentException | ParserInvalidResultException e) {
                     // End of chain so save completions if no more input
                     if (currentInput.size() == 0) {
                         ret.addAll(e.getParser().getCompletions());
@@ -301,7 +300,7 @@ public abstract class BaseCommand {
 
             try {
                 parseArg(commandRoot, currentArgs, currentInput, currentContext, false);
-            } catch (ParserRequiredArgumentException | ParserNoResultException | ParserInvalidResultException e) {
+            } catch (ParserRequiredArgumentException | ParserInvalidResultException e) {
                 // End of chain so save completion if no more input
                 if (currentInput.size() == 0) {
                     ret.addAll(e.getParser().getCompletions());
@@ -336,11 +335,11 @@ public abstract class BaseCommand {
         return ret;
     }
 
-    void parseArg(CommandRoot commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context) throws ParserNoResultException, ParserInvalidResultException, ParserRequiredArgumentException, SwitchNotFoundException {
+    void parseArg(CommandRoot commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context) throws ParserInvalidResultException, ParserRequiredArgumentException, SwitchNotFoundException {
         parseArg(commandRoot, argNodes, input, context, true);
     }
 
-    void parseSwitches(CommandRoot commandRoot, List<String> input, CommandContext context, boolean defaults) throws SwitchNotFoundException, ParserRequiredArgumentException, ParserInvalidResultException, ParserNoResultException {
+    void parseSwitches(CommandRoot commandRoot, List<String> input, CommandContext context, boolean defaults) throws SwitchNotFoundException, ParserRequiredArgumentException, ParserInvalidResultException {
         while (input.size() > 0 && input.get(0).startsWith("-")) {
             String name = input.remove(0).substring(1);
             Parser parser = context.getSwitches().stream()
@@ -364,7 +363,7 @@ public abstract class BaseCommand {
         }
     }
 
-    void parseArg(CommandRoot commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context, boolean defaults) throws ParserRequiredArgumentException, ParserInvalidResultException, ParserNoResultException, SwitchNotFoundException {
+    void parseArg(CommandRoot commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context, boolean defaults) throws ParserRequiredArgumentException, ParserInvalidResultException, SwitchNotFoundException {
         while (argNodes.size() > 0) {
             ArgNode node = argNodes.remove(0);
 
