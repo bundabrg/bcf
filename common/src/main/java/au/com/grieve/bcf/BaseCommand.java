@@ -110,7 +110,7 @@ public abstract class BaseCommand {
         if (getClass().getAnnotationsByType(Arg.class).length > 0) {
             for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
                 List<String> currentInput = new ArrayList<>(input);
-                List<ArgNode> currentArgs = ArgNode.parse(classArgs.value());
+                List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", classArgs.value()));
                 CommandContext currentContext = context.clone();
 
 
@@ -178,7 +178,7 @@ public abstract class BaseCommand {
 
         for (Arg methodArgs : method.getAnnotationsByType(Arg.class)) {
             List<String> currentInput = new ArrayList<>(input);
-            List<ArgNode> currentArgs = ArgNode.parse(methodArgs.value());
+            List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", methodArgs.value()));
             CommandContext currentContext = context.clone();
 
             try {
@@ -232,7 +232,7 @@ public abstract class BaseCommand {
         if (getClass().getAnnotationsByType(Arg.class).length > 0) {
             for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
                 List<String> currentInput = new ArrayList<>(input);
-                List<ArgNode> currentArgs = ArgNode.parse(classArgs.value());
+                List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", classArgs.value()));
                 CommandContext currentContext = context.clone();
 
 
@@ -297,7 +297,7 @@ public abstract class BaseCommand {
         List<String> ret = new ArrayList<>();
         for (Arg methodArgs : method.getAnnotationsByType(Arg.class)) {
             List<String> currentInput = new ArrayList<>(input);
-            List<ArgNode> currentArgs = ArgNode.parse(methodArgs.value());
+            List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", methodArgs.value()));
             CommandContext currentContext = context.clone();
 
             try {
