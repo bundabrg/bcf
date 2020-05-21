@@ -146,7 +146,7 @@ jobs:
           [Online Documentation](https://bundabrg.github.io/bcf)
 
           Since Last Release:
-          $(git log $(git describe --tags --abbrev=0 HEAD^ 2> /dev/null || git rev-list --max-parents=0 HEAD)..HEAD --graph --pretty=format:'%h %d %s [%an]' --abbrev-commit)
+          $(git log $(git describe --tags --abbrev=0 HEAD^ 2> /dev/null || git rev-list --max-parents=0 HEAD)..HEAD --graph --pretty=format:'%h %d %s [%an]%n%b')
           EOF
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -165,21 +165,22 @@ jobs:
           EOF
 
           docker run -i \
-          --shm-size=2g \
-          -v $(pwd)/config.yml:/app/config/config.yml \
-          -v $(pwd)/build:/app/build \
-          registry.worldguard.com.au/bgrieve/spigot_tools:latest app resource add-version \
-          bcf-command-formatter.78093 \
-          "https://github.com/${GITHUB_REPOSITORY}/releases/tag/${tag_name}" \
-          ${tag_name} \
-          "Release ${tag_name}" << EOF
-            [plain]
-              Release $tag_name
+            --shm-size=2g \
+            -v $(pwd)/config.yml:/app/config/config.yml \
+            -v $(pwd)/build:/app/build \
+            registry.worldguard.com.au/bgrieve/spigot_tools:latest app resource add-version \
+            bcf-command-formatter.78093 \
+            "https://github.com/${GITHUB_REPOSITORY}/releases/tag/${tag_name}" \
+            ${tag_name} \
+            "Release ${tag_name}" << EOF
+          [plain]
+          Release $tag_name
 
-              Since Last Release:
-              $(git log $(git describe --tags --abbrev=0 HEAD^ 2> /dev/null || git rev-list --max-parents=0 HEAD)..HEAD --graph --pretty=format:'%h %d %s [%an]' --abbrev-commit)
-            [/plain]
+          Since Last Release:
+          $(git log $(git describe --tags --abbrev=0 HEAD^ 2> /dev/null || git rev-list --max-parents=0 HEAD)..HEAD --graph --pretty=format:'%h %d %s [%an]%n%b')
+          [/plain]
           EOF
+
         env:
           DEPLOY_TOKEN: ${{ secrets.GITLAB_DEPLOY_TOKEN }}
           SPIGOT_USERNAME: ${{ secrets.SPIGOT_USERNAME }}
