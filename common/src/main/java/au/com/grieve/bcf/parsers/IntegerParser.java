@@ -63,7 +63,9 @@ public class IntegerParser extends SingleParser {
                     .collect(Collectors.toList());
         }
 
-        return super.complete();
+        List<String> ret = super.complete();
+        ret.add("<int>");
+        return ret;
     }
 
     @Override

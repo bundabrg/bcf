@@ -25,6 +25,7 @@ package au.com.grieve.bcf;
 
 import au.com.grieve.bcf.annotations.Command;
 import au.com.grieve.bcf.parsers.DoubleParser;
+import au.com.grieve.bcf.parsers.FloatParser;
 import au.com.grieve.bcf.parsers.IntegerParser;
 import au.com.grieve.bcf.parsers.LiteralParser;
 import au.com.grieve.bcf.parsers.StringParser;
@@ -52,6 +53,7 @@ public abstract class CommandManager {
         registerParser("string", StringParser.class);
         registerParser("int", IntegerParser.class);
         registerParser("double", DoubleParser.class);
+        registerParser("float", FloatParser.class);
     }
 
     public void registerCommand(Class<? extends BaseCommand> cmd) {

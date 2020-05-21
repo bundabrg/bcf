@@ -29,24 +29,23 @@ import au.com.grieve.bcf.CommandManager;
 
 import java.util.List;
 
-public class DoubleParser extends SingleParser {
+public class FloatParser extends SingleParser {
 
-    public DoubleParser(CommandManager manager, ArgNode argNode, CommandContext context) {
+    public FloatParser(CommandManager manager, ArgNode argNode, CommandContext context) {
         super(manager, argNode, context);
     }
 
     @Override
     protected List<String> complete() {
         List<String> ret = super.complete();
-        ret.add("<double>");
+        ret.add("<float>");
         return ret;
     }
-
 
     @Override
     protected Object result() {
         try {
-            return Double.valueOf(getInput());
+            return Float.valueOf(getInput());
         } catch (NumberFormatException e) {
             return null;
         }

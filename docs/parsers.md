@@ -191,6 +191,31 @@ This Parser will try to read a floating point number from input and will return 
     
     The command `/mycmd cmd1 aaa` will return an error.
 
+### @Float
+
+**Consumes**: 1
+
+**Returns**: `Float`
+
+**Completions**: `no`
+
+This Parser will try to read a floating point number from input and will return it as a `Float`
+
+!!! example
+    ```java
+    @Command("mycmd")
+    public class MainCommand extends BukkitCommand {
+    
+        @Arg("cmd1 @float")
+        public void myCmd1(CommandSender sender, Float p1) {
+            ...
+        }
+    }
+    ```
+    The command: `/mycmd cmd1 1.5` will provided the method parmeter `p1` with a Float with value `1.5`
+    
+    The command `/mycmd cmd1 aaa` will return an error.
+
 ### @Int
 
 **Consumes**: 1

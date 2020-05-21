@@ -155,7 +155,9 @@ public abstract class BaseCommand {
         // Return best execute
         CommandExecute best = null;
         for (CommandExecute testExecute : commandExecutes.stream().filter(Objects::nonNull).collect(Collectors.toList())) {
-            if (best == null || best.getContext().getParsers().size() < testExecute.getContext().getParsers().size()) {
+            if (best == null
+                    || best.getMethod().getAnnotation(Default.class) != null
+                    || best.getContext().getParsers().size() < testExecute.getContext().getParsers().size()) {
                 best = testExecute;
             }
         }
@@ -305,6 +307,7 @@ public abstract class BaseCommand {
                 if (currentInput.size() == 0) {
                     ret.addAll(e.getParser().getCompletions());
                 }
+                continue;
 
             } catch (SwitchNotFoundException e) {
                 // List switch options
