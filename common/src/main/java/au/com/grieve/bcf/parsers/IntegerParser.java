@@ -88,7 +88,7 @@ public class IntegerParser extends SingleParser {
             }
 
         } catch (NumberFormatException e) {
-            throw new ParserInvalidResultException(this);
+            throw new ParserInvalidResultException(this, "Not a valid integer");
         }
 
         return result;

@@ -26,6 +26,7 @@ package au.com.grieve.bcf.parsers;
 import au.com.grieve.bcf.ArgNode;
 import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandManager;
+import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
 
 import java.util.List;
 
@@ -43,11 +44,11 @@ public class FloatParser extends SingleParser {
     }
 
     @Override
-    protected Object result() {
+    protected Object result() throws ParserInvalidResultException {
         try {
             return Float.valueOf(getInput());
         } catch (NumberFormatException e) {
-            return null;
+            throw new ParserInvalidResultException(this, "Not a valid float");
         }
     }
 }

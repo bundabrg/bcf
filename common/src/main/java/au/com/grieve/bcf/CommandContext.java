@@ -24,6 +24,7 @@
 package au.com.grieve.bcf;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,10 @@ public class CommandContext implements Cloneable {
 
     @Getter
     List<Parser> parsers = new ArrayList<>();
+
+    @Getter
+    @Setter
+    Parser currentParser;
 
     public CommandContext clone() {
         CommandContext clone = null;

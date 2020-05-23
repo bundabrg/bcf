@@ -29,7 +29,6 @@ import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class StringParser extends SingleParser {
@@ -40,7 +39,15 @@ public class StringParser extends SingleParser {
 
     @Override
     protected List<String> complete() {
-        return new ArrayList<>(Arrays.asList(getParameter("options", "").split("\\|")));
+        List<String> result = new ArrayList<>();
+
+        for (String alias : getParameter("options", "").split("\\|")) {
+            if (alias.toLowerCase().startsWith(getInput().toLowerCase())) {
+                result.add(alias);
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -49,7 +56,7 @@ public class StringParser extends SingleParser {
             return getInput();
         }
 
-        for (String alias : argNode.getName().split("\\|")) {
+        for (String alias : getParameter("options", "").split("\\|")) {
             if (alias.toLowerCase().equals(getInput().toLowerCase())) {
                 return alias;
             }
