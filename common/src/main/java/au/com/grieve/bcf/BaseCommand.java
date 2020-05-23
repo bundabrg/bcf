@@ -216,12 +216,6 @@ public abstract class BaseCommand {
             }
         }
 
-//        // If we have no best then send to default
-//        if (best == null) {
-//            System.err.println(getClass().getName() + ":em no best");
-//            best = getDefaultExecute(commandRoot, context);
-//        }
-
         return best;
     }
 
@@ -306,8 +300,23 @@ public abstract class BaseCommand {
                 // End of chain so save completion if no more input
                 if (currentInput.size() == 0) {
                     ret.addAll(e.getParser().getCompletions());
+
+                    if (currentContext.getCurrentParser().getParameter("switch", null) == null) {
+                        if (currentInput.stream().allMatch(s -> s.equals("")) && (input.size() == 0 || input.get(input.size() - 1).equals(""))) {
+                            // Add switches
+                            ret.addAll(currentContext.getSwitches().stream()
+                                    .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
+                                            .limit(1)
+                                    )
+                                    .map(s -> "-" + s)
+                                    .limit(20)
+                                    .collect(Collectors.toList())
+                            );
+                        }
+                    }
+
                 }
-                continue;
+
 
             } catch (SwitchNotFoundException e) {
                 // List switch options
@@ -321,18 +330,6 @@ public abstract class BaseCommand {
                         .collect(Collectors.toList())
                 );
                 continue;
-            }
-
-            if (currentInput.stream().allMatch(s -> s.equals("")) && (input.size() == 0 || input.get(input.size() - 1).equals(""))) {
-                // Add switches
-                ret.addAll(currentContext.getSwitches().stream()
-                        .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
-                                .limit(1)
-                        )
-                        .map(s -> "-" + s)
-                        .limit(20)
-                        .collect(Collectors.toList())
-                );
             }
         }
         return ret;
@@ -361,7 +358,9 @@ public abstract class BaseCommand {
 
             context.getSwitches().remove(parser);
 
-            parser.parse(input, defaults);
+            context.setCurrentParser(parser);
+
+            parser.parse(input, false);
             parser.getResult();
         }
     }
@@ -384,6 +383,8 @@ public abstract class BaseCommand {
             } else {
                 // Handle switches
                 parseSwitches(commandRoot, input, context, defaults);
+
+                context.setCurrentParser(parser);
 
                 parser.parse(input, defaults);
                 parser.getResult();

@@ -55,10 +55,8 @@ public class LiteralParser extends SingleParser {
         for (String alias : argNode.getName().split("\\|")) {
             if (alias.equals("*")) {
                 result.add(getInput());
-//                return result;
-            } else if (alias.startsWith(getInput())) {
+            } else if (alias.toLowerCase().startsWith(getInput().toLowerCase())) {
                 result.add(alias);
-//                return result;
             }
         }
 
@@ -72,8 +70,8 @@ public class LiteralParser extends SingleParser {
                 return getInput();
             }
 
-            if (alias.equals(getInput())) {
-                return getInput();
+            if (alias.toLowerCase().equals(getInput().toLowerCase())) {
+                return alias;
             }
         }
 

@@ -57,7 +57,6 @@ public class CommandRoot {
     }
 
     public void addSubCommand(Class<? extends BaseCommand> cmd) {
-        System.err.println(command.getClass().getName() + ":addSubCommand:" + cmd);
         // Lookup all parent classes till it reaches our command
         if (!commandMap.containsKey(cmd)) {
             try {

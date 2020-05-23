@@ -72,8 +72,8 @@ public abstract class SingleParser extends Parser {
 
     @Override
     public Object getResult() throws ParserInvalidResultException {
-        if (input == null) {
-            return null;
+        if (input == null || input.isEmpty()) {
+            throw new ParserInvalidResultException(this, "Invalid command");
         }
 
         return super.getResult();
