@@ -26,6 +26,11 @@ package au.com.grieve.bcf.parsers;
 import au.com.grieve.bcf.ArgNode;
 import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandManager;
+import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class StringParser extends SingleParser {
 
@@ -34,7 +39,22 @@ public class StringParser extends SingleParser {
     }
 
     @Override
-    protected Object result() {
-        return getInput();
+    protected List<String> complete() {
+        return new ArrayList<>(Arrays.asList(getParameter("options", "").split("\\|")));
+    }
+
+    @Override
+    protected Object result() throws ParserInvalidResultException {
+        if (getParameter("options", "").isEmpty()) {
+            return getInput();
+        }
+
+        for (String alias : argNode.getName().split("\\|")) {
+            if (alias.toLowerCase().equals(getInput().toLowerCase())) {
+                return alias;
+            }
+        }
+
+        throw new ParserInvalidResultException(this, "Invalid Option");
     }
 }
