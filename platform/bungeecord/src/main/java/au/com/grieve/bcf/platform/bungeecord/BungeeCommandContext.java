@@ -21,35 +21,21 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.platform.bungeecord;
 
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import au.com.grieve.bcf.CommandContext;
+import lombok.Getter;
+import net.md_5.bungee.api.CommandSender;
 
-import java.util.Arrays;
-import java.util.List;
+public class BungeeCommandContext extends CommandContext {
 
-public class BukkitCommandRoot extends CommandRoot {
-    BukkitCommandRoot(CommandManager manager, Class<? extends BaseCommand> command) {
-        super(manager, command);
-    }
+    // Bukkit Command Sender
+    @Getter
+    private final CommandSender sender;
 
-    public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-        BukkitCommandContext context = new BukkitCommandContext(sender);
-        CommandExecute commandExecute = command.execute(this, Arrays.asList(args), context);
-        if (commandExecute != null) {
-            commandExecute.invoke(sender);
-            return true;
-        }
-        return false;
-    }
+    public BungeeCommandContext(CommandSender sender) {
+        super();
 
-    public @NotNull List<String> complete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-        BukkitCommandContext context = new BukkitCommandContext(sender);
-        return command.complete(this, Arrays.asList(args), context);
-    }
-
-    public boolean testPermission(@NotNull CommandSender sender) {
-        return ((BukkitCommand) command).testPermission(sender);
+        this.sender = sender;
     }
 }

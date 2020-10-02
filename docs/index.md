@@ -2,7 +2,7 @@
 
 ## What is bcf
 
-`bcf` is a Command Management tool suitable for use in Bukkit/Spigot/PaperMC, though it may support other platforms 
+`bcf` is a Command Management tool suitable for use in Bukkit/Spigot/PaperMC and Bungeecord, though it may support other platforms 
 in the near future.
 
 It allows one to easily provide full command completion for all your commands as

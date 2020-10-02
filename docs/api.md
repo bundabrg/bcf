@@ -16,15 +16,26 @@ Add the following repository to your `pom.xml`
 </repository>   
 ```
 
-Add the following dependency to your `pom.xml`
+Add the following dependency to your `pom.xml` if you are using Bukkit, Spigot or Paper:
 ```xml
 <dependency>
     <groupId>au.com.grieve.bcf</groupId>
     <artifactId>bukkit</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.5</version>
     <scope>provided</scope>
 </dependency>
 ```
+
+For Bungeecord add the following:
+```xml
+<dependency>
+    <groupId>au.com.grieve.bcf</groupId>
+    <artifactId>bungeecord</artifactId>
+    <version>1.2.5</version>
+    <scope>provided</scope>
+</dependency>
+```
+
 
 Shade the library into your own code by adding in your `pom.xml`
 ```xml
@@ -57,7 +68,8 @@ Shade the library into your own code by adding in your `pom.xml`
 
 ## Command Class
 
-To create a command extend from an appropriate BaseCommand class and annotate with @Command. For a Bukkit plugin use `BukkitCommand`.
+To create a command extend from an appropriate BaseCommand class and annotate with @Command. For a Bukkit plugin use `BukkitCommand`, and Bungeecord
+uses `BungeeCommand`.
 
 !!! example
     ```java
@@ -80,7 +92,7 @@ add commands under your plugin.
 ## Command Manager
 
 During your plugin initialization you need to setup a new Command Manager instance.  For Bukkit
-use a `BukkitCommandManager`, passing your own plugin as a parameter.
+use a `BukkitCommandManager`, and for Bungeecord use `BungeeCommandManager`, passing your own plugin as a parameter.
 
 Then register each of your Command classes with the manager, passing the class type as a parameter.
 
@@ -103,7 +115,7 @@ Then register each of your Command classes with the manager, passing the class t
     ```
 ## Parser
 
-You may wish to add your own custom parser. Either the built in ones are not sufficient or you
+You may wish to add your own custom parser. Either the built in ones are not sufficient, or you
 have some custom arguments that need to be parsed in a special way.
 
 !!! note

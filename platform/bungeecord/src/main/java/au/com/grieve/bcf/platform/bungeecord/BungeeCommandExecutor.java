@@ -21,38 +21,31 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.platform.bungeecord;
 
-import lombok.Getter;
-import lombok.Setter;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-import java.util.ArrayList;
-import java.util.List;
+public class BungeeCommandExecutor extends Command implements TabExecutor {
 
-public class CommandContext implements Cloneable {
-    @Getter
-    private List<Parser> switches = new ArrayList<>();
+    final BungeeCommandRoot commandRoot;
 
-    @Getter
-    private List<Parser> parsers = new ArrayList<>();
+    public BungeeCommandExecutor(String name, BungeeCommandRoot commandRoot, String... aliases) {
+        super(name, null, aliases);
+        this.commandRoot = commandRoot;
+    }
 
-    @Getter
-    @Setter
-    private Parser currentParser;
-
-    public CommandContext clone() {
-        CommandContext clone;
-        try {
-            clone = (CommandContext) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
+    @Override
+    public void execute(CommandSender sender, String[] args) {
+        if (hasPermission(sender)) {
+            commandRoot.execute(sender, args);
         }
+    }
 
-        // Clone Data
-        clone.getSwitches().addAll(switches);
-        clone.getParsers().addAll(parsers);
 
-        return clone;
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        return commandRoot.complete(sender, args);
     }
 }

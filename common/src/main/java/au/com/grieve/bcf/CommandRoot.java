@@ -32,10 +32,10 @@ import java.util.Map;
 
 public class CommandRoot {
     @Getter
-    final BaseCommand command;
+    private final BaseCommand command;
 
     @Getter
-    final CommandManager manager;
+    private final CommandManager manager;
 
     //final List<BaseCommand> subCommands = new ArrayList<>();
 
@@ -43,7 +43,7 @@ public class CommandRoot {
     protected final Map<Class<?>, BaseCommand> commandMap = new HashMap<>();
 
 
-    CommandRoot(CommandManager manager, Class<? extends BaseCommand> cmd) {
+    public CommandRoot(CommandManager manager, Class<? extends BaseCommand> cmd) {
         this.manager = manager;
         BaseCommand command = null;
         try {
@@ -60,7 +60,7 @@ public class CommandRoot {
         // Lookup all parent classes till it reaches our command
         if (!commandMap.containsKey(cmd)) {
             try {
-                commandMap.put(cmd, (BaseCommand) cmd.getConstructor().newInstance());
+                commandMap.put(cmd, cmd.getConstructor().newInstance());
             } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -92,7 +92,7 @@ public class CommandRoot {
         }
     }
 
-    Parser getParser(ArgNode argNode, CommandContext context) {
+    protected Parser getParser(ArgNode argNode, CommandContext context) {
         return manager.getParser(argNode, context);
 
     }

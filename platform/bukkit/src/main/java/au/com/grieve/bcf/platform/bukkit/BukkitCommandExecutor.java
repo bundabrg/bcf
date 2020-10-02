@@ -21,38 +21,39 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.platform.bukkit;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class CommandContext implements Cloneable {
-    @Getter
-    private List<Parser> switches = new ArrayList<>();
+public class BukkitCommandExecutor extends Command {
 
-    @Getter
-    private List<Parser> parsers = new ArrayList<>();
+    final BukkitCommandRoot commandRoot;
 
-    @Getter
-    @Setter
-    private Parser currentParser;
+    public BukkitCommandExecutor(String name, BukkitCommandRoot commandRoot) {
+        super(name);
+        this.commandRoot = commandRoot;
+    }
 
-    public CommandContext clone() {
-        CommandContext clone;
-        try {
-            clone = (CommandContext) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
+    @Override
+    public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
+        if (testPermission(sender)) {
+            return commandRoot.execute(sender, alias, args);
         }
+        return false;
+    }
 
-        // Clone Data
-        clone.getSwitches().addAll(switches);
-        clone.getParsers().addAll(parsers);
 
-        return clone;
+    @Override
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
+        return commandRoot.complete(sender, alias, args);
+    }
+
+    @Override
+    public boolean testPermissionSilent(@NotNull CommandSender target) {
+        return commandRoot.testPermission(target);
     }
 }

@@ -21,8 +21,12 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.platform.bukkit;
 
+import au.com.grieve.bcf.BaseCommand;
+import au.com.grieve.bcf.CommandContext;
+import au.com.grieve.bcf.CommandExecute;
+import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Default;
 import au.com.grieve.bcf.annotations.Error;
 import au.com.grieve.bcf.annotations.Permission;
@@ -70,7 +74,7 @@ public class BukkitCommand extends BaseCommand {
         return false;
     }
 
-    CommandExecute execute(CommandRoot commandRoot, List<String> input, CommandContext context) {
+    public CommandExecute execute(CommandRoot commandRoot, List<String> input, CommandContext context) {
         if (!testPermission(((BukkitCommandContext) context).getSender())) {
             return null;
         }
@@ -78,7 +82,7 @@ public class BukkitCommand extends BaseCommand {
         return super.execute(commandRoot, input, context);
     }
 
-    CommandExecute executeMethod(Method method, CommandRoot commandRoot, List<String> input, CommandContext context) {
+    protected CommandExecute executeMethod(Method method, CommandRoot commandRoot, List<String> input, CommandContext context) {
         Permission[] permissions = method.getAnnotationsByType(Permission.class);
         BukkitCommandContext bukkitCommandContext = (BukkitCommandContext) context;
 
@@ -97,7 +101,7 @@ public class BukkitCommand extends BaseCommand {
 
     }
 
-    List<String> complete(CommandRoot commandRoot, List<String> input, CommandContext context) {
+    public List<String> complete(CommandRoot commandRoot, List<String> input, CommandContext context) {
 
         Permission[] permissions = getClass().getAnnotationsByType(Permission.class);
         BukkitCommandContext bukkitCommandContext = (BukkitCommandContext) context;
@@ -117,7 +121,7 @@ public class BukkitCommand extends BaseCommand {
     }
 
     @Override
-    List<String> completeMethod(Method method, CommandRoot commandRoot, List<String> input, CommandContext context) {
+    protected List<String> completeMethod(Method method, CommandRoot commandRoot, List<String> input, CommandContext context) {
         Permission[] permissions = method.getAnnotationsByType(Permission.class);
         BukkitCommandContext bukkitCommandContext = (BukkitCommandContext) context;
 

@@ -21,13 +21,14 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.parsers;
+package au.com.grieve.bcf.platform.bukkit.parsers;
 
 import au.com.grieve.bcf.ArgNode;
-import au.com.grieve.bcf.BukkitCommandContext;
 import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
+import au.com.grieve.bcf.parsers.SingleParser;
+import au.com.grieve.bcf.platform.bukkit.BukkitCommandContext;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;

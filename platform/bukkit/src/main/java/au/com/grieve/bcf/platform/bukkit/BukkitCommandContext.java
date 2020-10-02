@@ -21,8 +21,9 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.platform.bukkit;
 
+import au.com.grieve.bcf.CommandContext;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 

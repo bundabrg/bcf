@@ -34,16 +34,16 @@ import java.util.stream.Collectors;
 
 public class CommandExecute {
     @Getter
-    final Method method;
+    private final Method method;
 
     @Getter
-    final BaseCommand command;
+    private final BaseCommand command;
 
     @Getter
-    final List<Object> parameters = new ArrayList<>();
+    private final List<Object> parameters = new ArrayList<>();
 
     @Getter
-    final CommandContext context;
+    private final CommandContext context;
 
     public CommandExecute(BaseCommand command, Method method, List<Object> parameters, CommandContext context) {
         this.command = command;

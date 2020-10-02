@@ -21,39 +21,39 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.platform.bukkit;
 
-import org.bukkit.command.Command;
+import au.com.grieve.bcf.BaseCommand;
+import au.com.grieve.bcf.CommandExecute;
+import au.com.grieve.bcf.CommandManager;
+import au.com.grieve.bcf.CommandRoot;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 
-public class BukkitCommandExecutor extends Command {
-
-    final BukkitCommandRoot commandRoot;
-
-    public BukkitCommandExecutor(String name, BukkitCommandRoot commandRoot) {
-        super(name);
-        this.commandRoot = commandRoot;
+public class BukkitCommandRoot extends CommandRoot {
+    BukkitCommandRoot(CommandManager manager, Class<? extends BaseCommand> command) {
+        super(manager, command);
     }
 
-    @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-        if (testPermission(sender)) {
-            return commandRoot.execute(sender, alias, args);
+        BukkitCommandContext context = new BukkitCommandContext(sender);
+        CommandExecute commandExecute = getCommand().execute(this, Arrays.asList(args), context);
+        if (commandExecute != null) {
+            commandExecute.invoke(sender);
+            return true;
         }
         return false;
     }
 
-
-    @Override
-    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
-        return commandRoot.complete(sender, alias, args);
+    public @NotNull List<String> complete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
+        BukkitCommandContext context = new BukkitCommandContext(sender);
+        return getCommand().complete(this, Arrays.asList(args), context);
     }
 
-    @Override
-    public boolean testPermissionSilent(@NotNull CommandSender target) {
-        return commandRoot.testPermission(target);
+    public boolean testPermission(@NotNull CommandSender sender) {
+        return ((BukkitCommand) getCommand()).testPermission(sender);
     }
 }

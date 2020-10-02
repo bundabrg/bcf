@@ -97,7 +97,7 @@ public abstract class CommandManager {
         return null;
     }
 
-    CommandRoot createCommandRoot(Class<? extends BaseCommand> cmd) {
+    protected CommandRoot createCommandRoot(Class<? extends BaseCommand> cmd) {
         return new CommandRoot(this, cmd);
     }
 

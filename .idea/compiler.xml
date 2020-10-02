@@ -8,13 +8,16 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="common" />
+        <module name="bungeecord" />
         <module name="bukkit" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="bcf" target="11" />
       <module name="bukkit" target="11" />
+      <module name="bungeecord" target="11" />
       <module name="common" target="11" />
+      <module name="platform" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

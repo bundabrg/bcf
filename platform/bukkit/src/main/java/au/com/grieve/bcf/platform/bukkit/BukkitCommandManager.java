@@ -21,10 +21,13 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.platform.bukkit;
 
+import au.com.grieve.bcf.BaseCommand;
+import au.com.grieve.bcf.CommandManager;
+import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Command;
-import au.com.grieve.bcf.parsers.PlayerParser;
+import au.com.grieve.bcf.platform.bukkit.parsers.PlayerParser;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandMap;
@@ -71,7 +74,7 @@ public class BukkitCommandManager extends CommandManager {
     }
 
     @Override
-    CommandRoot createCommandRoot(Class<? extends BaseCommand> cmd) {
+    protected CommandRoot createCommandRoot(Class<? extends BaseCommand> cmd) {
         BukkitCommandRoot cr = new BukkitCommandRoot(this, cmd);
 
         // Get Name and Aliases
