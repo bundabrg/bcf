@@ -294,11 +294,19 @@
     <span class="nt">&lt;/snapshots&gt;</span>
 <span class="nt">&lt;/repository&gt;</span>   
 </code></pre></div>
-<p>Add the following dependency to your <code>pom.xml</code>
+<p>Add the following dependency to your <code>pom.xml</code> if you are using Bukkit, Spigot or Paper:
 <div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>au.com.grieve.bcf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>bukkit<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.2.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.2.5<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div></p>
+<p>For Bungeecord add the following:
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>au.com.grieve.bcf<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>bungeecord<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.2.5<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </code></pre></div></p>
@@ -330,7 +338,8 @@
 <span class="nt">&lt;/build&gt;</span>
 </code></pre></div></p>
 <h2 id="command-class">Command Class<a class="headerlink" href="#command-class" title="Permanent link">¶</a></h2>
-<p>To create a command extend from an appropriate BaseCommand class and annotate with @Command. For a Bukkit plugin use <code>BukkitCommand</code>.</p>
+<p>To create a command extend from an appropriate BaseCommand class and annotate with @Command. For a Bukkit plugin use <code>BukkitCommand</code>, and Bungeecord
+uses <code>BungeeCommand</code>.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">"mycmd"</span><span class="p">)</span>
@@ -350,7 +359,7 @@ separate groups of commands.  This can also be an effective way to allow 3<sup>r
 add commands under your plugin.</p>
 <h2 id="command-manager">Command Manager<a class="headerlink" href="#command-manager" title="Permanent link">¶</a></h2>
 <p>During your plugin initialization you need to setup a new Command Manager instance.  For Bukkit
-use a <code>BukkitCommandManager</code>, passing your own plugin as a parameter.</p>
+use a <code>BukkitCommandManager</code>, and for Bungeecord use <code>BungeeCommandManager</code>, passing your own plugin as a parameter.</p>
 <p>Then register each of your Command classes with the manager, passing the class type as a parameter.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
@@ -370,7 +379,7 @@ use a <code>BukkitCommandManager</code>, passing your own plugin as a parameter.
 </code></pre></div>
 </div>
 <h2 id="parser">Parser<a class="headerlink" href="#parser" title="Permanent link">¶</a></h2>
-<p>You may wish to add your own custom parser. Either the built in ones are not sufficient or you
+<p>You may wish to add your own custom parser. Either the built in ones are not sufficient, or you
 have some custom arguments that need to be parsed in a special way.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -460,7 +469,7 @@ command candidate.</p>
 <div class="md-source-date">
 <small>
     
-      Last update: <span class="timeago" datetime="1590221850000" locale="en"></span>
+      Last update: <span class="timeago" datetime="1601646350000" locale="en"></span>
 </small>
 </div>
 </article>
