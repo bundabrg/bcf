@@ -177,8 +177,6 @@ jobs:
             ${tag_name} \
             "Release ${tag_name}" << EOF
           [plain]
-          Release $tag_name
-
           $(git log HEAD^..HEAD --pretty=format:'%s%n%n%b')
 
           Since Last Release:
