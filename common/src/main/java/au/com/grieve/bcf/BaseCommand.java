@@ -56,7 +56,7 @@ public abstract class BaseCommand {
         Method defaultMethod = null;
 
         // Check if we have an error Method
-        for (Method method : getClass().getDeclaredMethods()) {
+        for (Method method : getClass().getMethods()) {
             if (errorMethod == null && method.getAnnotation(Error.class) != null) {
                 errorMethod = method;
                 continue;

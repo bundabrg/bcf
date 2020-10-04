@@ -42,7 +42,7 @@ public class BungeeCommand extends BaseCommand {
 
     // Default Error
     @Error
-    void onError(CommandSender sender, String message) {
+    public void onError(CommandSender sender, String message) {
         sender.sendMessage(
                 new ComponentBuilder(message).color(ChatColor.RED).create()
         );
@@ -50,7 +50,7 @@ public class BungeeCommand extends BaseCommand {
 
     // Default Default
     @Default
-    void onDefault(CommandSender sender) {
+    public void onDefault(CommandSender sender) {
         sender.sendMessage(
                 new ComponentBuilder("Invalid Command").color(ChatColor.RED).create()
         );
