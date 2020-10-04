@@ -106,8 +106,8 @@ public abstract class BaseCommand {
     public CommandExecute execute(CommandRoot commandRoot, List<String> input, CommandContext context) {
         List<CommandExecute> commandExecutes = new ArrayList<>();
 
-        // Go through class Args first if they exist
-        if (getClass().getAnnotationsByType(Arg.class).length > 0) {
+        // Go through class Args first if they exist, as long as they are not on our commandRoot class (to allow @Commands to override @Args)
+        if (commandRoot.getCommand() != this && getClass().getAnnotationsByType(Arg.class).length > 0) {
             for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
                 List<String> currentInput = new ArrayList<>(input);
                 List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", classArgs.value()));
@@ -222,8 +222,8 @@ public abstract class BaseCommand {
     public List<String> complete(CommandRoot commandRoot, List<String> input, CommandContext context) {
         List<String> ret = new ArrayList<>();
 
-        // Go through class Args first
-        if (getClass().getAnnotationsByType(Arg.class).length > 0) {
+        // Go through class Args first as long as its not our commandroot command to allow @Command to override @Args
+        if (commandRoot.getCommand() != this && getClass().getAnnotationsByType(Arg.class).length > 0) {
             for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
                 List<String> currentInput = new ArrayList<>(input);
                 List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", classArgs.value()));
