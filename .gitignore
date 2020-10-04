@@ -115,3 +115,7 @@ buildNumber.properties
 # Ignore mkdocs
 #site/
 #gh-pages/
+
+# IntelliJ
+.idea/*
+!.idea/copyright
