@@ -27,15 +27,20 @@ import au.com.grieve.bcf.CommandContext;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 
+@Getter
 public class BukkitCommandContext extends CommandContext {
 
     // Bukkit Command Sender
-    @Getter
     private final CommandSender sender;
 
     public BukkitCommandContext(CommandSender sender) {
         super();
 
         this.sender = sender;
+    }
+
+    public BukkitCommandContext(CommandContext original) {
+        super(original);
+        this.sender = ((BukkitCommandContext) original).getSender();
     }
 }

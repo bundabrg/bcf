@@ -111,7 +111,7 @@ public abstract class BaseCommand {
             for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
                 List<String> currentInput = new ArrayList<>(input);
                 List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", classArgs.value()));
-                CommandContext currentContext = context.clone();
+                CommandContext currentContext = context.copy();
 
 
                 try {
@@ -139,7 +139,7 @@ public abstract class BaseCommand {
             }
         } else {
             List<String> currentInput = new ArrayList<>(input);
-            CommandContext currentContext = context.clone();
+            CommandContext currentContext = context.copy();
 
             // Process methods
             for (Method method : getClass().getDeclaredMethods()) {
@@ -155,10 +155,30 @@ public abstract class BaseCommand {
         // Return best execute
         CommandExecute best = null;
         for (CommandExecute testExecute : commandExecutes.stream().filter(Objects::nonNull).collect(Collectors.toList())) {
-            if (best == null
-                    || best.getMethod().getAnnotation(Default.class) != null
-                    || best.getMethod().getAnnotation(Error.class) != null
-                    || best.getContext().getParsers().size() < testExecute.getContext().getParsers().size()) {
+            // Always replace best when its null
+            if (best == null) {
+                best = testExecute;
+                continue;
+            }
+
+            // A longer chain always replaces a shorter chain
+            if (best.getContext().getParsers().size() < testExecute.getContext().getParsers().size()) {
+                best = testExecute;
+                continue;
+            }
+
+            // Equal chains rely on priority
+            if (best.getContext().getParsers().size() == testExecute.getContext().getParsers().size()) {
+                if (testExecute.getMethod().isAnnotationPresent(Default.class)) {
+                    continue;
+                }
+
+                if (testExecute.getMethod().isAnnotationPresent(Error.class)) {
+                    if (!best.getMethod().isAnnotationPresent(Default.class)) {
+                        continue;
+                    }
+                }
+
                 best = testExecute;
             }
         }
@@ -180,7 +200,7 @@ public abstract class BaseCommand {
         for (Arg methodArgs : method.getAnnotationsByType(Arg.class)) {
             List<String> currentInput = new ArrayList<>(input);
             List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", methodArgs.value()));
-            CommandContext currentContext = context.clone();
+            CommandContext currentContext = context.copy();
 
             try {
                 parseArg(commandRoot, currentArgs, currentInput, currentContext);
@@ -212,10 +232,30 @@ public abstract class BaseCommand {
         // Return best execute
         CommandExecute best = null;
         for (CommandExecute testExecute : commandExecutes.stream().filter(Objects::nonNull).collect(Collectors.toList())) {
-            if (best == null
-                    || best.getMethod().getAnnotation(Default.class) != null
-                    || best.getMethod().getAnnotation(Error.class) != null
-                    || best.getContext().getParsers().size() < testExecute.getContext().getParsers().size()) {
+            // Always replace best when its null
+            if (best == null) {
+                best = testExecute;
+                continue;
+            }
+
+            // A longer chain always replaces a shorter chain
+            if (best.getContext().getParsers().size() < testExecute.getContext().getParsers().size()) {
+                best = testExecute;
+                continue;
+            }
+
+            // Equal chains rely on priority
+            if (best.getContext().getParsers().size() == testExecute.getContext().getParsers().size()) {
+                if (testExecute.getMethod().isAnnotationPresent(Default.class)) {
+                    continue;
+                }
+
+                if (testExecute.getMethod().isAnnotationPresent(Error.class)) {
+                    if (!best.getMethod().isAnnotationPresent(Default.class)) {
+                        continue;
+                    }
+                }
+
                 best = testExecute;
             }
         }
@@ -231,7 +271,7 @@ public abstract class BaseCommand {
             for (Arg classArgs : getClass().getAnnotationsByType(Arg.class)) {
                 List<String> currentInput = new ArrayList<>(input);
                 List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", classArgs.value()));
-                CommandContext currentContext = context.clone();
+                CommandContext currentContext = context.copy();
 
 
                 try {
@@ -268,7 +308,7 @@ public abstract class BaseCommand {
             }
         } else {
             List<String> currentInput = new ArrayList<>(input);
-            CommandContext currentContext = context.clone();
+            CommandContext currentContext = context.copy();
 
             // Process methods
             for (Method method : getClass().getDeclaredMethods()) {
@@ -296,7 +336,7 @@ public abstract class BaseCommand {
         for (Arg methodArgs : method.getAnnotationsByType(Arg.class)) {
             List<String> currentInput = new ArrayList<>(input);
             List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", methodArgs.value()));
-            CommandContext currentContext = context.clone();
+            CommandContext currentContext = context.copy();
 
             try {
                 parseArg(commandRoot, currentArgs, currentInput, currentContext, false);

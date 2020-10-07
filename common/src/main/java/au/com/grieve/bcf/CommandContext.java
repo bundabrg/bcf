@@ -26,33 +26,32 @@ package au.com.grieve.bcf;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandContext implements Cloneable {
-    @Getter
-    private List<Parser> switches = new ArrayList<>();
+@Getter
+public class CommandContext {
+    private final List<Parser> switches = new ArrayList<>();
+    private final List<Parser> parsers = new ArrayList<>();
 
-    @Getter
-    private List<Parser> parsers = new ArrayList<>();
-
-    @Getter
     @Setter
     private Parser currentParser;
 
-    public CommandContext clone() {
-        CommandContext clone;
+    public CommandContext() {
+    }
+
+    public CommandContext(CommandContext original) {
+        switches.addAll(original.getSwitches());
+        parsers.addAll(original.getParsers());
+        currentParser = original.getCurrentParser();
+    }
+
+    public CommandContext copy() {
         try {
-            clone = (CommandContext) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
+            return getClass().getConstructor(CommandContext.class).newInstance(this);
+        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
-
-        // Clone Data
-        clone.getSwitches().addAll(switches);
-        clone.getParsers().addAll(parsers);
-
-        return clone;
     }
 }

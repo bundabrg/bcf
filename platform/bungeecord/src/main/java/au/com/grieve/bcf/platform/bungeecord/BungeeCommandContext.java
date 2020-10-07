@@ -38,4 +38,9 @@ public class BungeeCommandContext extends CommandContext {
 
         this.sender = sender;
     }
+
+    public BungeeCommandContext(CommandContext original) {
+        super(original);
+        this.sender = ((BungeeCommandContext) original).getSender();
+    }
 }
