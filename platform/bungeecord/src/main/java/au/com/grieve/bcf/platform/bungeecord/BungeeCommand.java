@@ -32,7 +32,10 @@ import au.com.grieve.bcf.annotations.Error;
 import au.com.grieve.bcf.annotations.Permission;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -139,5 +142,15 @@ public class BungeeCommand extends BaseCommand {
         return super.completeMethod(method, commandRoot, input, context);
     }
 
+    public BungeeCommand sendMessage(CommandSender sender, BaseComponent... components) {
+        boolean isMultiline = TextComponent.toLegacyText(components).contains("\n");
+        ComponentBuilder cb = new ComponentBuilder();
+        // If we are console we'll add a newline first to make things neater when multiline output
+        if (isMultiline && !(sender instanceof ProxiedPlayer)) {
+            cb.append("\n");
+        }
+        sender.sendMessage(cb.append(components).create());
+        return this;
+    }
 
 }
