@@ -21,8 +21,7 @@ Add the following dependency to your `pom.xml` if you are using Bukkit, Spigot o
 <dependency>
     <groupId>au.com.grieve.bcf</groupId>
     <artifactId>bukkit</artifactId>
-    <version>1.2.5</version>
-    <scope>provided</scope>
+    <version>1.2.8</version>
 </dependency>
 ```
 
@@ -31,8 +30,7 @@ For Bungeecord add the following:
 <dependency>
     <groupId>au.com.grieve.bcf</groupId>
     <artifactId>bungeecord</artifactId>
-    <version>1.2.5</version>
-    <scope>provided</scope>
+    <version>1.2.8</version>
 </dependency>
 ```
 

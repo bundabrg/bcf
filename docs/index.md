@@ -226,8 +226,7 @@ the command will be rejected.  Designating a switch parameter means it is no lon
     <dependency>
         <groupId>au.com.grieve.bcf</groupId>
         <artifactId>bukkit</artifactId>
-        <version>1.2.0</version>
-        <scope>provided</scope>
+        <version>1.2.8</version>
     </dependency>
     ```
    
