@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -55,5 +55,9 @@ public class BukkitCommandRoot extends CommandRoot {
 
     public boolean testPermission(@NotNull CommandSender sender) {
         return ((BukkitCommand) getCommand()).testPermission(sender);
+    }
+
+    public String[] getPermissions() {
+        return ((BukkitCommand) getCommand()).getPermissions();
     }
 }
