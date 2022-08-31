@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -36,6 +36,7 @@ public class BukkitCommandExecutor extends Command {
     public BukkitCommandExecutor(String name, BukkitCommandRoot commandRoot) {
         super(name);
         this.commandRoot = commandRoot;
+        setPermission(String.join(";", commandRoot.getPermissions()));
     }
 
     @Override
@@ -50,10 +51,5 @@ public class BukkitCommandExecutor extends Command {
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
         return commandRoot.complete(sender, alias, args);
-    }
-
-    @Override
-    public boolean testPermissionSilent(@NotNull CommandSender target) {
-        return commandRoot.testPermission(target);
     }
 }

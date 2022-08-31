@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -36,6 +36,7 @@ import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BukkitCommand extends BaseCommand {
@@ -57,17 +58,21 @@ public class BukkitCommand extends BaseCommand {
     }
 
     /**
+     * Retrieve List of permissions
+     */
+    public String[] getPermissions() {
+        return Arrays.stream(getClass().getAnnotationsByType(Permission.class))
+                .map(Permission::value)
+                .toArray(String[]::new);
+    }
+
+    /**
      * Return true if class permits permission of sender
      */
     public boolean testPermission(CommandSender sender) {
-        Permission[] permissions = getClass().getAnnotationsByType(Permission.class);
-        if (permissions.length == 0) {
-            return true;
-        }
-
         // Check Sender has any permissions
-        for (Permission permission : permissions) {
-            if (sender.hasPermission(permission.value())) {
+        for (String permission : getPermissions()) {
+            if (sender.hasPermission(permission)) {
                 return true;
             }
         }
