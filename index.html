@@ -424,26 +424,39 @@ features I felt I desperately needed for some reason. The name <code>bcf</code> 
 <ul>
 <li>
 <p>Define your commands by simply extending a BaseCommand derived class (like <code>BukkitCommand</code>) and annotating it with
-a <code>@Command</code> to define it, with any aliases separated by a <code>|</code>.</p>
+  a <code>@Command</code> to define it, with any aliases separated by a <code>|</code>.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
 <p><div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd|my|m&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">myCommand</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BukkitCommand</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">   </span><span class="p">...</span><span class="w"></span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyCommand</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BukkitCommand</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 All of <code>/mycmd</code>, <code>/my</code>, <code>/m</code> are valid commands with the latter 2 designated as aliases.</p>
 </div>
 </li>
 <li>
+<p>Register the class with the manager. For example in a Bukkit/Spigot/Paper based plugin you would use <code>BukkitManager</code></p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyPlugin</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">JavaPlugin</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">onEnable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">BukkitCommandManager</span><span class="w"> </span><span class="n">bcf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">BukkitCommandManager</span><span class="p">(</span><span class="k">this</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">bcf</span><span class="p">.</span><span class="na">registerCommand</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MyCommand</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+</div>
+</li>
+<li>
 <p>Annotate your method with <code>@Arg</code> to define what arguments it is expecting. This is a string of arguments that may
-consume 0 or more words from a users input both to provide command completion as well as to fully resolve and pass 
-objects to the method.</p>
+  consume 0 or more words from a users input both to provide command completion and to fully resolve and pass
+  objects to the method.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;give|g @player(required=true, default=%self, mode=online)&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">onGive</span><span class="p">(</span><span class="n">CommandSender</span><span class="w"> </span><span class="n">sender</span><span class="p">,</span><span class="w"> </span><span class="n">Player</span><span class="w"> </span><span class="n">player</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span>
-<span class="w">   </span><span class="p">...</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 </div>
@@ -455,7 +468,7 @@ objects to the method.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;give|g @player(required=true, default=%self, mode=online)&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;sudo give @player(required=true, default=%self, mode=online)&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">onGive</span><span class="p">(</span><span class="n">CommandSender</span><span class="w"> </span><span class="n">sender</span><span class="p">,</span><span class="w"> </span><span class="n">Player</span><span class="w"> </span><span class="n">player</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span>
-<span class="w">   </span><span class="p">...</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 </div>
@@ -470,7 +483,7 @@ objects to the method.</p>
 
 <span class="w">    </span><span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;tpto @world&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">doThis</span><span class="p">(</span><span class="n">CommandSender</span><span class="p">,</span><span class="w"> </span><span class="n">Player</span><span class="w"> </span><span class="n">player</span><span class="p">,</span><span class="w"> </span><span class="n">World</span><span class="w"> </span><span class="n">world</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">       </span><span class="p">...</span><span class="w"></span>
+<span class="w">        </span><span class="p">...</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
@@ -478,18 +491,26 @@ To reach doThis the command is: <code>/do for &lt;playername&gt; tpto &lt;worldn
 </div>
 </li>
 <li>
-<p>Your class can extend another command class to inherit any of its settings. For example a 3<sup>rd</sup> party
-plugin could extend your command class to add sub-commands under your own.</p>
+<p>Your class can add itself as a child of another command class to inherit any of its settings. For example a 3<sup>rd</sup> party
+  plugin could extend your command class to add sub-commands under your own. This is done by registering the sub-class
+  with the manager with the <code>registerSubCommand</code> method.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<p><div class="highlight"><pre><span></span><code><span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;sudo&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="kd">class</span> <span class="nc">MySubCommand</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">MyCommand</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;sudo&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="kd">class</span> <span class="nc">MySubCommand</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BukkitCommand</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
 <span class="w">    </span><span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;kill&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">killPlayer</span><span class="p">(</span><span class="n">CommandSender</span><span class="p">,</span><span class="w"> </span><span class="n">Player</span><span class="w"> </span><span class="n">player</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">       </span><span class="p">...</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AnotherPlugin</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">JavaPlugin</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">onEnable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">          </span><span class="n">BukkitCommandManager</span><span class="w"> </span><span class="n">bcf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">BukkitCommandManager</span><span class="p">(</span><span class="k">this</span><span class="p">);</span><span class="w"></span>
+<span class="w">          </span><span class="n">bcf</span><span class="p">.</span><span class="na">registerSubCommand</span><span class="p">(</span><span class="n">MyCommand</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MySubCommand</span><span class="p">());</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
 </code></pre></div>
 To execute killPlayer the full command now is: <code>/do for &lt;playername&gt; sudo kill</code></p>
 </div>
@@ -640,9 +661,13 @@ Valid commands would be:</p>
     <div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>au.com.grieve.bcf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>bukkit<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.2.8<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.2.9<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Don't forget to check what the latest verison is as these documents may be out of date.</p>
+</div>
 </li>
 <li>
 <p>Shade the library into your own code by adding in your <code>pom.xml</code></p>
@@ -693,7 +718,7 @@ Valid commands would be:</p>
 <span class="n">bcf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">BukkitCommandManager</span><span class="p">(</span><span class="k">this</span><span class="p">);</span><span class="w"></span>
 
 <span class="c1">// Register Commands</span><span class="w"></span>
-<span class="n">bcf</span><span class="p">.</span><span class="na">registerCommand</span><span class="p">(</span><span class="n">MainCommand</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
+<span class="n">bcf</span><span class="p">.</span><span class="na">registerCommand</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MainCommand</span><span class="p">());</span><span class="w"></span>
 </code></pre></div>
 </li>
 <li>
@@ -706,7 +731,7 @@ Valid commands would be:</p>
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-08-31T06:10:24+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-08-31</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-09-05T12:29:13+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-09-05</span>
       
     
   </small>
