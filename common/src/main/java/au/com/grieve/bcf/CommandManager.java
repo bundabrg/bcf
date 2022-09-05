@@ -35,19 +35,19 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-public abstract class CommandManager<T extends CommandRoot> {
+public abstract class CommandManager<S extends BaseCommand, T extends CommandRoot<S>> {
 
-    protected final Map<Class<? extends BaseCommand>, CommandConfig<T>> commands = new HashMap<>();
+    protected final Map<Class<? extends BaseCommand>, CommandConfig<S, T>> commands = new HashMap<>();
     protected final Map<String, Class<? extends Parser>> parsers = new HashMap<>();
 
     @SuppressWarnings("unused")
-    public void registerCommand(BaseCommand cmd) {
+    public void registerCommand(S cmd) {
         // As a root command cmd needs to have a @Command annotation
         if (cmd.getClass().getAnnotation(Command.class) == null) {
             throw new RuntimeException("Missing required @Command");
         }
 
-        CommandConfig<T> commandConfig = commands.getOrDefault(cmd.getClass(), new CommandConfig<>());
+        CommandConfig<S, T> commandConfig = commands.getOrDefault(cmd.getClass(), new CommandConfig<>());
 
         commandConfig.setCommandRoot(createCommandRoot(cmd));
 
@@ -63,9 +63,10 @@ public abstract class CommandManager<T extends CommandRoot> {
         registerParser("float", FloatParser.class);
     }
 
-    public void registerSubCommand(Class<? extends BaseCommand> parentClass, BaseCommand cmd) {
+    @SuppressWarnings("unused")
+    public void registerSubCommand(Class<? extends BaseCommand> parentClass, S cmd) {
         // Make sure parentClass is registered
-        CommandConfig<T> parentCommandConfig = commands.get(parentClass);
+        CommandConfig<S, T> parentCommandConfig = commands.get(parentClass);
 
         if (parentCommandConfig == null) {
             throw new RuntimeException("Parent class is not registered");
@@ -74,7 +75,7 @@ public abstract class CommandManager<T extends CommandRoot> {
         parentCommandConfig.getChildren().add(cmd);
 
         // If cmd has @Command, it is a CommandRoot
-        CommandConfig<T> commandConfig = commands.getOrDefault(cmd.getClass(), new CommandConfig<>());
+        CommandConfig<S, T> commandConfig = commands.getOrDefault(cmd.getClass(), new CommandConfig<>());
         if (cmd.getClass().getAnnotation(Command.class) != null) {
             commandConfig.setCommandRoot(createCommandRoot(cmd));
         }
@@ -83,11 +84,9 @@ public abstract class CommandManager<T extends CommandRoot> {
         commands.put(cmd.getClass(), commandConfig);
     }
 
-    protected T createCommandRoot(BaseCommand cmd) {
-        return new CommandRoot(this, cmd);
-    }
+    protected abstract T createCommandRoot(S cmd);
 
-    public Parser getParser(ArgNode argNode, CommandContext context) {
+    public Parser getParser(ArgNode argNode, CommandContext<S> context) {
         Class<? extends Parser> cls;
         if (argNode.getName().startsWith("@")) {
             cls = getParsers().getOrDefault(argNode.getName().substring(1), LiteralParser.class);
@@ -107,9 +106,9 @@ public abstract class CommandManager<T extends CommandRoot> {
     }
 
     @Getter
-    protected static class CommandConfig<T extends CommandRoot> {
-        private final List<BaseCommand> instances = new ArrayList<>();
-        private final List<BaseCommand> children = new ArrayList<>();
+    protected static class CommandConfig<S extends BaseCommand, T extends CommandRoot<S>> {
+        private final List<S> instances = new ArrayList<>();
+        private final List<S> children = new ArrayList<>();
         @Setter
         private T commandRoot;
     }

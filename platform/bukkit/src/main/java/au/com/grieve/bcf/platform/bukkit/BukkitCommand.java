@@ -24,19 +24,11 @@
 package au.com.grieve.bcf.platform.bukkit;
 
 import au.com.grieve.bcf.BaseCommand;
-import au.com.grieve.bcf.CommandExecute;
-import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Default;
 import au.com.grieve.bcf.annotations.Error;
-import au.com.grieve.bcf.annotations.Permission;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.CommandSender;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class BukkitCommand extends BaseCommand {
 
@@ -57,93 +49,5 @@ public class BukkitCommand extends BaseCommand {
                 new ComponentBuilder("Invalid Command").color(ChatColor.RED).create()
         );
     }
-
-    /**
-     * Retrieve List of permissions
-     */
-    public String[] getPermissions() {
-        return Arrays.stream(getClass().getAnnotationsByType(Permission.class))
-                .map(Permission::value)
-                .toArray(String[]::new);
-    }
-
-    /**
-     * Return true if class permits permission of sender
-     */
-    public boolean testPermission(CommandSender sender) {
-        // Check Sender has any permissions
-        for (String permission : getPermissions()) {
-            if (sender.hasPermission(permission)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @SuppressWarnings("unused")
-    public CommandExecute execute(CommandRoot<?> commandRoot, List<String> input, BukkitCommandContext context) {
-        if (!testPermission(context.getSender())) {
-            return null;
-        }
-
-        return super.execute(commandRoot, input, context);
-    }
-
-    @SuppressWarnings("unused")
-    protected CommandExecute executeMethod(Method method, CommandRoot<?> commandRoot, List<String> input, BukkitCommandContext context) {
-        Permission[] permissions = method.getAnnotationsByType(Permission.class);
-
-        if (permissions.length > 0) {
-            // Check Sender has any permissions
-            for (Permission permission : permissions) {
-                if (context.getSender().hasPermission(permission.value())) {
-                    return super.executeMethod(method, commandRoot, input, context);
-                }
-            }
-
-            return null;
-        }
-
-        return super.executeMethod(method, commandRoot, input, context);
-
-    }
-
-    @SuppressWarnings("unused")
-    public List<String> complete(CommandRoot<?> commandRoot, List<String> input, BukkitCommandContext context) {
-
-        Permission[] permissions = getClass().getAnnotationsByType(Permission.class);
-
-        if (permissions.length > 0) {
-            // Check Sender has any permissions
-            for (Permission permission : permissions) {
-                if (context.getSender().hasPermission(permission.value())) {
-                    return super.complete(commandRoot, input, context);
-                }
-            }
-
-            return new ArrayList<>();
-        }
-
-        return super.complete(commandRoot, input, context);
-    }
-
-    @SuppressWarnings("unused")
-    protected List<String> completeMethod(Method method, CommandRoot<?> commandRoot, List<String> input, BukkitCommandContext context) {
-        Permission[] permissions = method.getAnnotationsByType(Permission.class);
-
-        if (permissions.length > 0) {
-            // Check Sender has any permissions
-            for (Permission permission : permissions) {
-                if (context.getSender().hasPermission(permission.value())) {
-                    return super.completeMethod(method, commandRoot, input, context);
-                }
-            }
-
-            return new ArrayList<>();
-        }
-
-        return super.completeMethod(method, commandRoot, input, context);
-    }
-
 
 }

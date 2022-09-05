@@ -28,7 +28,7 @@ import lombok.Getter;
 import org.bukkit.command.CommandSender;
 
 @Getter
-public class BukkitCommandContext extends CommandContext {
+public class BukkitCommandContext extends CommandContext<BukkitCommand> {
 
     // Bukkit Command Sender
     private final CommandSender sender;
@@ -40,8 +40,8 @@ public class BukkitCommandContext extends CommandContext {
     }
 
     @SuppressWarnings("unused")
-    public BukkitCommandContext(CommandContext original) {
+    public BukkitCommandContext(BukkitCommandContext original) {
         super(original);
-        this.sender = ((BukkitCommandContext) original).getSender();
+        this.sender = original.getSender();
     }
 }

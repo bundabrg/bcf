@@ -24,7 +24,6 @@
 package au.com.grieve.bcf.platform.bukkit;
 
 import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Command;
 import au.com.grieve.bcf.platform.bukkit.parsers.PlayerParser;
 import org.bukkit.Bukkit;
@@ -39,7 +38,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 @SuppressWarnings("unused")
-public class BukkitCommandManager extends CommandManager<BukkitCommand> {
+public class BukkitCommandManager extends CommandManager<BukkitCommand, BukkitCommandRoot> {
 
     private final JavaPlugin plugin;
     private final CommandMap commandMap;
@@ -74,11 +73,11 @@ public class BukkitCommandManager extends CommandManager<BukkitCommand> {
     }
 
     @Override
-    protected CommandRoot<BukkitCommand> createCommandRoot(Class<? extends BukkitCommand> cmd) {
-        CommandRoot<BukkitCommand> cr = super.createCommandRoot(cmd);
+    protected BukkitCommandRoot createCommandRoot(BukkitCommand cmd) {
+        BukkitCommandRoot cr = new BukkitCommandRoot(this, cmd);
 
         // Get Name and Aliases
-        Command commandAnnotation = cmd.getAnnotation(Command.class);
+        Command commandAnnotation = cmd.getClass().getAnnotation(Command.class);
 
         if (commandAnnotation == null) {
             return cr;
@@ -86,7 +85,7 @@ public class BukkitCommandManager extends CommandManager<BukkitCommand> {
 
         String[] aliases = commandAnnotation.value().split("\\|");
         if (aliases.length == 0) {
-            aliases = new String[]{cmd.getSimpleName().toLowerCase()};
+            aliases = new String[]{cmd.getClass().getSimpleName().toLowerCase()};
         }
 
         // Register with Bukkit
@@ -96,5 +95,4 @@ public class BukkitCommandManager extends CommandManager<BukkitCommand> {
 
         return cr;
     }
-
 }

@@ -24,7 +24,6 @@
 package au.com.grieve.bcf.platform.bukkit;
 
 import au.com.grieve.bcf.CommandExecute;
-import au.com.grieve.bcf.CommandRoot;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -34,12 +33,12 @@ import java.util.List;
 
 public class BukkitCommandExecutor extends Command {
 
-    final CommandRoot<BukkitCommand> commandRoot;
+    final BukkitCommandRoot commandRoot;
 
-    public BukkitCommandExecutor(String name, CommandRoot<BukkitCommand> commandRoot) {
+    public BukkitCommandExecutor(String name, BukkitCommandRoot commandRoot) {
         super(name);
         this.commandRoot = commandRoot;
-        setPermission(String.join(";", commandRoot.getCommand().getPermissions()));
+        setPermission(String.join(";", commandRoot.getPermissions()));
     }
 
     @Override

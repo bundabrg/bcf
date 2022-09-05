@@ -26,16 +26,15 @@ package au.com.grieve.bcf;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 @Getter
-public class CommandContext {
+public class CommandContext<R extends BaseCommand> {
     private final List<Parser> switches = new ArrayList<>();
     private final List<Parser> parsers = new ArrayList<>();
-    private final Stack<BaseCommand> commandStack = new Stack<>();
+    private final Stack<R> commandStack = new Stack<>();
 
     @Setter
     private Parser currentParser;
@@ -43,18 +42,19 @@ public class CommandContext {
     public CommandContext() {
     }
 
-    public CommandContext(CommandContext original) {
+    public CommandContext(CommandContext<R> original) {
         switches.addAll(original.getSwitches());
         parsers.addAll(original.getParsers());
         commandStack.addAll(original.getCommandStack());
         currentParser = original.getCurrentParser();
     }
 
-    public CommandContext copy() {
-        try {
-            return getClass().getConstructor(CommandContext.class).newInstance(this);
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+    public CommandContext<R> copy() {
+        return new CommandContext<>(this);
+//        try {
+//            return getClass().getConstructor(CommandContext.class).newInstance(this);
+//        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 }

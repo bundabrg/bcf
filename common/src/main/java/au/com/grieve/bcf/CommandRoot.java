@@ -37,14 +37,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Getter
-public class CommandRoot {
+public class CommandRoot<S extends BaseCommand> {
     //    protected final Map<Class<? extends T>, T> commandMap = new HashMap<>();
-    private final BaseCommand command;
+    private final S command;
 
     //final List<BaseCommand> subCommands = new ArrayList<>();
-    private final CommandManager<?> manager;
+    private final CommandManager<S, ?> manager;
 
-    public CommandRoot(CommandManager<?> manager, BaseCommand cmd) {
+    public CommandRoot(CommandManager<S, ?> manager, S cmd) {
         this.manager = manager;
         this.command = cmd;
     }
@@ -87,21 +87,21 @@ public class CommandRoot {
 //        }
 //    }
 
-    protected Parser getParser(ArgNode argNode, CommandContext context) {
+    protected Parser getParser(ArgNode argNode, CommandContext<S> context) {
         return manager.getParser(argNode, context);
 
     }
 
-    public CommandExecute execute(List<String> input, CommandContext context) {
+    public CommandExecute execute(List<String> input, CommandContext<S> context) {
         return execute(command, input, context);
     }
 
-    public List<String> complete(List<String> input, CommandContext context) {
+    public List<String> complete(List<String> input, CommandContext<S> context) {
         return complete(command, input, context);
     }
 
-    protected CommandExecute getErrorExecute(BaseCommand command, String message, CommandContext context) {
-        for (BaseCommand cmd :
+    protected CommandExecute getErrorExecute(S command, String message, CommandContext<S> context) {
+        for (S cmd :
                 Stream.concat(
                         Stream.of(command),
                         context.getCommandStack().stream()
@@ -114,8 +114,8 @@ public class CommandRoot {
         return null;
     }
 
-    protected CommandExecute getDefaultExecute(BaseCommand command, CommandContext context) {
-        for (BaseCommand cmd :
+    protected CommandExecute getDefaultExecute(S command, CommandContext<S> context) {
+        for (S cmd :
                 Stream.concat(
                         Stream.of(command),
                         context.getCommandStack().stream()
@@ -128,7 +128,7 @@ public class CommandRoot {
         return null;
     }
 
-    public CommandExecute execute(BaseCommand command, List<String> input, CommandContext context) {
+    public CommandExecute execute(S command, List<String> input, CommandContext<S> context) {
         List<CommandExecute> commandExecutes = new ArrayList<>();
 
         // Go through class Args first if they exist, as long as they are not on our commandRoot class (to allow @Commands to override @Args)
@@ -136,7 +136,7 @@ public class CommandRoot {
             for (Arg classArgs : command.getClass().getAnnotationsByType(Arg.class)) {
                 List<String> currentInput = new ArrayList<>(input);
                 List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", classArgs.value()));
-                CommandContext currentContext = context.copy();
+                CommandContext<S> currentContext = context.copy();
 
                 try {
                     parseArg(currentArgs, currentInput, currentContext);
@@ -156,18 +156,18 @@ public class CommandRoot {
                 }
 
                 // Check each child class as well
-                CommandManager.CommandConfig<?> cc = manager.getCommands().get(getClass());
+                CommandManager.CommandConfig<S, ?> cc = manager.getCommands().get(getClass());
                 currentContext.getCommandStack().push(command);
 
                 if (cc != null) {
-                    for (BaseCommand child : cc.getChildren()) {
+                    for (S child : cc.getChildren()) {
                         commandExecutes.add(execute(child, currentInput, currentContext));
                     }
                 }
             }
         } else {
             List<String> currentInput = new ArrayList<>(input);
-            CommandContext currentContext = context.copy();
+            CommandContext<S> currentContext = context.copy();
 
             // Process methods
             for (Method method : command.getClass().getDeclaredMethods()) {
@@ -175,11 +175,11 @@ public class CommandRoot {
             }
 
             // Check each child class as well
-            CommandManager.CommandConfig<?> cc = manager.getCommands().get(getClass());
+            CommandManager.CommandConfig<S, ?> cc = manager.getCommands().get(getClass());
             currentContext.getCommandStack().push(command);
 
             if (cc != null) {
-                for (BaseCommand child : cc.getChildren()) {
+                for (S child : cc.getChildren()) {
                     commandExecutes.add(execute(child, currentInput, currentContext));
                 }
             }
@@ -227,13 +227,13 @@ public class CommandRoot {
     /**
      * Execution for methods
      */
-    protected CommandExecute executeMethod(Method method, BaseCommand command, List<String> input, CommandContext context) {
+    protected CommandExecute executeMethod(Method method, S command, List<String> input, CommandContext<S> context) {
         List<CommandExecute> commandExecutes = new ArrayList<>();
 
         for (Arg methodArgs : method.getAnnotationsByType(Arg.class)) {
             List<String> currentInput = new ArrayList<>(input);
             List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", methodArgs.value()));
-            CommandContext currentContext = context.copy();
+            CommandContext<S> currentContext = context.copy();
 
             try {
                 parseArg(currentArgs, currentInput, currentContext);
@@ -295,7 +295,7 @@ public class CommandRoot {
         return best;
     }
 
-    public List<String> complete(BaseCommand command, List<String> input, CommandContext context) {
+    public List<String> complete(S command, List<String> input, CommandContext<S> context) {
         List<String> ret = new ArrayList<>();
 
         // Go through class Args first as long as its not our commandroot command to allow @Command to override @Args
@@ -303,7 +303,7 @@ public class CommandRoot {
             for (Arg classArgs : command.getClass().getAnnotationsByType(Arg.class)) {
                 List<String> currentInput = new ArrayList<>(input);
                 List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", classArgs.value()));
-                CommandContext currentContext = context.copy();
+                CommandContext<S> currentContext = context.copy();
 
 
                 try {
@@ -334,18 +334,18 @@ public class CommandRoot {
                 }
 
                 // Check each child class as well
-                CommandManager.CommandConfig<?> cc = manager.getCommands().get(getClass());
+                CommandManager.CommandConfig<S, ?> cc = manager.getCommands().get(getClass());
                 currentContext.getCommandStack().push(command);
 
                 if (cc != null) {
-                    for (BaseCommand child : cc.getChildren()) {
+                    for (S child : cc.getChildren()) {
                         ret.addAll(complete(child, currentInput, currentContext));
                     }
                 }
             }
         } else {
             List<String> currentInput = new ArrayList<>(input);
-            CommandContext currentContext = context.copy();
+            CommandContext<S> currentContext = context.copy();
 
             // Process methods
             for (Method method : command.getClass().getDeclaredMethods()) {
@@ -353,11 +353,11 @@ public class CommandRoot {
             }
 
             // Check each child class as well
-            CommandManager.CommandConfig<?> cc = manager.getCommands().get(getClass());
+            CommandManager.CommandConfig<S, ?> cc = manager.getCommands().get(getClass());
             currentContext.getCommandStack().push(command);
 
             if (cc != null) {
-                for (BaseCommand child : cc.getChildren()) {
+                for (S child : cc.getChildren()) {
                     ret.addAll(complete(child, currentInput, currentContext));
                 }
             }
@@ -373,12 +373,12 @@ public class CommandRoot {
     /**
      * Completion for methods
      */
-    protected List<String> completeMethod(Method method, BaseCommand command, List<String> input, CommandContext context) {
+    protected List<String> completeMethod(Method method, S command, List<String> input, CommandContext<S> context) {
         List<String> ret = new ArrayList<>();
         for (Arg methodArgs : method.getAnnotationsByType(Arg.class)) {
             List<String> currentInput = new ArrayList<>(input);
             List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", methodArgs.value()));
-            CommandContext currentContext = context.copy();
+            CommandContext<S> currentContext = context.copy();
 
             try {
                 parseArg(currentArgs, currentInput, currentContext, false);
@@ -420,11 +420,11 @@ public class CommandRoot {
         return ret;
     }
 
-    protected void parseArg(List<ArgNode> argNodes, List<String> input, CommandContext context) throws ParserInvalidResultException, ParserRequiredArgumentException, SwitchNotFoundException {
+    protected void parseArg(List<ArgNode> argNodes, List<String> input, CommandContext<S> context) throws ParserInvalidResultException, ParserRequiredArgumentException, SwitchNotFoundException {
         parseArg(argNodes, input, context, true);
     }
 
-    protected void parseSwitches(List<String> input, CommandContext context, boolean defaults) throws SwitchNotFoundException, ParserRequiredArgumentException, ParserInvalidResultException {
+    protected void parseSwitches(List<String> input, CommandContext<S> context, boolean defaults) throws SwitchNotFoundException, ParserRequiredArgumentException, ParserInvalidResultException {
         while (input.size() > 0 && input.get(0).startsWith("-")) {
             String name = input.remove(0).substring(1);
             Parser parser = context.getSwitches().stream()
@@ -450,7 +450,7 @@ public class CommandRoot {
         }
     }
 
-    protected void parseArg(List<ArgNode> argNodes, List<String> input, CommandContext context, boolean defaults) throws ParserRequiredArgumentException, ParserInvalidResultException, SwitchNotFoundException {
+    protected void parseArg(List<ArgNode> argNodes, List<String> input, CommandContext<S> context, boolean defaults) throws ParserRequiredArgumentException, ParserInvalidResultException, SwitchNotFoundException {
         while (argNodes.size() > 0) {
             ArgNode node = argNodes.remove(0);
 

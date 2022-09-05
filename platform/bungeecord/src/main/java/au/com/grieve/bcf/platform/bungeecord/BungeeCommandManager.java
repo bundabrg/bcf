@@ -24,12 +24,11 @@
 package au.com.grieve.bcf.platform.bungeecord;
 
 import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Command;
 import net.md_5.bungee.api.plugin.Plugin;
 
 @SuppressWarnings("unused")
-public class BungeeCommandManager extends CommandManager<BungeeCommand> {
+public class BungeeCommandManager extends CommandManager<BungeeCommand, BungeeCommandRoot> {
 
     private final Plugin plugin;
 
@@ -42,11 +41,11 @@ public class BungeeCommandManager extends CommandManager<BungeeCommand> {
     }
 
     @Override
-    protected CommandRoot<BungeeCommand> createCommandRoot(Class<? extends BungeeCommand> cmd) {
-        CommandRoot<BungeeCommand> cr = super.createCommandRoot(cmd);
+    protected BungeeCommandRoot createCommandRoot(BungeeCommand cmd) {
+        BungeeCommandRoot cr = new BungeeCommandRoot(this, cmd);
 
         // Get Name and Aliases
-        Command commandAnnotation = cmd.getAnnotation(Command.class);
+        Command commandAnnotation = cmd.getClass().getAnnotation(Command.class);
 
         if (commandAnnotation == null) {
             return cr;
@@ -54,7 +53,7 @@ public class BungeeCommandManager extends CommandManager<BungeeCommand> {
 
         String[] aliases = commandAnnotation.value().split("\\|");
         if (aliases.length == 0) {
-            aliases = new String[]{cmd.getSimpleName().toLowerCase()};
+            aliases = new String[]{cmd.getClass().getSimpleName().toLowerCase()};
         }
 
         // Register with Bungee

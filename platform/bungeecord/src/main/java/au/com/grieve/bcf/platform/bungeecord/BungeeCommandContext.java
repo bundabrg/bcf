@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -27,7 +27,7 @@ import au.com.grieve.bcf.CommandContext;
 import lombok.Getter;
 import net.md_5.bungee.api.CommandSender;
 
-public class BungeeCommandContext extends CommandContext {
+public class BungeeCommandContext extends CommandContext<BungeeCommand> {
 
     // Bukkit Command Sender
     @Getter
@@ -39,8 +39,9 @@ public class BungeeCommandContext extends CommandContext {
         this.sender = sender;
     }
 
-    public BungeeCommandContext(CommandContext original) {
+    @SuppressWarnings("unused")
+    public BungeeCommandContext(BungeeCommandContext original) {
         super(original);
-        this.sender = ((BungeeCommandContext) original).getSender();
+        this.sender = original.getSender();
     }
 }
