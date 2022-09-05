@@ -515,24 +515,20 @@
     <span class="nt">&lt;/snapshots&gt;</span>
 <span class="nt">&lt;/repository&gt;</span>   
 </code></pre></div>
-<p>Add the following dependency to your <code>pom.xml</code> if you are using Bukkit, Spigot or Paper:</p>
+<p>Add the following dependency to your <code>pom.xml</code> if you are using Bukkit, Spigot or Paper:
 <div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>au.com.grieve.bcf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>bukkit<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.2.9<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.2.8<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
-</code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-</div>
-<p>Don't forget to check what the latest verison is as these documents may be out of date.</p>
-<p>For Bungeecord add the following:</p>
+</code></pre></div></p>
+<p>For Bungeecord add the following:
 <div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>au.com.grieve.bcf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>bungeecord<span class="nt">&lt;/artifactId&gt;</span>
     <span class="nt">&lt;version&gt;</span>1.2.8<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
-</code></pre></div>
+</code></pre></div></p>
 <p>Shade the library into your own code by adding in your <code>pom.xml</code>
 <div class="highlight"><pre><span></span><code><span class="nt">&lt;build&gt;</span>
     <span class="nt">&lt;plugins&gt;</span>
@@ -577,66 +573,38 @@ uses <code>BungeeCommand</code>.</p>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 </div>
-<p>You can of course (and are encouraged) to break out your Command classes into multiple groups of commands and
-then combine them as subcommands of one primary Command This can also be an effective way to allow 3<sup>rd</sup> parties to
+<p>You can of course (and are encouraged) to extend any of your command classes to better
+separate groups of commands.  This can also be an effective way to allow 3<sup>rd</sup> parties to
 add commands under your plugin.</p>
 <h2 id="command-manager">Command Manager<a class="headerlink" href="#command-manager" title="Permanent link">&para;</a></h2>
-<p>During your plugin initialization you need to setup a new Command Manager instance. For Bukkit
+<p>During your plugin initialization you need to setup a new Command Manager instance.  For Bukkit
 use a <code>BukkitCommandManager</code>, and for Bungeecord use <code>BungeeCommandManager</code>, passing your own plugin as a parameter.</p>
-<p>Then register each of your Command classes with the manager, passing the class type as a parameter. You can also
-register sub commands of another class by using <code>registerSubCommand</code>. You use the class of the command you are creating
-a subcommand underneath.</p>
+<p>Then register each of your Command classes with the manager, passing the class type as a parameter.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-</div>
-<p>```java</p>
-<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">public</span><span class="w"> </span><span class="n">final</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="n">MyPlugin</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="n">JavaPlugin</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="err">@</span><span class="n">Getter</span><span class="w"></span>
-<span class="w">    </span><span class="n">private</span><span class="w"> </span><span class="n">BukkitCommandManager</span><span class="w"> </span><span class="n">bcf</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyPlugin</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">JavaPlugin</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Getter</span><span class="w"></span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">BukkitCommandManager</span><span class="w"> </span><span class="n">bcf</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">    </span><span class="err">@</span><span class="n">Override</span><span class="w"></span>
-<span class="w">    </span><span class="n">public</span><span class="w"> </span><span class="nb nb-Type">void</span><span class="w"> </span><span class="n">onEnable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="o">//</span><span class="w"> </span><span class="n">Setup</span><span class="w"> </span><span class="n">Command</span><span class="w"> </span><span class="n">Manager</span><span class="w"></span>
-<span class="w">        </span><span class="n">bcf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">BukkitCommandManager</span><span class="p">(</span><span class="n">this</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">onEnable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// Setup Command Manager</span><span class="w"></span>
+<span class="w">        </span><span class="n">bcf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">BukkitCommandManager</span><span class="p">(</span><span class="k">this</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">        </span><span class="o">//</span><span class="w"> </span><span class="n">Register</span><span class="w"> </span><span class="n">Commands</span><span class="w"></span>
-<span class="w">        </span><span class="n">bcf</span><span class="o">.</span><span class="n">registerCommand</span><span class="p">(</span><span class="n">new</span><span class="w"> </span><span class="n">MainCommand</span><span class="p">());</span><span class="w"></span>
-
-<span class="w">        </span><span class="o">//</span><span class="w"> </span><span class="n">Register</span><span class="w"> </span><span class="n">Subcommands</span><span class="w"></span>
-<span class="w">        </span><span class="n">bcf</span><span class="o">.</span><span class="n">registerSubCommand</span><span class="p">(</span><span class="n">MainCommand</span><span class="o">.</span><span class="k">class</span><span class="p">,</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">MySubCommand</span><span class="p">());</span><span class="w"></span>
-<span class="w">        </span><span class="n">bcf</span><span class="o">.</span><span class="n">registerSubCommand</span><span class="p">(</span><span class="n">MainCommand</span><span class="o">.</span><span class="k">class</span><span class="p">,</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">MyOtherSubCommand</span><span class="p">());</span><span class="w"></span>
-<span class="w">        </span><span class="n">bcf</span><span class="o">.</span><span class="n">registerSubCommand</span><span class="p">(</span><span class="n">MyOtherSubCommand</span><span class="o">.</span><span class="k">class</span><span class="p">,</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">My</span><span class="w"> </span><span class="n">SubSubCommand</span><span class="p">());</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// Register Commands</span><span class="w"></span>
+<span class="w">        </span><span class="n">bcf</span><span class="p">.</span><span class="na">registerCommand</span><span class="p">(</span><span class="n">MainCommand</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
-<span class="err">```</span><span class="w"></span>
-</code></pre></div></td></tr></table></div>
-
+</code></pre></div>
+</div>
 <h2 id="parser">Parser<a class="headerlink" href="#parser" title="Permanent link">&para;</a></h2>
-<p>You may wish to add your own custom parser. Either the built-in ones are not sufficient, or you
+<p>You may wish to add your own custom parser. Either the built in ones are not sufficient, or you
 have some custom arguments that need to be parsed in a special way.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-</div>
 <p>If you do write a Parser that may be useful to others then please to send a PR
 to have it included as a built-in type. `</p>
+</div>
 <p>A parser can be though of as having the following attributes:</p>
 <ol>
 <li>
@@ -655,8 +623,8 @@ and must consume 0 or more of them.</p>
 prefixed with <code>@</code> can be used in an <code>@Arg</code> string.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<p><code>java
-bcf.registerParser("myparser", MyParser.class);</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">bcf</span><span class="p">.</span><span class="na">registerParser</span><span class="p">(</span><span class="s">&quot;myparser&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">MyParser</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
 </div>
 <h3 id="overrides">Overrides<a class="headerlink" href="#overrides" title="Permanent link">&para;</a></h3>
 <p>The three important methods to provide are:</p>
@@ -674,10 +642,10 @@ bcf.registerParser("myparser", MyParser.class);</code></p>
 <h4 id="parse">parse<a class="headerlink" href="#parse" title="Permanent link">&para;</a></h4>
 <div class="admonition definition">
 <p class="admonition-title">Definition</p>
-<p><code>java
-public void parse(List&lt;String&gt; input, boolean defaults) throws ParserRequiredArgumentException {
-    ...
-}</code>    </p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">defaults</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">ParserRequiredArgumentException</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
 </div>
 <p>Provided a list of words from input available at this parsers point in the <code>@Arg</code> string. Any input
 for this parser must be removed from the head of the list with any remaining items being available
@@ -695,10 +663,10 @@ input.</p>
 <h4 id="complete">complete<a class="headerlink" href="#complete" title="Permanent link">&para;</a></h4>
 <div class="admonition definition">
 <p class="admonition-title">Definition</p>
-<p><code>java
-protected List&lt;String&gt; complete() {
-    ...
-}</code></p>
+<div class="highlight"><pre><span></span><code><span class="kd">protected</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">complete</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
 </div>
 <p>Return a list of completions for the consumed input ideally filtering it by what has been
 entered and limiting it to a maximum of 20 items.  If no completions are available then
@@ -707,10 +675,10 @@ return an empty list.</p>
 <h4 id="result">result<a class="headerlink" href="#result" title="Permanent link">&para;</a></h4>
 <div class="admonition definition">
 <p class="admonition-title">Definition</p>
-<p><code>java
-protected Object result() throws ParserInvalidResultException {
-    ...
-}</code></p>
+<div class="highlight"><pre><span></span><code><span class="kd">protected</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="nf">result</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">ParserInvalidResultException</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
 </div>
 <p>Return a concrete Object for the input consumed.  If there is no valid result for the input then
 this must throw a <code>ParserInvalidResultException</code> which will cause it to be rejected as a valid
@@ -722,7 +690,7 @@ command candidate.</p>
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-09-05T12:03:09+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-09-05</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-08-31T06:10:24+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-08-31</span>
       
     
   </small>
