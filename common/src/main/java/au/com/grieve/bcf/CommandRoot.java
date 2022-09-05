@@ -156,7 +156,7 @@ public class CommandRoot<S extends BaseCommand> {
                 }
 
                 // Check each child class as well
-                CommandManager.CommandConfig<S, ?> cc = manager.getCommands().get(getClass());
+                CommandManager.CommandConfig<S, ?> cc = manager.getCommands().get(command.getClass());
                 currentContext.getCommandStack().push(command);
 
                 if (cc != null) {
@@ -175,7 +175,7 @@ public class CommandRoot<S extends BaseCommand> {
             }
 
             // Check each child class as well
-            CommandManager.CommandConfig<S, ?> cc = manager.getCommands().get(getClass());
+            CommandManager.CommandConfig<S, ?> cc = manager.getCommands().get(command.getClass());
             currentContext.getCommandStack().push(command);
 
             if (cc != null) {
@@ -334,7 +334,7 @@ public class CommandRoot<S extends BaseCommand> {
                 }
 
                 // Check each child class as well
-                CommandManager.CommandConfig<S, ?> cc = manager.getCommands().get(getClass());
+                CommandManager.CommandConfig<S, ?> cc = manager.getCommands().get(command.getClass());
                 currentContext.getCommandStack().push(command);
 
                 if (cc != null) {
@@ -353,7 +353,7 @@ public class CommandRoot<S extends BaseCommand> {
             }
 
             // Check each child class as well
-            CommandManager.CommandConfig<S, ?> cc = manager.getCommands().get(getClass());
+            CommandManager.CommandConfig<S, ?> cc = manager.getCommands().get(command.getClass());
             currentContext.getCommandStack().push(command);
 
             if (cc != null) {
