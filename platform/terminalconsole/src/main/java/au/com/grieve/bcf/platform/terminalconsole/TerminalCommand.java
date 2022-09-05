@@ -21,14 +21,25 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.annotations;
+package au.com.grieve.bcf.platform.terminalconsole;
 
-import java.lang.annotation.*;
+import au.com.grieve.bcf.BaseCommand;
+import au.com.grieve.bcf.annotations.Default;
+import au.com.grieve.bcf.annotations.Error;
 
-@Repeatable(Args.class)
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
-public @interface Arg {
-    String[] value();
+public class TerminalCommand extends BaseCommand {
+
+    // Default Error
+    @Error
+    void onError(String message) {
+        //@TODO
+        System.err.println("ERROR: " + message);
+    }
+
+    // Default Default
+    @Default
+    void onDefault() {
+        //@TODO
+        System.err.println("ERROR: Invalid Command");
+    }
 }
-

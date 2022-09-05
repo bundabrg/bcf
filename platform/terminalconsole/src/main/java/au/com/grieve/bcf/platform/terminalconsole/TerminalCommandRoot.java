@@ -21,14 +21,18 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.annotations;
+package au.com.grieve.bcf.platform.terminalconsole;
 
-import java.lang.annotation.*;
+import au.com.grieve.bcf.BaseCommand;
+import au.com.grieve.bcf.CommandRoot;
 
-@Repeatable(Args.class)
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
-public @interface Arg {
-    String[] value();
+public class TerminalCommandRoot extends CommandRoot {
+    public TerminalCommandRoot(TerminalCommandManager manager, BaseCommand cmd) {
+        super(manager, cmd);
+    }
+
+    @Override
+    public TerminalCommandManager getManager() {
+        return (TerminalCommandManager) super.getManager();
+    }
 }
-

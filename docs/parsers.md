@@ -43,6 +43,24 @@ default being provided and invalid input will correctly show an error.
     
     The command `/mycmd cmd1 aaa` will display the error "Invalid Number: a"
     
+
+#### description
+
+Provide a description when auto completing for platforms that support it.
+
+!!! example
+    ```java
+    @Command("mycmd")
+    public class MainCommand extends BukkitCommand {
+    
+        @Arg("cmd1 @int(description=A silly number)")
+        public void myCmd1(CommandSender sender, Integer myNum) {
+            ...
+        }
+    }
+    ```
+    
+
 #### required
 
 If set to true will require a value to be provided either through input or through a `default` parameter.

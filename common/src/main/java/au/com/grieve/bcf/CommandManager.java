@@ -43,12 +43,12 @@ public abstract class CommandManager<
     protected final Map<Class<? extends BaseCommand>, CommandConfig<RT>> commands = new HashMap<>();
     protected final Map<String, Class<? extends Parser>> parsers = new HashMap<>();
 
-    @Getter
-    protected static class CommandConfig<RT> {
-        private final List<BaseCommand> instances = new ArrayList<>();
-        private final List<BaseCommand> children = new ArrayList<>();
-        @Setter
-        private RT commandRoot;
+    public CommandManager() {
+        // Register Default Parsers
+        registerParser("string", StringParser.class);
+        registerParser("int", IntegerParser.class);
+        registerParser("double", DoubleParser.class);
+        registerParser("float", FloatParser.class);
     }
 
     @SuppressWarnings("unused")
@@ -64,14 +64,6 @@ public abstract class CommandManager<
 
         commandConfig.getInstances().add(cmd);
         commands.put(cmd.getClass(), commandConfig);
-    }
-
-    public CommandManager() {
-        // Register Default Parsers
-        registerParser("string", StringParser.class);
-        registerParser("int", IntegerParser.class);
-        registerParser("double", DoubleParser.class);
-        registerParser("float", FloatParser.class);
     }
 
     @SuppressWarnings("unused")
@@ -116,8 +108,6 @@ public abstract class CommandManager<
         return null;
     }
 
-
-
     public void registerParser(String name, Class<? extends Parser> parser) {
         this.parsers.put(name, parser);
     }
@@ -127,6 +117,13 @@ public abstract class CommandManager<
         this.parsers.remove(name);
     }
 
+    @Getter
+    protected static class CommandConfig<RT> {
+        private final List<BaseCommand> instances = new ArrayList<>();
+        private final List<BaseCommand> children = new ArrayList<>();
+        @Setter
+        private RT commandRoot;
+    }
 
 
 }

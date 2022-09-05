@@ -23,25 +23,25 @@
 
 package au.com.grieve.bcf.parsers;
 
-import au.com.grieve.bcf.ArgNode;
-import au.com.grieve.bcf.CommandContext;
-import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.Parser;
+import au.com.grieve.bcf.*;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
 import au.com.grieve.bcf.exceptions.ParserRequiredArgumentException;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Supports a single argument parser
  */
+@Getter
 public abstract class SingleParser extends Parser {
-    @Getter
     private String input;
 
-    public SingleParser(CommandManager<?,?> manager, ArgNode argNode, CommandContext context) {
+    private List<Candidate> completions;
+
+    public SingleParser(CommandManager<?, ?> manager, ArgNode argNode, CommandContext context) {
         super(manager, argNode, context);
     }
 
@@ -62,12 +62,18 @@ public abstract class SingleParser extends Parser {
     }
 
     @Override
-    public List<String> getCompletions() {
+    public List<Candidate> getCompletions() {
         if (input == null) {
             return new ArrayList<>();
         }
 
-        return super.getCompletions();
+        if (completions == null) {
+            completions = complete().stream()
+                    .map(s -> new Candidate(s, s, getParameter("description"), String.valueOf(hashCode())))
+                    .collect(Collectors.toList());
+        }
+
+        return completions;
     }
 
     @Override

@@ -23,6 +23,7 @@
 
 package au.com.grieve.bcf.platform.bukkit;
 
+import au.com.grieve.bcf.Candidate;
 import au.com.grieve.bcf.CommandExecute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -30,12 +31,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BukkitCommandExecutor extends Command {
 
     final BukkitCommandRoot commandRoot;
 
-    public BukkitCommandExecutor(String name, BukkitCommandRoot commandRoot) {
+    public BukkitCommandExecutor(BukkitCommandRoot commandRoot, String name) {
         super(name);
         this.commandRoot = commandRoot;
         setPermission(String.join(";", commandRoot.getPermissions()));
@@ -58,6 +60,8 @@ public class BukkitCommandExecutor extends Command {
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
         BukkitCommandContext context = new BukkitCommandContext(sender);
-        return commandRoot.complete(Arrays.asList(args), context);
+        return commandRoot.complete(Arrays.asList(args), context).stream()
+                .map(Candidate::getValue)
+                .collect(Collectors.toList());
     }
 }

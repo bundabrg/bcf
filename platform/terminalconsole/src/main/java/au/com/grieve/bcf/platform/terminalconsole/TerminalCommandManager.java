@@ -21,29 +21,25 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.platform.bungeecord;
+package au.com.grieve.bcf.platform.terminalconsole;
 
 import au.com.grieve.bcf.BaseCommand;
 import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.annotations.Command;
-import net.md_5.bungee.api.plugin.Plugin;
+import au.com.grieve.bcf.annotations.Description;
 
-@SuppressWarnings("unused")
-public class BungeeCommandManager extends CommandManager<BungeeCommand, BungeeCommandRoot> {
+public class TerminalCommandManager extends CommandManager<TerminalCommand, TerminalCommandRoot> {
 
-    private final Plugin plugin;
+    private final TerminalConsole console;
 
-    public BungeeCommandManager(Plugin plugin) {
+    public TerminalCommandManager(TerminalConsole console) {
         super();
-        this.plugin = plugin;
-
-        // Register Default Parsers
-//        registerParser("player", PlayerParser.class);
+        this.console = console;
     }
 
     @Override
-    protected BungeeCommandRoot createCommandRoot(BaseCommand cmd) {
-        BungeeCommandRoot cr = new BungeeCommandRoot(this, cmd);
+    protected TerminalCommandRoot createCommandRoot(BaseCommand cmd) {
+        TerminalCommandRoot cr = new TerminalCommandRoot(this, cmd);
 
         // Get Name and Aliases
         Command commandAnnotation = cmd.getClass().getAnnotation(Command.class);
@@ -52,16 +48,21 @@ public class BungeeCommandManager extends CommandManager<BungeeCommand, BungeeCo
             return cr;
         }
 
+        String description = cmd.getClass().isAnnotationPresent(Description.class) ?
+                cmd.getClass().getAnnotation(Description.class).value() :
+                null;
+
         String[] aliases = commandAnnotation.value().split("\\|");
         if (aliases.length == 0) {
             aliases = new String[]{cmd.getClass().getSimpleName().toLowerCase()};
         }
 
-        // Register with Bungee
-        BungeeCommandExecutor bungeeCommandExecutor = new BungeeCommandExecutor(cr, aliases[0], aliases);
-        plugin.getProxy().getPluginManager().registerCommand(plugin, bungeeCommandExecutor);
+        // Register with Bukkit
+        TerminalCommandExecutor terminalCommandExecutor = new TerminalCommandExecutor(cr, aliases[0], description);
+        console.getCommandMap().register(aliases[0], terminalCommandExecutor, aliases);
 
         return cr;
     }
+
 
 }

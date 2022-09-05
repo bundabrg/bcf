@@ -32,7 +32,7 @@ import java.util.List;
 
 public class FloatParser extends SingleParser {
 
-    public FloatParser(CommandManager<?,?> manager, ArgNode argNode, CommandContext context) {
+    public FloatParser(CommandManager<?, ?> manager, ArgNode argNode, CommandContext context) {
         super(manager, argNode, context);
     }
 

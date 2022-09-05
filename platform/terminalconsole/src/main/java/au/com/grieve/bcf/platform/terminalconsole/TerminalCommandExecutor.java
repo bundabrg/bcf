@@ -21,47 +21,43 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.parsers;
+package au.com.grieve.bcf.platform.terminalconsole;
 
-import au.com.grieve.bcf.ArgNode;
 import au.com.grieve.bcf.CommandContext;
-import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
+import au.com.grieve.bcf.CommandExecute;
+import au.com.grieve.bcf.platform.terminalconsole.mapper.Command;
+import org.jline.reader.Candidate;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class StringParser extends SingleParser {
+public class TerminalCommandExecutor extends Command {
 
-    public StringParser(CommandManager<?, ?> manager, ArgNode node, CommandContext context) {
-        super(manager, node, context);
+    private final TerminalCommandRoot commandRoot;
+
+    public TerminalCommandExecutor(TerminalCommandRoot commandRoot, String name, String description) {
+        super(name, description);
+        this.commandRoot = commandRoot;
+
     }
 
     @Override
-    protected List<String> complete() {
-        List<String> result = new ArrayList<>();
-
-        for (String alias : getParameter("options", "").split("\\|")) {
-            if (alias.toLowerCase().startsWith(getInput().toLowerCase())) {
-                result.add(alias);
-            }
+    public boolean execute(String cmd, String[] args) {
+        CommandContext context = new CommandContext();
+        CommandExecute commandExecute = commandRoot.execute(Arrays.asList(args), context);
+        if (commandExecute != null) {
+            commandExecute.invoke();
+            return true;
         }
-
-        return result;
+        return false;
     }
 
     @Override
-    protected Object result() throws ParserInvalidResultException {
-        if (getParameter("options", "").isEmpty()) {
-            return getInput();
-        }
-
-        for (String alias : getParameter("options", "").split("\\|")) {
-            if (alias.equalsIgnoreCase(getInput())) {
-                return alias;
-            }
-        }
-
-        throw new ParserInvalidResultException(this, "Invalid Option");
+    public List<Candidate> complete(String cmd, String[] args) {
+        CommandContext context = new CommandContext();
+        return commandRoot.complete(Arrays.asList(args), context).stream()
+                .map(c -> new Candidate(c.getValue(), c.getTitle(), null, c.getDescription(), null, c.getKey(), true))
+                .collect(Collectors.toList());
     }
 }

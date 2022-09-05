@@ -21,47 +21,30 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.parsers;
+package au.com.grieve.bcf.platform.terminalconsole.mapper;
 
-import au.com.grieve.bcf.ArgNode;
-import au.com.grieve.bcf.CommandContext;
-import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
+import lombok.Getter;
+import lombok.ToString;
+import org.jline.reader.Candidate;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class StringParser extends SingleParser {
+@Getter
+@ToString
+public abstract class Command {
+    private final String name;
+    private final String description;
 
-    public StringParser(CommandManager<?, ?> manager, ArgNode node, CommandContext context) {
-        super(manager, node, context);
+    public Command(String name) {
+        this(name, null);
     }
 
-    @Override
-    protected List<String> complete() {
-        List<String> result = new ArrayList<>();
-
-        for (String alias : getParameter("options", "").split("\\|")) {
-            if (alias.toLowerCase().startsWith(getInput().toLowerCase())) {
-                result.add(alias);
-            }
-        }
-
-        return result;
+    public Command(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
 
-    @Override
-    protected Object result() throws ParserInvalidResultException {
-        if (getParameter("options", "").isEmpty()) {
-            return getInput();
-        }
+    public abstract boolean execute(String cmd, String[] args);
 
-        for (String alias : getParameter("options", "").split("\\|")) {
-            if (alias.equalsIgnoreCase(getInput())) {
-                return alias;
-            }
-        }
-
-        throw new ParserInvalidResultException(this, "Invalid Option");
-    }
+    public abstract List<Candidate> complete(String cmd, String[] args);
 }
