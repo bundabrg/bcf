@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -39,6 +39,7 @@ public class BukkitCommandContext extends CommandContext {
         this.sender = sender;
     }
 
+    @SuppressWarnings("unused")
     public BukkitCommandContext(CommandContext original) {
         super(original);
         this.sender = ((BukkitCommandContext) original).getSender();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -28,40 +28,41 @@ import lombok.Getter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class CommandRoot {
+public class CommandRoot<T extends BaseCommand> {
     @Getter
-    private final BaseCommand command;
-
+    protected final Map<Class<? extends T>, T> commandMap = new HashMap<>();
     @Getter
-    private final CommandManager manager;
+    private final T command;
 
     //final List<BaseCommand> subCommands = new ArrayList<>();
-
     @Getter
-    protected final Map<Class<?>, BaseCommand> commandMap = new HashMap<>();
+    private final CommandManager<T> manager;
 
 
-    public CommandRoot(CommandManager manager, Class<? extends BaseCommand> cmd) {
+    public CommandRoot(CommandManager<T> manager, Class<? extends T> cmd) {
         this.manager = manager;
-        BaseCommand command = null;
+        T command = null;
         try {
             command = cmd.getConstructor().newInstance();
             commandMap.put(cmd, command);
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
+                 IllegalAccessException e) {
             e.printStackTrace();
         }
         this.command = command;
 
     }
 
-    public void addSubCommand(Class<? extends BaseCommand> cmd) {
+    public void addSubCommand(Class<? extends T> cmd) {
         // Lookup all parent classes till it reaches our command
         if (!commandMap.containsKey(cmd)) {
             try {
                 commandMap.put(cmd, cmd.getConstructor().newInstance());
-            } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            } catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
+                     IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -74,7 +75,8 @@ public class CommandRoot {
 
             if (!commandMap.containsKey(cls)) {
                 try {
-                    commandMap.put(cls, (BaseCommand) cls.getConstructor().newInstance());
+                    //noinspection unchecked
+                    commandMap.put((Class<? extends T>) cls, (T) cls.getConstructor().newInstance());
                 } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                     break;
@@ -95,6 +97,14 @@ public class CommandRoot {
     protected Parser getParser(ArgNode argNode, CommandContext context) {
         return manager.getParser(argNode, context);
 
+    }
+
+    public CommandExecute execute(List<String> input, CommandContext context) {
+        return command.execute(this, input, context);
+    }
+
+    public List<String> complete(List<String> input, CommandContext context) {
+        return command.complete(this, input, context);
     }
 
 

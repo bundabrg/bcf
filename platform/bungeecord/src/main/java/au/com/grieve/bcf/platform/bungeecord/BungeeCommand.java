@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -24,7 +24,6 @@
 package au.com.grieve.bcf.platform.bungeecord;
 
 import au.com.grieve.bcf.BaseCommand;
-import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandExecute;
 import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Default;
@@ -44,6 +43,7 @@ import java.util.List;
 public class BungeeCommand extends BaseCommand {
 
     // Default Error
+    @SuppressWarnings("unused")
     @Error
     public void onError(CommandSender sender, String message) {
         sender.sendMessage(
@@ -52,6 +52,7 @@ public class BungeeCommand extends BaseCommand {
     }
 
     // Default Default
+    @SuppressWarnings("unused")
     @Default
     public void onDefault(CommandSender sender) {
         sender.sendMessage(
@@ -77,22 +78,23 @@ public class BungeeCommand extends BaseCommand {
         return false;
     }
 
-    public CommandExecute execute(CommandRoot commandRoot, List<String> input, CommandContext context) {
-        if (!testPermission(((BungeeCommandContext) context).getSender())) {
+    @SuppressWarnings("unused")
+    public CommandExecute execute(CommandRoot<?> commandRoot, List<String> input, BungeeCommandContext context) {
+        if (!testPermission(context.getSender())) {
             return null;
         }
 
         return super.execute(commandRoot, input, context);
     }
 
-    protected CommandExecute executeMethod(Method method, CommandRoot commandRoot, List<String> input, CommandContext context) {
+    @SuppressWarnings("unused")
+    protected CommandExecute executeMethod(Method method, CommandRoot<?> commandRoot, List<String> input, BungeeCommandContext context) {
         Permission[] permissions = method.getAnnotationsByType(Permission.class);
-        BungeeCommandContext bungeeCommandContext = (BungeeCommandContext) context;
 
         if (permissions.length > 0) {
             // Check Sender has any permissions
             for (Permission permission : permissions) {
-                if (bungeeCommandContext.getSender().hasPermission(permission.value())) {
+                if (context.getSender().hasPermission(permission.value())) {
                     return super.executeMethod(method, commandRoot, input, context);
                 }
             }
@@ -104,15 +106,15 @@ public class BungeeCommand extends BaseCommand {
 
     }
 
-    public List<String> complete(CommandRoot commandRoot, List<String> input, CommandContext context) {
+    @SuppressWarnings("unused")
+    public List<String> complete(CommandRoot<?> commandRoot, List<String> input, BungeeCommandContext context) {
 
         Permission[] permissions = getClass().getAnnotationsByType(Permission.class);
-        BungeeCommandContext bungeeCommandContext = (BungeeCommandContext) context;
 
         if (permissions.length > 0) {
             // Check Sender has any permissions
             for (Permission permission : permissions) {
-                if (bungeeCommandContext.getSender().hasPermission(permission.value())) {
+                if (context.getSender().hasPermission(permission.value())) {
                     return super.complete(commandRoot, input, context);
                 }
             }
@@ -123,15 +125,14 @@ public class BungeeCommand extends BaseCommand {
         return super.complete(commandRoot, input, context);
     }
 
-    @Override
-    protected List<String> completeMethod(Method method, CommandRoot commandRoot, List<String> input, CommandContext context) {
+    @SuppressWarnings("unused")
+    protected List<String> completeMethod(Method method, CommandRoot<?> commandRoot, List<String> input, BungeeCommandContext context) {
         Permission[] permissions = method.getAnnotationsByType(Permission.class);
-        BungeeCommandContext bungeeCommandContext = (BungeeCommandContext) context;
 
         if (permissions.length > 0) {
             // Check Sender has any permissions
             for (Permission permission : permissions) {
-                if (bungeeCommandContext.getSender().hasPermission(permission.value())) {
+                if (context.getSender().hasPermission(permission.value())) {
                     return super.completeMethod(method, commandRoot, input, context);
                 }
             }

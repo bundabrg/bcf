@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -24,11 +24,7 @@
 package au.com.grieve.bcf;
 
 import au.com.grieve.bcf.annotations.Command;
-import au.com.grieve.bcf.parsers.DoubleParser;
-import au.com.grieve.bcf.parsers.FloatParser;
-import au.com.grieve.bcf.parsers.IntegerParser;
-import au.com.grieve.bcf.parsers.LiteralParser;
-import au.com.grieve.bcf.parsers.StringParser;
+import au.com.grieve.bcf.parsers.*;
 import au.com.grieve.bcf.utils.ReflectUtils;
 import lombok.Getter;
 
@@ -40,10 +36,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class CommandManager {
+public abstract class CommandManager<T extends BaseCommand> {
 
     @Getter
-    protected final Map<Class<? extends BaseCommand>, CommandRoot> commandRoots = new HashMap<>();
+    protected final Map<Class<? extends T>, CommandRoot<T>> commandRoots = new HashMap<>();
 
     @Getter
     protected final Map<String, Class<? extends Parser>> parsers = new HashMap<>();
@@ -56,7 +52,8 @@ public abstract class CommandManager {
         registerParser("float", FloatParser.class);
     }
 
-    public void registerCommand(Class<? extends BaseCommand> cmd) {
+    @SuppressWarnings("unused")
+    public void registerCommand(Class<? extends T> cmd) {
         // Lookup all parent classes
         List<Class<?>> parents = Stream.of(ReflectUtils.getAllSuperClasses(cmd))
                 .filter(BaseCommand.class::isAssignableFrom)
@@ -71,7 +68,7 @@ public abstract class CommandManager {
 
         // Find all commandRoots and add us to them as a sub command
         for (Class<?> cls : parents) {
-            CommandRoot c = commandRoots.getOrDefault(cls, null);
+            CommandRoot<T> c = commandRoots.getOrDefault(cls, null);
 
             if (c != null) {
                 c.addSubCommand(cmd);
@@ -91,14 +88,15 @@ public abstract class CommandManager {
             return cls
                     .getConstructor(CommandManager.class, ArgNode.class, CommandContext.class)
                     .newInstance(this, argNode, context);
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
+                 IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    protected CommandRoot createCommandRoot(Class<? extends BaseCommand> cmd) {
-        return new CommandRoot(this, cmd);
+    protected CommandRoot<T> createCommandRoot(Class<? extends T> cmd) {
+        return new CommandRoot<>(this, cmd);
     }
 
     public void registerParser(String name, Class<? extends Parser> parser) {

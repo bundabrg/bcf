@@ -23,26 +23,34 @@
 
 package au.com.grieve.bcf.platform.bukkit;
 
+import au.com.grieve.bcf.CommandExecute;
+import au.com.grieve.bcf.CommandRoot;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class BukkitCommandExecutor extends Command {
 
-    final BukkitCommandRoot commandRoot;
+    final CommandRoot<BukkitCommand> commandRoot;
 
-    public BukkitCommandExecutor(String name, BukkitCommandRoot commandRoot) {
+    public BukkitCommandExecutor(String name, CommandRoot<BukkitCommand> commandRoot) {
         super(name);
         this.commandRoot = commandRoot;
-        setPermission(String.join(";", commandRoot.getPermissions()));
+        setPermission(String.join(";", commandRoot.getCommand().getPermissions()));
     }
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         if (testPermission(sender)) {
-            return commandRoot.execute(sender, alias, args);
+            BukkitCommandContext context = new BukkitCommandContext(sender);
+            CommandExecute commandExecute = commandRoot.execute(Arrays.asList(args), context);
+            if (commandExecute != null) {
+                commandExecute.invoke(sender);
+                return true;
+            }
         }
         return false;
     }
@@ -50,6 +58,7 @@ public class BukkitCommandExecutor extends Command {
 
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
-        return commandRoot.complete(sender, alias, args);
+        BukkitCommandContext context = new BukkitCommandContext(sender);
+        return commandRoot.complete(Arrays.asList(args), context);
     }
 }

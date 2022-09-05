@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -23,7 +23,6 @@
 
 package au.com.grieve.bcf.platform.bukkit;
 
-import au.com.grieve.bcf.BaseCommand;
 import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Command;
@@ -39,7 +38,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class BukkitCommandManager extends CommandManager {
+@SuppressWarnings("unused")
+public class BukkitCommandManager extends CommandManager<BukkitCommand> {
 
     private final JavaPlugin plugin;
     private final CommandMap commandMap;
@@ -74,8 +74,8 @@ public class BukkitCommandManager extends CommandManager {
     }
 
     @Override
-    protected CommandRoot createCommandRoot(Class<? extends BaseCommand> cmd) {
-        BukkitCommandRoot cr = new BukkitCommandRoot(this, cmd);
+    protected CommandRoot<BukkitCommand> createCommandRoot(Class<? extends BukkitCommand> cmd) {
+        CommandRoot<BukkitCommand> cr = super.createCommandRoot(cmd);
 
         // Get Name and Aliases
         Command commandAnnotation = cmd.getAnnotation(Command.class);

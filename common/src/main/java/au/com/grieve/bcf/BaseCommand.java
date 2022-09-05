@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -32,12 +32,7 @@ import au.com.grieve.bcf.exceptions.SwitchNotFoundException;
 import lombok.Getter;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class BaseCommand {
@@ -71,7 +66,7 @@ public abstract class BaseCommand {
         this.defaultMethod = defaultMethod;
     }
 
-    protected CommandExecute getErrorExecute(CommandRoot commandRoot, String message, CommandContext context) {
+    protected CommandExecute getErrorExecute(CommandRoot<?> commandRoot, String message, CommandContext context) {
         BaseCommand cmd = this;
         while (cmd.getErrorMethod() == null) {
             cmd = commandRoot.getCommandMap().get(cmd.getClass().getSuperclass());
@@ -87,7 +82,7 @@ public abstract class BaseCommand {
         return null;
     }
 
-    protected CommandExecute getDefaultExecute(CommandRoot commandRoot, CommandContext context) {
+    protected CommandExecute getDefaultExecute(CommandRoot<?> commandRoot, CommandContext context) {
         BaseCommand cmd = this;
         while (cmd.getDefaultMethod() == null) {
             cmd = commandRoot.getCommandMap().get(cmd.getClass().getSuperclass());
@@ -103,7 +98,7 @@ public abstract class BaseCommand {
         return null;
     }
 
-    public CommandExecute execute(CommandRoot commandRoot, List<String> input, CommandContext context) {
+    public CommandExecute execute(CommandRoot<?> commandRoot, List<String> input, CommandContext context) {
         List<CommandExecute> commandExecutes = new ArrayList<>();
 
         // Go through class Args first if they exist, as long as they are not on our commandRoot class (to allow @Commands to override @Args)
@@ -194,7 +189,7 @@ public abstract class BaseCommand {
     /**
      * Execution for methods
      */
-    protected CommandExecute executeMethod(Method method, CommandRoot commandRoot, List<String> input, CommandContext context) {
+    protected CommandExecute executeMethod(Method method, CommandRoot<?> commandRoot, List<String> input, CommandContext context) {
         List<CommandExecute> commandExecutes = new ArrayList<>();
 
         for (Arg methodArgs : method.getAnnotationsByType(Arg.class)) {
@@ -263,7 +258,7 @@ public abstract class BaseCommand {
         return best;
     }
 
-    public List<String> complete(CommandRoot commandRoot, List<String> input, CommandContext context) {
+    public List<String> complete(CommandRoot<?> commandRoot, List<String> input, CommandContext context) {
         List<String> ret = new ArrayList<>();
 
         // Go through class Args first as long as its not our commandroot command to allow @Command to override @Args
@@ -331,7 +326,7 @@ public abstract class BaseCommand {
     /**
      * Completion for methods
      */
-    protected List<String> completeMethod(Method method, CommandRoot commandRoot, List<String> input, CommandContext context) {
+    protected List<String> completeMethod(Method method, CommandRoot<?> commandRoot, List<String> input, CommandContext context) {
         List<String> ret = new ArrayList<>();
         for (Arg methodArgs : method.getAnnotationsByType(Arg.class)) {
             List<String> currentInput = new ArrayList<>(input);
@@ -378,16 +373,16 @@ public abstract class BaseCommand {
         return ret;
     }
 
-    protected void parseArg(CommandRoot commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context) throws ParserInvalidResultException, ParserRequiredArgumentException, SwitchNotFoundException {
+    protected void parseArg(CommandRoot<?> commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context) throws ParserInvalidResultException, ParserRequiredArgumentException, SwitchNotFoundException {
         parseArg(commandRoot, argNodes, input, context, true);
     }
 
-    protected void parseSwitches(CommandRoot commandRoot, List<String> input, CommandContext context, boolean defaults) throws SwitchNotFoundException, ParserRequiredArgumentException, ParserInvalidResultException {
+    protected void parseSwitches(CommandRoot<?> commandRoot, List<String> input, CommandContext context, boolean defaults) throws SwitchNotFoundException, ParserRequiredArgumentException, ParserInvalidResultException {
         while (input.size() > 0 && input.get(0).startsWith("-")) {
             String name = input.remove(0).substring(1);
             Parser parser = context.getSwitches().stream()
                     .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
-                            .filter(sw -> sw.toLowerCase().equals(name.toLowerCase()))
+                            .filter(sw -> sw.equalsIgnoreCase(name))
                             .limit(1)
                             .map(sw -> s)
                     )
@@ -408,7 +403,7 @@ public abstract class BaseCommand {
         }
     }
 
-    protected void parseArg(CommandRoot commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context, boolean defaults) throws ParserRequiredArgumentException, ParserInvalidResultException, SwitchNotFoundException {
+    protected void parseArg(CommandRoot<?> commandRoot, List<ArgNode> argNodes, List<String> input, CommandContext context, boolean defaults) throws ParserRequiredArgumentException, ParserInvalidResultException, SwitchNotFoundException {
         while (argNodes.size() > 0) {
             ArgNode node = argNodes.remove(0);
 

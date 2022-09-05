@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -23,13 +23,13 @@
 
 package au.com.grieve.bcf.platform.bungeecord;
 
-import au.com.grieve.bcf.BaseCommand;
 import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Command;
 import net.md_5.bungee.api.plugin.Plugin;
 
-public class BungeeCommandManager extends CommandManager {
+@SuppressWarnings("unused")
+public class BungeeCommandManager extends CommandManager<BungeeCommand> {
 
     private final Plugin plugin;
 
@@ -42,8 +42,8 @@ public class BungeeCommandManager extends CommandManager {
     }
 
     @Override
-    protected CommandRoot createCommandRoot(Class<? extends BaseCommand> cmd) {
-        BungeeCommandRoot cr = new BungeeCommandRoot(this, cmd);
+    protected CommandRoot<BungeeCommand> createCommandRoot(Class<? extends BungeeCommand> cmd) {
+        CommandRoot<BungeeCommand> cr = super.createCommandRoot(cmd);
 
         // Get Name and Aliases
         Command commandAnnotation = cmd.getAnnotation(Command.class);
