@@ -100,7 +100,7 @@ the command will be rejected.  Designating a switch parameter means it is no lon
     <dependency>
         <groupId>au.com.grieve.bcf</groupId>
         <artifactId>bukkit</artifactId>
-        <version>1.2.8</version>
+        <version>1.2.9</version>
     </dependency>
     ```
    
@@ -156,7 +156,7 @@ the command will be rejected.  Designating a switch parameter means it is no lon
     bcf = new BukkitCommandManager(this);
     
     // Register Commands
-    bcf.registerCommand(MainCommand.class);
+    bcf.registerCommand(new MainCommand());
     ```
    
 6. You should now be able to use `/mycmd list` in-game.

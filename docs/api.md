@@ -17,23 +17,29 @@ Add the following repository to your `pom.xml`
 ```
 
 Add the following dependency to your `pom.xml` if you are using Bukkit, Spigot or Paper:
+
 ```xml
+
 <dependency>
     <groupId>au.com.grieve.bcf</groupId>
     <artifactId>bukkit</artifactId>
-    <version>1.2.8</version>
+    <version>1.2.9</version>
 </dependency>
 ```
 
+!!! note
+    Don't forget to check what the latest verison is as these documents may be out of date.
+
 For Bungeecord add the following:
+
 ```xml
+
 <dependency>
     <groupId>au.com.grieve.bcf</groupId>
     <artifactId>bungeecord</artifactId>
     <version>1.2.8</version>
 </dependency>
 ```
-
 
 Shade the library into your own code by adding in your `pom.xml`
 ```xml
@@ -83,20 +89,22 @@ uses `BungeeCommand`.
     }
     ```
 
-You can of course (and are encouraged) to extend any of your command classes to better
-separate groups of commands.  This can also be an effective way to allow 3rd parties to
+You can of course (and are encouraged) to break out your Command classes into multiple groups of commands and
+then combine them as subcommands of one primary Command This can also be an effective way to allow 3rd parties to
 add commands under your plugin.
+
 
 ## Command Manager
 
-During your plugin initialization you need to setup a new Command Manager instance.  For Bukkit
+During your plugin initialization you need to setup a new Command Manager instance. For Bukkit
 use a `BukkitCommandManager`, and for Bungeecord use `BungeeCommandManager`, passing your own plugin as a parameter.
 
-Then register each of your Command classes with the manager, passing the class type as a parameter.
+Then register each of your Command classes with the manager, passing the class type as a parameter. You can also
+register sub commands of another class by using `registerSubCommand`. You use the class of the command you are creating
+a subcommand underneath.
 
 !!! example
     ```java
-    
     public final class MyPlugin extends JavaPlugin {
         @Getter
         private BukkitCommandManager bcf;
@@ -107,13 +115,19 @@ Then register each of your Command classes with the manager, passing the class t
             bcf = new BukkitCommandManager(this);
     
             // Register Commands
-            bcf.registerCommand(MainCommand.class);
+            bcf.registerCommand(new MainCommand());
+
+            // Register Subcommands
+            bcf.registerSubCommand(MainCommand.class, new MySubCommand());
+            bcf.registerSubCommand(MainCommand.class, new MyOtherSubCommand());
+            bcf.registerSubCommand(MyOtherSubCommand.class, new My SubSubCommand());
         }
     }
     ```
+
 ## Parser
 
-You may wish to add your own custom parser. Either the built in ones are not sufficient, or you
+You may wish to add your own custom parser. Either the built-in ones are not sufficient, or you
 have some custom arguments that need to be parsed in a special way.
 
 !!! note
