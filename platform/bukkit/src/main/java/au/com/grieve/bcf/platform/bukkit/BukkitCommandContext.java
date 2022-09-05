@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -28,7 +28,7 @@ import lombok.Getter;
 import org.bukkit.command.CommandSender;
 
 @Getter
-public class BukkitCommandContext extends CommandContext {
+public class BukkitCommandContext extends CommandContext<BukkitCommand> {
 
     // Bukkit Command Sender
     private final CommandSender sender;
@@ -39,8 +39,9 @@ public class BukkitCommandContext extends CommandContext {
         this.sender = sender;
     }
 
-    public BukkitCommandContext(CommandContext original) {
+    @SuppressWarnings("unused")
+    public BukkitCommandContext(BukkitCommandContext original) {
         super(original);
-        this.sender = ((BukkitCommandContext) original).getSender();
+        this.sender = original.getSender();
     }
 }
