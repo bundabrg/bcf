@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -29,11 +29,13 @@ import lombok.Setter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 @Getter
 public class CommandContext {
     private final List<Parser> switches = new ArrayList<>();
     private final List<Parser> parsers = new ArrayList<>();
+    private final Stack<BaseCommand> commandStack = new Stack<>();
 
     @Setter
     private Parser currentParser;
@@ -44,6 +46,7 @@ public class CommandContext {
     public CommandContext(CommandContext original) {
         switches.addAll(original.getSwitches());
         parsers.addAll(original.getParsers());
+        commandStack.addAll(original.getCommandStack());
         currentParser = original.getCurrentParser();
     }
 

@@ -25,24 +25,35 @@ package au.com.grieve.bcf;
 
 import au.com.grieve.bcf.annotations.Command;
 import au.com.grieve.bcf.parsers.*;
-import au.com.grieve.bcf.utils.ReflectUtils;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public abstract class CommandManager<T extends BaseCommand> {
+@Getter
+public abstract class CommandManager<T extends CommandRoot> {
 
-    @Getter
-    protected final Map<Class<? extends T>, CommandRoot<T>> commandRoots = new HashMap<>();
-
-    @Getter
+    protected final Map<Class<? extends BaseCommand>, CommandConfig<T>> commands = new HashMap<>();
     protected final Map<String, Class<? extends Parser>> parsers = new HashMap<>();
+
+    @SuppressWarnings("unused")
+    public void registerCommand(BaseCommand cmd) {
+        // As a root command cmd needs to have a @Command annotation
+        if (cmd.getClass().getAnnotation(Command.class) == null) {
+            throw new RuntimeException("Missing required @Command");
+        }
+
+        CommandConfig<T> commandConfig = commands.getOrDefault(cmd.getClass(), new CommandConfig<>());
+
+        commandConfig.setCommandRoot(createCommandRoot(cmd));
+
+        commandConfig.getInstances().add(cmd);
+        commands.put(cmd.getClass(), commandConfig);
+    }
 
     public CommandManager() {
         // Register Default Parsers
@@ -52,28 +63,28 @@ public abstract class CommandManager<T extends BaseCommand> {
         registerParser("float", FloatParser.class);
     }
 
-    @SuppressWarnings("unused")
-    public void registerCommand(Class<? extends T> cmd) {
-        // Lookup all parent classes
-        List<Class<?>> parents = Stream.of(ReflectUtils.getAllSuperClasses(cmd))
-                .filter(BaseCommand.class::isAssignableFrom)
-                .filter(c -> c != BaseCommand.class)
-                .collect(Collectors.toList());
-        Collections.reverse(parents);
+    public void registerSubCommand(Class<? extends BaseCommand> parentClass, BaseCommand cmd) {
+        // Make sure parentClass is registered
+        CommandConfig<T> parentCommandConfig = commands.get(parentClass);
 
-        // If our class has a command, we are a CommandRoot
-        if (cmd.getAnnotation(Command.class) != null) {
-            commandRoots.put(cmd, createCommandRoot(cmd));
+        if (parentCommandConfig == null) {
+            throw new RuntimeException("Parent class is not registered");
         }
 
-        // Find all commandRoots and add us to them as a sub command
-        for (Class<?> cls : parents) {
-            CommandRoot<T> c = commandRoots.getOrDefault(cls, null);
+        parentCommandConfig.getChildren().add(cmd);
 
-            if (c != null) {
-                c.addSubCommand(cmd);
-            }
+        // If cmd has @Command, it is a CommandRoot
+        CommandConfig<T> commandConfig = commands.getOrDefault(cmd.getClass(), new CommandConfig<>());
+        if (cmd.getClass().getAnnotation(Command.class) != null) {
+            commandConfig.setCommandRoot(createCommandRoot(cmd));
         }
+
+        commandConfig.getInstances().add(cmd);
+        commands.put(cmd.getClass(), commandConfig);
+    }
+
+    protected T createCommandRoot(BaseCommand cmd) {
+        return new CommandRoot(this, cmd);
     }
 
     public Parser getParser(ArgNode argNode, CommandContext context) {
@@ -95,8 +106,12 @@ public abstract class CommandManager<T extends BaseCommand> {
         return null;
     }
 
-    protected CommandRoot<T> createCommandRoot(Class<? extends T> cmd) {
-        return new CommandRoot<>(this, cmd);
+    @Getter
+    protected static class CommandConfig<T extends CommandRoot> {
+        private final List<BaseCommand> instances = new ArrayList<>();
+        private final List<BaseCommand> children = new ArrayList<>();
+        @Setter
+        private T commandRoot;
     }
 
     public void registerParser(String name, Class<? extends Parser> parser) {
