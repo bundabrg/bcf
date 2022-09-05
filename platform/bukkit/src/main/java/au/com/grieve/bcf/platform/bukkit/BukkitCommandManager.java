@@ -92,7 +92,7 @@ public class BukkitCommandManager extends CommandManager<
         }
 
         // Register with Bukkit
-        BukkitCommandExecutor bukkitCommandExecutor = new BukkitCommandExecutor(aliases[0], cr);
+        BukkitCommandExecutor bukkitCommandExecutor = new BukkitCommandExecutor(cr, aliases[0]);
         bukkitCommandExecutor.setAliases(Arrays.asList(aliases));
         commandMap.register(aliases[0], plugin.getName().toLowerCase(), bukkitCommandExecutor);
 

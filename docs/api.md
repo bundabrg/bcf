@@ -72,8 +72,8 @@ Shade the library into your own code by adding in your `pom.xml`
 
 ## Command Class
 
-To create a command extend from an appropriate BaseCommand class and annotate with @Command. For a Bukkit plugin use `BukkitCommand`, and Bungeecord
-uses `BungeeCommand`.
+To create a command extend from an appropriate BaseCommand class and annotate with @Command. For a Bukkit plugin use `BukkitCommand`, Bungeecord
+uses `BungeeCommand` and Standalone Console uses `TerminalCommand`.
 
 !!! example
     ```java
@@ -96,8 +96,10 @@ add commands under your plugin.
 
 ## Command Manager
 
+### Bukkit/Bungeecord
+
 During your plugin initialization you need to setup a new Command Manager instance. For Bukkit
-use a `BukkitCommandManager`, and for Bungeecord use `BungeeCommandManager`, passing your own plugin as a parameter.
+use a `BukkitCommandManager`, for Bungeecord use `BungeeCommandManager`, passing your own plugin as a parameter.
 
 Then register each of your Command classes with the manager, passing the class type as a parameter. You can also
 register sub commands of another class by using `registerSubCommand`. You use the class of the command you are creating
@@ -120,7 +122,69 @@ a subcommand underneath.
             // Register Subcommands
             bcf.registerSubCommand(MainCommand.class, new MySubCommand());
             bcf.registerSubCommand(MainCommand.class, new MyOtherSubCommand());
-            bcf.registerSubCommand(MyOtherSubCommand.class, new My SubSubCommand());
+            bcf.registerSubCommand(MyOtherSubCommand.class, new MySubSubCommand());
+        }
+    }
+    ```
+
+### Standalone
+
+First you need to extend `TerminalConsole` to define how your console works. You can change up completions are done
+by modifying the `buildReader` method. In the example below it uses TailTipsWidgets, part of `jline-console` to display
+fancy auto-completions.
+
+!!! example
+    ```java
+    public class MyConsole extends TerminalConsole {
+        @Override
+        protected boolean isRunning() {
+            return true;
+        }
+    
+        @Override
+        protected void shutdown() {
+    
+        }
+    
+        @Override
+        protected LineReader buildReader(LineReaderBuilder builder) {
+            LineReader reader = super.buildReader(builder);
+            Map<String, CmdDesc> tailTips = new HashMap<>();
+            TailTipWidgets widgets = new TailTipWidgets(reader, tailTips);
+            widgets.enable();
+            return reader;
+    
+        }
+    }
+    ```
+
+In your main function instantiate the above class and pass it as a parameter to `TerminalManager` to add
+command completion.
+
+Then register each of your Command classes with the manager, passing the class type as a parameter. You can also
+register sub commands of another class by using `registerSubCommand`. You use the class of the command you are creating
+a subcommand underneath.
+
+You then execute the `start` method on your TerminalConsole class which will not return until it is shut down or the 
+user breaks out.
+
+!!! example
+    ```java
+    public class Standalone {
+        public static void main(String[] args) {
+            MyConsle console = new MyConsole();
+            TerminalCommandManager bcf = new TerminalCommandManager(console);
+    
+            // Register Commands
+            bcf.registerCommand(new MainCommand());
+    
+            // Register Subcommands
+            bcf.registerSubCommand(MainCommand.class, new MySubCommand());
+            bcf.registerSubCommand(MainCommand.class, new MyOtherSubCommand());
+            bcf.registerSubCommand(MyOtherSubCommand.class, new MySubSubCommand());
+    
+            // Listen forever
+            console.start();
         }
     }
     ```

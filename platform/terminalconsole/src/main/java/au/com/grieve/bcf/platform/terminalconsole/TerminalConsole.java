@@ -21,47 +21,38 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.parsers;
+package au.com.grieve.bcf.platform.terminalconsole;
 
-import au.com.grieve.bcf.ArgNode;
-import au.com.grieve.bcf.CommandContext;
-import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
+import au.com.grieve.bcf.platform.terminalconsole.mapper.CommandCompleter;
+import au.com.grieve.bcf.platform.terminalconsole.mapper.CommandMap;
+import lombok.Getter;
+import net.minecrell.terminalconsole.SimpleTerminalConsole;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
+@Getter
+public abstract class TerminalConsole extends SimpleTerminalConsole {
 
-public class StringParser extends SingleParser {
+    private final CommandMap commandMap;
+    private final CommandCompleter commandCompleter;
 
-    public StringParser(CommandManager<?, ?> manager, ArgNode node, CommandContext context) {
-        super(manager, node, context);
+    public TerminalConsole() {
+        commandMap = new CommandMap();
+        this.commandCompleter = new CommandCompleter(commandMap);
     }
 
     @Override
-    protected List<String> complete() {
-        List<String> result = new ArrayList<>();
+    protected LineReader buildReader(LineReaderBuilder builder) {
+        return super.buildReader(builder
+                .completer(commandCompleter)
+        );
 
-        for (String alias : getParameter("options", "").split("\\|")) {
-            if (alias.toLowerCase().startsWith(getInput().toLowerCase())) {
-                result.add(alias);
-            }
-        }
-
-        return result;
     }
 
     @Override
-    protected Object result() throws ParserInvalidResultException {
-        if (getParameter("options", "").isEmpty()) {
-            return getInput();
+    protected void runCommand(String input) {
+        if (!commandMap.execute(input)) {
+            System.err.println("No such command");
         }
-
-        for (String alias : getParameter("options", "").split("\\|")) {
-            if (alias.equalsIgnoreCase(getInput())) {
-                return alias;
-            }
-        }
-
-        throw new ParserInvalidResultException(this, "Invalid Option");
     }
 }

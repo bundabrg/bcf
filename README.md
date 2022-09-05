@@ -22,7 +22,7 @@
 
 ---
 
-`bcf` is a Command Management tool suitable for use in Bukkit/Spigot/PaperMC and Bungeecord, though it may support other platforms 
+`bcf` is a Command Management tool suitable for use in Bukkit/Spigot/PaperMC, Bungeecord and Standalone (based on JLine) though it may support other platforms 
 in the near future.
 
 It allows one to easily provide full command completion for all your commands as
@@ -38,6 +38,8 @@ features I felt I desperately needed for some reason. The name `bcf` is used in 
 
 
 ## Features
+
+* Supports Bukkit (Spigot/PaperMC), Bungeecoord and Standalone
 
 * Define your commands by simply extending a BaseCommand derived class (like `BukkitCommand`) and annotating it with
 a `@Command` to define it, with any aliases separated by a `|`.

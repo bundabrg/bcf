@@ -166,7 +166,32 @@ The method must not take any additional parameters apart from those provided by 
     
     When attempting to execute the invalid command: `/mycmd unknown` a message "Some help" in yellow will
     be shown.
-    
+
+### @Description
+
+**Target**: `Class`
+
+**Value**: `None`
+
+**Multiple**: not allowed
+
+When used on a class decorated by `@Command` it will add a description that will become visible in platforms that
+support it.
+
+!!! example
+    ```java
+    @Command("mycmd")
+    @Description("This performs something")
+    class MainCommand extends BukkitCommand {
+        @Arg("cmd1")
+        public void cmd1(CommandSender sender) {
+            ...
+        }
+    }
+    ```
+
+
+
 ### @Error
 
 **Target**: `Method`
@@ -224,9 +249,9 @@ The method must take a string argument containing the error message.
     When attempting to execute the invalid command: `/mycmd cmd1 10` a message "Number must be smaller or equal to 3" in yellow will
     be shown.
     
-## Bukkit
+## Bukkit/Bungeecord
 
-These annotations are available for Bukkit environments.
+These annotations are available for Bukkit and Bungeecord environments.
 
 ### @Permission
 

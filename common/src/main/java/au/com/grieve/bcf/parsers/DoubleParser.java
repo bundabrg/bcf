@@ -32,7 +32,7 @@ import java.util.List;
 
 public class DoubleParser extends SingleParser {
 
-    public DoubleParser(CommandManager<?,?> manager, ArgNode argNode, CommandContext context) {
+    public DoubleParser(CommandManager<?, ?> manager, ArgNode argNode, CommandContext context) {
         super(manager, argNode, context);
     }
 

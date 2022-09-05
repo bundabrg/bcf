@@ -21,14 +21,26 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.annotations;
+package au.com.grieve.bcf.platform.terminalconsole.mapper;
 
-import java.lang.annotation.*;
 
-@Repeatable(Args.class)
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
-public @interface Arg {
-    String[] value();
+import org.jline.reader.Candidate;
+import org.jline.reader.Completer;
+import org.jline.reader.LineReader;
+import org.jline.reader.ParsedLine;
+
+import java.util.List;
+
+public class CommandCompleter implements Completer {
+
+    private final CommandMap commandMap;
+
+    public CommandCompleter(CommandMap commandMap) {
+        this.commandMap = commandMap;
+    }
+
+    @Override
+    public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
+        candidates.addAll(commandMap.complete(line.line()));
+    }
 }
-

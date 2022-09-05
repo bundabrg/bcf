@@ -34,7 +34,7 @@ import java.util.stream.IntStream;
 
 public class IntegerParser extends SingleParser {
 
-    public IntegerParser(CommandManager<?,?> manager, ArgNode argNode, CommandContext context) {
+    public IntegerParser(CommandManager<?, ?> manager, ArgNode argNode, CommandContext context) {
         super(manager, argNode, context);
     }
 

@@ -35,7 +35,7 @@ import java.util.Map;
 @Getter
 public abstract class Parser {
     // Data
-    protected final CommandManager<?,?> manager;
+    protected final CommandManager<?, ?> manager;
     protected final CommandContext context;
     protected final Map<String, String> defaultParameters = new HashMap<>();
 
@@ -44,21 +44,15 @@ public abstract class Parser {
     protected ArgNode argNode;
 
     // Cache
-    protected List<String> completions;
     protected Object result;
 
-    public Parser(CommandManager<?,?> manager, ArgNode argNode, CommandContext context) {
+    public Parser(CommandManager<?, ?> manager, ArgNode argNode, CommandContext context) {
         this.manager = manager;
         this.context = context;
         this.argNode = argNode;
     }
 
-    public List<String> getCompletions() {
-        if (completions == null) {
-            completions = complete();
-        }
-        return completions;
-    }
+    public abstract List<Candidate> getCompletions();
 
     public Object getResult() throws ParserInvalidResultException {
         if (result == null) {

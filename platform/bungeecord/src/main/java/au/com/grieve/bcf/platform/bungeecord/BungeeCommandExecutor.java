@@ -23,18 +23,20 @@
 
 package au.com.grieve.bcf.platform.bungeecord;
 
+import au.com.grieve.bcf.Candidate;
 import au.com.grieve.bcf.CommandExecute;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class BungeeCommandExecutor extends Command implements TabExecutor {
 
     final BungeeCommandRoot commandRoot;
 
-    public BungeeCommandExecutor(String name, BungeeCommandRoot commandRoot, String... aliases) {
+    public BungeeCommandExecutor(BungeeCommandRoot commandRoot, String name, String... aliases) {
         super(name, null, aliases);
         this.commandRoot = commandRoot;
     }
@@ -54,6 +56,8 @@ public class BungeeCommandExecutor extends Command implements TabExecutor {
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         BungeeCommandContext context = new BungeeCommandContext(sender);
-        return commandRoot.complete(Arrays.asList(args), context);
+        return commandRoot.complete(Arrays.asList(args), context).stream()
+                .map(Candidate::getValue)
+                .collect(Collectors.toList());
     }
 }

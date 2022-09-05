@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  */
 public class PlayerParser extends SingleParser {
 
-    public PlayerParser(CommandManager<?,?> manager, ArgNode argNode, CommandContext context) {
+    public PlayerParser(CommandManager<?, ?> manager, ArgNode argNode, CommandContext context) {
         super(manager, argNode, context);
     }
 

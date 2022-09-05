@@ -21,14 +21,28 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.annotations;
+package au.com.grieve.bcf;
 
-import java.lang.annotation.*;
+import lombok.Getter;
+import lombok.ToString;
 
-@Repeatable(Args.class)
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
-public @interface Arg {
-    String[] value();
+@Getter
+@ToString
+public class Candidate {
+    private final String value;
+    private final String title;
+    private final String description;
+
+    private final String key;
+
+    public Candidate(String value) {
+        this(value, value, null, null);
+    }
+
+    public Candidate(String value, String title, String description, String key) {
+        this.value = value;
+        this.title = title;
+        this.description = description;
+        this.key = key;
+    }
 }
-

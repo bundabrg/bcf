@@ -24,6 +24,7 @@
 package au.com.grieve.bcf.platform.bungeecord;
 
 import au.com.grieve.bcf.BaseCommand;
+import au.com.grieve.bcf.Candidate;
 import au.com.grieve.bcf.CommandExecute;
 import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Permission;
@@ -101,7 +102,7 @@ public class BungeeCommandRoot extends CommandRoot {
     }
 
     @SuppressWarnings("unused")
-    public List<String> complete(BaseCommand command, List<String> input, BungeeCommandContext context) {
+    public List<Candidate> complete(BaseCommand command, List<String> input, BungeeCommandContext context) {
         if (testPermission(command, context.getSender(), false)) {
             return super.complete(command, input, context);
         }
@@ -109,7 +110,7 @@ public class BungeeCommandRoot extends CommandRoot {
     }
 
     @SuppressWarnings("unused")
-    protected List<String> completeMethod(Method method, BaseCommand command, List<String> input, BungeeCommandContext context) {
+    protected List<Candidate> completeMethod(Method method, BaseCommand command, List<String> input, BungeeCommandContext context) {
         Permission[] permissions = method.getAnnotationsByType(Permission.class);
 
         if (permissions.length > 0) {

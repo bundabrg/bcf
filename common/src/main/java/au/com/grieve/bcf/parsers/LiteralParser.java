@@ -44,7 +44,7 @@ import java.util.List;
 public class LiteralParser extends SingleParser {
 
 
-    public LiteralParser(CommandManager<BaseCommand,?> manager, ArgNode argNode, CommandContext context) {
+    public LiteralParser(CommandManager<BaseCommand, ?> manager, ArgNode argNode, CommandContext context) {
         super(manager, argNode, context);
         defaultParameters.put("suppress", "true");
     }

@@ -56,7 +56,7 @@ public class CommandRoot {
         return execute(command, input, context);
     }
 
-    public List<String> complete(List<String> input, CommandContext context) {
+    public List<Candidate> complete(List<String> input, CommandContext context) {
         return complete(command, input, context);
     }
 
@@ -255,10 +255,10 @@ public class CommandRoot {
         return best;
     }
 
-    public List<String> complete(BaseCommand command, List<String> input, CommandContext context) {
-        List<String> ret = new ArrayList<>();
+    public List<Candidate> complete(BaseCommand command, List<String> input, CommandContext context) {
+        List<Candidate> ret = new ArrayList<>();
 
-        // Go through class Args first as long as its not our commandroot command to allow @Command to override @Args
+        // Go through class Args first as long as it's not our commandroot command to allow @Command to override @Args
         if (command.getClass().getAnnotationsByType(Arg.class).length > 0) {
             for (Arg classArgs : command.getClass().getAnnotationsByType(Arg.class)) {
                 List<String> currentInput = new ArrayList<>(input);
@@ -283,6 +283,7 @@ public class CommandRoot {
                             )
                             .map(s -> "-" + s)
                             .limit(20)
+                            .map(s -> new Candidate(s))
                             .collect(Collectors.toList())
                     );
                     continue;
@@ -325,7 +326,7 @@ public class CommandRoot {
 
         // Remove duplicates and order alphabetically
         ret = new ArrayList<>(new HashSet<>(ret));
-        ret.sort((s1, s2) -> s1.toLowerCase().compareTo(s2));
+        ret.sort(Comparator.comparing(s -> s.getTitle().toLowerCase()));
 
         return ret;
     }
@@ -333,8 +334,8 @@ public class CommandRoot {
     /**
      * Completion for methods
      */
-    protected List<String> completeMethod(Method method, BaseCommand command, List<String> input, CommandContext context) {
-        List<String> ret = new ArrayList<>();
+    protected List<Candidate> completeMethod(Method method, BaseCommand command, List<String> input, CommandContext context) {
+        List<Candidate> ret = new ArrayList<>();
         for (Arg methodArgs : method.getAnnotationsByType(Arg.class)) {
             List<String> currentInput = new ArrayList<>(input);
             List<ArgNode> currentArgs = ArgNode.parse(String.join(" ", methodArgs.value()));
@@ -356,6 +357,7 @@ public class CommandRoot {
                                     )
                                     .map(s -> "-" + s)
                                     .limit(20)
+                                    .map(s -> new Candidate(s))
                                     .collect(Collectors.toList())
                             );
                         }
@@ -373,6 +375,7 @@ public class CommandRoot {
                         )
                         .map(s -> "-" + s)
                         .limit(20)
+                        .map(s -> new Candidate(s))
                         .collect(Collectors.toList())
                 );
             }
