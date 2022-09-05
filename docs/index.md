@@ -20,26 +20,38 @@ features I felt I desperately needed for some reason. The name `bcf` is used in 
 ## Features
 
 * Define your commands by simply extending a BaseCommand derived class (like `BukkitCommand`) and annotating it with
-a `@Command` to define it, with any aliases separated by a `|`.
+  a `@Command` to define it, with any aliases separated by a `|`.
 
     !!! example
         ```java
         @Command("mycmd|my|m")
-        public class myCommand extends BukkitCommand {
-           ...
+        public class MyCommand extends BukkitCommand {
+            ...
         }
         ```
         All of `/mycmd`, `/my`, `/m` are valid commands with the latter 2 designated as aliases.
 
+* Register the class with the manager. For example in a Bukkit/Spigot/Paper based plugin you would use `BukkitManager`
+
+    !!! example
+        ```java
+        public final class MyPlugin extends JavaPlugin {
+            public void onEnable() {
+                BukkitCommandManager bcf = new BukkitCommandManager(this);
+                bcf.registerCommand(new MyCommand());
+            }
+        }
+        ```
+
 * Annotate your method with `@Arg` to define what arguments it is expecting. This is a string of arguments that may
-consume 0 or more words from a users input both to provide command completion as well as to fully resolve and pass 
-objects to the method.
+  consume 0 or more words from a users input both to provide command completion and to fully resolve and pass
+  objects to the method.
 
     !!! example
         ```java
         @Arg("give|g @player(required=true, default=%self, mode=online)")
         public void onGive(CommandSender sender, Player player) {  
-           ...
+            ...
         }
         ```
 
@@ -50,7 +62,7 @@ objects to the method.
         @Arg("give|g @player(required=true, default=%self, mode=online)")
         @Arg("sudo give @player(required=true, default=%self, mode=online)")
         public void onGive(CommandSender sender, Player player) {  
-           ...
+            ...
         }
         ```
 
@@ -61,28 +73,38 @@ objects to the method.
         @Command("do")
         @Arg("for @player(required=true, mode=offline)")
         class MyCommand extends BukkitCommand {
-        
+
             @Arg("tpto @world")
             public void doThis(CommandSender, Player player, World world) {
-               ...
+                ...
             }
         }
         ```
         To reach doThis the command is: `/do for <playername> tpto <worldname>`
-        
-* Your class can extend another command class to inherit any of its settings. For example a 3rd party
-plugin could extend your command class to add sub-commands under your own.
+
+* Your class can add itself as a child of another command class to inherit any of its settings. For example a 3rd party
+  plugin could extend your command class to add sub-commands under your own. This is done by registering the sub-class
+  with the manager with the `registerSubCommand` method.
 
     !!! example
         ```java
         @Arg("sudo")
-        class MySubCommand extends MyCommand {
-        
+        class MySubCommand extends BukkitCommand {
+
             @Arg("kill")
             public void killPlayer(CommandSender, Player player) {
                ...
             }
         }
+        ```
+
+        ```java
+          public final class AnotherPlugin extends JavaPlugin {
+              public void onEnable() {
+                  BukkitCommandManager bcf = new BukkitCommandManager(this);
+                  bcf.registerSubCommand(MyCommand.class, new MySubCommand());
+              }
+          }
         ```
         To execute killPlayer the full command now is: `/do for <playername> sudo kill`
 
@@ -220,18 +242,21 @@ the command will be rejected.  Designating a switch parameter means it is no lon
         </snapshots>
     </repository>   
     ```
-   
+
 2. Add the following dependency to your `pom.xml`
     ```xml
     <dependency>
         <groupId>au.com.grieve.bcf</groupId>
         <artifactId>bukkit</artifactId>
-        <version>1.2.8</version>
+        <version>1.2.9</version>
     </dependency>
     ```
-   
+
+    !!! note
+        Don't forget to check what the latest verison is as these documents may be out of date.
+
 3. Shade the library into your own code by adding in your `pom.xml`
-    
+
     ```xml
     <build>
         <plugins>
@@ -282,7 +307,7 @@ the command will be rejected.  Designating a switch parameter means it is no lon
     bcf = new BukkitCommandManager(this);
     
     // Register Commands
-    bcf.registerCommand(MainCommand.class);
+    bcf.registerCommand(new MainCommand());
     ```
    
 6. You should now be able to use `/mycmd list` in-game.

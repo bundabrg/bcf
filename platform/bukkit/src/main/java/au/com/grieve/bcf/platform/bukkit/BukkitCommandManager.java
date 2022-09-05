@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -23,9 +23,7 @@
 
 package au.com.grieve.bcf.platform.bukkit;
 
-import au.com.grieve.bcf.BaseCommand;
 import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Command;
 import au.com.grieve.bcf.platform.bukkit.parsers.PlayerParser;
 import org.bukkit.Bukkit;
@@ -39,7 +37,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class BukkitCommandManager extends CommandManager {
+@SuppressWarnings("unused")
+public class BukkitCommandManager extends CommandManager<BukkitCommand, BukkitCommandRoot> {
 
     private final JavaPlugin plugin;
     private final CommandMap commandMap;
@@ -74,11 +73,11 @@ public class BukkitCommandManager extends CommandManager {
     }
 
     @Override
-    protected CommandRoot createCommandRoot(Class<? extends BaseCommand> cmd) {
+    protected BukkitCommandRoot createCommandRoot(BukkitCommand cmd) {
         BukkitCommandRoot cr = new BukkitCommandRoot(this, cmd);
 
         // Get Name and Aliases
-        Command commandAnnotation = cmd.getAnnotation(Command.class);
+        Command commandAnnotation = cmd.getClass().getAnnotation(Command.class);
 
         if (commandAnnotation == null) {
             return cr;
@@ -86,7 +85,7 @@ public class BukkitCommandManager extends CommandManager {
 
         String[] aliases = commandAnnotation.value().split("\\|");
         if (aliases.length == 0) {
-            aliases = new String[]{cmd.getSimpleName().toLowerCase()};
+            aliases = new String[]{cmd.getClass().getSimpleName().toLowerCase()};
         }
 
         // Register with Bukkit
@@ -96,5 +95,4 @@ public class BukkitCommandManager extends CommandManager {
 
         return cr;
     }
-
 }

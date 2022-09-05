@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -23,9 +23,12 @@
 
 package au.com.grieve.bcf.platform.bungeecord;
 
+import au.com.grieve.bcf.CommandExecute;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
+
+import java.util.Arrays;
 
 public class BungeeCommandExecutor extends Command implements TabExecutor {
 
@@ -39,13 +42,18 @@ public class BungeeCommandExecutor extends Command implements TabExecutor {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (hasPermission(sender)) {
-            commandRoot.execute(sender, args);
+            BungeeCommandContext context = new BungeeCommandContext(sender);
+            CommandExecute commandExecute = commandRoot.execute(Arrays.asList(args), context);
+            if (commandExecute != null) {
+                commandExecute.invoke(sender);
+            }
         }
     }
 
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        return commandRoot.complete(sender, args);
+        BungeeCommandContext context = new BungeeCommandContext(sender);
+        return commandRoot.complete(Arrays.asList(args), context);
     }
 }

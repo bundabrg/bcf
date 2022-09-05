@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -23,37 +23,106 @@
 
 package au.com.grieve.bcf.platform.bungeecord;
 
-import au.com.grieve.bcf.BaseCommand;
 import au.com.grieve.bcf.CommandExecute;
 import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.CommandRoot;
+import au.com.grieve.bcf.annotations.Permission;
 import net.md_5.bungee.api.CommandSender;
-import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BungeeCommandRoot extends CommandRoot {
-    BungeeCommandRoot(CommandManager manager, Class<? extends BaseCommand> command) {
-        super(manager, command);
+public class BungeeCommandRoot extends CommandRoot<BungeeCommand> {
+    public BungeeCommandRoot(CommandManager<BungeeCommand, ?> manager, BungeeCommand cmd) {
+        super(manager, cmd);
     }
 
-    public boolean execute(@NotNull CommandSender sender, String[] args) {
-        BungeeCommandContext context = new BungeeCommandContext(sender);
-        CommandExecute commandExecute = getCommand().execute(this, Arrays.asList(args), context);
-        if (commandExecute != null) {
-            commandExecute.invoke(sender);
-            return true;
+    /**
+     * Retrieve List of permissions
+     */
+    public String[] getPermissions(BungeeCommand command) {
+        return Arrays.stream(command.getClass().getAnnotationsByType(Permission.class))
+                .map(Permission::value)
+                .toArray(String[]::new);
+    }
+
+    @SuppressWarnings("unused")
+    public String[] getPermissions() {
+        return getPermissions(getCommand());
+    }
+
+    /**
+     * Return true if class permits permission of sender
+     */
+    public boolean testPermission(BungeeCommand command, CommandSender sender, boolean unknown) {
+        String[] permissions = getPermissions(command);
+
+        if (permissions.length > 0) {
+            // Check Sender has any permissions
+            for (String permission : getPermissions(command)) {
+                if (sender.hasPermission(permission)) {
+                    return true;
+                }
+            }
+        } else {
+            return unknown;
         }
+
         return false;
     }
 
-    public @NotNull List<String> complete(@NotNull CommandSender sender, String[] args) {
-        BungeeCommandContext context = new BungeeCommandContext(sender);
-        return getCommand().complete(this, Arrays.asList(args), context);
+    @SuppressWarnings("unused")
+    public CommandExecute execute(BungeeCommand command, List<String> input, BungeeCommandContext context) {
+        if (testPermission(command, context.getSender(), false)) {
+            return super.execute(command, input, context);
+        }
+        return null;
     }
 
-    public boolean testPermission(@NotNull CommandSender sender) {
-        return ((BungeeCommand) getCommand()).testPermission(sender);
+    @SuppressWarnings("unused")
+    protected CommandExecute executeMethod(Method method, BungeeCommand command, List<String> input, BungeeCommandContext context) {
+        Permission[] permissions = method.getAnnotationsByType(Permission.class);
+
+        if (permissions.length > 0) {
+            // Check Sender has any permissions
+            for (Permission permission : permissions) {
+                if (context.getSender().hasPermission(permission.value())) {
+                    return super.executeMethod(method, command, input, context);
+                }
+            }
+
+            return null;
+        }
+
+        return super.executeMethod(method, command, input, context);
+
+    }
+
+    @SuppressWarnings("unused")
+    public List<String> complete(BungeeCommand command, List<String> input, BungeeCommandContext context) {
+        if (testPermission(command, context.getSender(), false)) {
+            return super.complete(command, input, context);
+        }
+        return new ArrayList<>();
+    }
+
+    @SuppressWarnings("unused")
+    protected List<String> completeMethod(Method method, BungeeCommand command, List<String> input, BungeeCommandContext context) {
+        Permission[] permissions = method.getAnnotationsByType(Permission.class);
+
+        if (permissions.length > 0) {
+            // Check Sender has any permissions
+            for (Permission permission : permissions) {
+                if (context.getSender().hasPermission(permission.value())) {
+                    return super.completeMethod(method, command, input, context);
+                }
+            }
+
+            return new ArrayList<>();
+        }
+
+        return super.completeMethod(method, command, input, context);
     }
 }

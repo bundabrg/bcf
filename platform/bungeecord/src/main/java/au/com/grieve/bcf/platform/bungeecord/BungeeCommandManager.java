@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -23,13 +23,12 @@
 
 package au.com.grieve.bcf.platform.bungeecord;
 
-import au.com.grieve.bcf.BaseCommand;
 import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Command;
 import net.md_5.bungee.api.plugin.Plugin;
 
-public class BungeeCommandManager extends CommandManager {
+@SuppressWarnings("unused")
+public class BungeeCommandManager extends CommandManager<BungeeCommand, BungeeCommandRoot> {
 
     private final Plugin plugin;
 
@@ -42,11 +41,11 @@ public class BungeeCommandManager extends CommandManager {
     }
 
     @Override
-    protected CommandRoot createCommandRoot(Class<? extends BaseCommand> cmd) {
+    protected BungeeCommandRoot createCommandRoot(BungeeCommand cmd) {
         BungeeCommandRoot cr = new BungeeCommandRoot(this, cmd);
 
         // Get Name and Aliases
-        Command commandAnnotation = cmd.getAnnotation(Command.class);
+        Command commandAnnotation = cmd.getClass().getAnnotation(Command.class);
 
         if (commandAnnotation == null) {
             return cr;
@@ -54,7 +53,7 @@ public class BungeeCommandManager extends CommandManager {
 
         String[] aliases = commandAnnotation.value().split("\\|");
         if (aliases.length == 0) {
-            aliases = new String[]{cmd.getSimpleName().toLowerCase()};
+            aliases = new String[]{cmd.getClass().getSimpleName().toLowerCase()};
         }
 
         // Register with Bungee

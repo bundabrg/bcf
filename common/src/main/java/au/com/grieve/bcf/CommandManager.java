@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -24,29 +24,36 @@
 package au.com.grieve.bcf;
 
 import au.com.grieve.bcf.annotations.Command;
-import au.com.grieve.bcf.parsers.DoubleParser;
-import au.com.grieve.bcf.parsers.FloatParser;
-import au.com.grieve.bcf.parsers.IntegerParser;
-import au.com.grieve.bcf.parsers.LiteralParser;
-import au.com.grieve.bcf.parsers.StringParser;
-import au.com.grieve.bcf.utils.ReflectUtils;
+import au.com.grieve.bcf.parsers.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public abstract class CommandManager {
+@Getter
+public abstract class CommandManager<S extends BaseCommand, T extends CommandRoot<S>> {
 
-    @Getter
-    protected final Map<Class<? extends BaseCommand>, CommandRoot> commandRoots = new HashMap<>();
-
-    @Getter
+    protected final Map<Class<? extends BaseCommand>, CommandConfig<S, T>> commands = new HashMap<>();
     protected final Map<String, Class<? extends Parser>> parsers = new HashMap<>();
+
+    @SuppressWarnings("unused")
+    public void registerCommand(S cmd) {
+        // As a root command cmd needs to have a @Command annotation
+        if (cmd.getClass().getAnnotation(Command.class) == null) {
+            throw new RuntimeException("Missing required @Command");
+        }
+
+        CommandConfig<S, T> commandConfig = commands.getOrDefault(cmd.getClass(), new CommandConfig<>());
+
+        commandConfig.setCommandRoot(createCommandRoot(cmd));
+
+        commandConfig.getInstances().add(cmd);
+        commands.put(cmd.getClass(), commandConfig);
+    }
 
     public CommandManager() {
         // Register Default Parsers
@@ -56,30 +63,30 @@ public abstract class CommandManager {
         registerParser("float", FloatParser.class);
     }
 
-    public void registerCommand(Class<? extends BaseCommand> cmd) {
-        // Lookup all parent classes
-        List<Class<?>> parents = Stream.of(ReflectUtils.getAllSuperClasses(cmd))
-                .filter(BaseCommand.class::isAssignableFrom)
-                .filter(c -> c != BaseCommand.class)
-                .collect(Collectors.toList());
-        Collections.reverse(parents);
+    @SuppressWarnings("unused")
+    public void registerSubCommand(Class<? extends BaseCommand> parentClass, S cmd) {
+        // Make sure parentClass is registered
+        CommandConfig<S, T> parentCommandConfig = commands.get(parentClass);
 
-        // If our class has a command, we are a CommandRoot
-        if (cmd.getAnnotation(Command.class) != null) {
-            commandRoots.put(cmd, createCommandRoot(cmd));
+        if (parentCommandConfig == null) {
+            throw new RuntimeException("Parent class is not registered");
         }
 
-        // Find all commandRoots and add us to them as a sub command
-        for (Class<?> cls : parents) {
-            CommandRoot c = commandRoots.getOrDefault(cls, null);
+        parentCommandConfig.getChildren().add(cmd);
 
-            if (c != null) {
-                c.addSubCommand(cmd);
-            }
+        // If cmd has @Command, it is a CommandRoot
+        CommandConfig<S, T> commandConfig = commands.getOrDefault(cmd.getClass(), new CommandConfig<>());
+        if (cmd.getClass().getAnnotation(Command.class) != null) {
+            commandConfig.setCommandRoot(createCommandRoot(cmd));
         }
+
+        commandConfig.getInstances().add(cmd);
+        commands.put(cmd.getClass(), commandConfig);
     }
 
-    public Parser getParser(ArgNode argNode, CommandContext context) {
+    protected abstract T createCommandRoot(S cmd);
+
+    public Parser getParser(ArgNode argNode, CommandContext<S> context) {
         Class<? extends Parser> cls;
         if (argNode.getName().startsWith("@")) {
             cls = getParsers().getOrDefault(argNode.getName().substring(1), LiteralParser.class);
@@ -91,14 +98,19 @@ public abstract class CommandManager {
             return cls
                     .getConstructor(CommandManager.class, ArgNode.class, CommandContext.class)
                     .newInstance(this, argNode, context);
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
+                 IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    protected CommandRoot createCommandRoot(Class<? extends BaseCommand> cmd) {
-        return new CommandRoot(this, cmd);
+    @Getter
+    protected static class CommandConfig<S extends BaseCommand, T extends CommandRoot<S>> {
+        private final List<S> instances = new ArrayList<>();
+        private final List<S> children = new ArrayList<>();
+        @Setter
+        private T commandRoot;
     }
 
     public void registerParser(String name, Class<? extends Parser> parser) {
