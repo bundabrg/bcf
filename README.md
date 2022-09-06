@@ -23,12 +23,12 @@
 ---
 
 `bcf` is a Command Management tool suitable for use in Bukkit/Spigot/PaperMC, Bungeecord and Standalone applications though 
-it may support other platforms in the future.
+it may support other platforms in the future. 
 
 It allows one to easily provide full command completion for all your commands as
 well as automatically resolve and marshal input from the user so your command
 gets the data it is expecting to get. For example if your command is expecting a player
-name then available players will be provided during command completion and your command 
+name then available players will be provided during command completion and your command
 method will receive the actual player object, or the command sender will receive an error
 explaining what the error is.
 
@@ -36,6 +36,9 @@ This library is inspired by aikar's [Annotation Command Framework (ACF)](https:/
 before I decided on the crazy idea of writing my own to support some extra  features I felt I desperately needed for 
 some reason. The name `bcf` is used in recognition of that.
 
+It was originally created for minecraft projects but now supports standalone console apps as you can see below.
+
+![standalone](https://bundabrg.github.io/bcf/img/standalone.gif)
 
 ## Features
 
