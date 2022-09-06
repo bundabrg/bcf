@@ -277,13 +277,16 @@ public class CommandRoot {
                 } catch (SwitchNotFoundException e) {
                     // List switch options
                     ret.addAll(currentContext.getSwitches().stream()
-                            .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
-                                    .filter(sw -> sw.toLowerCase().startsWith(e.getSwitchName().toLowerCase()))
+                            .flatMap(sw -> Arrays.stream(sw.getParameter("switch").split("\\|"))
+                                    .filter(s -> s.toLowerCase().startsWith(e.getSwitchName().toLowerCase()))
+                                    .map(s -> new Object() {
+                                        final String name = s;
+                                        final Parser parser = sw;
+                                    })
                                     .limit(1)
                             )
-                            .map(s -> "-" + s)
                             .limit(20)
-                            .map(s -> new Candidate(s))
+                            .map(so -> new Candidate("-" + so.name, "-" + so.name, so.parser.getParameter("description", null), null))
                             .collect(Collectors.toList())
                     );
                     continue;
@@ -352,12 +355,15 @@ public class CommandRoot {
                         if (currentInput.stream().allMatch(s -> s.equals("")) && (input.size() == 0 || input.get(input.size() - 1).equals(""))) {
                             // Add switches
                             ret.addAll(currentContext.getSwitches().stream()
-                                    .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
+                                    .flatMap(sw -> Arrays.stream(sw.getParameter("switch").split("\\|"))
+                                            .map(s -> new Object() {
+                                                final String name = s;
+                                                final Parser parser = sw;
+                                            })
                                             .limit(1)
                                     )
-                                    .map(s -> "-" + s)
                                     .limit(20)
-                                    .map(s -> new Candidate(s))
+                                    .map(so -> new Candidate("-" + so.name, "-" + so.name, so.parser.getParameter("description", null), null))
                                     .collect(Collectors.toList())
                             );
                         }
@@ -369,13 +375,16 @@ public class CommandRoot {
             } catch (SwitchNotFoundException e) {
                 // List switch options
                 ret.addAll(currentContext.getSwitches().stream()
-                        .flatMap(s -> Arrays.stream(s.getParameter("switch").split("\\|"))
-                                .filter(sw -> sw.toLowerCase().startsWith(e.getSwitchName().toLowerCase()))
+                        .flatMap(sw -> Arrays.stream(sw.getParameter("switch").split("\\|"))
+                                .filter(s -> s.toLowerCase().startsWith(e.getSwitchName().toLowerCase()))
+                                .map(s -> new Object() {
+                                    final String name = s;
+                                    final Parser parser = sw;
+                                })
                                 .limit(1)
                         )
-                        .map(s -> "-" + s)
                         .limit(20)
-                        .map(s -> new Candidate(s))
+                        .map(so -> new Candidate("-" + so.name, "-" + so.name, so.parser.getParameter("description", null), null))
                         .collect(Collectors.toList())
                 );
             }
