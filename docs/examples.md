@@ -4,6 +4,14 @@
 Add to `pom.xml`
 
 ```xml
+<repositories>
+    <!-- Bundabrg's Repo -->
+    <repository>
+        <id>bundabrg-repo</id>
+        <url>https://repo.worldguard.com.au/repository/maven-public</url>
+    </repository>
+</repositories>
+
 <dependencies>
     <dependency>
         <groupId>au.com.grieve.bcf</groupId>
