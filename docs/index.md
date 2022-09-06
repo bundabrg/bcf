@@ -16,6 +16,7 @@ This library is inspired by aikar's [Annotation Command Framework (ACF)](https:/
 before I decided on the crazy idea of writing my own to support some extra
 features I felt I desperately needed for some reason. The name `bcf` is used in recognition of that.
 
+![standalone](img/standalone.gif)
 
 ## Features
 

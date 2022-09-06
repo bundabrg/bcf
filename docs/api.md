@@ -19,7 +19,6 @@ Add the following repository to your `pom.xml`
 ### Bukkit/Spigot/Paper
 
 ```xml
-
 <dependency>
     <groupId>au.com.grieve.bcf</groupId>
     <artifactId>bukkit</artifactId>
@@ -30,7 +29,6 @@ Add the following repository to your `pom.xml`
 ### Bungeecord
 
 ```xml
-
 <dependency>
     <groupId>au.com.grieve.bcf</groupId>
     <artifactId>bungeecord</artifactId>
@@ -41,7 +39,6 @@ Add the following repository to your `pom.xml`
 ### Standalone
 
 ```xml
-
 <dependency>
     <groupId>au.com.grieve.bcf</groupId>
     <artifactId>terminalconsole</artifactId>

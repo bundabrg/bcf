@@ -7,6 +7,9 @@ repo_url: https://github.com/Bundabrg/bcf
 edit_uri: ""
 copyright: 'Copyright (C) 2020 BCF Developers'
 
+extra:
+  gitstats: {}
+
 extra_css:
   - 'css/mkpdf.css'
 #  - 'css/version_select.css'
@@ -79,5 +82,6 @@ nav:
   - How it works: howitworks.md
   - Annotations: annotations.md
   - Parsers: parsers.md
+  - Examples: examples.md
   - Contributing: contributing.md
   - API: api.md
