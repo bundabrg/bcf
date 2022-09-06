@@ -66,8 +66,36 @@ public class ThirdParty extends TerminalCommand {
 }
 ```
 
+### Create a Console
+
+Console.java
+```java
+public class Console extends TerminalConsole {
+    @Override
+    protected boolean isRunning() {
+        return true;
+    }
+
+    @Override
+    protected void shutdown() {
+
+    }
+
+    @Override
+    protected LineReader buildReader(LineReaderBuilder builder) {
+        LineReader reader = super.buildReader(builder);
+        Map<String, CmdDesc> tailTips = new HashMap<>();
+        TailTipWidgets widgets = new TailTipWidgets(reader, tailTips);
+        widgets.enable();
+        return reader;
+
+    }
+}
+```
+
 ### Create Main Program
 
+Standalone.java
 ```java
 public class Standalone {
     public static void main(String[] args) {
