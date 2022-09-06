@@ -322,6 +322,33 @@
     Maven
   </a>
   
+    <nav class="md-nav" aria-label="Maven">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bukkitspigotpaper" class="md-nav__link">
+    Bukkit/Spigot/Paper
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bungeecord" class="md-nav__link">
+    Bungeecord
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#standalone" class="md-nav__link">
+    Standalone
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -347,7 +374,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#standalone" class="md-nav__link">
+  <a href="#standalone_1" class="md-nav__link">
     Standalone
   </a>
   
@@ -442,6 +469,33 @@
     Maven
   </a>
   
+    <nav class="md-nav" aria-label="Maven">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bukkitspigotpaper" class="md-nav__link">
+    Bukkit/Spigot/Paper
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bungeecord" class="md-nav__link">
+    Bungeecord
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#standalone" class="md-nav__link">
+    Standalone
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -467,7 +521,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#standalone" class="md-nav__link">
+  <a href="#standalone_1" class="md-nav__link">
     Standalone
   </a>
   
@@ -555,24 +609,31 @@
     <span class="nt">&lt;/snapshots&gt;</span>
 <span class="nt">&lt;/repository&gt;</span>   
 </code></pre></div>
-<p>Add the following dependency to your <code>pom.xml</code> if you are using Bukkit, Spigot or Paper:</p>
+<h3 id="bukkitspigotpaper">Bukkit/Spigot/Paper<a class="headerlink" href="#bukkitspigotpaper" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>au.com.grieve.bcf<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>bukkit<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.2.9<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0805fd067440a9bffb5e87ac893b7a3ad5ed47d4<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div>
+<h3 id="bungeecord">Bungeecord<a class="headerlink" href="#bungeecord" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>au.com.grieve.bcf<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>bungeecord<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0805fd067440a9bffb5e87ac893b7a3ad5ed47d4<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div>
+<h3 id="standalone">Standalone<a class="headerlink" href="#standalone" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>au.com.grieve.bcf<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>terminalconsole<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0805fd067440a9bffb5e87ac893b7a3ad5ed47d4<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Don't forget to check what the latest verison is as these documents may be out of date.</p>
 </div>
-<p>For Bungeecord add the following:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>au.com.grieve.bcf<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>bungeecord<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.2.8<span class="nt">&lt;/version&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span>
-</code></pre></div>
 <p>Shade the library into your own code by adding in your <code>pom.xml</code>
 <div class="highlight"><pre><span></span><code><span class="nt">&lt;build&gt;</span>
     <span class="nt">&lt;plugins&gt;</span>
@@ -649,7 +710,7 @@ a subcommand underneath.</p>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 </div>
-<h3 id="standalone">Standalone<a class="headerlink" href="#standalone" title="Permanent link">&para;</a></h3>
+<h3 id="standalone_1">Standalone<a class="headerlink" href="#standalone_1" title="Permanent link">&para;</a></h3>
 <p>First you need to extend <code>TerminalConsole</code> to define how your console works. You can change up completions are done
 by modifying the <code>buildReader</code> method. In the example below it uses TailTipsWidgets, part of <code>jline-console</code> to display
 fancy auto-completions.</p>
@@ -799,7 +860,7 @@ command candidate.</p>
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-09-06T08:59:11+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-09-06</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-09-06T10:38:09+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-09-06</span>
       
     
   </small>
