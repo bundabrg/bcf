@@ -28,7 +28,7 @@
     <parent>
         <artifactId>bcf-parent</artifactId>
         <groupId>au.com.grieve.bcf</groupId>
-        <version>1.4.0-SNAPSHOT</version>
+        <version>1.5.0-SNAPSHOT</version>
     </parent>
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
