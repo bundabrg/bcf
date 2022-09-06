@@ -325,6 +325,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#create-a-console" class="md-nav__link">
+    Create a Console
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#create-main-program" class="md-nav__link">
     Create Main Program
   </a>
@@ -428,6 +435,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#create-a-console" class="md-nav__link">
+    Create a Console
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#create-main-program" class="md-nav__link">
     Create Main Program
   </a>
@@ -519,7 +533,32 @@
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div></p>
+<h3 id="create-a-console">Create a Console<a class="headerlink" href="#create-a-console" title="Permanent link">&para;</a></h3>
+<p>Console.java
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Console</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">TerminalConsole</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isRunning</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">LineReader</span><span class="w"> </span><span class="nf">buildReader</span><span class="p">(</span><span class="n">LineReaderBuilder</span><span class="w"> </span><span class="n">builder</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">LineReader</span><span class="w"> </span><span class="n">reader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">super</span><span class="p">.</span><span class="na">buildReader</span><span class="p">(</span><span class="n">builder</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">CmdDesc</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tailTips</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">TailTipWidgets</span><span class="w"> </span><span class="n">widgets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TailTipWidgets</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span><span class="w"> </span><span class="n">tailTips</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">widgets</span><span class="p">.</span><span class="na">enable</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">reader</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div></p>
 <h3 id="create-main-program">Create Main Program<a class="headerlink" href="#create-main-program" title="Permanent link">&para;</a></h3>
+<p>Standalone.java
 <div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Standalone</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="n">Console</span><span class="w"> </span><span class="n">console</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Console</span><span class="p">();</span><span class="w"></span>
@@ -534,7 +573,7 @@
 <span class="w">        </span><span class="n">console</span><span class="p">.</span><span class="na">start</span><span class="p">();</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
-</code></pre></div>
+</code></pre></div></p>
 <h3 id="output">Output<a class="headerlink" href="#output" title="Permanent link">&para;</a></h3>
 <p><img alt="standlone output" src="../img/standalone.gif" /></p>
 
@@ -543,7 +582,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-09-06T12:13:15+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-09-06</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-09-06T12:17:09+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-09-06</span>
       
     
   </small>
