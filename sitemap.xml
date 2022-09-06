@@ -21,6 +21,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://github.com/Bundabrg/bcf/examples/</loc>
+         <lastmod>2022-09-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://github.com/Bundabrg/bcf/howitworks/</loc>
          <lastmod>2022-09-06</lastmod>
          <changefreq>daily</changefreq>
