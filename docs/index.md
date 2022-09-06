@@ -250,12 +250,12 @@ the command will be rejected.  Designating a switch parameter means it is no lon
     <dependency>
         <groupId>au.com.grieve.bcf</groupId>
         <artifactId>bukkit</artifactId>
-        <version>1.2.9</version>
+        <version>{{ gitstats.version|default('[latest-version]') }}</version>
     </dependency>
     ```
 
     !!! note
-        Don't forget to check what the latest verison is as these documents may be out of date.
+        Don't forget to check what the latest version is as these documents may be out of date.
 
 3. Shade the library into your own code by adding in your `pom.xml`
 

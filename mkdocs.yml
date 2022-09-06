@@ -56,6 +56,7 @@ markdown_extensions:
 # Bundie's Tip: Disable mkpdfs whilst using `mkdocs serve` on a local machine
 plugins:
   - search
+  - markdownextradata
   - exclude:
       glob:
         - 'theme/*'

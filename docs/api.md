@@ -16,30 +16,41 @@ Add the following repository to your `pom.xml`
 </repository>   
 ```
 
-Add the following dependency to your `pom.xml` if you are using Bukkit, Spigot or Paper:
+### Bukkit/Spigot/Paper
 
 ```xml
 
 <dependency>
     <groupId>au.com.grieve.bcf</groupId>
     <artifactId>bukkit</artifactId>
-    <version>1.2.9</version>
+    <version>{{ gitstats.version|default('[latest-version]') }}</version>
 </dependency>
 ```
 
-!!! note
-    Don't forget to check what the latest verison is as these documents may be out of date.
-
-For Bungeecord add the following:
+### Bungeecord
 
 ```xml
 
 <dependency>
     <groupId>au.com.grieve.bcf</groupId>
     <artifactId>bungeecord</artifactId>
-    <version>1.2.8</version>
+    <version>{{ gitstats.version|default('[latest-version]') }}</version>
 </dependency>
 ```
+
+### Standalone
+
+```xml
+
+<dependency>
+    <groupId>au.com.grieve.bcf</groupId>
+    <artifactId>terminalconsole</artifactId>
+    <version>{{ gitstats.version|default('[latest-version]') }}</version>
+</dependency>
+```
+
+!!! note
+    Don't forget to check what the latest verison is as these documents may be out of date.
 
 Shade the library into your own code by adding in your `pom.xml`
 ```xml

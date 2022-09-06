@@ -114,7 +114,7 @@ venv/
 # Ignore mkdocs
 build/
 #gh-pages/
-
+_data/
 
 # IntelliJ
 .idea/*

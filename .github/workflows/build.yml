@@ -71,6 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: git fetch --prune --unshallow
 
       - name: Setup Python
         uses: actions/setup-python@v1
@@ -90,6 +91,12 @@ jobs:
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install -r ./requirements.txt
+
+      - name: Set variables
+        run: |
+          VERSION=$(git describe --tags --abbrev=0 HEAD 2> /dev/null || git rev-list --max-parents=0 HEAD)
+          mkdir _data
+          echo "version: ${VERSION/v/}" > _data/gitstats.yml
 
       - run: mkdocs build
 

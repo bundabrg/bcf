@@ -22,8 +22,8 @@
 
 ---
 
-`bcf` is a Command Management tool suitable for use in Bukkit/Spigot/PaperMC, Bungeecord and Standalone (based on JLine) though it may support other platforms 
-in the near future.
+`bcf` is a Command Management tool suitable for use in Bukkit/Spigot/PaperMC, Bungeecord and Standalone applications though 
+it may support other platforms in the future.
 
 It allows one to easily provide full command completion for all your commands as
 well as automatically resolve and marshal input from the user so your command
@@ -33,13 +33,13 @@ method will receive the actual player object, or the command sender will receive
 explaining what the error is.
 
 This library is inspired by aikar's [Annotation Command Framework (ACF)](https://github.com/aikar/commands) which used
-before I decided on the crazy idea of writing my own to support some extra
-features I felt I desperately needed for some reason. The name `bcf` is used in recognition of that.
+before I decided on the crazy idea of writing my own to support some extra  features I felt I desperately needed for 
+some reason. The name `bcf` is used in recognition of that.
 
 
 ## Features
 
-* Supports Bukkit (Spigot/PaperMC), Bungeecoord and Standalone
+* Supports Bukkit (Spigot/PaperMC), Bungeecoord and Standalone applications
 
 * Define your commands by simply extending a BaseCommand derived class (like `BukkitCommand`) and annotating it with
 a `@Command` to define it, with any aliases separated by a `|`.
@@ -102,7 +102,7 @@ the command will be rejected.  Designating a switch parameter means it is no lon
     <dependency>
         <groupId>au.com.grieve.bcf</groupId>
         <artifactId>bukkit</artifactId>
-        <version>1.2.9</version>
+        <version>1.5.0-SNAPSHOT</version>
     </dependency>
     ```
    
@@ -162,3 +162,5 @@ the command will be rejected.  Designating a switch parameter means it is no lon
     ```
    
 6. You should now be able to use `/mycmd list` in-game.
+
+Please refer to the documentation for more info on other supported platforms.

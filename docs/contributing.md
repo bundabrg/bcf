@@ -30,6 +30,18 @@ The documentation is built using `mkdocs`. You can set up a hot-build dev enviro
 * pip3
 * npm (only if changing themes)
 
+Install a virtual environment under a subfolder `venv`
+
+```
+python3 -m venv venv
+```
+
+Enter environment
+
+```
+source venv/bin/activate
+```
+
 Install dependencies by running:
 
 ```
@@ -43,15 +55,3 @@ To start a http document server on `http://127.0.0.1:8000` execute:
 ```
 mkdocs serve
 ```
-
-### Change PDF Theme
-
-Edit the PDF theme under `docs/theme/pdf`. Rebuild by doing the following:
-
-```
-cd docs/theme/pdf
-npm install
-npm run build-compressed
-```
-
-This will update `pdf.css` under `docs/css/pdf.css`. Rebuilding the docs will now use the new theme.
