@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -34,7 +34,7 @@ import java.util.stream.IntStream;
 
 public class IntegerParser extends SingleParser {
 
-    public IntegerParser(CommandManager manager, ArgNode argNode, CommandContext context) {
+    public IntegerParser(CommandManager<?,?> manager, ArgNode argNode, CommandContext context) {
         super(manager, argNode, context);
     }
 

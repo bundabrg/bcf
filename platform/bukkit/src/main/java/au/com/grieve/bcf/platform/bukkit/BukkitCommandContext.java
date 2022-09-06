@@ -28,7 +28,7 @@ import lombok.Getter;
 import org.bukkit.command.CommandSender;
 
 @Getter
-public class BukkitCommandContext extends CommandContext<BukkitCommand> {
+public class BukkitCommandContext extends CommandContext {
 
     // Bukkit Command Sender
     private final CommandSender sender;

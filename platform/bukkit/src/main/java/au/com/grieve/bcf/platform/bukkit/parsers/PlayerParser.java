@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  */
 public class PlayerParser extends SingleParser {
 
-    public PlayerParser(CommandManager manager, ArgNode argNode, CommandContext context) {
+    public PlayerParser(CommandManager<?,?> manager, ArgNode argNode, CommandContext context) {
         super(manager, argNode, context);
     }
 
@@ -69,7 +69,7 @@ public class PlayerParser extends SingleParser {
                 }
 
                 return Bukkit.getOnlinePlayers().stream()
-                        .filter(p -> p.getName().toLowerCase().equals(getInput().toLowerCase()))
+                        .filter(p -> p.getName().equalsIgnoreCase(getInput()))
                         .findFirst()
                         .orElseThrow(() -> new ParserInvalidResultException(this, "No such player can be found online"));
             case "offline":

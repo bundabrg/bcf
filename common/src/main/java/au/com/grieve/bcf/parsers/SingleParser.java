@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -41,7 +41,7 @@ public abstract class SingleParser extends Parser {
     @Getter
     private String input;
 
-    public SingleParser(CommandManager manager, ArgNode argNode, CommandContext context) {
+    public SingleParser(CommandManager<?,?> manager, ArgNode argNode, CommandContext context) {
         super(manager, argNode, context);
     }
 

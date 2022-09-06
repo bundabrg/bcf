@@ -23,6 +23,7 @@
 
 package au.com.grieve.bcf.platform.bungeecord;
 
+import au.com.grieve.bcf.BaseCommand;
 import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.annotations.Command;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -41,7 +42,7 @@ public class BungeeCommandManager extends CommandManager<BungeeCommand, BungeeCo
     }
 
     @Override
-    protected BungeeCommandRoot createCommandRoot(BungeeCommand cmd) {
+    protected BungeeCommandRoot createCommandRoot(BaseCommand cmd) {
         BungeeCommandRoot cr = new BungeeCommandRoot(this, cmd);
 
         // Get Name and Aliases

@@ -31,10 +31,10 @@ import java.util.List;
 import java.util.Stack;
 
 @Getter
-public class CommandContext<R extends BaseCommand> {
+public class CommandContext {
     private final List<Parser> switches = new ArrayList<>();
     private final List<Parser> parsers = new ArrayList<>();
-    private final Stack<R> commandStack = new Stack<>();
+    private final Stack<BaseCommand> commandStack = new Stack<>();
 
     @Setter
     private Parser currentParser;
@@ -42,15 +42,15 @@ public class CommandContext<R extends BaseCommand> {
     public CommandContext() {
     }
 
-    public CommandContext(CommandContext<R> original) {
+    public CommandContext(CommandContext original) {
         switches.addAll(original.getSwitches());
         parsers.addAll(original.getParsers());
         commandStack.addAll(original.getCommandStack());
         currentParser = original.getCurrentParser();
     }
 
-    public CommandContext<R> copy() {
-        return new CommandContext<>(this);
+    public CommandContext copy() {
+        return new CommandContext(this);
 //        try {
 //            return getClass().getConstructor(CommandContext.class).newInstance(this);
 //        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {

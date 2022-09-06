@@ -27,7 +27,7 @@ import au.com.grieve.bcf.CommandContext;
 import lombok.Getter;
 import net.md_5.bungee.api.CommandSender;
 
-public class BungeeCommandContext extends CommandContext<BungeeCommand> {
+public class BungeeCommandContext extends CommandContext {
 
     // Bukkit Command Sender
     @Getter

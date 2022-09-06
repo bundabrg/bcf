@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -24,6 +24,7 @@
 package au.com.grieve.bcf.parsers;
 
 import au.com.grieve.bcf.ArgNode;
+import au.com.grieve.bcf.BaseCommand;
 import au.com.grieve.bcf.CommandContext;
 import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
@@ -43,7 +44,7 @@ import java.util.List;
 public class LiteralParser extends SingleParser {
 
 
-    public LiteralParser(CommandManager manager, ArgNode argNode, CommandContext context) {
+    public LiteralParser(CommandManager<BaseCommand,?> manager, ArgNode argNode, CommandContext context) {
         super(manager, argNode, context);
         defaultParameters.put("suppress", "true");
     }
@@ -70,7 +71,7 @@ public class LiteralParser extends SingleParser {
                 return getInput();
             }
 
-            if (alias.toLowerCase().equals(getInput().toLowerCase())) {
+            if (alias.equalsIgnoreCase(getInput())) {
                 return alias;
             }
         }

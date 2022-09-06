@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -33,7 +33,7 @@ import java.util.List;
 
 public class StringParser extends SingleParser {
 
-    public StringParser(CommandManager manager, ArgNode node, CommandContext context) {
+    public StringParser(CommandManager<?,?> manager, ArgNode node, CommandContext context) {
         super(manager, node, context);
     }
 
@@ -57,7 +57,7 @@ public class StringParser extends SingleParser {
         }
 
         for (String alias : getParameter("options", "").split("\\|")) {
-            if (alias.toLowerCase().equals(getInput().toLowerCase())) {
+            if (alias.equalsIgnoreCase(getInput())) {
                 return alias;
             }
         }

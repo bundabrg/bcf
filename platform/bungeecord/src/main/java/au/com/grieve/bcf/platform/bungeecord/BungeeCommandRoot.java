@@ -23,8 +23,8 @@
 
 package au.com.grieve.bcf.platform.bungeecord;
 
+import au.com.grieve.bcf.BaseCommand;
 import au.com.grieve.bcf.CommandExecute;
-import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Permission;
 import net.md_5.bungee.api.CommandSender;
@@ -34,15 +34,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BungeeCommandRoot extends CommandRoot<BungeeCommand> {
-    public BungeeCommandRoot(CommandManager<BungeeCommand, ?> manager, BungeeCommand cmd) {
+public class BungeeCommandRoot extends CommandRoot {
+    public BungeeCommandRoot(BungeeCommandManager manager, BaseCommand cmd) {
         super(manager, cmd);
     }
 
     /**
      * Retrieve List of permissions
      */
-    public String[] getPermissions(BungeeCommand command) {
+    public String[] getPermissions(BaseCommand command) {
         return Arrays.stream(command.getClass().getAnnotationsByType(Permission.class))
                 .map(Permission::value)
                 .toArray(String[]::new);
@@ -56,7 +56,7 @@ public class BungeeCommandRoot extends CommandRoot<BungeeCommand> {
     /**
      * Return true if class permits permission of sender
      */
-    public boolean testPermission(BungeeCommand command, CommandSender sender, boolean unknown) {
+    public boolean testPermission(BaseCommand command, CommandSender sender, boolean unknown) {
         String[] permissions = getPermissions(command);
 
         if (permissions.length > 0) {
@@ -74,7 +74,7 @@ public class BungeeCommandRoot extends CommandRoot<BungeeCommand> {
     }
 
     @SuppressWarnings("unused")
-    public CommandExecute execute(BungeeCommand command, List<String> input, BungeeCommandContext context) {
+    public CommandExecute execute(BaseCommand command, List<String> input, BungeeCommandContext context) {
         if (testPermission(command, context.getSender(), false)) {
             return super.execute(command, input, context);
         }
@@ -82,7 +82,7 @@ public class BungeeCommandRoot extends CommandRoot<BungeeCommand> {
     }
 
     @SuppressWarnings("unused")
-    protected CommandExecute executeMethod(Method method, BungeeCommand command, List<String> input, BungeeCommandContext context) {
+    protected CommandExecute executeMethod(Method method, BaseCommand command, List<String> input, BungeeCommandContext context) {
         Permission[] permissions = method.getAnnotationsByType(Permission.class);
 
         if (permissions.length > 0) {
@@ -101,7 +101,7 @@ public class BungeeCommandRoot extends CommandRoot<BungeeCommand> {
     }
 
     @SuppressWarnings("unused")
-    public List<String> complete(BungeeCommand command, List<String> input, BungeeCommandContext context) {
+    public List<String> complete(BaseCommand command, List<String> input, BungeeCommandContext context) {
         if (testPermission(command, context.getSender(), false)) {
             return super.complete(command, input, context);
         }
@@ -109,7 +109,7 @@ public class BungeeCommandRoot extends CommandRoot<BungeeCommand> {
     }
 
     @SuppressWarnings("unused")
-    protected List<String> completeMethod(Method method, BungeeCommand command, List<String> input, BungeeCommandContext context) {
+    protected List<String> completeMethod(Method method, BaseCommand command, List<String> input, BungeeCommandContext context) {
         Permission[] permissions = method.getAnnotationsByType(Permission.class);
 
         if (permissions.length > 0) {

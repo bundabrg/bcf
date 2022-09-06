@@ -23,8 +23,8 @@
 
 package au.com.grieve.bcf.platform.bukkit;
 
+import au.com.grieve.bcf.BaseCommand;
 import au.com.grieve.bcf.CommandExecute;
-import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.CommandRoot;
 import au.com.grieve.bcf.annotations.Permission;
 import org.bukkit.command.CommandSender;
@@ -34,15 +34,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BukkitCommandRoot extends CommandRoot<BukkitCommand> {
-    public BukkitCommandRoot(CommandManager<BukkitCommand, ?> manager, BukkitCommand cmd) {
+public class BukkitCommandRoot extends CommandRoot {
+    public BukkitCommandRoot(BukkitCommandManager manager, BaseCommand cmd) {
         super(manager, cmd);
     }
 
     /**
      * Retrieve List of permissions
      */
-    public String[] getPermissions(BukkitCommand command) {
+    public String[] getPermissions(BaseCommand command) {
         return Arrays.stream(command.getClass().getAnnotationsByType(Permission.class))
                 .map(Permission::value)
                 .toArray(String[]::new);
@@ -55,7 +55,7 @@ public class BukkitCommandRoot extends CommandRoot<BukkitCommand> {
     /**
      * Return true if class permits permission of sender
      */
-    public boolean testPermission(BukkitCommand command, CommandSender sender, boolean unknown) {
+    public boolean testPermission(BaseCommand command, CommandSender sender, boolean unknown) {
         String[] permissions = getPermissions(command);
 
         if (permissions.length > 0) {
@@ -73,7 +73,7 @@ public class BukkitCommandRoot extends CommandRoot<BukkitCommand> {
     }
 
     @SuppressWarnings("unused")
-    public CommandExecute execute(BukkitCommand command, List<String> input, BukkitCommandContext context) {
+    public CommandExecute execute(BaseCommand command, List<String> input, BukkitCommandContext context) {
         if (testPermission(command, context.getSender(), true)) {
             return super.execute(command, input, context);
         }
@@ -82,7 +82,7 @@ public class BukkitCommandRoot extends CommandRoot<BukkitCommand> {
     }
 
     @SuppressWarnings("unused")
-    protected CommandExecute executeMethod(Method method, BukkitCommand command, List<String> input, BukkitCommandContext context) {
+    protected CommandExecute executeMethod(Method method, BaseCommand command, List<String> input, BukkitCommandContext context) {
         Permission[] permissions = method.getAnnotationsByType(Permission.class);
 
         if (permissions.length > 0) {
@@ -101,7 +101,7 @@ public class BukkitCommandRoot extends CommandRoot<BukkitCommand> {
     }
 
     @SuppressWarnings("unused")
-    public List<String> complete(BukkitCommand command, List<String> input, BukkitCommandContext context) {
+    public List<String> complete(BaseCommand command, List<String> input, BukkitCommandContext context) {
         if (testPermission(command, context.getSender(), true)) {
             return super.complete(command, input, context);
         }
@@ -110,7 +110,7 @@ public class BukkitCommandRoot extends CommandRoot<BukkitCommand> {
     }
 
     @SuppressWarnings("unused")
-    protected List<String> completeMethod(Method method, BukkitCommand command, List<String> input, BukkitCommandContext context) {
+    protected List<String> completeMethod(Method method, BaseCommand command, List<String> input, BukkitCommandContext context) {
         Permission[] permissions = method.getAnnotationsByType(Permission.class);
 
         if (permissions.length > 0) {

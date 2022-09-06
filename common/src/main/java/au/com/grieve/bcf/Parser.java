@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -32,26 +32,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 public abstract class Parser {
     // Data
-    @Getter
-    protected final CommandManager manager;
-    @Getter
+    protected final CommandManager<?,?> manager;
     protected final CommandContext context;
-    @Getter
     protected final Map<String, String> defaultParameters = new HashMap<>();
 
-    @Getter
     protected boolean parsed = false;
 
-    @Getter
     protected ArgNode argNode;
 
     // Cache
     protected List<String> completions;
     protected Object result;
 
-    public Parser(CommandManager manager, ArgNode argNode, CommandContext context) {
+    public Parser(CommandManager<?,?> manager, ArgNode argNode, CommandContext context) {
         this.manager = manager;
         this.context = context;
         this.argNode = argNode;

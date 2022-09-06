@@ -23,6 +23,7 @@
 
 package au.com.grieve.bcf.platform.bukkit;
 
+import au.com.grieve.bcf.BaseCommand;
 import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.annotations.Command;
 import au.com.grieve.bcf.platform.bukkit.parsers.PlayerParser;
@@ -38,7 +39,9 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 @SuppressWarnings("unused")
-public class BukkitCommandManager extends CommandManager<BukkitCommand, BukkitCommandRoot> {
+public class BukkitCommandManager extends CommandManager<
+        BukkitCommand, BukkitCommandRoot
+        > {
 
     private final JavaPlugin plugin;
     private final CommandMap commandMap;
@@ -73,7 +76,7 @@ public class BukkitCommandManager extends CommandManager<BukkitCommand, BukkitCo
     }
 
     @Override
-    protected BukkitCommandRoot createCommandRoot(BukkitCommand cmd) {
+    protected BukkitCommandRoot createCommandRoot(BaseCommand cmd) {
         BukkitCommandRoot cr = new BukkitCommandRoot(this, cmd);
 
         // Get Name and Aliases
@@ -95,4 +98,6 @@ public class BukkitCommandManager extends CommandManager<BukkitCommand, BukkitCo
 
         return cr;
     }
+
+
 }
