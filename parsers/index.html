@@ -311,6 +311,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#required" class="md-nav__link">
     required
   </a>
@@ -515,6 +522,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#required" class="md-nav__link">
     required
   </a>
@@ -683,6 +697,20 @@ default being provided and invalid input will correctly show an error.</p>
 The command <code>/mycmd cmd1</code> will provide 3 to <code>myNum</code> variable.</p>
 <p>The command <code>/mycmd cmd1 10</code> will provide 10 to <code>myNum</code> variable.</p>
 <p>The command <code>/mycmd cmd1 aaa</code> will display the error "Invalid Number: a"</p>
+</div>
+<h4 id="description">description<a class="headerlink" href="#description" title="Permanent link">&para;</a></h4>
+<p>Provide a description when auto completing for platforms that support it.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MainCommand</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BukkitCommand</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1 @int(description=A silly number)&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">myCmd1</span><span class="p">(</span><span class="n">CommandSender</span><span class="w"> </span><span class="n">sender</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">myNum</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="p">...</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
 </div>
 <h4 id="required">required<a class="headerlink" href="#required" title="Permanent link">&para;</a></h4>
 <p>If set to true will require a value to be provided either through input or through a <code>default</code> parameter.</p>
@@ -910,7 +938,7 @@ that the player exists.  Returns an <code>OfflinePlayer</code> object to the met
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-09-06T02:02:22+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-09-06</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-09-05T00:03:56+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-09-05</span>
       
     
   </small>

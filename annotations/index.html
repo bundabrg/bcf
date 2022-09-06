@@ -302,6 +302,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    @Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#error" class="md-nav__link">
     @Error
   </a>
@@ -314,11 +321,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bukkit" class="md-nav__link">
-    Bukkit
+  <a href="#bukkitbungeecord" class="md-nav__link">
+    Bukkit/Bungeecord
   </a>
   
-    <nav class="md-nav" aria-label="Bukkit">
+    <nav class="md-nav" aria-label="Bukkit/Bungeecord">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -440,6 +447,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    @Description
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#error" class="md-nav__link">
     @Error
   </a>
@@ -452,11 +466,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bukkit" class="md-nav__link">
-    Bukkit
+  <a href="#bukkitbungeecord" class="md-nav__link">
+    Bukkit/Bungeecord
   </a>
   
-    <nav class="md-nav" aria-label="Bukkit">
+    <nav class="md-nav" aria-label="Bukkit/Bungeecord">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -624,6 +638,24 @@ be shown.</p>
 <p>When attempting to execute the invalid command: <code>/mycmd unknown</code> a message "Some help" in yellow will
 be shown.</p>
 </div>
+<h3 id="description">@Description<a class="headerlink" href="#description" title="Permanent link">&para;</a></h3>
+<p><strong>Target</strong>: <code>Class</code></p>
+<p><strong>Value</strong>: <code>None</code></p>
+<p><strong>Multiple</strong>: not allowed</p>
+<p>When used on a class decorated by <code>@Command</code> it will add a description that will become visible in platforms that
+support it.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Command</span><span class="p">(</span><span class="s">&quot;mycmd&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="nd">@Description</span><span class="p">(</span><span class="s">&quot;This performs something&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="kd">class</span> <span class="nc">MainCommand</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BukkitCommand</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Arg</span><span class="p">(</span><span class="s">&quot;cmd1&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">cmd1</span><span class="p">(</span><span class="n">CommandSender</span><span class="w"> </span><span class="n">sender</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="p">...</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+</div>
 <h3 id="error">@Error<a class="headerlink" href="#error" title="Permanent link">&para;</a></h3>
 <p><strong>Target</strong>: <code>Method</code></p>
 <p><strong>Value</strong>: <code>None</code></p>
@@ -672,8 +704,8 @@ will be shown in green.</p>
 <p>When attempting to execute the invalid command: <code>/mycmd cmd1 10</code> a message "Number must be smaller or equal to 3" in yellow will
 be shown.</p>
 </div>
-<h2 id="bukkit">Bukkit<a class="headerlink" href="#bukkit" title="Permanent link">&para;</a></h2>
-<p>These annotations are available for Bukkit environments.</p>
+<h2 id="bukkitbungeecord">Bukkit/Bungeecord<a class="headerlink" href="#bukkitbungeecord" title="Permanent link">&para;</a></h2>
+<p>These annotations are available for Bukkit and Bungeecord environments.</p>
 <h3 id="permission">@Permission<a class="headerlink" href="#permission" title="Permanent link">&para;</a></h3>
 <p><strong>Target</strong>: <code>Class</code>, <code>Method</code></p>
 <p><strong>Value</strong>: <code>String</code></p>
@@ -731,7 +763,7 @@ A user with <code>mycmd.perm1</code> will be able to access the following comman
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-09-06T02:02:22+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-09-06</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-09-05T00:03:56+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-09-05</span>
       
     
   </small>
