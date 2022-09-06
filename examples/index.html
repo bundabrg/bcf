@@ -479,7 +479,15 @@
 <h2 id="standalone-application">Standalone Application<a class="headerlink" href="#standalone-application" title="Permanent link">&para;</a></h2>
 <h3 id="maven">Maven<a class="headerlink" href="#maven" title="Permanent link">&para;</a></h3>
 <p>Add to <code>pom.xml</code></p>
-<div class="highlight"><pre><span></span><code><span class="nt">&lt;dependencies&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;repositories&gt;</span>
+    <span class="cm">&lt;!-- Bundabrg&#39;s Repo --&gt;</span>
+    <span class="nt">&lt;repository&gt;</span>
+        <span class="nt">&lt;id&gt;</span>bundabrg-repo<span class="nt">&lt;/id&gt;</span>
+        <span class="nt">&lt;url&gt;</span>https://repo.worldguard.com.au/repository/maven-public<span class="nt">&lt;/url&gt;</span>
+    <span class="nt">&lt;/repository&gt;</span>
+<span class="nt">&lt;/repositories&gt;</span>
+
+<span class="nt">&lt;dependencies&gt;</span>
     <span class="nt">&lt;dependency&gt;</span>
         <span class="nt">&lt;groupId&gt;</span>au.com.grieve.bcf<span class="nt">&lt;/groupId&gt;</span>
         <span class="nt">&lt;artifactId&gt;</span>terminalconsole<span class="nt">&lt;/artifactId&gt;</span>
@@ -582,7 +590,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-09-06T12:17:09+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-09-06</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-09-06T14:07:06+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-09-06</span>
       
     
   </small>
