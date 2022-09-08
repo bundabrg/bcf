@@ -23,8 +23,8 @@
 
 package au.com.grieve.bcf.platform.terminalconsole;
 
-import au.com.grieve.bcf.BaseCommand;
-import au.com.grieve.bcf.CommandRoot;
+import au.com.grieve.bcf.core.BaseCommand;
+import au.com.grieve.bcf.core.CommandRoot;
 
 public class TerminalCommandRoot extends CommandRoot {
     public TerminalCommandRoot(TerminalCommandManager manager, BaseCommand cmd) {

@@ -23,8 +23,8 @@
 
 package au.com.grieve.bcf.platform.bukkit;
 
-import au.com.grieve.bcf.Candidate;
-import au.com.grieve.bcf.CommandExecute;
+import au.com.grieve.bcf.core.CommandExecute;
+import au.com.grieve.bcf.impl.candidate.DefaultCompletionCandidate;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +61,7 @@ public class BukkitCommandExecutor extends Command {
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
         BukkitCommandContext context = new BukkitCommandContext(sender);
         return commandRoot.complete(Arrays.asList(args), context).stream()
-                .map(Candidate::getValue)
+                .map(DefaultCompletionCandidate::getValue)
                 .collect(Collectors.toList());
     }
 }

@@ -23,9 +23,9 @@
 
 package au.com.grieve.bcf.platform.bukkit;
 
-import au.com.grieve.bcf.BaseCommand;
-import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.annotations.Command;
+import au.com.grieve.bcf.core.BaseCommand;
+import au.com.grieve.bcf.core.CommandManager;
+import au.com.grieve.bcf.framework.annotation.annotations.Command;
 import au.com.grieve.bcf.platform.bukkit.parsers.PlayerParser;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;

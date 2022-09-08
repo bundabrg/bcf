@@ -23,11 +23,11 @@
 
 package au.com.grieve.bcf.platform.bukkit.parsers;
 
-import au.com.grieve.bcf.ArgNode;
-import au.com.grieve.bcf.CommandContext;
-import au.com.grieve.bcf.CommandManager;
+import au.com.grieve.bcf.core.ArgNode;
+import au.com.grieve.bcf.core.CommandContext;
+import au.com.grieve.bcf.core.CommandManager;
+import au.com.grieve.bcf.core.parser.SingleParser;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
-import au.com.grieve.bcf.parsers.SingleParser;
 import au.com.grieve.bcf.platform.bukkit.BukkitCommandContext;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

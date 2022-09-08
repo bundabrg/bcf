@@ -23,9 +23,9 @@
 
 package au.com.grieve.bcf.platform.terminalconsole;
 
-import au.com.grieve.bcf.BaseCommand;
-import au.com.grieve.bcf.annotations.Default;
-import au.com.grieve.bcf.annotations.Error;
+import au.com.grieve.bcf.core.BaseCommand;
+import au.com.grieve.bcf.framework.annotation.annotations.Default;
+import au.com.grieve.bcf.framework.annotation.annotations.Error;
 
 public class TerminalCommand extends BaseCommand {
 

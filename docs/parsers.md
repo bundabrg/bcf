@@ -5,7 +5,9 @@ Parsers are provided in a space separated `@Arg` annotation string to the Class 
 
 The format of the parser definition in the `@Arg` string is:
 
-    @parsername(key=value, ...) @nextparser...
+```
+@parsername(key=value, ...) @nextparser...
+```
 
 Where:
 

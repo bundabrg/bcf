@@ -44,7 +44,7 @@ It was originally created for minecraft projects but now supports standalone con
 
 * Supports Bukkit (Spigot/PaperMC), Bungeecoord and Standalone applications
 
-* Define your commands by simply extending a BaseCommand derived class (like `BukkitCommand`) and annotating it with
+* Define your commands by simply extending a au.com.grieve.bcf.Command derived class (like `BukkitCommand`) and annotating it with
 a `@Command` to define it, with any aliases separated by a `|`.
 
 * Annotate your method with `@Arg` to define what arguments it is expecting. This is a string of arguments that may

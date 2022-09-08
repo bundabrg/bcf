@@ -23,7 +23,7 @@
 
 package au.com.grieve.bcf.platform.bukkit;
 
-import au.com.grieve.bcf.CommandContext;
+import au.com.grieve.bcf.core.CommandContext;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 

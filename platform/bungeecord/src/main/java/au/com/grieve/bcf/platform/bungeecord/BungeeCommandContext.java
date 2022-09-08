@@ -23,7 +23,7 @@
 
 package au.com.grieve.bcf.platform.bungeecord;
 
-import au.com.grieve.bcf.CommandContext;
+import au.com.grieve.bcf.core.CommandContext;
 import lombok.Getter;
 import net.md_5.bungee.api.CommandSender;
 

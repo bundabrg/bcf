@@ -23,9 +23,9 @@
 
 package au.com.grieve.bcf.platform.bungeecord;
 
-import au.com.grieve.bcf.BaseCommand;
-import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.annotations.Command;
+import au.com.grieve.bcf.core.BaseCommand;
+import au.com.grieve.bcf.core.CommandManager;
+import au.com.grieve.bcf.framework.annotation.annotations.Command;
 import net.md_5.bungee.api.plugin.Plugin;
 
 @SuppressWarnings("unused")

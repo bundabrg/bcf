@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -23,7 +23,7 @@
 
 package au.com.grieve.bcf.exceptions;
 
-import au.com.grieve.bcf.Parser;
+import au.com.grieve.bcf.core.Parser;
 
 public class ParserInvalidResultException extends ParserException {
 

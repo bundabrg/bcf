@@ -23,8 +23,8 @@
 
 package au.com.grieve.bcf.platform.terminalconsole;
 
-import au.com.grieve.bcf.CommandContext;
-import au.com.grieve.bcf.CommandExecute;
+import au.com.grieve.bcf.core.CommandContext;
+import au.com.grieve.bcf.core.CommandExecute;
 import au.com.grieve.bcf.platform.terminalconsole.mapper.Command;
 import org.jline.reader.Candidate;
 

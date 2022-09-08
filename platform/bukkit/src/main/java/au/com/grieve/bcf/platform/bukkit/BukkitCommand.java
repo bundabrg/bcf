@@ -23,9 +23,9 @@
 
 package au.com.grieve.bcf.platform.bukkit;
 
-import au.com.grieve.bcf.BaseCommand;
-import au.com.grieve.bcf.annotations.Default;
-import au.com.grieve.bcf.annotations.Error;
+import au.com.grieve.bcf.core.BaseCommand;
+import au.com.grieve.bcf.framework.annotation.annotations.Default;
+import au.com.grieve.bcf.framework.annotation.annotations.Error;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.CommandSender;

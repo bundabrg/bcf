@@ -23,8 +23,8 @@
 
 package au.com.grieve.bcf.platform.bungeecord;
 
-import au.com.grieve.bcf.Candidate;
-import au.com.grieve.bcf.CommandExecute;
+import au.com.grieve.bcf.core.CommandExecute;
+import au.com.grieve.bcf.impl.candidate.DefaultCompletionCandidate;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -57,7 +57,7 @@ public class BungeeCommandExecutor extends Command implements TabExecutor {
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         BungeeCommandContext context = new BungeeCommandContext(sender);
         return commandRoot.complete(Arrays.asList(args), context).stream()
-                .map(Candidate::getValue)
+                .map(DefaultCompletionCandidate::getValue)
                 .collect(Collectors.toList());
     }
 }
