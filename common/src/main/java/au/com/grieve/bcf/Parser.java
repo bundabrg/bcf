@@ -23,15 +23,23 @@
 
 package au.com.grieve.bcf;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Converts input into objects based upon what the parser is expecting. Also provides completion by providing
  * candidates.
  */
-public interface Parser<
+public abstract class Parser<
         RT
         > {
+
+    private final Map<String, String> parameters = new HashMap<>();
+
+    public Parser(Map<String, String> parameters) {
+        this.parameters.putAll(parameters);
+    }
 
     /**
      * Provide completion candidates for the input
@@ -39,7 +47,7 @@ public interface Parser<
      * @param candidates List of candidates
      * @param context Context
      */
-    void complete(ParsedLine line, List<CompletionCandidate> candidates, Context context);
+    public abstract void complete(ParsedLine line, List<CompletionCandidate> candidates, Context context);
 
     /**
      * Return a concrete object for the parsed input
@@ -47,6 +55,6 @@ public interface Parser<
      * @param context Context
      * @return returned object
      */
-    RT parse(ParsedLine line, Context context);
+    public abstract RT parse(ParsedLine line, Context context);
 
 }

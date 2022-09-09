@@ -32,6 +32,7 @@ public interface Command<
         PL extends ParsedLine,
         CTX extends Context
         > {
+
     /**
      * Provide completion candidates for the input
      * @param line The input
@@ -47,6 +48,12 @@ public interface Command<
      * @return best execution method
      */
     ExecutionCandidate execute(PL line, CTX context);
+
+    /**
+     * Add a child command to this one
+     * @param childCommand Child Command
+     */
+    void addChild(Command<PL, CTX> childCommand);
 
 
 

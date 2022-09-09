@@ -33,7 +33,7 @@ import java.util.*;
 @Getter
 public class AnnotationCommandManager implements CommandManager<AnnotationCommand> {
     private final List<AnnotationCommand> commands = new ArrayList<>();
-    private final Map<Class<? extends AnnotationCommand>, Set<AnnotationCommand>> childCommands = new HashMap<>();
+    private final Map<Class<? extends AnnotationCommand>, Set<AnnotationCommand>> commmandInstances = new HashMap<>();
     private final Map<String, Class<? extends Parser<?>>> parsers = new HashMap<>();
 
     private boolean hasCommand(AnnotationCommand command) {
@@ -50,6 +50,17 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
     }
 
     /**
+     * Add command instance
+     *
+     * When child commands are added later we use this to know where to add the children to
+     * @param command Command to add
+     */
+    private void addInstance(AnnotationCommand command) {
+        Set<AnnotationCommand> instances = this.commmandInstances.computeIfAbsent(command.getClass(), k -> new HashSet<>());
+        instances.add(command);
+    }
+
+    /**
      * Register a root command
      * @param command Command to register
      */
@@ -60,6 +71,7 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
         }
 
         this.commands.add(command);
+        addInstance(command);
     }
 
     /**
@@ -69,8 +81,11 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
      */
     @Override
     public void registerCommand(Class<? extends AnnotationCommand> parent, AnnotationCommand command) {
-        Set<AnnotationCommand> children = this.childCommands.computeIfAbsent(parent, k -> new HashSet<>());
-        children.add(command);
+        Set<AnnotationCommand> instances = this.commmandInstances.get(parent);
+        if (instances != null) {
+            addInstance(command);
+            instances.forEach(c -> c.addChild(command));
+        }
     }
 
 }
