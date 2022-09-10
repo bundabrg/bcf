@@ -68,16 +68,17 @@ public class AnnotationCommand implements Command<DefaultParsedLine, AnnotationC
     @Override
     public ExecutionCandidate execute(DefaultParsedLine line, AnnotationContext context) {
 
-        // If our class has an @Arg and no @Command then we parse each of them first
-        if (hasArg() && !hasCommand()) {
-            for (Arg arg : getClass().getAnnotationsByType(Arg.class)) {
-                // Join args that make use of multiple arguments together
-                String argumentLine = String.join(" ", arg.value());
-
-
-
-            }
-        }
+//        // If our class has an @Arg and no @Command then we parse each of them first
+//        if (hasArg() && !hasCommand()) {
+//            for (Arg arg : getClass().getAnnotationsByType(Arg.class)) {
+//                // Join args that make use of multiple arguments together
+//                String argumentLine = String.join(" ", arg.value());
+//
+//
+//
+//            }
+//        }
+        return null;
 
     }
 

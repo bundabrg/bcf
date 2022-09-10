@@ -23,5 +23,10 @@
 
 package au.com.grieve.bcf.impl.parser;
 
+import java.util.Map;
+
 public class IntegerParser extends BaseParser<Integer> {
+    public IntegerParser(Map<String, String> parameters) {
+        super(parameters);
+    }
 }

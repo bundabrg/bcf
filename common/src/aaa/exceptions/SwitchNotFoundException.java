@@ -21,28 +21,16 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.parser;
+package au.com.grieve.bcf.exceptions;
 
-import au.com.grieve.bcf.CompletionCandidate;
-import au.com.grieve.bcf.Context;
-import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.Parser;
+import lombok.Getter;
 
-import java.util.List;
-import java.util.Map;
+public class SwitchNotFoundException extends Exception {
+    @Getter
+    final String switchName;
 
-public class BaseParser<RT> extends Parser<RT> {
-    public BaseParser(Map<String, String> parameters) {
-        super(parameters);
+    public SwitchNotFoundException(String switchName) {
+        this.switchName = switchName;
     }
 
-    @Override
-    public void complete(ParsedLine line, List<CompletionCandidate> candidates, Context context) {
-
-    }
-
-    @Override
-    public RT parse(ParsedLine line, Context context) {
-        return null;
-    }
 }

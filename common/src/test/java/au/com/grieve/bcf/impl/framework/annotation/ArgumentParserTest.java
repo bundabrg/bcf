@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -21,16 +21,18 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.exceptions;
+package au.com.grieve.bcf.impl.framework.annotation;
 
-import lombok.Getter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class SwitchNotFoundException extends Exception {
-    @Getter
-    final String switchName;
+class ArgumentParserTest {
 
-    public SwitchNotFoundException(String switchName) {
-        this.switchName = switchName;
+    @BeforeEach
+    void setUp() {
     }
 
+    @Test
+    void parse() {
+    }
 }
