@@ -30,9 +30,11 @@ class ArgumentParserTest {
 
     @BeforeEach
     void setUp() {
+        System.out.println("Setup");
     }
 
     @Test
     void parse() {
+        System.out.println("Parse");
     }
 }
