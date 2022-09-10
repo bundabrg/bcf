@@ -64,11 +64,27 @@ public class ArgumentParser {
         return parsers.get(parserIndex);
     }
 
-    Parser<?> createParser(String name, Map<String, String> parameters) {
+    /**
+     * Create a new parser based upon the name.
+     *
+     * @param name Name of parser
+     * @param parameters Parameters to parser
+     * @return Parser
+     */
+    protected Parser<?> createParser(String name, Map<String, String> parameters) {
+        // If it does not start with @, then a String parser will be used with options being the name
+        if (!name.startsWith("@")) {
+            parameters.put("options", name);
+            name="string";
+        } else {
+            name = name.substring(1);
+        }
+
         Class<? extends Parser<?>> parserClass = this.parserClasses.get(name);
         if (parserClass == null) {
-            throw new RuntimeException("Unknown parser: " + name); //TODO
+            throw new RuntimeException("Unknown parser: " + name);
         }
+
 
         try {
             return parserClass.getConstructor(Map.class)
@@ -97,6 +113,9 @@ public class ArgumentParser {
             while (true) {
                 int i = reader.read();
                 if (i < 0) {
+                    if (state == State.NAME && name.length() > 0) {
+                        result.add(createParser(name.toString(), new HashMap<>()));
+                    }
                     break;
                 }
                 char c = (char) i;
@@ -195,7 +214,11 @@ public class ArgumentParser {
                 }
             }
         } catch (IOException ignored) {
+
         }
+
+
+
         return result;
     }
 

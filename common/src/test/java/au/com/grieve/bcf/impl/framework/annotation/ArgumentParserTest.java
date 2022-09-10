@@ -23,18 +23,84 @@
 
 package au.com.grieve.bcf.impl.framework.annotation;
 
-import org.junit.jupiter.api.BeforeEach;
+import au.com.grieve.bcf.Parser;
+import au.com.grieve.bcf.impl.parser.IntegerParser;
+import au.com.grieve.bcf.impl.parser.StringParser;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ArgumentParserTest {
 
-    @BeforeEach
-    void setUp() {
-        System.out.println("Setup");
+    @Test
+    void noParsers() {
+        final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
+
+        // Should work
+        assertEquals(0, new ArgumentParser(parserClasses, "").getParsers().size());
+
+        // No such parser
+        assertThrows(RuntimeException.class, () -> new ArgumentParser(parserClasses, "first second third"));
+
+        // No such parser
+        assertThrows(RuntimeException.class, () -> new ArgumentParser(parserClasses, "@string"));
     }
 
     @Test
-    void parse() {
-        System.out.println("Parse");
+    void parsers() {
+        final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
+        parserClasses.put("string", StringParser.class);
+        parserClasses.put("int", IntegerParser.class);
+        ArgumentParser a;
+
+        // 1 Parser
+        a = new ArgumentParser(parserClasses, "");
+        assertEquals(0, a.getParsers().size());
+
+        a = new ArgumentParser(parserClasses, "literal");
+        assertEquals(1, a.getParsers().size());
+        assertEquals(StringParser.class, a.getParsers().get(0).getClass());
+
+        a = new ArgumentParser(parserClasses, "@string");
+        assertEquals(1, a.getParsers().size());
+        assertEquals(StringParser.class, a.getParsers().get(0).getClass());
+
+        a = new ArgumentParser(parserClasses, "@int");
+        assertEquals(1, a.getParsers().size());
+        assertEquals(IntegerParser.class, a.getParsers().get(0).getClass());
+
+        // 2 Parsers
+        a = new ArgumentParser(parserClasses, "literal literal");
+        assertEquals(2, a.getParsers().size());
+        assertEquals(StringParser.class, a.getParsers().get(0).getClass());
+        assertEquals(StringParser.class, a.getParsers().get(1).getClass());
+
+        a = new ArgumentParser(parserClasses, "@string @string");
+        assertEquals(2, a.getParsers().size());
+        assertEquals(StringParser.class, a.getParsers().get(0).getClass());
+        assertEquals(StringParser.class, a.getParsers().get(1).getClass());
+
+        a = new ArgumentParser(parserClasses, "@int @int");
+        assertEquals(2, a.getParsers().size());
+        assertEquals(IntegerParser.class, a.getParsers().get(0).getClass());
+        assertEquals(IntegerParser.class, a.getParsers().get(1).getClass());
+
+        a = new ArgumentParser(parserClasses, "literal @string @int");
+        assertEquals(3, a.getParsers().size());
+        assertEquals(StringParser.class, a.getParsers().get(0).getClass());
+        assertEquals(StringParser.class, a.getParsers().get(1).getClass());
+        assertEquals(IntegerParser.class, a.getParsers().get(2).getClass());
+
+
+        // No such parser
+        assertThrows(RuntimeException.class, () -> new ArgumentParser(parserClasses, "@bob"));
+        assertThrows(RuntimeException.class, () -> new ArgumentParser(parserClasses, "literal @bob"));
+        assertThrows(RuntimeException.class, () -> new ArgumentParser(parserClasses, "@int @bob"));
+        assertThrows(RuntimeException.class, () -> new ArgumentParser(parserClasses, "literal string @int @bob"));
+
     }
 }
