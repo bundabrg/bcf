@@ -21,24 +21,25 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.parser;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.CompletionCandidate;
-import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.exception.EndOfLineException;
 
 import java.util.List;
-import java.util.Map;
 
-public abstract class BaseParser<RT> extends Parser<RT> {
-    public BaseParser(Map<String, String> parameters) {
-        super(parameters);
-    }
+public interface ParserChain {
+    /**
+     * Return the list of parsers that make up this parser chain
+     * @return List of Parsers
+     */
+    List<Parser<?>> getParsers();
 
-    @Override
-    public abstract void complete(ParsedLine line, List<CompletionCandidate> candidates);
+    /**
+     * Parse line
+     * @param line Input line to parse into objects
+     * @param output Output data
+     */
+    void parse(ParsedLine line, List<Object> output) throws EndOfLineException;
 
-    @Override
-    public abstract RT parse(ParsedLine line) throws EndOfLineException, IllegalArgumentException;
+
 }

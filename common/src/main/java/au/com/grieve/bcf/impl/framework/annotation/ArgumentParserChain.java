@@ -23,7 +23,10 @@
 
 package au.com.grieve.bcf.impl.framework.annotation;
 
+import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
+import au.com.grieve.bcf.ParserChain;
+import au.com.grieve.bcf.exception.EndOfLineException;
 import lombok.Getter;
 
 import java.io.IOException;
@@ -35,11 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-public class ArgumentParser {
-    private final List<Parser<?>> parsers = new ArrayList<>();
-    private final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
-    private final int parserIndex;
-
+public class ArgumentParserChain implements ParserChain {
     private enum State {
         NAME,
         PARAM_KEY,
@@ -49,19 +48,19 @@ public class ArgumentParser {
         PARAM_END
     }
 
+    private final Map<String, Class<? extends Parser<?>>> parserClasses;
+    private final List<Parser<?>> parsers = new ArrayList<>();
 
-    public ArgumentParser(Map<String, Class<? extends Parser<?>>> parserClasses, String input) {
-        this.parserIndex = 0;
-        this.parserClasses.putAll(parserClasses);
-        this.parsers.addAll(parse(input));
+    public ArgumentParserChain(Map<String, Class<? extends Parser<?>>> parserClasses, String input) {
+        this.parserClasses = parserClasses;
+        this.parsers.addAll(parseArgumentString(input));
     }
 
-    /**
-     * Return the current parser in line
-     * @return Current Parser
-     */
-    public Parser<?> getCurrentParser() {
-        return parsers.get(parserIndex);
+    @Override
+    public void parse(ParsedLine line, List<Object> output) throws EndOfLineException, IllegalArgumentException {
+        for(Parser<?> p : parsers) {
+            output.add(p.parse(line));
+        }
     }
 
     /**
@@ -72,10 +71,10 @@ public class ArgumentParser {
      * @return Parser
      */
     protected Parser<?> createParser(String name, Map<String, String> parameters) {
-        // If it does not start with @, then a String parser will be used with options being the name
+        // If it does not start with @, then a parser called 'literal' parser will be used with options being the name
         if (!name.startsWith("@")) {
             parameters.put("options", name);
-            name="string";
+            name="literal";
         } else {
             name = name.substring(1);
         }
@@ -96,10 +95,10 @@ public class ArgumentParser {
 
     /**
      * Parse input into a list of Parsers
-      * @param input Input
+     * @param input Input
      * @return List of Parsers
      */
-    protected List<Parser<?>> parse(String input) {
+    protected List<Parser<?>> parseArgumentString(String input) {
         List<Parser<?>> result = new ArrayList<>();
 
         try (StringReader reader = new StringReader(input)) {
@@ -221,5 +220,4 @@ public class ArgumentParser {
 
         return result;
     }
-
 }

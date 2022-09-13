@@ -23,22 +23,29 @@
 
 package au.com.grieve.bcf.impl.parser;
 
-import au.com.grieve.bcf.CompletionCandidate;
-import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.impl.line.DefaultParsedLine;
+import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 
-public abstract class BaseParser<RT> extends Parser<RT> {
-    public BaseParser(Map<String, String> parameters) {
-        super(parameters);
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class IntegerParserTest {
+
+    @Test
+    void complete() {
     }
 
-    @Override
-    public abstract void complete(ParsedLine line, List<CompletionCandidate> candidates);
+    @Test
+    void parse() throws EndOfLineException {
+        IntegerParser integerParser = new IntegerParser(new HashMap<>());
 
-    @Override
-    public abstract RT parse(ParsedLine line) throws EndOfLineException, IllegalArgumentException;
+        assertThrows(EndOfLineException.class, () -> integerParser.parse(new DefaultParsedLine("")));
+        assertThrows(IllegalArgumentException.class, () ->integerParser.parse(new DefaultParsedLine("a")));
+        assertEquals(1, integerParser.parse(new DefaultParsedLine("1")));
+        assertEquals(1, integerParser.parse(new DefaultParsedLine("1 a")));
+        assertThrows(IllegalArgumentException.class, () -> integerParser.parse(new DefaultParsedLine("a 1")));
+    }
 }

@@ -26,14 +26,14 @@ package au.com.grieve.bcf.impl.framework.annotation;
 import au.com.grieve.bcf.Command;
 import au.com.grieve.bcf.CompletionCandidate;
 import au.com.grieve.bcf.ExecutionCandidate;
+import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.framework.annotation.annotations.Arg;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import lombok.Getter;
 
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Used by the AnnotationCommandManager as a Base Command class
@@ -43,6 +43,22 @@ import java.util.Set;
 @Getter
 public class AnnotationCommand implements Command<DefaultParsedLine, AnnotationContext> {
     private final Set<Command<DefaultParsedLine, AnnotationContext>> children = new HashSet<>();
+    private final List<String> classArgStrings = new ArrayList<>();
+    private final Map<String, Method> methodArgStrings = new HashMap<>();
+
+    public AnnotationCommand() {
+        // Class Arguments
+        for (Arg arg : getClass().getAnnotationsByType(Arg.class)) {
+            classArgStrings.add(String.join(" ", arg.value()));
+        }
+
+        // Method Arguments
+        for (Method method : getClass().getMethods()) {
+            for (Arg arg : method.getAnnotationsByType(Arg.class)) {
+                methodArgStrings.put(String.join(" ", arg.value()), method);
+            }
+        }
+    }
 
     public Method getErrorMethod() {
         return null;
@@ -67,17 +83,27 @@ public class AnnotationCommand implements Command<DefaultParsedLine, AnnotationC
 
     @Override
     public ExecutionCandidate execute(DefaultParsedLine line, AnnotationContext context) {
+        if (classArgStrings.size() > 0) {
+            List<ArgumentParserChain> classChain = classArgStrings.stream()
+                    .map(s -> new ArgumentParserChain(context.getParserClasses(), s))
+                    .collect(Collectors.toList());
 
-//        // If our class has an @Arg and no @Command then we parse each of them first
-//        if (hasArg() && !hasCommand()) {
-//            for (Arg arg : getClass().getAnnotationsByType(Arg.class)) {
-//                // Join args that make use of multiple arguments together
-//                String argumentLine = String.join(" ", arg.value());
-//
-//
-//
-//            }
-//        }
+            for (ArgumentParserChain p : classChain) {
+                List<Object> result = new ArrayList<>();
+                DefaultParsedLine currentLine = line.copy();
+                try {
+                    p.parse(currentLine, result);
+                } catch (EndOfLineException e) {
+                    throw new RuntimeException(e);
+                } catch (IllegalArgumentException e) {
+
+                }
+            }
+
+        } else {
+            executeMethod(line, context);
+        }
+
         return null;
 
     }

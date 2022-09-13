@@ -23,10 +23,25 @@
 
 package au.com.grieve.bcf.impl.parser;
 
+import au.com.grieve.bcf.CompletionCandidate;
+import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.exception.EndOfLineException;
+
+import java.util.List;
 import java.util.Map;
 
 public class StringParser extends BaseParser<String> {
     public StringParser(Map<String, String> parameters) {
         super(parameters);
+    }
+
+    @Override
+    public void complete(ParsedLine line, List<CompletionCandidate> candidates) {
+
+    }
+
+    @Override
+    public String parse(ParsedLine line) throws EndOfLineException {
+        return(line.next());
     }
 }

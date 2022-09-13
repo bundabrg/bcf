@@ -23,10 +23,25 @@
 
 package au.com.grieve.bcf.impl.parser;
 
+import au.com.grieve.bcf.CompletionCandidate;
+import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.exception.EndOfLineException;
+
+import java.util.List;
 import java.util.Map;
 
 public class IntegerParser extends BaseParser<Integer> {
     public IntegerParser(Map<String, String> parameters) {
         super(parameters);
+    }
+
+    @Override
+    public void complete(ParsedLine line, List<CompletionCandidate> candidates) {
+
+    }
+
+    @Override
+    public Integer parse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
+        return Integer.valueOf(line.next());
     }
 }

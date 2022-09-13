@@ -24,27 +24,38 @@
 package au.com.grieve.bcf.impl.line;
 
 import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.exception.EndOfLineException;
 import lombok.Getter;
-import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class DefaultParsedLine implements ParsedLine {
     private final List<String> words;
     private final String prefix;
-    @Setter
     private int wordIndex = 0;
 
+    public DefaultParsedLine(String line) {
+        this(line, "");
+    }
+
     public DefaultParsedLine(String line, String prefix) {
-        this.words = Arrays.asList(line.split(" "));
+        this.words = Arrays.stream(line.split(" +"))
+                        .filter(s -> !s.equals(""))
+                        .collect(Collectors.toList());
         this.prefix = prefix;
     }
 
+    public DefaultParsedLine(List<String> args) {
+        this(args, "");
+    }
+
     public DefaultParsedLine(List<String> args, String prefix) {
-        this.words = new ArrayList<>(args);
+        this.words = args.stream()
+                .filter(s -> !s.strip().equals(""))
+                .collect(Collectors.toList());
         this.prefix = prefix;
     }
 
@@ -60,8 +71,32 @@ public class DefaultParsedLine implements ParsedLine {
      * Return the current word being completed
      * @return current word
      */
-    public String getCurrentWord() {
-        return words.get(0);
+    public String getCurrentWord() throws EndOfLineException {
+        if (wordIndex >= words.size()) {
+            throw new EndOfLineException();
+        }
+
+        return words.get(wordIndex);
+    }
+
+    @Override
+    public boolean isEol() {
+        return wordIndex >= words.size();
+    }
+
+    @Override
+    public String next() throws EndOfLineException {
+        if (wordIndex >= words.size()) {
+            throw new EndOfLineException();
+        }
+        return words.get(wordIndex++);
+    }
+
+    @Override
+    public DefaultParsedLine copy() {
+        DefaultParsedLine result = new DefaultParsedLine(words, prefix);
+        result.wordIndex = wordIndex;
+        return result;
     }
 
 

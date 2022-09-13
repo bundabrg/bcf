@@ -23,6 +23,8 @@
 
 package au.com.grieve.bcf;
 
+import au.com.grieve.bcf.exception.EndOfLineException;
+
 import java.util.List;
 
 public interface ParsedLine {
@@ -48,11 +50,30 @@ public interface ParsedLine {
      * Get the current word being parsed
      * @return current word
      */
-    String getCurrentWord();
+    String getCurrentWord() throws EndOfLineException;
 
     /**
      * Get the index of current word in list of words
      * @return current word index
      */
     int getWordIndex();
+
+    /**
+     * Return true if at the end of the line
+     * @return true if end of line
+     */
+    boolean isEol();
+
+    /**
+     * Return current word and move word index to next word
+     * @return current word
+     */
+    String next() throws EndOfLineException;
+
+    /**
+     * Return a copy of ourself
+     * @return Copy
+     */
+    ParsedLine copy();
+
 }

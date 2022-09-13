@@ -23,6 +23,9 @@
 
 package au.com.grieve.bcf;
 
+import au.com.grieve.bcf.exception.EndOfLineException;
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,7 @@ import java.util.Map;
  * Converts input into objects based upon what the parser is expecting. Also provides completion by providing
  * candidates.
  */
+@Getter
 public abstract class Parser<
         RT
         > {
@@ -45,16 +49,14 @@ public abstract class Parser<
      * Provide completion candidates for the input
      * @param line The input
      * @param candidates List of candidates
-     * @param context Context
      */
-    public abstract void complete(ParsedLine line, List<CompletionCandidate> candidates, Context context);
+    public abstract void complete(ParsedLine line, List<CompletionCandidate> candidates);
 
     /**
      * Return a concrete object for the parsed input
      * @param line The input
-     * @param context Context
      * @return returned object
      */
-    public abstract RT parse(ParsedLine line, Context context);
+    public abstract RT parse(ParsedLine line) throws EndOfLineException, IllegalArgumentException;
 
 }
