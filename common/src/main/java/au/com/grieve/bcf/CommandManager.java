@@ -24,7 +24,7 @@
 package au.com.grieve.bcf;
 
 public interface CommandManager<
-        CMD extends Command<?,?>
+        CMD extends Command
         > {
 
     /**

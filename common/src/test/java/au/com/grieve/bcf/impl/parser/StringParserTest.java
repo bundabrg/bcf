@@ -28,6 +28,7 @@ import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,12 +40,34 @@ class StringParserTest {
     }
 
     @Test
-    void parse() throws EndOfLineException {
+    void parseSimple() throws EndOfLineException {
         StringParser stringParser = new StringParser(new HashMap<>());
 
         assertThrows(EndOfLineException.class, () -> stringParser.parse(new DefaultParsedLine("")));
         assertEquals("1", stringParser.parse(new DefaultParsedLine("1")));
         assertEquals("1", stringParser.parse(new DefaultParsedLine("1 a")));
         assertEquals("a", stringParser.parse(new DefaultParsedLine("a 1")));
+    }
+
+    @Test
+    void singleOption() throws EndOfLineException {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("options", "option1");
+        StringParser sp1 = new StringParser(parameters);
+
+        assertEquals("option1", sp1.parse(new DefaultParsedLine("option1")));
+        assertThrows(IllegalArgumentException.class, () -> sp1.parse(new DefaultParsedLine("bob")));
+    }
+
+    @Test
+    void multipleOptions() throws EndOfLineException {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("options", "option1|option2|option3");
+        StringParser sp2 = new StringParser(parameters);
+
+        assertEquals("option1", sp2.parse(new DefaultParsedLine("option1")));
+        assertEquals("option2", sp2.parse(new DefaultParsedLine("option2")));
+        assertEquals("option3", sp2.parse(new DefaultParsedLine("option3")));
+        assertThrows(IllegalArgumentException.class, () -> sp2.parse(new DefaultParsedLine("bob")));
     }
 }

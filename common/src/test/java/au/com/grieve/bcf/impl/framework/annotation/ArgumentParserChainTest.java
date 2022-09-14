@@ -74,84 +74,134 @@ class ArgumentParserChainTest {
     }
 
     @Test
-    void noParsers() {
+    void noParsers_1() {
         final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
 
         // Should work
         assertEquals(0, new ArgumentParserChain(parserClasses, "").getParsers().size());
+    }
+
+    @Test
+    void noParsers_2() {
+        final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
 
         // No such parser
         assertThrows(RuntimeException.class, () -> new ArgumentParserChain(parserClasses, "first second third"));
+    }
+    
+    @Test
+    void noParsers_3() {
+        final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
 
         // No such parser
         assertThrows(RuntimeException.class, () -> new ArgumentParserChain(parserClasses, "@string"));
     }
 
-    @Test
-    void parsers() {
+    Map<String, Class<? extends Parser<?>>> getParserClasses1() {
         final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
         parserClasses.put("literal", TestParser1.class);
         parserClasses.put("string", TestParser1.class);
         parserClasses.put("int", TestParser2.class);
-        ArgumentParserChain a;
+        return parserClasses;
+    }
 
-        // 1 Parser
-        a = new ArgumentParserChain(parserClasses, "");
+    @Test
+    void oneParser_1() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "");
         assertEquals(0, a.getParsers().size());
-
-        a = new ArgumentParserChain(parserClasses, "literal");
+    }
+    
+    @Test
+    void oneParser_2() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal");
         assertEquals(1, a.getParsers().size());
         assertEquals(TestParser1.class, a.getParsers().get(0).getClass());
-
-        a = new ArgumentParserChain(parserClasses, "@string");
+    }
+    
+    @Test
+    void oneParser_3() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string");
         assertEquals(1, a.getParsers().size());
         assertEquals(TestParser1.class, a.getParsers().get(0).getClass());
-
-        a = new ArgumentParserChain(parserClasses, "@int");
+    }
+    
+    @Test
+    void oneParser_4() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@int");
         assertEquals(1, a.getParsers().size());
         assertEquals(TestParser2.class, a.getParsers().get(0).getClass());
+    }
 
-        // 2 Parsers
-        a = new ArgumentParserChain(parserClasses, "literal literal");
+    @Test
+    void twoParsers_1() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal literal");
         assertEquals(2, a.getParsers().size());
         assertEquals(TestParser1.class, a.getParsers().get(0).getClass());
         assertEquals(TestParser1.class, a.getParsers().get(1).getClass());
+    }
 
-        a = new ArgumentParserChain(parserClasses, "@string @string");
+    @Test
+    void twoParsers_2() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string");
         assertEquals(2, a.getParsers().size());
         assertEquals(TestParser1.class, a.getParsers().get(0).getClass());
         assertEquals(TestParser1.class, a.getParsers().get(1).getClass());
+    }
 
-        a = new ArgumentParserChain(parserClasses, "@int @int");
+    @Test
+    void twoParsers_3() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@int @int");
         assertEquals(2, a.getParsers().size());
         assertEquals(TestParser2.class, a.getParsers().get(0).getClass());
         assertEquals(TestParser2.class, a.getParsers().get(1).getClass());
+    }
 
-        a = new ArgumentParserChain(parserClasses, "literal @string @int");
+    @Test
+    void threeParsers_1() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal @string @int");
         assertEquals(3, a.getParsers().size());
         assertEquals(TestParser1.class, a.getParsers().get(0).getClass());
         assertEquals(TestParser1.class, a.getParsers().get(1).getClass());
         assertEquals(TestParser2.class, a.getParsers().get(2).getClass());
-
-
-        // No such parser
-        assertThrows(RuntimeException.class, () -> new ArgumentParserChain(parserClasses, "@bob"));
-        assertThrows(RuntimeException.class, () -> new ArgumentParserChain(parserClasses, "literal @bob"));
-        assertThrows(RuntimeException.class, () -> new ArgumentParserChain(parserClasses, "@int @bob"));
-        assertThrows(RuntimeException.class, () -> new ArgumentParserChain(parserClasses, "literal string @int @bob"));
     }
 
     @Test
-    void parameters() {
-        final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
-        parserClasses.put("literal", TestParser1.class);
-        ArgumentParserChain a;
+    void invalidParsers_1() {
+        assertThrows(RuntimeException.class, () -> new ArgumentParserChain(getParserClasses1(), "@bob"));
+    }
 
-        a = new ArgumentParserChain(parserClasses, "literal");
+    @Test
+    void invalidParsers_2() {
+        assertThrows(RuntimeException.class, () -> new ArgumentParserChain(getParserClasses1(), "literal @bob"));
+    }
+
+    @Test
+    void invalidParsers_3() {
+        assertThrows(RuntimeException.class, () -> new ArgumentParserChain(getParserClasses1(), "@int @bob"));
+    }
+
+    @Test
+    void invalidParsers_4() {
+        assertThrows(RuntimeException.class, () -> new ArgumentParserChain(getParserClasses1(), "literal string @int @bob"));
+    }
+
+    @Test
+    void literalParameters_1() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal");
         assertEquals(1, a.getParsers().get(0).getParameters().size());
         assertEquals("literal", a.getParsers().get(0).getParameters().get("options"));
+    }
 
-        a = new ArgumentParserChain(parserClasses, "literal(p1=one,p2='two',p3='one two',p4=one two)");
+    @Test
+    void literalParameters_2() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal3");
+        assertEquals(1, a.getParsers().get(0).getParameters().size());
+        assertEquals("literal1|literal2|literal3", a.getParsers().get(0).getParameters().get("options"));
+    }
+
+    @Test
+    void multiParams_1() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal(p1=one,p2='two',p3='one two',p4=one two)");
         assertEquals(5, a.getParsers().get(0).getParameters().size());
         assertEquals("literal", a.getParsers().get(0).getParameters().get("options"));
         assertEquals("one", a.getParsers().get(0).getParameters().get("p1"));

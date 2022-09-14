@@ -50,7 +50,7 @@ public interface ParsedLine {
      * Get the current word being parsed
      * @return current word
      */
-    String getCurrentWord() throws EndOfLineException;
+    String getCurrentWord();
 
     /**
      * Get the index of current word in list of words

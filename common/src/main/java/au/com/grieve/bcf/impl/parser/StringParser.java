@@ -26,10 +26,13 @@ package au.com.grieve.bcf.impl.parser;
 import au.com.grieve.bcf.CompletionCandidate;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import lombok.ToString;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+@ToString(callSuper = true)
 public class StringParser extends BaseParser<String> {
     public StringParser(Map<String, String> parameters) {
         super(parameters);
@@ -42,6 +45,15 @@ public class StringParser extends BaseParser<String> {
 
     @Override
     public String parse(ParsedLine line) throws EndOfLineException {
+        if (getParameters().containsKey("options")) {
+            String word = Arrays.stream(getParameters().get("options").split("\\|"))
+                    .filter(s -> s.equals(line.getCurrentWord()))
+                    .findFirst()
+                    .orElseThrow(IllegalArgumentException::new);
+            line.next();
+            return word;
+        }
+
         return(line.next());
     }
 }

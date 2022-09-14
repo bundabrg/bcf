@@ -33,39 +33,48 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DefaultParsedLineTest {
     @Test
-    void simple() throws EndOfLineException {
-        DefaultParsedLine line;
-
-        line = new DefaultParsedLine("");
+    void emptyLine_1() {
+        DefaultParsedLine line = new DefaultParsedLine("");
         assertEquals(0, line.getWords().size());
         assertEquals("", line.getLine());
         assertTrue(line.isEol());
         assertThrows(EndOfLineException.class, line::next);
-        assertThrows(EndOfLineException.class, line::getCurrentWord);
+        assertNull(line.getCurrentWord());
+    }
 
-        line = new DefaultParsedLine(Collections.singletonList(""));
+    @Test
+    void emptyLine_2() {
+        DefaultParsedLine line = new DefaultParsedLine(Collections.singletonList(""));
         assertEquals(0, line.getWords().size());
         assertEquals("", line.getLine());
         assertTrue(line.isEol());
         assertThrows(EndOfLineException.class, line::next);
-        assertThrows(EndOfLineException.class, line::getCurrentWord);
+        assertNull(line.getCurrentWord());
+    }
 
-        line = new DefaultParsedLine("word");
+    @Test
+    void singleWord_1() throws EndOfLineException {
+        DefaultParsedLine line = new DefaultParsedLine("word");
         assertEquals(1, line.getWords().size());
         assertEquals("word", line.getLine());
         assertFalse(line.isEol());
         assertEquals("word", line.getCurrentWord());
         assertEquals("word", line.next());
+    }
 
-        line = new DefaultParsedLine(Collections.singletonList("word"));
+    @Test
+    void singleWord_2() throws EndOfLineException {
+        DefaultParsedLine line = new DefaultParsedLine(Collections.singletonList("word"));
         assertEquals(1, line.getWords().size());
         assertEquals("word", line.getLine());
         assertFalse(line.isEol());
         assertEquals("word", line.getCurrentWord());
         assertEquals("word", line.next());
+    }
 
-
-        line = new DefaultParsedLine("word1 word2   word3");
+    @Test
+    void multiWord_1() throws EndOfLineException {
+        DefaultParsedLine line = new DefaultParsedLine("word1 word2   word3");
         assertEquals(3, line.getWords().size());
         assertEquals("word1 word2 word3", line.getLine());
         assertFalse(line.isEol());
@@ -73,8 +82,11 @@ class DefaultParsedLineTest {
         assertEquals("word2", line.next());
         assertEquals("word3", line.getCurrentWord());
         assertEquals("word3", line.next());
+    }
 
-        line = new DefaultParsedLine(Arrays.asList("word1", "word2", "", " ", "word3"));
+    @Test
+    void multiWord_2() throws EndOfLineException {
+        DefaultParsedLine line = new DefaultParsedLine(Arrays.asList("word1", "word2", "", " ", "word3"));
         assertEquals(3, line.getWords().size());
         assertEquals("word1 word2 word3", line.getLine());
         assertFalse(line.isEol());

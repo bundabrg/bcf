@@ -23,5 +23,18 @@
 
 package au.com.grieve.bcf;
 
+import java.util.List;
+
 public interface Context {
+    /**
+     * Return the chain of command classes so far
+     * @return List of Commands
+     */
+    List<Command> getCommandChain();
+
+    /**
+     * Return a copy of ourselves
+     * @return Copy
+     */
+    Context copy();
 }

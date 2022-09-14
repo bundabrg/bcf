@@ -28,10 +28,7 @@ import java.util.List;
 /**
 * Command - All commands inherit from this class
  */
-public interface Command<
-        PL extends ParsedLine,
-        CTX extends Context
-        > {
+public interface Command {
 
     /**
      * Provide completion candidates for the input
@@ -39,7 +36,7 @@ public interface Command<
      * @param candidates List of candidates
      * @param context Context
      */
-    void complete(PL line, List<CompletionCandidate> candidates, CTX context);
+    void complete(ParsedLine line, List<CompletionCandidate> candidates, Context context);
 
     /**
      * Return the best execution candidate for the parsed input
@@ -47,13 +44,13 @@ public interface Command<
      * @param context Context
      * @return best execution method
      */
-    ExecutionCandidate execute(PL line, CTX context);
+    ExecutionCandidate execute(ParsedLine line, Context context);
 
     /**
      * Add a child command to this one
      * @param childCommand Child Command
      */
-    void addChild(Command<PL, CTX> childCommand);
+    void addChild(Command childCommand);
 
 
 

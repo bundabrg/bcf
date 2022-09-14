@@ -27,10 +27,12 @@ import au.com.grieve.bcf.CompletionCandidate;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Map;
 
+@ToString(callSuper = true)
 public abstract class BaseParser<RT> extends Parser<RT> {
     public BaseParser(Map<String, String> parameters) {
         super(parameters);

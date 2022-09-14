@@ -26,12 +26,14 @@ package au.com.grieve.bcf.impl.line;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@ToString
 public class DefaultParsedLine implements ParsedLine {
     private final List<String> words;
     private final String prefix;
@@ -69,11 +71,12 @@ public class DefaultParsedLine implements ParsedLine {
 
     /**
      * Return the current word being completed
-     * @return current word
+     * @return current word or null if at the end
      */
-    public String getCurrentWord() throws EndOfLineException {
+    @ToString.Include
+    public String getCurrentWord() {
         if (wordIndex >= words.size()) {
-            throw new EndOfLineException();
+            return null;
         }
 
         return words.get(wordIndex);

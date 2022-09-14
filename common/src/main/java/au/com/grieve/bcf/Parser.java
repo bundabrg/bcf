@@ -25,6 +25,7 @@ package au.com.grieve.bcf;
 
 import au.com.grieve.bcf.exception.EndOfLineException;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.Map;
  * candidates.
  */
 @Getter
+@ToString
 public abstract class Parser<
         RT
         > {

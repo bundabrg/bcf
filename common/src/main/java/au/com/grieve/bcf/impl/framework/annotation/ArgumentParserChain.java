@@ -28,6 +28,7 @@ import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.ParserChain;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
+@ToString
 public class ArgumentParserChain implements ParserChain {
     private enum State {
         NAME,

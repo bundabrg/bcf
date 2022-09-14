@@ -23,14 +23,26 @@
 
 package au.com.grieve.bcf.impl.framework.annotation;
 
+import au.com.grieve.bcf.Command;
 import au.com.grieve.bcf.Context;
 import au.com.grieve.bcf.Parser;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
 public class AnnotationContext implements Context {
     private final Map<String, Class <? extends Parser<?>>> parserClasses = new HashMap<>();
+    private final List<Command> commandChain = new ArrayList<>();
+
+    @Override
+    public Context copy() {
+        AnnotationContext result = new AnnotationContext();
+        result.getCommandChain().addAll(commandChain);
+        result.getParserClasses().putAll(parserClasses);
+        return result;
+    }
 }

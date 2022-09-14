@@ -23,28 +23,30 @@
 
 package au.com.grieve.bcf.impl.framework.annotation;
 
-import au.com.grieve.bcf.Command;
-import au.com.grieve.bcf.CompletionCandidate;
-import au.com.grieve.bcf.ExecutionCandidate;
+import au.com.grieve.bcf.*;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.framework.annotation.annotations.Arg;
-import au.com.grieve.bcf.impl.line.DefaultParsedLine;
+import au.com.grieve.bcf.framework.annotation.annotations.Default;
+import au.com.grieve.bcf.framework.annotation.annotations.Error;
+import au.com.grieve.bcf.impl.execution.DefaultExecutionCandidate;
 import lombok.Getter;
 
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Used by the AnnotationCommandManager as a Base Command class
- *
  * Commands are defined by annotations on methods
  */
 @Getter
-public class AnnotationCommand implements Command<DefaultParsedLine, AnnotationContext> {
-    private final Set<Command<DefaultParsedLine, AnnotationContext>> children = new HashSet<>();
+public class AnnotationCommand implements Command {
+    private final Set<Command> children = new HashSet<>();
     private final List<String> classArgStrings = new ArrayList<>();
     private final Map<String, Method> methodArgStrings = new HashMap<>();
+    private final Method defaultMethod;
+    private final Method errorMethod;
 
     public AnnotationCommand() {
         // Class Arguments
@@ -58,58 +60,147 @@ public class AnnotationCommand implements Command<DefaultParsedLine, AnnotationC
                 methodArgStrings.put(String.join(" ", arg.value()), method);
             }
         }
-    }
 
-    public Method getErrorMethod() {
-        return null;
-    }
-
-    public Method getDefaultMethod() {
-        return null;
-    }
-
-    protected boolean hasCommand() {
-        return getClass().getAnnotation(au.com.grieve.bcf.framework.annotation.annotations.Command.class) != null;
-    }
-
-    protected boolean hasArg() {
-        return getClass().getAnnotation(Arg.class) != null;
+        // Check if we have special Methods
+        errorMethod = Arrays.stream(getClass().getMethods())
+                .filter(m -> m.isAnnotationPresent(Error.class))
+                .findFirst()
+                .orElse(null);
+        defaultMethod = Arrays.stream(getClass().getMethods())
+                .filter(m -> m.isAnnotationPresent(Default.class))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
-    public void complete(DefaultParsedLine line, List<CompletionCandidate> candidates, AnnotationContext context) {
+    public void complete(ParsedLine line, List<CompletionCandidate> candidates, Context context) {
 
     }
 
-    @Override
-    public ExecutionCandidate execute(DefaultParsedLine line, AnnotationContext context) {
-        if (classArgStrings.size() > 0) {
-            List<ArgumentParserChain> classChain = classArgStrings.stream()
-                    .map(s -> new ArgumentParserChain(context.getParserClasses(), s))
-                    .collect(Collectors.toList());
+    protected ExecutionCandidate getErrorExecutionCandidate(List<Command> chain, int weight) {
+        for(Command cmd : Stream.concat(
+                Stream.of(this),
+                chain.stream()
+        ).collect(Collectors.toList())) {
+            Method method = ((AnnotationCommand) cmd).getErrorMethod();
+            if (method != null) {
+                return new DefaultExecutionCandidate(cmd.getClass(), method, weight, new ArrayList<>());
+            }
+        }
+        throw new RuntimeException("Failed to find Error Execution Candidate");
+    }
+    protected ExecutionCandidate getDefaultExecutionCandidate(List<Command> chain, int weight) {
+        for(Command cmd : Stream.concat(
+            Stream.of(this),
+            chain.stream()
+        ).collect(Collectors.toList())) {
+            Method method = ((AnnotationCommand) cmd).getDefaultMethod();
+            if (method != null) {
+                return new DefaultExecutionCandidate(cmd.getClass(), method, weight, new ArrayList<>());
+            }
+        }
+        throw new RuntimeException("Failed to find Default Execution Candidate");
+    }
 
-            for (ArgumentParserChain p : classChain) {
-                List<Object> result = new ArrayList<>();
-                DefaultParsedLine currentLine = line.copy();
-                try {
-                    p.parse(currentLine, result);
-                } catch (EndOfLineException e) {
-                    throw new RuntimeException(e);
-                } catch (IllegalArgumentException e) {
+    protected ExecutionCandidate executeClass(ParsedLine line, Context context) {
+        List<ExecutionCandidate> candidates = new ArrayList<>();
 
-                }
+        List<ArgumentParserChain> classChain = classArgStrings.stream()
+                .map(s -> new ArgumentParserChain(((AnnotationContext) context).getParserClasses(), s))
+                .collect(Collectors.toList());
+
+        for (ArgumentParserChain p : classChain) {
+            List<Object> result = new ArrayList<>();
+            ParsedLine currentLine = line.copy();
+            try {
+                p.parse(currentLine, result);
+            } catch (EndOfLineException e) {
+                // Ran out of input to satisfy this chain
+                candidates.add(getDefaultExecutionCandidate(context.getCommandChain(), currentLine.getWordIndex()));
+                continue;
+            } catch (IllegalArgumentException e) {
+                // Error has occurred
+                candidates.add(getErrorExecutionCandidate(context.getCommandChain(), currentLine.getWordIndex()));
+                continue;
             }
 
-        } else {
-            executeMethod(line, context);
+            // Add a default at this level
+            candidates.add(getDefaultExecutionCandidate(context.getCommandChain(), currentLine.getWordIndex()));
+
+            candidates.add(executeChildren(currentLine.copy(), context));
+            candidates.add(executeMethod(currentLine.copy(), context));
         }
 
-        return null;
+        return candidates.stream()
+                .filter(Objects::nonNull)
+                .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
+                .orElse(null);
+    }
 
+    protected ExecutionCandidate executeChildren(ParsedLine line, Context context) {
+        List<ExecutionCandidate> candidates = new ArrayList<>();
+
+        for(Command cmd : getChildren()) {
+            Context currentContext = context.copy();
+            currentContext.getCommandChain().add(this);
+            candidates.add(cmd.execute(line.copy(), currentContext));
+        }
+
+        return candidates.stream()
+                .filter(Objects::nonNull)
+                .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
+                .orElse(null);
+    }
+
+    protected ExecutionCandidate executeMethod(ParsedLine line, Context context) {
+        List<ExecutionCandidate> candidates = new ArrayList<>();
+
+        for(Map.Entry<String, Method> item : methodArgStrings.entrySet()) {
+            ArgumentParserChain methodChain = new ArgumentParserChain(((AnnotationContext) context).getParserClasses(), item.getKey());
+
+            List<Object> result = new ArrayList<>();
+            ParsedLine currentLine = line.copy();
+            try {
+                methodChain.parse(currentLine, result);
+            } catch (EndOfLineException e) {
+                // Ran out of input to satisfy this chain
+                candidates.add(getDefaultExecutionCandidate(context.getCommandChain(), currentLine.getWordIndex()));
+                continue;
+            } catch (IllegalArgumentException e) {
+                // Error has occurred
+                candidates.add(getErrorExecutionCandidate(context.getCommandChain(), currentLine.getWordIndex()));
+                continue;
+            }
+
+            candidates.add(new DefaultExecutionCandidate(getClass(), item.getValue(), currentLine.getWordIndex(), result));
+        }
+        return candidates.stream()
+                .filter(Objects::nonNull)
+                .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
+                .orElse(null);
     }
 
     @Override
-    public void addChild(Command<DefaultParsedLine, AnnotationContext> childCommand) {
+    public ExecutionCandidate execute(ParsedLine line, Context context) {
+        List<ExecutionCandidate> candidates = new ArrayList<>();
+
+        if (classArgStrings.size() > 0) {
+            candidates.add(executeClass(line.copy(), context));
+        } else {
+            // Add a default at this level
+            candidates.add(getDefaultExecutionCandidate(context.getCommandChain(), line.getWordIndex()));
+
+            candidates.add(executeChildren(line.copy(), context));
+            candidates.add(executeMethod(line.copy(), context));
+        }
+        return candidates.stream()
+                .filter(Objects::nonNull)
+                .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
+                .orElse(getDefaultExecutionCandidate(context.getCommandChain(), line.getWordIndex()));
+    }
+
+    @Override
+    public void addChild(Command childCommand) {
         this.children.add(childCommand);
     }
 }
