@@ -83,6 +83,12 @@ public class DefaultParsedLine implements ParsedLine {
     }
 
     @Override
+    public void setWordIndex(int newIndex) {
+        assert(newIndex >=0 && newIndex <= words.size());
+        wordIndex = newIndex;
+    }
+
+    @Override
     public boolean isEol() {
         return wordIndex >= words.size();
     }

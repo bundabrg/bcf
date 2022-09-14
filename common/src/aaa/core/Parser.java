@@ -25,7 +25,7 @@ package au.com.grieve.bcf.core;
 
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
 import au.com.grieve.bcf.exceptions.ParserRequiredArgumentException;
-import au.com.grieve.bcf.impl.candidate.DefaultCompletionCandidate;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import lombok.Getter;
 
 import java.util.ArrayList;

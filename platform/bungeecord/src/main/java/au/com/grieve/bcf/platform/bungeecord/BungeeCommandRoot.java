@@ -27,7 +27,7 @@ import au.com.grieve.bcf.core.BaseCommand;
 import au.com.grieve.bcf.core.CommandExecute;
 import au.com.grieve.bcf.core.CommandRoot;
 import au.com.grieve.bcf.framework.annotation.annotations.Permission;
-import au.com.grieve.bcf.impl.candidate.DefaultCompletionCandidate;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import net.md_5.bungee.api.CommandSender;
 
 import java.lang.reflect.Method;

@@ -44,16 +44,17 @@ public class StringParser extends BaseParser<String> {
     }
 
     @Override
-    public String parse(ParsedLine line) throws EndOfLineException {
+    protected String doParse(ParsedLine line) throws EndOfLineException {
+        String result = line.next();
         if (getParameters().containsKey("options")) {
-            String word = Arrays.stream(getParameters().get("options").split("\\|"))
-                    .filter(s -> s.equals(line.getCurrentWord()))
+            String r = result;
+
+            result = Arrays.stream(getParameters().get("options").split("\\|"))
+                    .filter(s -> s.equals(r))
                     .findFirst()
                     .orElseThrow(IllegalArgumentException::new);
-            line.next();
-            return word;
         }
 
-        return(line.next());
+        return result;
     }
 }

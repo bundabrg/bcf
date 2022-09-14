@@ -41,6 +41,28 @@ public abstract class BaseParser<RT> extends Parser<RT> {
     @Override
     public abstract void complete(ParsedLine line, List<CompletionCandidate> candidates);
 
+    /**
+     * Call doParse and make sure that errors don't mutate line
+     *
+     * @param line The input
+     * @return Return Object
+     * @throws EndOfLineException Ran out of input
+     * @throws IllegalArgumentException Invalid input
+     */
     @Override
-    public abstract RT parse(ParsedLine line) throws EndOfLineException, IllegalArgumentException;
+    public RT parse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
+        ParsedLine currentLine = line.copy();
+        RT result = doParse(currentLine);
+        line.setWordIndex(currentLine.getWordIndex());
+        return result;
+    }
+
+    /**
+     * Handle parsing the line.
+     * @param line The input
+     * @return Return Object
+     * @throws EndOfLineException Ran out out of input
+     * @throws IllegalArgumentException Invalid input
+     */
+    protected abstract RT doParse(ParsedLine line) throws EndOfLineException, IllegalArgumentException;
 }

@@ -116,7 +116,7 @@ public class AnnotationCommand implements Command {
                 p.parse(currentLine, result);
             } catch (EndOfLineException e) {
                 // Ran out of input to satisfy this chain
-                candidates.add(getDefaultExecutionCandidate(context.getCommandChain(), currentLine.getWordIndex()));
+                candidates.add(getErrorExecutionCandidate(context.getCommandChain(), currentLine.getWordIndex()));
                 continue;
             } catch (IllegalArgumentException e) {
                 // Error has occurred
@@ -164,7 +164,7 @@ public class AnnotationCommand implements Command {
                 methodChain.parse(currentLine, result);
             } catch (EndOfLineException e) {
                 // Ran out of input to satisfy this chain
-                candidates.add(getDefaultExecutionCandidate(context.getCommandChain(), currentLine.getWordIndex()));
+                candidates.add(getErrorExecutionCandidate(context.getCommandChain(), currentLine.getWordIndex()));
                 continue;
             } catch (IllegalArgumentException e) {
                 // Error has occurred

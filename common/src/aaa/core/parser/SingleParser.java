@@ -29,7 +29,7 @@ import au.com.grieve.bcf.core.CommandManager;
 import au.com.grieve.bcf.core.Parser;
 import au.com.grieve.bcf.exceptions.ParserInvalidResultException;
 import au.com.grieve.bcf.exceptions.ParserRequiredArgumentException;
-import au.com.grieve.bcf.impl.candidate.DefaultCompletionCandidate;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import lombok.Getter;
 
 import java.util.ArrayList;

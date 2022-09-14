@@ -215,6 +215,7 @@ class AnnotationCommandTest {
         ExecutionCandidate e = c2.execute(line, ctx);
 
         // Should be error method with a weight of 5
+        System.err.println(e.getWeight());
         assertEquals(c2.getClass().getMethod("e"), e.getMethod());
         assertEquals(5, e.getWeight());
     }

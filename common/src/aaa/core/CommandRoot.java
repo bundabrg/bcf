@@ -29,7 +29,7 @@ import au.com.grieve.bcf.exceptions.SwitchNotFoundException;
 import au.com.grieve.bcf.framework.annotation.annotations.Arg;
 import au.com.grieve.bcf.framework.annotation.annotations.Default;
 import au.com.grieve.bcf.framework.annotation.annotations.Error;
-import au.com.grieve.bcf.impl.candidate.DefaultCompletionCandidate;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import lombok.Getter;
 
 import java.lang.reflect.Method;

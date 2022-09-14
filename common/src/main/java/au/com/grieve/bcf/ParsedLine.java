@@ -59,6 +59,11 @@ public interface ParsedLine {
     int getWordIndex();
 
     /**
+     * Update word index
+     */
+    void setWordIndex(int newIndex);
+
+    /**
      * Return true if at the end of the line
      * @return true if end of line
      */

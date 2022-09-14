@@ -21,7 +21,7 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.candidate;
+package au.com.grieve.bcf.impl.completion;
 
 import au.com.grieve.bcf.CompletionCandidate;
 import lombok.Getter;

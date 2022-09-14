@@ -24,7 +24,7 @@
 package au.com.grieve.bcf.platform.bungeecord;
 
 import au.com.grieve.bcf.core.CommandExecute;
-import au.com.grieve.bcf.impl.candidate.DefaultCompletionCandidate;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;

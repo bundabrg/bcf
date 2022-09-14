@@ -24,7 +24,7 @@
 package au.com.grieve.bcf.platform.bukkit;
 
 import au.com.grieve.bcf.core.CommandExecute;
-import au.com.grieve.bcf.impl.candidate.DefaultCompletionCandidate;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;

@@ -43,7 +43,16 @@ public class IntegerParser extends BaseParser<Integer> {
     }
 
     @Override
-    public Integer parse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
-        return Integer.valueOf(line.next());
+    protected Integer doParse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
+        int result = Integer.parseInt(line.next());
+        if (getParameters().get("max") != null && result > Integer.parseInt(getParameters().get("max"))) {
+            throw new IllegalArgumentException("Value larger than max");
+        }
+
+        if (getParameters().get("min") != null && result < Integer.parseInt(getParameters().get("min"))) {
+            throw new IllegalArgumentException("Value smaller than min");
+        }
+
+        return result;
     }
 }
