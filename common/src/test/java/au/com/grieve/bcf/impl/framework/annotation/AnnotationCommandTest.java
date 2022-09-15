@@ -123,7 +123,7 @@ class AnnotationCommandTest {
     void noDefaultDefined() {
         C1 c1 = new C1();
         ParsedLine line = new DefaultParsedLine("bob");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         assertThrows(RuntimeException.class, () -> c1.execute(line, ctx));
     }
@@ -132,7 +132,7 @@ class AnnotationCommandTest {
     void noArgMatchOnClass_1() throws NoSuchMethodException {
         C2 c2 = new C2();
         ParsedLine line = new DefaultParsedLine("");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -145,7 +145,7 @@ class AnnotationCommandTest {
     void noArgMatchOnClass_2() throws NoSuchMethodException {
         C2 c2 = new C2();
         ParsedLine line = new DefaultParsedLine("bob");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -158,7 +158,7 @@ class AnnotationCommandTest {
     void someArgMatchOnClass_1() throws NoSuchMethodException {
         C2 c2 = new C2();
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -171,7 +171,7 @@ class AnnotationCommandTest {
     void someArgMatchOnClass_2() throws NoSuchMethodException {
         C2 c2 = new C2();
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 bob");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -184,7 +184,7 @@ class AnnotationCommandTest {
     void argMatchClassNotMethod_1() throws NoSuchMethodException {
         C2 c2 = new C2();
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -197,7 +197,7 @@ class AnnotationCommandTest {
     void argMatchClassNotMethod_2() throws NoSuchMethodException {
         C2 c2 = new C2();
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 bob");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -210,12 +210,11 @@ class AnnotationCommandTest {
     void argMatchClassSomeMethod_1() throws NoSuchMethodException {
         C2 c2 = new C2();
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
         // Should be error method with a weight of 5
-        System.err.println(e.getWeight());
         assertEquals(c2.getClass().getMethod("e"), e.getMethod());
         assertEquals(5, e.getWeight());
     }
@@ -224,7 +223,7 @@ class AnnotationCommandTest {
     void argMatchClassSomeMethod_2() throws NoSuchMethodException {
         C2 c2 = new C2();
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 bob");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -237,7 +236,7 @@ class AnnotationCommandTest {
     void argMatchClassAndMethod_1() throws NoSuchMethodException {
         C2 c2 = new C2();
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -250,7 +249,7 @@ class AnnotationCommandTest {
     void argMatchClassAndMethod_2() throws NoSuchMethodException {
         C2 c2 = new C2();
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3_m2");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -265,7 +264,7 @@ class AnnotationCommandTest {
     void noArgMatchOnMethod_1() throws NoSuchMethodException {
         C3 c3 = new C3();
         ParsedLine line = new DefaultParsedLine("");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c3.execute(line, ctx);
 
@@ -278,7 +277,7 @@ class AnnotationCommandTest {
     void noArgMatchOnMethod_2() throws NoSuchMethodException {
         C3 c3 = new C3();
         ParsedLine line = new DefaultParsedLine("bob");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c3.execute(line, ctx);
 
@@ -291,7 +290,7 @@ class AnnotationCommandTest {
     void someMatchOnMethod_1() throws NoSuchMethodException {
         C3 c3 = new C3();
         ParsedLine line = new DefaultParsedLine("m_arg1 m_arg2");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c3.execute(line, ctx);
 
@@ -304,7 +303,7 @@ class AnnotationCommandTest {
     void someMatchOnMethod_2() throws NoSuchMethodException {
         C3 c3 = new C3();
         ParsedLine line = new DefaultParsedLine("m_arg1 m_arg2 bob");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c3.execute(line, ctx);
 
@@ -317,7 +316,7 @@ class AnnotationCommandTest {
     void argMatchMethod_1() throws NoSuchMethodException {
         C3 c3 = new C3();
         ParsedLine line = new DefaultParsedLine("m_arg1 m_arg2 m_arg3");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c3.execute(line, ctx);
 
@@ -330,7 +329,7 @@ class AnnotationCommandTest {
     void argMatchMethod_2() throws NoSuchMethodException {
         C3 c3 = new C3();
         ParsedLine line = new DefaultParsedLine("m_arg1 m_arg2 m_arg3_m2");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c3.execute(line, ctx);
 
@@ -347,7 +346,7 @@ class AnnotationCommandTest {
         c2.addChild(child1);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -363,7 +362,7 @@ class AnnotationCommandTest {
         c2.addChild(child1);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 bob");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -379,7 +378,7 @@ class AnnotationCommandTest {
         c2.addChild(child1);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -395,7 +394,7 @@ class AnnotationCommandTest {
         c2.addChild(child1);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 bob");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -411,7 +410,7 @@ class AnnotationCommandTest {
         c2.addChild(child2);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -427,7 +426,7 @@ class AnnotationCommandTest {
         c2.addChild(child2);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 bob");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -443,7 +442,7 @@ class AnnotationCommandTest {
         c2.addChild(child1);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -459,7 +458,7 @@ class AnnotationCommandTest {
         c2.addChild(child2);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -475,7 +474,7 @@ class AnnotationCommandTest {
         c2.addChild(child2);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3 m_arg1 m_arg2");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -491,7 +490,7 @@ class AnnotationCommandTest {
         c2.addChild(child2);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3 m_arg1 m_arg2 bob");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -507,7 +506,7 @@ class AnnotationCommandTest {
         c2.addChild(child2);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3 m_arg1 m_arg2 m_arg3");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -523,7 +522,7 @@ class AnnotationCommandTest {
         c2.addChild(child2);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3 m_arg1 m_arg2 m_arg3 bob");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
@@ -539,7 +538,7 @@ class AnnotationCommandTest {
         c2.addChild(child2);
 
         ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3 m_arg1 m_arg2 m_arg3_m2");
-        AnnotationContext ctx = new AnnotationContext();
+        AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 

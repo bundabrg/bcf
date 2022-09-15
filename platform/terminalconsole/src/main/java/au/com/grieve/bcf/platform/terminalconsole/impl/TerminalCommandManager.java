@@ -21,36 +21,9 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.framework.annotation;
+package au.com.grieve.bcf.platform.terminalconsole.impl;
 
-import au.com.grieve.bcf.Command;
-import au.com.grieve.bcf.Context;
-import au.com.grieve.bcf.Parser;
-import lombok.Builder;
-import lombok.Getter;
+import au.com.grieve.bcf.impl.framework.annotation.AnnotationCommandManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-@Getter
-@Builder
-public class AnnotationContext implements Context {
-    @Builder.Default
-    private final Map<String, Class <? extends Parser<?>>> parserClasses = new HashMap<>();
-    private final List<Command> commandChain = new ArrayList<>();
-    private final List<Object> result = new ArrayList<>();
-    private final ArgumentParserChain prefixParserChain;
-
-    @Override
-    public Context copy() {
-        AnnotationContext result = AnnotationContext.builder()
-                .parserClasses(parserClasses)
-                .prefixParserChain(prefixParserChain)
-                .build();
-        result.getCommandChain().addAll(commandChain);
-        result.getResult().addAll(this.result);
-        return result;
-    }
+public class TerminalCommandManager extends AnnotationCommandManager {
 }

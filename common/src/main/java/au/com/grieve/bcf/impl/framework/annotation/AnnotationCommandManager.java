@@ -23,21 +23,47 @@
 
 package au.com.grieve.bcf.impl.framework.annotation;
 
-import au.com.grieve.bcf.CommandManager;
-import au.com.grieve.bcf.Parser;
+import au.com.grieve.bcf.*;
+import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.framework.annotation.annotations.Command;
+import au.com.grieve.bcf.impl.line.DefaultParsedLine;
+import au.com.grieve.bcf.impl.parser.DoubleParser;
+import au.com.grieve.bcf.impl.parser.FloatParser;
+import au.com.grieve.bcf.impl.parser.IntegerParser;
+import au.com.grieve.bcf.impl.parser.StringParser;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 public class AnnotationCommandManager implements CommandManager<AnnotationCommand> {
-    private final List<AnnotationCommand> commands = new ArrayList<>();
+    private final Map<String, CommandConfig> commandsByName = new HashMap<>();
+    private final Map<String, String> commandAliases = new HashMap<>();
     private final Map<Class<? extends AnnotationCommand>, Set<AnnotationCommand>> commmandInstances = new HashMap<>();
     private final Map<String, Class<? extends Parser<?>>> parsers = new HashMap<>();
 
-    private boolean hasCommand(AnnotationCommand command) {
-        return command.getClass().getAnnotation(Command.class) != null;
+    @Builder
+    protected static class CommandConfig {
+        AnnotationCommand command;
+        ArgumentParserChain prefixParserChain;
+        String input;
+    }
+
+    public AnnotationCommandManager() {
+        registerDefaultParsers();
+    }
+
+    /**
+     * Register default parsers
+     */
+    protected void registerDefaultParsers() {
+        registerParser("literal", StringParser.class);
+        registerParser("string", StringParser.class);
+        registerParser("int", IntegerParser.class);
+        registerParser("float", FloatParser.class);
+        registerParser("double", DoubleParser.class);
     }
 
     /**
@@ -51,11 +77,10 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
 
     /**
      * Add command instance
-     *
      * When child commands are added later we use this to know where to add the children to
      * @param command Command to add
      */
-    private void addInstance(AnnotationCommand command) {
+    protected void addInstance(AnnotationCommand command) {
         Set<AnnotationCommand> instances = this.commmandInstances.computeIfAbsent(command.getClass(), k -> new HashSet<>());
         instances.add(command);
     }
@@ -66,12 +91,55 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
      */
     @Override
     public void registerCommand(AnnotationCommand command) {
-        if (!hasCommand(command)) {
+        if (!command.getClass().isAnnotationPresent(Command.class)) {
             throw new RuntimeException("Missing required @Command");
         }
 
-        this.commands.add(command);
+        if (command.getClass().getAnnotation(Command.class).value().strip().equals("")) {
+            throw new RuntimeException("Empty @Command");
+        }
+
+        addCommand(command);
         addInstance(command);
+    }
+
+    /**
+     * Add new command
+     * Can be overridden to allow hooking into other command managers
+     * @param command Command to add
+     */
+    protected void addCommand(AnnotationCommand command) {
+        Command commandData = command.getClass().getAnnotation(Command.class);
+        String[] commandValue = commandData.value().strip().split(" ",2);
+
+        List<String> commandNames = List.of(
+                commandValue[0].split("\\|")
+        );
+
+        if (!commandsByName.containsKey(commandNames.get(0))) {
+            commandsByName.put(commandNames.get(0), CommandConfig.builder()
+                    .command(command)
+                    .prefixParserChain(commandValue.length > 1 ? new ArgumentParserChain(getParsers(), commandValue[1]) : null)
+                    .input(commandData.input())
+                    .build());
+        }
+
+        // Add aliases that don't exist yet
+        commandAliases.putAll(commandNames.stream()
+                .skip(1)
+                .filter(s -> !commandAliases.containsKey(s))
+                .collect(Collectors.toMap(s -> s, s -> commandNames.get(0)))
+        );
+    }
+
+
+    /**
+     * Find a command by name
+     * @param name Name
+     * @return Command that matches name else null
+     */
+    protected CommandConfig findCommand(String name) {
+        return commandsByName.getOrDefault(name, commandsByName.get(commandAliases.get(name)));
     }
 
     /**
@@ -82,10 +150,57 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
     @Override
     public void registerCommand(Class<? extends AnnotationCommand> parent, AnnotationCommand command) {
         Set<AnnotationCommand> instances = this.commmandInstances.get(parent);
+
+        if (command.getClass().isAnnotationPresent(Command.class)) {
+            addCommand(command);
+        }
+
         if (instances != null) {
             addInstance(command);
             instances.forEach(c -> c.addChild(command));
         }
     }
 
+    @Override
+    public void complete(String line, List<CompletionCandidate> candidates) {
+        complete(new DefaultParsedLine(line), candidates);
+    }
+
+    @Override
+    public ExecutionCandidate execute(String line) {
+       return execute(new DefaultParsedLine(line));
+    }
+
+    @Override
+    public void complete(ParsedLine line, List<CompletionCandidate> candidates) {
+
+    }
+
+    @Override
+    public ExecutionCandidate execute(ParsedLine line) {
+        String commandName;
+        try {
+            commandName = line.next();
+        } catch (EndOfLineException e) {
+            return null;
+        }
+
+        CommandConfig commandConfig = findCommand(commandName);
+        if (commandConfig == null) {
+            return null;
+        }
+
+        // Prepend any additional input from the command to the input
+        if (commandConfig.input.length() > 0) {
+            line.insert(commandConfig.input);
+        }
+
+        AnnotationContext context = AnnotationContext.builder()
+                .prefixParserChain(commandConfig.prefixParserChain)
+                .parserClasses(getParsers())
+                .build();
+
+        return commandConfig.command.execute(line, context);
+
+    }
 }

@@ -96,4 +96,52 @@ class DefaultParsedLineTest {
         assertEquals("word3", line.next());
     }
 
+    @Test
+    void insert_1() throws EndOfLineException {
+        DefaultParsedLine line = new DefaultParsedLine("word1 word2 word3");
+        assertEquals("word1", line.next());
+
+        line.insert("word5 word6");
+        assertEquals("word5", line.next());
+        assertEquals("word6", line.next());
+        assertEquals("word2", line.next());
+        assertEquals("word3", line.next());
+        assertThrows(EndOfLineException.class, line::next);
+    }
+
+    @Test
+    void insert_2() throws EndOfLineException {
+        DefaultParsedLine line = new DefaultParsedLine("word1 word2 word3");
+        assertEquals("word1", line.next());
+
+        line.insert("");
+        assertEquals("word2", line.next());
+        assertEquals("word3", line.next());
+        assertThrows(EndOfLineException.class, line::next);
+    }
+
+    @Test
+    void insert_3() throws EndOfLineException {
+        DefaultParsedLine line = new DefaultParsedLine("word1 word2 word3");
+        assertEquals("word1", line.next());
+
+        line.insert("   ");
+        assertEquals("word2", line.next());
+        assertEquals("word3", line.next());
+        assertThrows(EndOfLineException.class, line::next);
+    }
+
+    @Test
+    void insert_4() throws EndOfLineException {
+        DefaultParsedLine line = new DefaultParsedLine("word1 word2 word3");
+        assertEquals("word1", line.next());
+
+        line.insert(" word5    word6  ");
+        assertEquals("word5", line.next());
+        assertEquals("word6", line.next());
+        assertEquals("word2", line.next());
+        assertEquals("word3", line.next());
+        assertThrows(EndOfLineException.class, line::next);
+    }
+
 }

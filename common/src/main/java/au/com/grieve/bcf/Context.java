@@ -33,6 +33,12 @@ public interface Context {
     List<Command> getCommandChain();
 
     /**
+     * Return the result so far
+     * @return List of parameters
+     */
+    List<Object> getResult();
+
+    /**
      * Return a copy of ourselves
      * @return Copy
      */

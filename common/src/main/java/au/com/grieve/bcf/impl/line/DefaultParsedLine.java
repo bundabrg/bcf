@@ -108,5 +108,14 @@ public class DefaultParsedLine implements ParsedLine {
         return result;
     }
 
+    @Override
+    public void insert(String input) {
+        words.addAll(wordIndex,
+                Arrays.stream(input.split(" +"))
+                    .filter(s -> !s.equals(""))
+                    .collect(Collectors.toList())
+        );
+    }
+
 
 }

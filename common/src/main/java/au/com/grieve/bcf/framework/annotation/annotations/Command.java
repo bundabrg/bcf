@@ -32,5 +32,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface Command {
     String value();
+    String input() default "";
 }
 

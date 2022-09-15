@@ -81,4 +81,6 @@ public interface ParsedLine {
      */
     ParsedLine copy();
 
+    void insert(String input);
+
 }

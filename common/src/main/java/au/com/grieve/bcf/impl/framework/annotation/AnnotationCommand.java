@@ -124,11 +124,14 @@ public class AnnotationCommand implements Command {
                 continue;
             }
 
-            // Add a default at this level
-            candidates.add(getDefaultExecutionCandidate(context.getCommandChain(), currentLine.getWordIndex()));
+            Context currentContext = context.copy();
+            currentContext.getResult().addAll(result);
 
-            candidates.add(executeChildren(currentLine.copy(), context));
-            candidates.add(executeMethod(currentLine.copy(), context));
+            // Add a default at this level
+            candidates.add(getDefaultExecutionCandidate(currentContext.getCommandChain(), currentLine.getWordIndex()));
+
+            candidates.add(executeMethod(currentLine.copy(), currentContext));
+            candidates.add(executeChildren(currentLine.copy(), currentContext));
         }
 
         return candidates.stream()
@@ -172,7 +175,10 @@ public class AnnotationCommand implements Command {
                 continue;
             }
 
-            candidates.add(new DefaultExecutionCandidate(getClass(), item.getValue(), currentLine.getWordIndex(), result));
+            Context currentContext = context.copy();
+            context.getResult().addAll(result);
+
+            candidates.add(new DefaultExecutionCandidate(getClass(), item.getValue(), currentLine.getWordIndex(), currentContext.getResult()));
         }
         return candidates.stream()
                 .filter(Objects::nonNull)
@@ -184,14 +190,23 @@ public class AnnotationCommand implements Command {
     public ExecutionCandidate execute(ParsedLine line, Context context) {
         List<ExecutionCandidate> candidates = new ArrayList<>();
 
+        if (context.getCommandChain().size() == 0 && ((AnnotationContext) context).getPrefixParserChain() != null) {
+            List<Object> result = new ArrayList<>();
+            try {
+                ((AnnotationContext) context).getPrefixParserChain().parse(line, result);
+            } catch (EndOfLineException | IllegalArgumentException e) {
+                return getErrorExecutionCandidate(context.getCommandChain(), line.getWordIndex());
+            }
+        }
+
         if (classArgStrings.size() > 0) {
             candidates.add(executeClass(line.copy(), context));
         } else {
             // Add a default at this level
             candidates.add(getDefaultExecutionCandidate(context.getCommandChain(), line.getWordIndex()));
 
-            candidates.add(executeChildren(line.copy(), context));
             candidates.add(executeMethod(line.copy(), context));
+            candidates.add(executeChildren(line.copy(), context));
         }
         return candidates.stream()
                 .filter(Objects::nonNull)

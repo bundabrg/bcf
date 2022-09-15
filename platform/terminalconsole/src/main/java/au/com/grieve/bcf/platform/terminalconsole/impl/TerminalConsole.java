@@ -21,36 +21,38 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.framework.annotation;
+package au.com.grieve.bcf.platform.terminalconsole.impl;
 
-import au.com.grieve.bcf.Command;
-import au.com.grieve.bcf.Context;
-import au.com.grieve.bcf.Parser;
-import lombok.Builder;
+import au.com.grieve.bcf.platform.terminalconsole.mapper.CommandCompleter;
+import au.com.grieve.bcf.platform.terminalconsole.mapper.CommandMap;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import net.minecrell.terminalconsole.SimpleTerminalConsole;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
 
 @Getter
-@Builder
-public class AnnotationContext implements Context {
-    @Builder.Default
-    private final Map<String, Class <? extends Parser<?>>> parserClasses = new HashMap<>();
-    private final List<Command> commandChain = new ArrayList<>();
-    private final List<Object> result = new ArrayList<>();
-    private final ArgumentParserChain prefixParserChain;
+public abstract class TerminalConsole extends SimpleTerminalConsole {
+
+    private final CommandMap commandMap;
+    private final CommandCompleter commandCompleter;
+
+    public TerminalConsole() {
+        commandMap = new CommandMap();
+        this.commandCompleter = new CommandCompleter(commandMap);
+    }
 
     @Override
-    public Context copy() {
-        AnnotationContext result = AnnotationContext.builder()
-                .parserClasses(parserClasses)
-                .prefixParserChain(prefixParserChain)
-                .build();
-        result.getCommandChain().addAll(commandChain);
-        result.getResult().addAll(this.result);
-        return result;
+    protected LineReader buildReader(LineReaderBuilder builder) {
+        return super.buildReader(builder
+                .completer(commandCompleter)
+        );
+
+    }
+
+    @Override
+    protected void runCommand(String input) {
+        if (!commandMap.execute(input)) {
+            System.err.println("No such command");
+        }
     }
 }
