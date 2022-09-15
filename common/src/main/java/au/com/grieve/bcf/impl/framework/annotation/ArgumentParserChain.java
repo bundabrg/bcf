@@ -23,6 +23,7 @@
 
 package au.com.grieve.bcf.impl.framework.annotation;
 
+import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.ParserChain;
@@ -77,6 +78,28 @@ public class ArgumentParserChain implements ParserChain {
             // Handle suppress
             if (p.getParameters().getOrDefault("suppress", "false").equals("false")) {
                 output.add(result);
+            }
+        }
+    }
+
+    @Override
+    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups) throws EndOfLineException, IllegalArgumentException {
+        for(Parser<?> p : parsers) {
+            ParsedLine lineCopy = line.copy();
+
+            try {
+                p.parse(line);
+            } catch (IllegalArgumentException e) {
+                List<CompletionCandidateGroup> groups = new ArrayList<>();
+                p.complete(lineCopy, groups);
+                if (groups.size() == 0) {
+                    throw e;
+                }
+                candidateGroups.addAll(groups);
+                continue;
+            }
+            if (line.isEol()) {
+                p.complete(lineCopy, candidateGroups);
             }
         }
     }
@@ -228,7 +251,7 @@ public class ArgumentParserChain implements ParserChain {
                         if (" ".indexOf(c) == 0) {
                             state = State.NAME;
                         }
-                        continue;
+                        // continue;
                 }
             }
         } catch (IOException ignored) {

@@ -28,6 +28,8 @@ import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
+import au.com.grieve.bcf.impl.parser.IntegerParser;
+import au.com.grieve.bcf.impl.parser.StringParser;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -38,42 +40,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ArgumentParserChainTest {
-
-    static class TestParser1 extends Parser<String> {
-
-        public TestParser1(Map<String, String> parameters) {
-            super(parameters);
-        }
-
-        @Override
-        public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates) {
-
-        }
-
-        @Override
-        public String parse(ParsedLine line) throws EndOfLineException {
-            return line.next();
-        }
-
-    }
-
-    static class TestParser2 extends Parser<Integer> {
-
-        public TestParser2(Map<String, String> parameters) {
-            super(parameters);
-        }
-
-        @Override
-        public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates) {
-
-        }
-
-        @Override
-        public Integer parse(ParsedLine line) throws EndOfLineException {
-            return Integer.parseInt(line.next());
-        }
-
-    }
 
     @Test
     void noParsers_1() {
@@ -101,9 +67,9 @@ class ArgumentParserChainTest {
 
     Map<String, Class<? extends Parser<?>>> getParserClasses1() {
         final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
-        parserClasses.put("literal", TestParser1.class);
-        parserClasses.put("string", TestParser1.class);
-        parserClasses.put("int", TestParser2.class);
+        parserClasses.put("literal", StringParser.class);
+        parserClasses.put("string", StringParser.class);
+        parserClasses.put("int", IntegerParser.class);
         return parserClasses;
     }
 
@@ -117,54 +83,54 @@ class ArgumentParserChainTest {
     void oneParser_2() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal");
         assertEquals(1, a.getParsers().size());
-        assertEquals(TestParser1.class, a.getParsers().get(0).getClass());
+        assertEquals(StringParser.class, a.getParsers().get(0).getClass());
     }
     
     @Test
     void oneParser_3() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string");
         assertEquals(1, a.getParsers().size());
-        assertEquals(TestParser1.class, a.getParsers().get(0).getClass());
+        assertEquals(StringParser.class, a.getParsers().get(0).getClass());
     }
     
     @Test
     void oneParser_4() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@int");
         assertEquals(1, a.getParsers().size());
-        assertEquals(TestParser2.class, a.getParsers().get(0).getClass());
+        assertEquals(IntegerParser.class, a.getParsers().get(0).getClass());
     }
 
     @Test
     void twoParsers_1() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal literal");
         assertEquals(2, a.getParsers().size());
-        assertEquals(TestParser1.class, a.getParsers().get(0).getClass());
-        assertEquals(TestParser1.class, a.getParsers().get(1).getClass());
+        assertEquals(StringParser.class, a.getParsers().get(0).getClass());
+        assertEquals(StringParser.class, a.getParsers().get(1).getClass());
     }
 
     @Test
     void twoParsers_2() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string");
         assertEquals(2, a.getParsers().size());
-        assertEquals(TestParser1.class, a.getParsers().get(0).getClass());
-        assertEquals(TestParser1.class, a.getParsers().get(1).getClass());
+        assertEquals(StringParser.class, a.getParsers().get(0).getClass());
+        assertEquals(StringParser.class, a.getParsers().get(1).getClass());
     }
 
     @Test
     void twoParsers_3() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@int @int");
         assertEquals(2, a.getParsers().size());
-        assertEquals(TestParser2.class, a.getParsers().get(0).getClass());
-        assertEquals(TestParser2.class, a.getParsers().get(1).getClass());
+        assertEquals(IntegerParser.class, a.getParsers().get(0).getClass());
+        assertEquals(IntegerParser.class, a.getParsers().get(1).getClass());
     }
 
     @Test
     void threeParsers_1() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal @string @int");
         assertEquals(3, a.getParsers().size());
-        assertEquals(TestParser1.class, a.getParsers().get(0).getClass());
-        assertEquals(TestParser1.class, a.getParsers().get(1).getClass());
-        assertEquals(TestParser2.class, a.getParsers().get(2).getClass());
+        assertEquals(StringParser.class, a.getParsers().get(0).getClass());
+        assertEquals(StringParser.class, a.getParsers().get(1).getClass());
+        assertEquals(IntegerParser.class, a.getParsers().get(2).getClass());
     }
 
     @Test
@@ -222,7 +188,6 @@ class ArgumentParserChainTest {
         List<Object> result = new ArrayList<>();
 
         a.parse(line, result);
-        System.err.println(result);
         assertEquals(1, result.size());
         assertEquals("bob", result.get(0));
     }
@@ -279,5 +244,54 @@ class ArgumentParserChainTest {
         a.parse(line, result);
         assertEquals(1, result.size());
         assertNull(result.get(0));
+    }
+
+    @Test
+    void complete_1() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1");
+        ParsedLine line = new DefaultParsedLine("");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        assertThrows(EndOfLineException.class, () -> a.complete(line, result));
+    }
+
+    @Test
+    void complete_2() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1");
+        ParsedLine line = new DefaultParsedLine(" ");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        assertThrows(EndOfLineException.class, () -> a.complete(line, result));
+    }
+
+    @Test
+    void complete_3() {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1");
+        ParsedLine line = new DefaultParsedLine("b");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        assertThrows(IllegalArgumentException.class, () -> a.complete(line, result));
+    }
+
+    @Test
+    void complete_4() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1");
+        ParsedLine line = new DefaultParsedLine("l");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        a.complete(line, result);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void complete_5() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1");
+        ParsedLine line = new DefaultParsedLine("literal1");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        a.complete(line, result);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getCompletionCandidates().size());
     }
 }

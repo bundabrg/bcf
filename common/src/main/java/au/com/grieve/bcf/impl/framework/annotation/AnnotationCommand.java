@@ -73,10 +73,6 @@ public class AnnotationCommand implements Command {
                 .orElse(null);
     }
 
-    @Override
-    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates, Context context) {
-
-    }
 
     protected ExecutionCandidate getErrorExecutionCandidate(List<Command> chain, int weight) {
         for(Command cmd : Stream.concat(
@@ -213,6 +209,69 @@ public class AnnotationCommand implements Command {
                 .filter(Objects::nonNull)
                 .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
                 .orElse(getDefaultExecutionCandidate(context.getCommandChain(), line.getWordIndex()));
+    }
+
+    protected void completeClass(ParsedLine line, List<CompletionCandidateGroup> candidates, Context context) {
+        List<ArgumentParserChain> classChain = classArgStrings.stream()
+                .map(s -> new ArgumentParserChain(((AnnotationContext) context).getParserClasses(), s))
+                .collect(Collectors.toList());
+
+        for (ArgumentParserChain p : classChain) {
+            ParsedLine currentLine = line.copy();
+            try {
+                p.complete(currentLine, candidates);
+            } catch (EndOfLineException e) {
+                // Ran out of input to satisfy this chain
+                continue;
+            } catch (IllegalArgumentException e) {
+                // Error has occurred
+                continue;
+            }
+
+            Context currentContext = context.copy();
+
+            completeMethod(currentLine.copy(), candidates, currentContext);
+            completeChildren(currentLine.copy(), candidates, currentContext);
+        }
+    }
+
+    protected void completeChildren(ParsedLine line, List<CompletionCandidateGroup> candidates, Context context) {
+        for(Command cmd : getChildren()) {
+            Context currentContext = context.copy();
+            currentContext.getCommandChain().add(this);
+            cmd.complete(line.copy(), candidates, currentContext);
+        }
+    }
+
+    protected void completeMethod(ParsedLine line, List<CompletionCandidateGroup> candidates, Context context) {
+        for(Map.Entry<String, Method> item : methodArgStrings.entrySet()) {
+            ArgumentParserChain methodChain = new ArgumentParserChain(((AnnotationContext) context).getParserClasses(), item.getKey());
+
+            ParsedLine currentLine = line.copy();
+            try {
+                methodChain.complete(currentLine, candidates);
+            } catch (EndOfLineException | IllegalArgumentException ignored) {
+            }
+        }
+    }
+
+
+    @Override
+    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates, Context context) {
+        if (context.getCommandChain().size() == 0 && ((AnnotationContext) context).getPrefixParserChain() != null) {
+            try {
+                ((AnnotationContext) context).getPrefixParserChain().complete(line, candidates);
+            } catch (EndOfLineException | IllegalArgumentException e) {
+                return;
+            }
+        }
+
+        if (classArgStrings.size() > 0) {
+            completeClass(line.copy(), candidates, context);
+        } else {
+            completeMethod(line.copy(), candidates, context);
+            completeChildren(line.copy(), candidates, context);
+        }
     }
 
     @Override
