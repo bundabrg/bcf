@@ -24,6 +24,7 @@
 package au.com.grieve.bcf.impl.completion;
 
 import au.com.grieve.bcf.CompletionCandidate;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -32,18 +33,14 @@ import lombok.ToString;
 public class DefaultCompletionCandidate implements CompletionCandidate {
     private final String value;
     private final String title;
-    private final String description;
-
-    private final String key;
 
     public DefaultCompletionCandidate(String value) {
-        this(value, value, null, null);
+        this(value, value);
     }
 
-    public DefaultCompletionCandidate(String value, String title, String description, String key) {
+    @Builder
+    public DefaultCompletionCandidate(String value, String title) {
         this.value = value;
-        this.title = title;
-        this.description = description;
-        this.key = key;
+        this.title = title != null ? title : value;
     }
 }

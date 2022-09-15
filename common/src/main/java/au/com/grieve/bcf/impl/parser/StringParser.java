@@ -23,14 +23,17 @@
 
 package au.com.grieve.bcf.impl.parser;
 
-import au.com.grieve.bcf.CompletionCandidate;
+import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidateGroup;
 import lombok.ToString;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @ToString(callSuper = true)
 public class StringParser extends BaseParser<String> {
@@ -38,10 +41,6 @@ public class StringParser extends BaseParser<String> {
         super(parameters);
     }
 
-    @Override
-    public void complete(ParsedLine line, List<CompletionCandidate> candidates) {
-
-    }
 
     @Override
     protected String doParse(ParsedLine line) throws EndOfLineException {
@@ -56,5 +55,21 @@ public class StringParser extends BaseParser<String> {
         }
 
         return result;
+    }
+
+    @Override
+    protected void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException{
+        String input = line.next();
+
+        if (getParameters().containsKey("options")) {
+            DefaultCompletionCandidateGroup group = new DefaultCompletionCandidateGroup(getParameters().get("description"));
+            group.getCompletionCandidates().addAll(
+                    Arrays.stream(getParameters().get("options").split("\\|"))
+                            .filter(s -> s.startsWith(input))
+                            .map(DefaultCompletionCandidate::new)
+                            .collect(Collectors.toList())
+            );
+            candidates.add(group);
+        }
     }
 }

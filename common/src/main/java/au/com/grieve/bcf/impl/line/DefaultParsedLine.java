@@ -28,6 +28,7 @@ import au.com.grieve.bcf.exception.EndOfLineException;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,9 +45,15 @@ public class DefaultParsedLine implements ParsedLine {
     }
 
     public DefaultParsedLine(String line, String prefix) {
-        this.words = Arrays.stream(line.split(" +"))
-                        .filter(s -> !s.equals(""))
-                        .collect(Collectors.toList());
+        // Line can have at most 1 space at the end as long as its not the only thing in the line
+        String strippedLine = line.strip() + (line.stripLeading().endsWith(" ") ? " " : "");
+
+        this.words = strippedLine.length() > 0 ?
+                Arrays.stream(strippedLine.split(" +", -1))
+                        .collect(Collectors.toList())
+                :
+                new ArrayList<>();
+
         this.prefix = prefix;
     }
 
@@ -55,10 +62,7 @@ public class DefaultParsedLine implements ParsedLine {
     }
 
     public DefaultParsedLine(List<String> args, String prefix) {
-        this.words = args.stream()
-                .filter(s -> !s.strip().equals(""))
-                .collect(Collectors.toList());
-        this.prefix = prefix;
+        this(String.join(" ", args), prefix);
     }
 
     /**

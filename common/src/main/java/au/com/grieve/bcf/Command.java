@@ -36,7 +36,7 @@ public interface Command {
      * @param candidates List of candidates
      * @param context Context
      */
-    void complete(ParsedLine line, List<CompletionCandidate> candidates, Context context);
+    void complete(ParsedLine line, List<CompletionCandidateGroup> candidates, Context context);
 
     /**
      * Return the best execution candidate for the parsed input

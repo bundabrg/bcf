@@ -23,7 +23,7 @@
 
 package au.com.grieve.bcf.impl.parser;
 
-import au.com.grieve.bcf.CompletionCandidate;
+import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import lombok.ToString;
@@ -38,11 +38,6 @@ public class FloatParser extends BaseParser<Float> {
     }
 
     @Override
-    public void complete(ParsedLine line, List<CompletionCandidate> candidates) {
-
-    }
-
-    @Override
     protected Float doParse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
         float result = Float.parseFloat(line.next());
         if (getParameters().get("max") != null && result > Float.parseFloat(getParameters().get("max"))) {
@@ -54,5 +49,10 @@ public class FloatParser extends BaseParser<Float> {
         }
 
         return result;
+    }
+
+    @Override
+    protected void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException {
+
     }
 }

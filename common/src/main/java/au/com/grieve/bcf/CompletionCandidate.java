@@ -39,16 +39,4 @@ public interface CompletionCandidate {
      */
     String getTitle();
 
-    /**
-     * Get the description of this completion
-     * @return description
-     */
-    String getDescription();
-
-    /**
-     * Return key of completion. Anything with the same key will be grouped
-     * @return key
-     */
-    String getKey();
-
 }

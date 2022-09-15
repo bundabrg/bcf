@@ -21,38 +21,22 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.parser;
-
-import au.com.grieve.bcf.CompletionCandidateGroup;
-import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.exception.EndOfLineException;
-import lombok.ToString;
+package au.com.grieve.bcf;
 
 import java.util.List;
-import java.util.Map;
 
-@ToString(callSuper = true)
-public class IntegerParser extends BaseParser<Integer> {
-    public IntegerParser(Map<String, String> parameters) {
-        super(parameters);
-    }
+public interface CompletionCandidateGroup {
 
-    @Override
-    protected Integer doParse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
-        int result = Integer.parseInt(line.next());
-        if (getParameters().get("max") != null && result > Integer.parseInt(getParameters().get("max"))) {
-            throw new IllegalArgumentException("Value larger than max");
-        }
+    /**
+     * Return the list of CompletionCandidates that belong to this group
+     * @return List of CompletionCandidates
+     */
+    List<CompletionCandidate> getCompletionCandidates();
 
-        if (getParameters().get("min") != null && result < Integer.parseInt(getParameters().get("min"))) {
-            throw new IllegalArgumentException("Value smaller than min");
-        }
+    /**
+     * Get the description of this completion group
+     * @return description
+     */
+    String getDescription();
 
-        return result;
-    }
-
-    @Override
-    protected void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException {
-
-    }
 }

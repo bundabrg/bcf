@@ -23,14 +23,16 @@
 
 package au.com.grieve.bcf.impl.parser;
 
-import au.com.grieve.bcf.CompletionCandidate;
+import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @ToString(callSuper = true)
 public abstract class BaseParser<RT> extends Parser<RT> {
@@ -38,8 +40,25 @@ public abstract class BaseParser<RT> extends Parser<RT> {
         super(parameters);
     }
 
+    /**
+     * Call doComplete and make sure that errors don't mutate line
+     *
+     * @param line The input
+     * @param candidates List of candidates
+     */
     @Override
-    public abstract void complete(ParsedLine line, List<CompletionCandidate> candidates);
+    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException {
+        ParsedLine currentLine = line.copy();
+        List<CompletionCandidateGroup> groups = new ArrayList<>();
+        doComplete(currentLine, groups);
+
+        // Only add groups that actually have any candidates
+        candidates.addAll(groups.stream()
+                .filter(g -> g.getCompletionCandidates().size() > 0)
+                .collect(Collectors.toList())
+        );
+        line.setWordIndex(currentLine.getWordIndex());
+    }
 
     /**
      * Call doParse and make sure that errors don't mutate line
@@ -59,10 +78,13 @@ public abstract class BaseParser<RT> extends Parser<RT> {
 
     /**
      * Handle parsing the line.
+     *
      * @param line The input
      * @return Return Object
      * @throws EndOfLineException Ran out of input
      * @throws IllegalArgumentException Invalid input
      */
     protected abstract RT doParse(ParsedLine line) throws EndOfLineException, IllegalArgumentException;
+
+    protected abstract void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException;
 }

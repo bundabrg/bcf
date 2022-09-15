@@ -23,12 +23,15 @@
 
 package au.com.grieve.bcf.impl.parser;
 
+import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -113,5 +116,91 @@ class StringParserTest {
         assertEquals(3, line.getWordIndex());
         assertThrows(IllegalArgumentException.class, () -> sp2.parse(line));
         assertEquals(3, line.getWordIndex());
+    }
+
+    @Test
+    void completionEmptyInput_1() {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("options", "option1|option2|option3");
+        StringParser p = new StringParser(parameters);
+        ParsedLine line = new DefaultParsedLine("");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        assertThrows(EndOfLineException.class, () -> p.complete(line, result));
+    }
+
+    @Test
+    void completionEmptyInput_2() {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("options", "option1|option2|option3");
+        StringParser p = new StringParser(parameters);
+        ParsedLine line = new DefaultParsedLine(" ");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        assertThrows(EndOfLineException.class, () -> p.complete(line, result));
+    }
+
+    @Test
+    void completionSingleInput_1() throws EndOfLineException {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("options", "option1|option2|option3");
+        StringParser p = new StringParser(parameters);
+        ParsedLine line = new DefaultParsedLine("b");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        p.complete(line, result);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void completionSingleInput_2() throws EndOfLineException {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("options", "option1|option2|option3");
+        StringParser p = new StringParser(parameters);
+        ParsedLine line = new DefaultParsedLine("o");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        p.complete(line, result);
+        assertEquals(1, result.size());
+        assertEquals(3, result.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void completionSingleInput_3() throws EndOfLineException {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("options", "option1|option2|option3");
+        StringParser p = new StringParser(parameters);
+        ParsedLine line = new DefaultParsedLine("option2");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        p.complete(line, result);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void completionSingleInput_4() throws EndOfLineException {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("options", "option1|option2|option3");
+        StringParser p = new StringParser(parameters);
+        ParsedLine line = new DefaultParsedLine("arg1");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+        line.next();
+
+        assertThrows(EndOfLineException.class, () -> p.complete(line, result));
+    }
+
+    @Test
+    void completionSingleInput_5() throws EndOfLineException {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("options", "option1|option2|option3");
+        StringParser p = new StringParser(parameters);
+        ParsedLine line = new DefaultParsedLine("arg1 ");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+        line.next();
+
+        p.complete(line, result);
+        assertEquals(1, result.size());
+        assertEquals(3, result.get(0).getCompletionCandidates().size());
     }
 }

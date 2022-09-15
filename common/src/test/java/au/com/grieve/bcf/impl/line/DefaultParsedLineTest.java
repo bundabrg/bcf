@@ -53,6 +53,46 @@ class DefaultParsedLineTest {
     }
 
     @Test
+    void emptyLine_3() {
+        DefaultParsedLine line = new DefaultParsedLine(" ");
+        assertEquals(0, line.getWords().size());
+        assertEquals("", line.getLine());
+        assertTrue(line.isEol());
+        assertThrows(EndOfLineException.class, line::next);
+        assertNull(line.getCurrentWord());
+    }
+
+    @Test
+    void emptyLine_4() {
+        DefaultParsedLine line = new DefaultParsedLine(Collections.singletonList(" "));
+        assertEquals(0, line.getWords().size());
+        assertEquals("", line.getLine());
+        assertTrue(line.isEol());
+        assertThrows(EndOfLineException.class, line::next);
+        assertNull(line.getCurrentWord());
+    }
+
+    @Test
+    void trailing_1() throws EndOfLineException {
+        DefaultParsedLine line = new DefaultParsedLine("word ");
+        assertEquals(2, line.getWords().size());
+        assertEquals("word ", line.getLine());
+        assertFalse(line.isEol());
+        assertEquals("word", line.next());
+        assertEquals("", line.next());
+    }
+
+    @Test
+    void trailing_2() throws EndOfLineException {
+        DefaultParsedLine line = new DefaultParsedLine("  word   ");
+        assertEquals(2, line.getWords().size());
+        assertEquals("word ", line.getLine());
+        assertFalse(line.isEol());
+        assertEquals("word", line.next());
+        assertEquals("", line.next());
+    }
+
+    @Test
     void singleWord_1() throws EndOfLineException {
         DefaultParsedLine line = new DefaultParsedLine("word");
         assertEquals(1, line.getWords().size());

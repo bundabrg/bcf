@@ -23,7 +23,7 @@
 
 package au.com.grieve.bcf.impl.parser;
 
-import au.com.grieve.bcf.CompletionCandidate;
+import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import lombok.ToString;
@@ -38,11 +38,6 @@ public class DoubleParser extends BaseParser<Double> {
     }
 
     @Override
-    public void complete(ParsedLine line, List<CompletionCandidate> candidates) {
-
-    }
-
-    @Override
     protected Double doParse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
         double result = Double.parseDouble(line.next());
         if (getParameters().get("max") != null && result > Double.parseDouble(getParameters().get("max"))) {
@@ -54,5 +49,10 @@ public class DoubleParser extends BaseParser<Double> {
         }
 
         return result;
+    }
+
+    @Override
+    protected void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException {
+
     }
 }

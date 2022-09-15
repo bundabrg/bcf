@@ -74,7 +74,7 @@ public class AnnotationCommand implements Command {
     }
 
     @Override
-    public void complete(ParsedLine line, List<CompletionCandidate> candidates, Context context) {
+    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates, Context context) {
 
     }
 

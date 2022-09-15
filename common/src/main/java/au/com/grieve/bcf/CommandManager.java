@@ -47,8 +47,8 @@ public interface CommandManager<
      * @param line The input
      * @param candidates List of candidates
      */
-    void complete(String line, List<CompletionCandidate> candidates);
-    void complete(ParsedLine line, List<CompletionCandidate> candidates);
+    void complete(String line, List<CompletionCandidateGroup> candidates);
+    void complete(ParsedLine line, List<CompletionCandidateGroup> candidates);
 
     /**
      * Return the best execution candidate for the parsed input

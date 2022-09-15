@@ -37,9 +37,7 @@ import java.util.Map;
  */
 @Getter
 @ToString
-public abstract class Parser<
-        RT
-        > {
+public abstract class Parser<RT> {
 
     private final Map<String, String> parameters = new HashMap<>();
 
@@ -52,7 +50,7 @@ public abstract class Parser<
      * @param line The input
      * @param candidates List of candidates
      */
-    public abstract void complete(ParsedLine line, List<CompletionCandidate> candidates);
+    public abstract void complete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException;
 
     /**
      * Return a concrete object for the parsed input

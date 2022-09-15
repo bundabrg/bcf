@@ -23,7 +23,7 @@
 
 package au.com.grieve.bcf.impl.framework.annotation;
 
-import au.com.grieve.bcf.CompletionCandidate;
+import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.exception.EndOfLineException;
@@ -46,7 +46,7 @@ class ArgumentParserChainTest {
         }
 
         @Override
-        public void complete(ParsedLine line, List<CompletionCandidate> candidates) {
+        public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates) {
 
         }
 
@@ -64,7 +64,7 @@ class ArgumentParserChainTest {
         }
 
         @Override
-        public void complete(ParsedLine line, List<CompletionCandidate> candidates) {
+        public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates) {
 
         }
 

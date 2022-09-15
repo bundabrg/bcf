@@ -162,7 +162,7 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
     }
 
     @Override
-    public void complete(String line, List<CompletionCandidate> candidates) {
+    public void complete(String line, List<CompletionCandidateGroup> candidates) {
         complete(new DefaultParsedLine(line), candidates);
     }
 
@@ -172,7 +172,7 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
     }
 
     @Override
-    public void complete(ParsedLine line, List<CompletionCandidate> candidates) {
+    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates) {
 
     }
 
