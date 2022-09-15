@@ -32,10 +32,10 @@ import java.util.List;
  */
 public interface ExecutionCandidate {
     /**
-     * Return the class the method is a member of
+     * Return the class instance the method is a member of
      * @return Class of method
      */
-    Class<?> getMethodClass();
+    Object getInstance();
 
     /**
      * Return the method that will be executed

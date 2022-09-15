@@ -23,36 +23,44 @@
 
 package au.com.grieve.bcf.platform.terminalconsole.impl;
 
-import au.com.grieve.bcf.platform.terminalconsole.mapper.CommandCompleter;
-import au.com.grieve.bcf.platform.terminalconsole.mapper.CommandMap;
+import au.com.grieve.bcf.ExecutionCandidate;
 import lombok.Getter;
 import net.minecrell.terminalconsole.SimpleTerminalConsole;
-import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
+
+import java.lang.reflect.InvocationTargetException;
 
 @Getter
-public abstract class TerminalConsole extends SimpleTerminalConsole {
+public abstract class TerminalCommandConsole extends SimpleTerminalConsole {
 
-    private final CommandMap commandMap;
-    private final CommandCompleter commandCompleter;
+    private final TerminalCommandManager manager;
+    private final TerminalCommandCompleter commandCompleter;
 
-    public TerminalConsole() {
-        commandMap = new CommandMap();
-        this.commandCompleter = new CommandCompleter(commandMap);
+    public TerminalCommandConsole(TerminalCommandManager manager) {
+        this.manager = manager;
+        this.commandCompleter = new TerminalCommandCompleter(manager);
     }
 
-    @Override
-    protected LineReader buildReader(LineReaderBuilder builder) {
-        return super.buildReader(builder
-                .completer(commandCompleter)
-        );
-
-    }
+//    @Override
+//    protected LineReader buildReader(LineReaderBuilder builder) {
+//        return super.buildReader(builder
+//                .completer(commandCompleter)
+//        );
+//
+//    }
 
     @Override
     protected void runCommand(String input) {
-        if (!commandMap.execute(input)) {
+        ExecutionCandidate executionCandidate = manager.execute(input);
+
+        if (executionCandidate == null) {
             System.err.println("No such command");
+            return;
+        }
+
+        try {
+            executionCandidate.invoke();
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 }

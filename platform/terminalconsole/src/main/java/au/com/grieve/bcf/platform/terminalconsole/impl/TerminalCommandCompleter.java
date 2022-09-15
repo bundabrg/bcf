@@ -21,15 +21,25 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.platform.terminalconsole.mapper;
+package au.com.grieve.bcf.platform.terminalconsole.impl;
 
-public interface CommandMap {
-    /**
-     * Register a new command
-     * @param label Main command name
-     * @param command Command
-     * @param aliases Aliases for command
-     * @return True if successful
-     */
-    public boolean register(String label, Command command, String[] aliases);
+
+import org.jline.reader.Candidate;
+import org.jline.reader.Completer;
+import org.jline.reader.LineReader;
+import org.jline.reader.ParsedLine;
+
+import java.util.List;
+
+public class TerminalCommandCompleter implements Completer {
+    private final TerminalCommandManager manager;
+
+    public TerminalCommandCompleter(TerminalCommandManager manager) {
+        this.manager = manager;
+    }
+
+    @Override
+    public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
+//        candidates.addAll(commandMap.complete(line.line()));
+    }
 }

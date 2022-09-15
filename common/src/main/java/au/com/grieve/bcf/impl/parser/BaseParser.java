@@ -61,7 +61,7 @@ public abstract class BaseParser<RT> extends Parser<RT> {
      * Handle parsing the line.
      * @param line The input
      * @return Return Object
-     * @throws EndOfLineException Ran out out of input
+     * @throws EndOfLineException Ran out of input
      * @throws IllegalArgumentException Invalid input
      */
     protected abstract RT doParse(ParsedLine line) throws EndOfLineException, IllegalArgumentException;

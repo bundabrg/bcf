@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020 Brendan Grieve (bundabrg) - MIT License
+ * Copyright (c) 2020-2022 Brendan Grieve (bundabrg) - MIT License
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -23,10 +23,10 @@
 
 package au.com.grieve.bcf.utils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.lang.annotation.Annotation;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ReflectUtils {
     /**
@@ -48,6 +48,24 @@ public class ReflectUtils {
         getAllInterfaces(clz, set);
         return set.toArray(new Class<?>[0]);
     }
+
+    /**
+     * Return a list of found annotations on the class and all super classes
+     *
+     * @param <A>             The type of annotation being queried
+     * @param clz Class to query on
+     * @param annotationClass The annotation being queried
+     * @return Array of annotations
+     */
+    public static <A extends Annotation> List<A> getAllAnnotationsByType(Class<?> clz, Class<A> annotationClass) {
+        return Stream.concat(
+                Stream.of(clz),
+                Stream.of(getAllSuperClasses(clz))
+        )
+                .flatMap(c -> Arrays.stream(c.getAnnotationsByType(annotationClass)).sequential())
+                .collect(Collectors.toList());
+    }
+
 
     private static void getAllInterfaces(Class<?> clz, Set<Class<?>> visited) {
         if (clz.getSuperclass() != null) {

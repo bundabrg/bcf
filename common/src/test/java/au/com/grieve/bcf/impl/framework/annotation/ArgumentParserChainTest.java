@@ -26,18 +26,20 @@ package au.com.grieve.bcf.impl.framework.annotation;
 import au.com.grieve.bcf.CompletionCandidate;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
+import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ArgumentParserChainTest {
 
-    static class TestParser1 extends Parser<Object> {
+    static class TestParser1 extends Parser<String> {
 
         public TestParser1(Map<String, String> parameters) {
             super(parameters);
@@ -49,13 +51,13 @@ class ArgumentParserChainTest {
         }
 
         @Override
-        public Object parse(ParsedLine line) {
-            return null;
+        public String parse(ParsedLine line) throws EndOfLineException {
+            return line.next();
         }
 
     }
 
-    static class TestParser2 extends Parser<Object> {
+    static class TestParser2 extends Parser<Integer> {
 
         public TestParser2(Map<String, String> parameters) {
             super(parameters);
@@ -67,8 +69,8 @@ class ArgumentParserChainTest {
         }
 
         @Override
-        public Object parse(ParsedLine line) {
-            return null;
+        public Integer parse(ParsedLine line) throws EndOfLineException {
+            return Integer.parseInt(line.next());
         }
 
     }
@@ -188,25 +190,94 @@ class ArgumentParserChainTest {
     @Test
     void literalParameters_1() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal");
-        assertEquals(1, a.getParsers().get(0).getParameters().size());
+        assertEquals(2, a.getParsers().get(0).getParameters().size());
         assertEquals("literal", a.getParsers().get(0).getParameters().get("options"));
+        assertEquals("true", a.getParsers().get(0).getParameters().get("suppress"));
     }
 
     @Test
     void literalParameters_2() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal3");
-        assertEquals(1, a.getParsers().get(0).getParameters().size());
+        assertEquals(2, a.getParsers().get(0).getParameters().size());
         assertEquals("literal1|literal2|literal3", a.getParsers().get(0).getParameters().get("options"));
+        assertEquals("true", a.getParsers().get(0).getParameters().get("suppress"));
     }
 
     @Test
     void multiParams_1() {
-        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal(p1=one,p2='two',p3='one two',p4=one two)");
-        assertEquals(5, a.getParsers().get(0).getParameters().size());
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal(p1=one,p2='two',p3='one two',p4=one two,suppress=false)");
+        assertEquals(6, a.getParsers().get(0).getParameters().size());
         assertEquals("literal", a.getParsers().get(0).getParameters().get("options"));
         assertEquals("one", a.getParsers().get(0).getParameters().get("p1"));
         assertEquals("two", a.getParsers().get(0).getParameters().get("p2"));
         assertEquals("one two", a.getParsers().get(0).getParameters().get("p3"));
         assertEquals("one two", a.getParsers().get(0).getParameters().get("p4"));
+        assertEquals("false", a.getParsers().get(0).getParameters().get("suppress"));
+    }
+
+    @Test
+    void parseSuppress_1() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string");
+        ParsedLine line = new DefaultParsedLine("bob");
+        List<Object> result = new ArrayList<>();
+
+        a.parse(line, result);
+        System.err.println(result);
+        assertEquals(1, result.size());
+        assertEquals("bob", result.get(0));
+    }
+
+    @Test
+    void parseSuppress_2() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(suppress=true)");
+        ParsedLine line = new DefaultParsedLine("bob");
+        List<Object> result = new ArrayList<>();
+
+        a.parse(line, result);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void parseDefaultRequired_1() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(default=alice)");
+        ParsedLine line = new DefaultParsedLine("bob");
+        List<Object> result = new ArrayList<>();
+
+        a.parse(line, result);
+        assertEquals(1, result.size());
+        assertEquals("bob", result.get(0));
+    }
+
+    @Test
+    void parseDefaultRequired_2() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(default=alice)");
+        ParsedLine line = new DefaultParsedLine("");
+        List<Object> result = new ArrayList<>();
+
+        a.parse(line, result);
+        assertEquals(1, result.size());
+        assertEquals("alice", result.get(0));
+    }
+
+    @Test
+    void parseDefaultRequired_3() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(required=false)");
+        ParsedLine line = new DefaultParsedLine("bob");
+        List<Object> result = new ArrayList<>();
+
+        a.parse(line, result);
+        assertEquals(1, result.size());
+        assertEquals("bob", result.get(0));
+    }
+
+    @Test
+    void parseDefaultRequired_4() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(required=false)");
+        ParsedLine line = new DefaultParsedLine("");
+        List<Object> result = new ArrayList<>();
+
+        a.parse(line, result);
+        assertEquals(1, result.size());
+        assertNull(result.get(0));
     }
 }

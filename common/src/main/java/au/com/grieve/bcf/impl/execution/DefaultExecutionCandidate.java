@@ -37,13 +37,13 @@ import java.util.List;
 @ToString
 public class DefaultExecutionCandidate implements ExecutionCandidate {
 
-    private final Class<?> methodClass;
+    private final Object instance;
     private final Method method;
     private final List<Object> parameters;
     private final int weight;
 
-    public DefaultExecutionCandidate(Class<?> methodClass, Method method, int weight, List<Object> parameters) {
-        this.methodClass = methodClass;
+    public DefaultExecutionCandidate(Object instance, Method method, int weight, List<Object> parameters) {
+        this.instance = instance;
         this.method = method;
         this.weight = weight;
         this.parameters = new ArrayList<>(parameters);
@@ -59,6 +59,6 @@ public class DefaultExecutionCandidate implements ExecutionCandidate {
             allArgs.add(null);
         }
 
-        return method.invoke(methodClass, allArgs.toArray());
+        return method.invoke(instance, allArgs.toArray());
     }
 }

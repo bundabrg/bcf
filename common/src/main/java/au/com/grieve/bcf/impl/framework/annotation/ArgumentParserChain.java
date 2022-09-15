@@ -61,7 +61,23 @@ public class ArgumentParserChain implements ParserChain {
     @Override
     public void parse(ParsedLine line, List<Object> output) throws EndOfLineException, IllegalArgumentException {
         for(Parser<?> p : parsers) {
-            output.add(p.parse(line));
+            Object result;
+            try {
+                result = p.parse(line);
+            } catch (EndOfLineException e) {
+                // Handle defaults
+                if (p.getParameters().getOrDefault("required", "true").equals("false") ||
+                        p.getParameters().containsKey("default")) {
+                    result = p.getParameters().get("default");
+                } else {
+                    throw e;
+                }
+            }
+
+            // Handle suppress
+            if (p.getParameters().getOrDefault("suppress", "false").equals("false")) {
+                output.add(result);
+            }
         }
     }
 
@@ -76,6 +92,7 @@ public class ArgumentParserChain implements ParserChain {
         // If it does not start with @, then a parser called 'literal' parser will be used with options being the name
         if (!name.startsWith("@")) {
             parameters.put("options", name);
+            parameters.put("suppress", parameters.getOrDefault("suppress", "true"));
             name="literal";
         } else {
             name = name.substring(1);

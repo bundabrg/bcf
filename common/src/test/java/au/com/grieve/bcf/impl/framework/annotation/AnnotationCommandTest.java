@@ -29,11 +29,12 @@ import au.com.grieve.bcf.framework.annotation.annotations.Arg;
 import au.com.grieve.bcf.framework.annotation.annotations.Default;
 import au.com.grieve.bcf.framework.annotation.annotations.Error;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
+import au.com.grieve.bcf.impl.parser.IntegerParser;
 import au.com.grieve.bcf.impl.parser.StringParser;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class AnnotationCommandTest {
 
@@ -66,6 +67,10 @@ class AnnotationCommandTest {
         public void m2() {
 
         }
+    }
+
+    static class C2Extended extends C2 {
+
     }
 
     static class C3 extends AnnotationCommand {
@@ -119,13 +124,21 @@ class AnnotationCommandTest {
         }
     }
 
+    @Arg("c_arg1 @string")
+    static class ParamClass extends AnnotationCommand {
+        @Arg("@string @int")
+        public void m1(String p1, String p2, Integer p3) {
+
+        }
+    }
+
     @Test
     void noDefaultDefined() {
         C1 c1 = new C1();
         ParsedLine line = new DefaultParsedLine("bob");
         AnnotationContext ctx = AnnotationContext.builder().build();
         ctx.getParserClasses().put("literal", StringParser.class);
-        assertThrows(RuntimeException.class, () -> c1.execute(line, ctx));
+        assertNull(c1.execute(line, ctx));
     }
 
     @Test
@@ -546,5 +559,49 @@ class AnnotationCommandTest {
         assertEquals(child2.getClass().getMethod("m2"), e.getMethod());
         assertEquals(9, e.getWeight());
     }
+
+    @Test
+    void extendedClass_1() throws NoSuchMethodException {
+        C2Extended c2 = new C2Extended();
+        ParsedLine line = new DefaultParsedLine("bob");
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ExecutionCandidate e = c2.execute(line, ctx);
+
+        // Should be error method with a weight of 0
+        assertEquals(c2.getClass().getMethod("e"), e.getMethod());
+        assertEquals(0, e.getWeight());
+    }
+
+    @Test
+    void extendedClass_2() throws NoSuchMethodException {
+        C2Extended c2 = new C2Extended();
+        ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3");
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ExecutionCandidate e = c2.execute(line, ctx);
+
+        // Should be default method with a weight of 3
+        assertEquals(c2.getClass().getMethod("d"), e.getMethod());
+        assertEquals(3, e.getWeight());
+    }
+
+    @Test
+    void parameters_1() throws NoSuchMethodException {
+        ParamClass c = new ParamClass();
+        ParsedLine line = new DefaultParsedLine("c_arg1 arg1 arg2 23");
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ExecutionCandidate e = c.execute(line, ctx);
+
+        // Should be m1
+        assertEquals(c.getClass().getMethod("m1", String.class, String.class, Integer.class), e.getMethod());
+        assertEquals("arg1", e.getParameters().get(0));
+        assertEquals("arg2", e.getParameters().get(1));
+        assertEquals(23, e.getParameters().get(2));
+    }
+
 
 }

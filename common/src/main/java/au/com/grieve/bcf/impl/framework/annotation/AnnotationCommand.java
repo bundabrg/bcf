@@ -29,6 +29,7 @@ import au.com.grieve.bcf.framework.annotation.annotations.Arg;
 import au.com.grieve.bcf.framework.annotation.annotations.Default;
 import au.com.grieve.bcf.framework.annotation.annotations.Error;
 import au.com.grieve.bcf.impl.execution.DefaultExecutionCandidate;
+import au.com.grieve.bcf.utils.ReflectUtils;
 import lombok.Getter;
 
 import java.lang.reflect.Method;
@@ -50,7 +51,7 @@ public class AnnotationCommand implements Command {
 
     public AnnotationCommand() {
         // Class Arguments
-        for (Arg arg : getClass().getAnnotationsByType(Arg.class)) {
+        for (Arg arg : ReflectUtils.getAllAnnotationsByType(getClass(), Arg.class)) {
             classArgStrings.add(String.join(" ", arg.value()));
         }
 
@@ -84,10 +85,10 @@ public class AnnotationCommand implements Command {
         ).collect(Collectors.toList())) {
             Method method = ((AnnotationCommand) cmd).getErrorMethod();
             if (method != null) {
-                return new DefaultExecutionCandidate(cmd.getClass(), method, weight, new ArrayList<>());
+                return new DefaultExecutionCandidate(cmd, method, weight, new ArrayList<>());
             }
         }
-        throw new RuntimeException("Failed to find Error Execution Candidate");
+        return null;
     }
     protected ExecutionCandidate getDefaultExecutionCandidate(List<Command> chain, int weight) {
         for(Command cmd : Stream.concat(
@@ -96,10 +97,10 @@ public class AnnotationCommand implements Command {
         ).collect(Collectors.toList())) {
             Method method = ((AnnotationCommand) cmd).getDefaultMethod();
             if (method != null) {
-                return new DefaultExecutionCandidate(cmd.getClass(), method, weight, new ArrayList<>());
+                return new DefaultExecutionCandidate(cmd, method, weight, new ArrayList<>());
             }
         }
-        throw new RuntimeException("Failed to find Default Execution Candidate");
+        return null;
     }
 
     protected ExecutionCandidate executeClass(ParsedLine line, Context context) {
@@ -176,9 +177,9 @@ public class AnnotationCommand implements Command {
             }
 
             Context currentContext = context.copy();
-            context.getResult().addAll(result);
+            currentContext.getResult().addAll(result);
 
-            candidates.add(new DefaultExecutionCandidate(getClass(), item.getValue(), currentLine.getWordIndex(), currentContext.getResult()));
+            candidates.add(new DefaultExecutionCandidate(this, item.getValue(), currentLine.getWordIndex(), currentContext.getResult()));
         }
         return candidates.stream()
                 .filter(Objects::nonNull)

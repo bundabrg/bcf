@@ -29,14 +29,14 @@ import au.com.grieve.bcf.impl.framework.annotation.AnnotationCommand;
 
 public class TerminalCommand extends AnnotationCommand {
     @Error
-    void onError() {
+    public void onError() {
         //TODO
         System.err.println("Error");
     }
 
     // Default Default
     @Default
-    void onDefault() {
+    public void onDefault() {
         //TODO
         System.err.println("Default");
     }
