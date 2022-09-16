@@ -89,23 +89,28 @@ public class ArgumentParserChain implements ParserChain {
 
             try {
                 p.parse(line);
-            } catch (IllegalArgumentException | EndOfLineException e) {
+            } catch (EndOfLineException | IllegalArgumentException e) {
+                // We may or may not be at the end of input so we try complete it just in case and if we are then at EOL we
+                // include the results
                 List<CompletionCandidateGroup> groups = new ArrayList<>();
                 try {
                     p.complete(line, groups);
-                    if (groups.size() != 0) {
+                    if (line.isEol()) {
                         candidateGroups.addAll(groups);
                     }
                 } catch (IllegalArgumentException ignored) {
                 }
 
-                return;
+                throw new EndOfLineException();
             }
+
+
             if (line.isEol()) {
                 try {
                     p.complete(lineCopy, candidateGroups);
                 } catch (IllegalArgumentException ignored) {
                 }
+                throw new EndOfLineException();
             }
         }
     }
