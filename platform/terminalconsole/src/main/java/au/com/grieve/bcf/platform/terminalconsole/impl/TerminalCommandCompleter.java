@@ -24,12 +24,15 @@
 package au.com.grieve.bcf.platform.terminalconsole.impl;
 
 
+import au.com.grieve.bcf.CompletionCandidateGroup;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TerminalCommandCompleter implements Completer {
     private final TerminalCommandManager manager;
@@ -40,6 +43,17 @@ public class TerminalCommandCompleter implements Completer {
 
     @Override
     public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
-//        candidates.addAll(commandMap.complete(line.line()));
+        List<CompletionCandidateGroup> completionCandidateGroups = new ArrayList<>();
+        manager.complete(line.line(), completionCandidateGroups);
+
+        // Convert to jline
+        for (CompletionCandidateGroup g : completionCandidateGroups) {
+            int key = g.hashCode();
+            candidates.addAll(
+                    g.getCompletionCandidates().stream()
+                            .map(c -> new Candidate(c.getValue(), c.getTitle(), null, g.getDescription(), "", String.valueOf(key), true))
+                            .collect(Collectors.toList())
+            );
+        }
     }
 }

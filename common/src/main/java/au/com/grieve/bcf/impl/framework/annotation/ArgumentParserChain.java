@@ -28,6 +28,7 @@ import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.ParserChain;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -69,7 +70,13 @@ public class ArgumentParserChain implements ParserChain {
                 // Handle defaults
                 if (p.getParameters().getOrDefault("required", "true").equals("false") ||
                         p.getParameters().containsKey("default")) {
-                    result = p.getParameters().get("default");
+
+                    String defaultValue = p.getParameters().get("default");
+                    if (defaultValue != null) {
+                        result = p.parse(new DefaultParsedLine(defaultValue));
+                    } else {
+                        result = null;
+                    }
                 } else {
                     throw e;
                 }
@@ -90,7 +97,7 @@ public class ArgumentParserChain implements ParserChain {
             try {
                 p.parse(line);
             } catch (EndOfLineException | IllegalArgumentException e) {
-                // We may or may not be at the end of input so we try complete it just in case and if we are then at EOL we
+                // We may or may not be at the end of input, so we try complete it just in case and if we are then at EOL we
                 // include the results
                 List<CompletionCandidateGroup> groups = new ArrayList<>();
                 try {

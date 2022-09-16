@@ -247,6 +247,17 @@ class ArgumentParserChainTest {
     }
 
     @Test
+    void parseDefaultRequired_5() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@int(default=5)");
+        ParsedLine line = new DefaultParsedLine("");
+        List<Object> result = new ArrayList<>();
+
+        a.parse(line, result);
+        assertEquals(1, result.size());
+        assertEquals(5, result.get(0));
+    }
+
+    @Test
     void complete_1() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1");
         ParsedLine line = new DefaultParsedLine("");

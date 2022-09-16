@@ -26,6 +26,8 @@ package au.com.grieve.bcf.platform.terminalconsole.impl;
 import au.com.grieve.bcf.ExecutionCandidate;
 import lombok.Getter;
 import net.minecrell.terminalconsole.SimpleTerminalConsole;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -40,13 +42,13 @@ public abstract class TerminalCommandConsole extends SimpleTerminalConsole {
         this.commandCompleter = new TerminalCommandCompleter(manager);
     }
 
-//    @Override
-//    protected LineReader buildReader(LineReaderBuilder builder) {
-//        return super.buildReader(builder
-//                .completer(commandCompleter)
-//        );
-//
-//    }
+    @Override
+    protected LineReader buildReader(LineReaderBuilder builder) {
+        return super.buildReader(builder
+                .completer(commandCompleter)
+        );
+
+    }
 
     @Override
     protected void runCommand(String input) {
