@@ -265,12 +265,13 @@ class ArgumentParserChainTest {
     }
 
     @Test
-    void complete_3() {
+    void complete_3() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1");
         ParsedLine line = new DefaultParsedLine("b");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
-        assertThrows(IllegalArgumentException.class, () -> a.complete(line, result));
+        a.complete(line, result);
+        assertEquals(0, result.size());
     }
 
     @Test
@@ -293,5 +294,134 @@ class ArgumentParserChainTest {
         a.complete(line, result);
         assertEquals(1, result.size());
         assertEquals(1, result.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void complete_6() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal3");
+        ParsedLine line = new DefaultParsedLine("literal");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        a.complete(line, result);
+        assertEquals(1, result.size());
+        assertEquals(3, result.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void complete_7() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal3");
+        ParsedLine line = new DefaultParsedLine("literal1");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        a.complete(line, result);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void complete_8() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal3 mike|milly|mark");
+        ParsedLine line = new DefaultParsedLine("l");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        a.complete(line, result);
+        assertEquals(1, result.size());
+        assertEquals(3, result.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void complete_9() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
+        ParsedLine line = new DefaultParsedLine("literal");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        assertThrows(EndOfLineException.class, () -> a.complete(line, result));
+        assertEquals(1, result.size());
+        assertEquals(3, result.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void complete_10() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
+        ParsedLine line = new DefaultParsedLine("literal1");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        assertThrows(EndOfLineException.class, () -> a.complete(line, result));
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void complete_11() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
+        ParsedLine line = new DefaultParsedLine("literal ");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        a.complete(line, result);
+        assertEquals(1, result.size());
+        assertEquals(3, result.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void complete_12() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
+        ParsedLine line = new DefaultParsedLine("literal ma");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        a.complete(line, result);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void complete_13() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
+        ParsedLine line = new DefaultParsedLine("literal mark");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        a.complete(line, result);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void complete_14() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
+        ParsedLine line = new DefaultParsedLine("literal markb");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        a.complete(line, result);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void complete_15() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
+        ParsedLine line = new DefaultParsedLine("literal mark b");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        a.complete(line, result);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void complete_16() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
+        ParsedLine line = new DefaultParsedLine("l m");
+        List<CompletionCandidateGroup> result = new ArrayList<>();
+
+        a.complete(line, result);
+        assertEquals(1, result.size());
+        assertEquals(3, result.get(0).getCompletionCandidates().size());
+        assertTrue(result.get(0).getCompletionCandidates().stream()
+                .map(c -> c.getValue().equals("literal1"))
+                .findFirst()
+                .orElse(false)
+        );
+        assertFalse(result.get(0).getCompletionCandidates().stream()
+                .map(c -> c.getValue().equals("mike"))
+                .findFirst()
+                .orElse(false)
+        );
     }
 }

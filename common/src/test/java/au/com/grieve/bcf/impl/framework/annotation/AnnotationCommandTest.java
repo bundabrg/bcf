@@ -23,6 +23,7 @@
 
 package au.com.grieve.bcf.impl.framework.annotation;
 
+import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ExecutionCandidate;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.framework.annotation.annotations.Arg;
@@ -32,6 +33,9 @@ import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import au.com.grieve.bcf.impl.parser.IntegerParser;
 import au.com.grieve.bcf.impl.parser.StringParser;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -130,6 +134,20 @@ class AnnotationCommandTest {
         public void m1(String p1, String p2, Integer p3) {
 
         }
+    }
+
+    @Arg("first|fire|second")
+    static class CompletionClass extends AnnotationCommand {
+        @Arg("mike|milly|marta art")
+        public void m1() {
+
+        }
+
+        @Arg("alice|bob|mike plate|yeet")
+        public void m2() {
+
+        }
+
     }
 
     @Test
@@ -602,6 +620,92 @@ class AnnotationCommandTest {
         assertEquals("arg2", e.getParameters().get(1));
         assertEquals(23, e.getParameters().get(2));
     }
+
+    @Test
+    void complete_1() throws NoSuchMethodException {
+        CompletionClass c = new CompletionClass();
+        ParsedLine line = new DefaultParsedLine("");
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        List<CompletionCandidateGroup> groups = new ArrayList<>();
+        c.complete(line, groups, ctx);
+
+        assertEquals(0, groups.size());
+    }
+
+    @Test
+    void complete_2() throws NoSuchMethodException {
+        CompletionClass c = new CompletionClass();
+        ParsedLine line = new DefaultParsedLine(" ");
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        List<CompletionCandidateGroup> groups = new ArrayList<>();
+        c.complete(line, groups, ctx);
+
+        assertEquals(0, groups.size());
+    }
+
+    @Test
+    void complete_3() throws NoSuchMethodException {
+        CompletionClass c = new CompletionClass();
+        ParsedLine line = new DefaultParsedLine("b");
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        List<CompletionCandidateGroup> groups = new ArrayList<>();
+        c.complete(line, groups, ctx);
+
+        assertEquals(0, groups.size());
+    }
+
+    @Test
+    void complete_4() throws NoSuchMethodException {
+        CompletionClass c = new CompletionClass();
+        ParsedLine line = new DefaultParsedLine("f");
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        List<CompletionCandidateGroup> groups = new ArrayList<>();
+        c.complete(line, groups, ctx);
+
+        assertEquals(1, groups.size());
+        assertEquals(2, groups.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void complete_5() throws NoSuchMethodException {
+        CompletionClass c = new CompletionClass();
+        ParsedLine line = new DefaultParsedLine("firs");
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        List<CompletionCandidateGroup> groups = new ArrayList<>();
+        c.complete(line, groups, ctx);
+
+        assertEquals(1, groups.size());
+        assertEquals(1, groups.get(0).getCompletionCandidates().size());
+    }
+
+//    @Test
+//    void complete_6() throws NoSuchMethodException {
+//        CompletionClass c = new CompletionClass();
+//        ParsedLine line = new DefaultParsedLine("firs m");
+//        AnnotationContext ctx = AnnotationContext.builder().build();
+//        ctx.getParserClasses().put("literal", StringParser.class);
+//        ctx.getParserClasses().put("string", StringParser.class);
+//        ctx.getParserClasses().put("int", IntegerParser.class);
+//        List<CompletionCandidateGroup> groups = new ArrayList<>();
+//        c.complete(line, groups, ctx);
+//
+//        assertEquals(0, groups.size());
+//    }
 
 
 }

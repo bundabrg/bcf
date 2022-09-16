@@ -221,10 +221,6 @@ public class AnnotationCommand implements Command {
             try {
                 p.complete(currentLine, candidates);
             } catch (EndOfLineException e) {
-                // Ran out of input to satisfy this chain
-                continue;
-            } catch (IllegalArgumentException e) {
-                // Error has occurred
                 continue;
             }
 
@@ -250,7 +246,7 @@ public class AnnotationCommand implements Command {
             ParsedLine currentLine = line.copy();
             try {
                 methodChain.complete(currentLine, candidates);
-            } catch (EndOfLineException | IllegalArgumentException ignored) {
+            } catch (EndOfLineException ignored) {
             }
         }
     }

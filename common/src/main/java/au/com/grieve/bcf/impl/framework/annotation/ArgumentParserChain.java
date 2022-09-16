@@ -83,23 +83,29 @@ public class ArgumentParserChain implements ParserChain {
     }
 
     @Override
-    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups) throws EndOfLineException, IllegalArgumentException {
+    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups) throws EndOfLineException {
         for(Parser<?> p : parsers) {
             ParsedLine lineCopy = line.copy();
 
             try {
                 p.parse(line);
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | EndOfLineException e) {
                 List<CompletionCandidateGroup> groups = new ArrayList<>();
-                p.complete(lineCopy, groups);
-                if (groups.size() == 0) {
-                    throw e;
+                try {
+                    p.complete(line, groups);
+                    if (groups.size() != 0) {
+                        candidateGroups.addAll(groups);
+                    }
+                } catch (IllegalArgumentException ignored) {
                 }
-                candidateGroups.addAll(groups);
-                continue;
+
+                return;
             }
             if (line.isEol()) {
-                p.complete(lineCopy, candidateGroups);
+                try {
+                    p.complete(lineCopy, candidateGroups);
+                } catch (IllegalArgumentException ignored) {
+                }
             }
         }
     }
