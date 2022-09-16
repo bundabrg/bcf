@@ -50,14 +50,16 @@ public abstract class BaseParser<RT> extends Parser<RT> {
     public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException {
         ParsedLine currentLine = line.copy();
         List<CompletionCandidateGroup> groups = new ArrayList<>();
-        doComplete(currentLine, groups);
-
-        // Only add groups that actually have any candidates
-        candidates.addAll(groups.stream()
-                .filter(g -> g.getCompletionCandidates().size() > 0)
-                .collect(Collectors.toList())
-        );
-        line.setWordIndex(currentLine.getWordIndex());
+        try {
+            doComplete(currentLine, groups);
+            line.setWordIndex(currentLine.getWordIndex());
+        } finally {
+            // Only add groups that actually have any candidates
+            candidates.addAll(groups.stream()
+                    .filter(g -> g.getCompletionCandidates().size() > 0)
+                    .collect(Collectors.toList())
+            );
+        }
     }
 
     /**

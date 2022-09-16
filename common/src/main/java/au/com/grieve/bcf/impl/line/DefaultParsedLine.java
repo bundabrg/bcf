@@ -80,7 +80,7 @@ public class DefaultParsedLine implements ParsedLine {
     @ToString.Include
     public String getCurrentWord() {
         if (wordIndex >= words.size()) {
-            return null;
+            return "";
         }
 
         return words.get(wordIndex);

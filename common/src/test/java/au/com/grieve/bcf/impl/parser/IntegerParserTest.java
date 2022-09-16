@@ -23,12 +23,15 @@
 
 package au.com.grieve.bcf.impl.parser;
 
+import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -145,5 +148,46 @@ class IntegerParserTest {
 
         assertEquals(13, integerParser.parse(line));
         assertEquals(1, line.getWordIndex());
+    }
+
+    @Test
+    void completionMinMax_1() {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("min", "5");
+        parameters.put("max", "13");
+        ParsedLine line = new DefaultParsedLine("");
+        List<CompletionCandidateGroup> groups = new ArrayList<>();
+        IntegerParser integerParser = new IntegerParser(parameters);
+
+        assertThrows(EndOfLineException.class, () -> integerParser.complete(line, groups));
+        assertEquals(1, groups.size());
+        assertEquals(9, groups.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void completionMinMax_2() throws EndOfLineException {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("min", "5");
+        parameters.put("max", "13");
+        ParsedLine line = new DefaultParsedLine("1");
+        List<CompletionCandidateGroup> groups = new ArrayList<>();
+        IntegerParser integerParser = new IntegerParser(parameters);
+
+        integerParser.complete(line, groups);
+        assertEquals(1, groups.size());
+        assertEquals(4, groups.get(0).getCompletionCandidates().size());
+    }
+
+    @Test
+    void completionMinMax_3() throws EndOfLineException {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("min", "13");
+        parameters.put("max", "5");
+        ParsedLine line = new DefaultParsedLine("1");
+        List<CompletionCandidateGroup> groups = new ArrayList<>();
+        IntegerParser integerParser = new IntegerParser(parameters);
+
+        integerParser.complete(line, groups);
+        assertEquals(0, groups.size());
     }
 }

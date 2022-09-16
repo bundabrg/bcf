@@ -26,10 +26,14 @@ package au.com.grieve.bcf.impl.parser;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidateGroup;
 import lombok.ToString;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @ToString(callSuper = true)
 public class IntegerParser extends BaseParser<Integer> {
@@ -53,6 +57,25 @@ public class IntegerParser extends BaseParser<Integer> {
 
     @Override
     protected void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException {
+        String input = line.getCurrentWord();
 
+        // Show a number range if both min and max defined
+        if (getParameters().containsKey("min") && getParameters().containsKey("max")) {
+            int min = Integer.parseInt(getParameters().get("min"));
+            int max = Integer.parseInt(getParameters().get("max"));
+
+            DefaultCompletionCandidateGroup group = new DefaultCompletionCandidateGroup(getParameters().get("description"));
+            group.getCompletionCandidates().addAll(
+                    IntStream.rangeClosed(min, max)
+                            .mapToObj(String::valueOf)
+                            .filter(s -> s.startsWith(input))
+                            .limit(20)
+                            .map(DefaultCompletionCandidate::new)
+                            .collect(Collectors.toList())
+            );
+            candidates.add(group);
+        }
+
+        line.next();
     }
 }

@@ -39,7 +39,7 @@ class DefaultParsedLineTest {
         assertEquals("", line.getLine());
         assertTrue(line.isEol());
         assertThrows(EndOfLineException.class, line::next);
-        assertNull(line.getCurrentWord());
+        assertEquals("", line.getCurrentWord());
     }
 
     @Test
@@ -49,7 +49,7 @@ class DefaultParsedLineTest {
         assertEquals("", line.getLine());
         assertTrue(line.isEol());
         assertThrows(EndOfLineException.class, line::next);
-        assertNull(line.getCurrentWord());
+        assertEquals("", line.getCurrentWord());
     }
 
     @Test
@@ -59,7 +59,7 @@ class DefaultParsedLineTest {
         assertEquals("", line.getLine());
         assertTrue(line.isEol());
         assertThrows(EndOfLineException.class, line::next);
-        assertNull(line.getCurrentWord());
+        assertEquals("", line.getCurrentWord());
     }
 
     @Test
@@ -69,7 +69,7 @@ class DefaultParsedLineTest {
         assertEquals("", line.getLine());
         assertTrue(line.isEol());
         assertThrows(EndOfLineException.class, line::next);
-        assertNull(line.getCurrentWord());
+        assertEquals("", line.getCurrentWord());
     }
 
     @Test
