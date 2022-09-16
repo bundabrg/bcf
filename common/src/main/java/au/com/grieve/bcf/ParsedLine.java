@@ -70,6 +70,12 @@ public interface ParsedLine {
     boolean isEol();
 
     /**
+     * Returns the size of the remaining elements
+     * @return size of remaining elements
+     */
+    int size();
+
+    /**
      * Return current word and move word index to next word
      * @return current word
      */

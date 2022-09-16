@@ -39,6 +39,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("unused")
 class AnnotationCommandTest {
 
 
@@ -702,8 +703,6 @@ class AnnotationCommandTest {
         ctx.getParserClasses().put("int", IntegerParser.class);
         List<CompletionCandidateGroup> groups = new ArrayList<>();
         c.complete(line, groups, ctx);
-
-        System.err.println(groups);
 
         assertEquals(0, groups.size());
     }

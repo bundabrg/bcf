@@ -98,6 +98,11 @@ public class DefaultParsedLine implements ParsedLine {
     }
 
     @Override
+    public int size() {
+        return words.size()-wordIndex;
+    }
+
+    @Override
     public String next() throws EndOfLineException {
         if (wordIndex >= words.size()) {
             throw new EndOfLineException();

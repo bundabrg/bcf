@@ -26,6 +26,9 @@ package au.com.grieve.bcf.impl.framework.annotation;
 import au.com.grieve.bcf.*;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.framework.annotation.annotations.Command;
+import au.com.grieve.bcf.framework.annotation.annotations.Description;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidateGroup;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import au.com.grieve.bcf.impl.parser.DoubleParser;
 import au.com.grieve.bcf.impl.parser.FloatParser;
@@ -47,6 +50,7 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
     @Builder
     protected static class CommandConfig {
         AnnotationCommand command;
+        String description;
         ArgumentParserChain prefixParserChain;
         String input;
     }
@@ -121,6 +125,10 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
                     .command(command)
                     .prefixParserChain(commandValue.length > 1 ? new ArgumentParserChain(getParsers(), commandValue[1]) : null)
                     .input(commandData.input())
+                    .description(command.getClass().isAnnotationPresent(Description.class) ?
+                            command.getClass().getAnnotation(Description.class).value() :
+                            null
+                    )
                     .build());
         }
 
@@ -173,7 +181,66 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
 
     @Override
     public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates) {
+        // If at the end of the line we do the completion against command names
+        if (line.isEol() || line.size() == 1) {
+            // Store groups with the commands so that we can group aliases properly
+            Map<String, CompletionCandidateGroup> commandGroups = new HashMap<>();
+            String input = line.isEol() ? "" : line.getCurrentWord();
 
+            for (Map.Entry<String, CommandConfig> item : commandsByName.entrySet()) {
+                if (!item.getKey().startsWith(input)) {
+                    continue;
+                }
+                CompletionCandidateGroup group = new DefaultCompletionCandidateGroup(item.getValue().description);
+
+                // Add command name
+                group.getCompletionCandidates().add(new DefaultCompletionCandidate(item.getKey()));
+
+                commandGroups.put(item.getKey(), group);
+            }
+
+            // Add any aliases that match input
+            for (Map.Entry<String, String> item : commandAliases.entrySet()) {
+                if (!item.getKey().startsWith(input) || commandsByName.containsKey(item.getKey())) {
+                    continue;
+                }
+
+                // Check if we already have a group, otherwise create one now
+                CompletionCandidateGroup group = commandGroups.getOrDefault(
+                        item.getValue(),
+                        new DefaultCompletionCandidateGroup(commandsByName.get(item.getValue()).description)
+                );
+                commandGroups.put(item.getValue(), group);
+
+                group.getCompletionCandidates().add(new DefaultCompletionCandidate(item.getKey()));
+            }
+            candidates.addAll(commandGroups.values());
+            return;
+        }
+
+        String commandName;
+        try {
+            commandName = line.next();
+        } catch (EndOfLineException e) {
+            return;
+        }
+
+        CommandConfig commandConfig = findCommand(commandName);
+        if (commandConfig == null) {
+            return;
+        }
+
+        // Prepend any additional input from the command to the input
+        if (commandConfig.input.length() > 0) {
+            line.insert(commandConfig.input);
+        }
+
+        AnnotationContext context = AnnotationContext.builder()
+                .prefixParserChain(commandConfig.prefixParserChain)
+                .parserClasses(getParsers())
+                .build();
+
+        commandConfig.command.complete(line, candidates, context);
     }
 
     @Override
