@@ -40,7 +40,7 @@ public class ParserCompletionCandidateGroup implements CompletionCandidateGroup 
     private final List<CompletionCandidate> completionCandidates = new ArrayList<>();
     private final Parser<?> parser;
 
-    private final String input;
+    protected String input;
 
     public ParserCompletionCandidateGroup(Parser<?> parser, String input) {
         this.parser = parser;

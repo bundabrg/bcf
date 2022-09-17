@@ -41,6 +41,7 @@ public class AnnotationCompletionContext implements CompletionContext {
     private final Map<String, Class <? extends Parser<?>>> parserClasses;
     private final List<Command> commandChain = new ArrayList<>();
     private final ArgumentParserChain prefixParserChain;
+    private final List<Parser<?>> switches = new ArrayList<>();
 
     public AnnotationCompletionContext() {
         this(new HashMap<>(), null);
@@ -59,6 +60,7 @@ public class AnnotationCompletionContext implements CompletionContext {
                 .build();
         result.parserClasses.putAll(parserClasses);
         result.getCommandChain().addAll(commandChain);
+        result.getSwitches().addAll(switches);
         return result;
     }
 }

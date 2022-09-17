@@ -25,6 +25,8 @@ package au.com.grieve.bcf.impl.framework.annotation;
 
 import au.com.grieve.bcf.*;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
+import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
 import au.com.grieve.bcf.impl.result.ParserResult;
 import au.com.grieve.bcf.impl.result.SwitchParserResult;
 import lombok.Getter;
@@ -120,16 +122,85 @@ public class ArgumentParserChain implements ParserChain {
         parseSwitches(line, output, context);
     }
 
+    protected void completeSwitches(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext context) throws EndOfLineException {
+        while (line.getCurrentWord().startsWith("-")) {
+            String input = line.getCurrentWord().substring(1);
+
+            // Look backwards through candidates for a non-completed result that matches our switch
+            Parser<?> parser = ((AnnotationCompletionContext) context).getSwitches().stream()
+                    .collect(
+                            Collectors.collectingAndThen(
+                                    Collectors.toList(),
+                                    l -> {
+                                        Collections.reverse(l);
+                                        return l;
+                                    }
+                            )
+                    ).stream()
+                    .filter(r -> List.of(r.getParameters().get("switch").split("\\|")).contains(input))
+                    .findFirst()
+                    .orElse(null);
+
+            if (parser == null) {
+                break;
+            }
+
+            line.next();
+
+            ParsedLine lineCopy = line.copy();
+
+            try {
+                parser.parse(line);
+                ((AnnotationCompletionContext) context).getSwitches().remove(parser);
+            } catch(EndOfLineException | IllegalArgumentException e) {
+                // We may or may not be at the end of input, so we try complete it just in case and if we are then at EOL we
+                // include the results
+                List<CompletionCandidateGroup> groups = new ArrayList<>();
+                try {
+                    parser.complete(line, groups);
+                    if (line.isEol()) {
+                        candidateGroups.addAll(groups);
+                        ((AnnotationCompletionContext) context).getSwitches().remove(parser);
+                    }
+                } catch (IllegalArgumentException ignored) {
+                }
+
+                throw new EndOfLineException();
+            }
+
+            if (line.isEol()) {
+                try {
+                    parser.complete(lineCopy, candidateGroups);
+                } catch (IllegalArgumentException ignored) {
+                }
+                throw new EndOfLineException();
+            }
+        }
+
+        // If we are at the end of the line, add any switches
+        if (line.size() <= 1) {
+            for(Parser<?> p : ((AnnotationCompletionContext) context).getSwitches()) {
+                CompletionCandidateGroup group = new ParserCompletionCandidateGroup(p, line.getCurrentWord());
+                group.getCompletionCandidates().addAll(
+                        Stream.of(p.getParameters().get("switch").split("\\|"))
+                                .map(s -> new DefaultCompletionCandidate("-" + s))
+                                .collect(Collectors.toList())
+                );
+                candidateGroups.add(group);
+            }
+        }
+    }
+
     @Override
     public void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext context) throws EndOfLineException {
         for(Parser<?> p : parsers) {
             // If parser is a switch we add it for later evaluation
-//            if (p.getParameters().containsKey("switch")) {
-//                CompletionCandidateGroup group = new SwitchParserCompletionCandidateGroup(p);
-//                candidateGroups.add(group);
-//
-//                continue;
-//            }
+            if (p.getParameters().containsKey("switch")) {
+                ((AnnotationCompletionContext) context).getSwitches().add(p);
+                continue;
+            }
+
+            completeSwitches(line, candidateGroups, context);
 
             ParsedLine lineCopy = line.copy();
 
@@ -159,6 +230,8 @@ public class ArgumentParserChain implements ParserChain {
                 throw new EndOfLineException();
             }
         }
+
+        completeSwitches(line, candidateGroups, context);
     }
 
     /**
