@@ -484,5 +484,119 @@ class ArgumentParserChainTest {
         assertEquals("amy", result.get(2).getValue());
     }
 
+    @Test
+    void parseSwitch_4() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1) @string @string");
+        Context context = new AnnotationContext();
+        List<Result> result = new ArrayList<>();
+        ParsedLine line = new DefaultParsedLine("alice -sw1 bob amy");
+
+        a.parse(line, result, context);
+        assertEquals(3, result.size());
+        assertEquals("bob", result.get(0).getValue());
+        assertEquals("alice", result.get(1).getValue());
+        assertEquals("amy", result.get(2).getValue());
+    }
+
+    @Test
+    void parseSwitch_5() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1) @string @string");
+        Context context = new AnnotationContext();
+        List<Result> result = new ArrayList<>();
+        ParsedLine line = new DefaultParsedLine("-sw1 bob alice amy");
+
+        a.parse(line, result, context);
+        assertEquals(3, result.size());
+        assertEquals("bob", result.get(0).getValue());
+        assertEquals("alice", result.get(1).getValue());
+        assertEquals("amy", result.get(2).getValue());
+    }
+
+    @Test
+    void parseSwitch_6() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string(switch=sw1) @string");
+        Context context = new AnnotationContext();
+        List<Result> result = new ArrayList<>();
+        ParsedLine line = new DefaultParsedLine("-sw1 bob alice amy");
+
+        // The switch is invalid, so it'll end up in the other parameters
+        a.parse(line, result, context);
+        assertEquals(3, result.size());
+        assertEquals("-sw1", result.get(0).getValue());
+        assertFalse(result.get(1).isComplete());
+        assertEquals("bob", result.get(2).getValue());
+    }
+
+    @Test
+    void parseSwitch_7() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string(switch=sw1) @string");
+        Context context = new AnnotationContext();
+        List<Result> result = new ArrayList<>();
+        ParsedLine line = new DefaultParsedLine("alice -sw1 bob amy");
+
+        a.parse(line, result, context);
+        assertEquals(3, result.size());
+        assertEquals("alice", result.get(0).getValue());
+        assertEquals("bob", result.get(1).getValue());
+        assertEquals("amy", result.get(2).getValue());
+    }
+
+    @Test
+    void parseSwitch_8() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string(switch=sw1) @string");
+        Context context = new AnnotationContext();
+        List<Result> result = new ArrayList<>();
+        ParsedLine line = new DefaultParsedLine("alice amy -sw1 bob");
+
+        a.parse(line, result, context);
+        assertEquals(3, result.size());
+        assertEquals("alice", result.get(0).getValue());
+        assertEquals("bob", result.get(1).getValue());
+        assertEquals("amy", result.get(2).getValue());
+    }
+
+    @Test
+    void parseSwitch_9() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string @string(switch=sw1)");
+        Context context = new AnnotationContext();
+        List<Result> result = new ArrayList<>();
+        ParsedLine line = new DefaultParsedLine("-sw1 bob alice amy");
+
+        // The switch is invalid, so it'll end up in the other parameters
+        a.parse(line, result, context);
+        assertEquals(3, result.size());
+        assertEquals("-sw1", result.get(0).getValue());
+        assertEquals("bob", result.get(1).getValue());
+        assertFalse(result.get(2).isComplete());
+    }
+
+    @Test
+    void parseSwitch_10() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string @string(switch=sw1)");
+        Context context = new AnnotationContext();
+        List<Result> result = new ArrayList<>();
+        ParsedLine line = new DefaultParsedLine("alice -sw1 bob amy");
+
+        // The switch is invalid, so it'll end up in the other parameters
+        a.parse(line, result, context);
+        assertEquals(3, result.size());
+        assertEquals("alice", result.get(0).getValue());
+        assertEquals("-sw1", result.get(1).getValue());
+        assertFalse(result.get(2).isComplete());
+    }
+
+    @Test
+    void parseSwitch_11() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string @string(switch=sw1)");
+        Context context = new AnnotationContext();
+        List<Result> result = new ArrayList<>();
+        ParsedLine line = new DefaultParsedLine("alice amy -sw1 bob");
+
+        a.parse(line, result, context);
+        assertEquals(3, result.size());
+        assertEquals("alice", result.get(0).getValue());
+        assertEquals("amy", result.get(1).getValue());
+        assertEquals("bob", result.get(2).getValue());
+    }
 
 }

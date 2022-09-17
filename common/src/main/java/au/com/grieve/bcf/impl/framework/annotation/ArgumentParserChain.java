@@ -32,10 +32,9 @@ import lombok.ToString;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 @ToString
@@ -62,45 +61,57 @@ public class ArgumentParserChain implements ParserChain {
      * @param line Parsed Line
      * @param context Current context
      */
-    protected void handleSwitches(ParsedLine line, Context context) throws EndOfLineException, IllegalArgumentException {
-        if (!line.getCurrentWord().startsWith("-")) {
-            return;
+    protected void handleSwitches(ParsedLine line, List<Result> output, Context context) throws EndOfLineException, IllegalArgumentException {
+        while (line.getCurrentWord().startsWith("-")) {
+
+            String input = line.getCurrentWord().substring(1);
+//            System.err.println("  - Handling switch: " + input);
+//            System.err.println("    + output: " + output);
+//            System.err.println("    + contxt: " + context.getResult());
+
+
+            // Look backwards through output for a non-completed result that matches our switch
+            Result result = Stream.concat(
+                            context.getResult().stream(),
+                            output.stream()
+                    ).collect(
+                            Collectors.collectingAndThen(
+                                    Collectors.toList(),
+                                    l -> {
+                                        Collections.reverse(l);
+                                        return l;
+                                    }
+                            )
+                    ).stream()
+                    .filter(r -> !r.isComplete())
+                    .filter(r -> r.getParser().getParameters().containsKey("switch"))
+                    .filter(r -> List.of(r.getParser().getParameters().get("switch").split("\\|")).contains(input))
+                    .findFirst()
+                    .orElse(null);
+
+            if (result == null) {
+//                System.err.println("    - Not found");
+                break;
+            }
+
+            line.next();
+            ((ParserResult) result).setValue(result.getParser().parse(line));
         }
-
-        String input = line.getCurrentWord().substring(1);
-
-        List<ParserResult> parserResults = ((AnnotationContext) context).getSwitches().entrySet().stream()
-                .filter(e -> List.of(e.getKey().split("\\|")).contains(input))
-                .map(Map.Entry::getValue)
-                .findFirst()
-                .orElse(null);
-
-
-
-        if (parserResults == null) {
-            return;
-        }
-
-        line.next();
-        ParserResult switchResult = parserResults.remove(0);
-        switchResult.setValue(switchResult.getParser().parse(line));
     }
 
     @Override
     public void parse(ParsedLine line, List<Result> output, Context context) throws EndOfLineException, IllegalArgumentException {
         for(Parser<?> p : parsers) {
+//            System.err.println("Parser: " + p);
             // If parser is a switch we add it for later evaluation
             if (p.getParameters().containsKey("switch")) {
-                List<ParserResult> switches = ((AnnotationContext) context).getSwitches().computeIfAbsent(
-                        p.getParameters().get("switch"), k -> new ArrayList<>()
-                );
+//                System.err.println("  - Is a switch");
                 ParserResult parserResult = new ParserResult(p);
-                switches.add(parserResult);
                 output.add(parserResult);
                 continue;
             }
 
-            handleSwitches(line, context);
+            handleSwitches(line, output, context);
 
             Object result = p.parse(line);
 
@@ -110,7 +121,7 @@ public class ArgumentParserChain implements ParserChain {
             }
         }
 
-        handleSwitches(line, context);
+        handleSwitches(line, output, context);
     }
 
     @Override

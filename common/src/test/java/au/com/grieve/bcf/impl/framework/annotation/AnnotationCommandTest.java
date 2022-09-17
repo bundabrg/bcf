@@ -150,6 +150,39 @@ class AnnotationCommandTest {
 
     }
 
+    @Arg("opt1|opt2|opt3(switch=c_sw1, suppress=false)")
+    static class SwitchClass1 extends AnnotationCommand {
+        @Arg("mike|milly|marta(switch=m_sw1, suppress=false) art")
+        public void m1() {
+
+        }
+
+        @Arg("mike|milly(switch=m_sw2, suppress=false) art")
+        public void m2() {
+
+        }
+
+        @Arg("sue|zoe(switch=m_sw1, suppress=false) art")
+        public void m3() {
+
+        }
+
+        @Arg("mike|milly(switch=m_sw3, suppress=false) art plate")
+        public void m4() {
+
+        }
+
+        @Arg("mike|zoe(switch=m_sw3, suppress=false) art angel")
+        public void m5() {
+
+        }
+
+        @Arg("mike|zoe(switch=m_sw3, suppress=false) art")
+        public void m6() {
+
+        }
+    }
+
     @Test
     void noDefaultDefined() {
         C1 c1 = new C1();
@@ -815,6 +848,197 @@ class AnnotationCommandTest {
 
         assertEquals(1, groups.size());
         assertEquals("plate", groups.get(0).getCompletionCandidates().get(0).getValue());
+    }
+
+    @Test
+    void switchTest_1() {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("opt1 mike art");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertNull(e);
+    }
+
+    @Test
+    void switchTest_2() throws NoSuchMethodException {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("-c_sw1 opt1 -m_sw2 mike art");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m2"), e.getMethod());
+        assertEquals("opt1", e.getParameters().get(0));
+        assertEquals("mike", e.getParameters().get(1));
+    }
+
+    @Test
+    void switchTest_3() throws NoSuchMethodException {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("-c_sw1 opt1 art -m_sw2 mike");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m2"), e.getMethod());
+        assertEquals("opt1", e.getParameters().get(0));
+        assertEquals("mike", e.getParameters().get(1));
+    }
+
+    @Test
+    void switchTest_4() throws NoSuchMethodException {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("-m_sw2 mike art -c_sw1 opt1");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m2"), e.getMethod());
+        assertEquals("opt1", e.getParameters().get(0));
+        assertEquals("mike", e.getParameters().get(1));
+    }
+
+    @Test
+    void switchTest_5() throws NoSuchMethodException {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("art -c_sw1 opt1 -m_sw2 mike");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m2"), e.getMethod());
+        assertEquals("opt1", e.getParameters().get(0));
+        assertEquals("mike", e.getParameters().get(1));
+    }
+
+    @Test
+    void switchTest_6() throws NoSuchMethodException {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("art -m_sw2 mike -c_sw1 opt1");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m2"), e.getMethod());
+        assertEquals("opt1", e.getParameters().get(0));
+        assertEquals("mike", e.getParameters().get(1));
+    }
+
+    @Test
+    void switchTest_7() {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("-c_sw1 opt1 -m_sw1 bob art");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertNull(e);
+    }
+
+    @Test
+    void switchTest_8() throws NoSuchMethodException {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("-c_sw1 opt1 -m_sw1 milly art");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m1"), e.getMethod());
+        assertEquals("opt1", e.getParameters().get(0));
+        assertEquals("milly", e.getParameters().get(1));
+    }
+
+    @Test
+    void switchTest_9() throws NoSuchMethodException {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("art -c_sw1 opt1 -m_sw1 milly");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m1"), e.getMethod());
+        assertEquals("opt1", e.getParameters().get(0));
+        assertEquals("milly", e.getParameters().get(1));
+    }
+
+    @Test
+    void switchTest_10() throws NoSuchMethodException {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("art -m_sw1 zoe -c_sw1 opt2");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m3"), e.getMethod());
+        assertEquals("opt2", e.getParameters().get(0));
+        assertEquals("zoe", e.getParameters().get(1));
+    }
+
+    @Test
+    void switchTest_11() throws NoSuchMethodException {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("-c_sw1 opt1 -m_sw3 mike art plate");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m4"), e.getMethod());
+        assertEquals("opt1", e.getParameters().get(0));
+        assertEquals("mike", e.getParameters().get(1));
+    }
+
+    @Test
+    void switchTest_12() throws NoSuchMethodException {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("-c_sw1 opt1 -m_sw3 mike art");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m6"), e.getMethod());
+        assertEquals("opt1", e.getParameters().get(0));
+        assertEquals("mike", e.getParameters().get(1));
+    }
+
+    @Test
+    void switchTest_13() throws NoSuchMethodException {
+        SwitchClass1 c = new SwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("art angel -m_sw3 mike -c_sw1 opt1");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m5"), e.getMethod());
+        assertEquals("opt1", e.getParameters().get(0));
+        assertEquals("mike", e.getParameters().get(1));
     }
 
 

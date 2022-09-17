@@ -61,4 +61,12 @@ public class ParserResult implements Result {
             throw new IllegalArgumentException();
         }
     }
+
+    @Override
+    public Result copy() {
+        ParserResult result = new ParserResult(parser);
+        result.value = value;
+        result.complete = complete;
+        return result;
+    }
 }

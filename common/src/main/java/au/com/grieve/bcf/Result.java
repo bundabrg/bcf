@@ -45,4 +45,9 @@ public interface Result {
      * @return Result
      */
     Object getValue();
+
+    /**
+     * Return a copy of ourself
+     */
+    Result copy();
 }
