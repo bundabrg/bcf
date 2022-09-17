@@ -600,6 +600,17 @@ class ArgumentParserChainTest {
     }
 
     @Test
+    void parseSwitch_12() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1) @string @string");
+        Context context = new AnnotationContext();
+        List<Result> result = new ArrayList<>();
+        ParsedLine line = new DefaultParsedLine("alice amy bob");
+
+        a.parse(line, result, context);
+        assertFalse(result.get(0).isComplete());
+    }
+
+    @Test
     void parseSwitchDefault_1() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1,default=zoe) @string @string");
         Context context = new AnnotationContext();

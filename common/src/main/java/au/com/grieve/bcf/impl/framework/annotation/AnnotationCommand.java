@@ -173,6 +173,11 @@ public class AnnotationCommand implements Command {
                 continue;
             }
 
+            // If we have input left then we reject this pathway
+            if (!currentLine.isEol()) {
+                continue;
+            }
+
             currentContext.getResult().addAll(result);
 
             try {

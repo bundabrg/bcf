@@ -196,6 +196,13 @@ class AnnotationCommandTest {
         }
     }
 
+    static class ComplexSwitchClass1 extends AnnotationCommand {
+        @Arg("list(description=List Process) @int(min=1,max=6,switch=page,default=1,description=Page Number) @string(description=Process Name)")
+        public void onList(Integer pageNo, String processName) {
+
+        }
+    }
+
     @Test
     void noDefaultDefined() {
         C1 c1 = new C1();
@@ -603,9 +610,9 @@ class AnnotationCommandTest {
         ctx.getParserClasses().put("literal", StringParser.class);
         ExecutionCandidate e = c2.execute(line, ctx);
 
-        // Success
-        assertEquals(child2.getClass().getMethod("m1"), e.getMethod());
-        assertEquals(9, e.getWeight());
+        // Error
+        assertEquals(child2.getClass().getMethod("e"), e.getMethod());
+        assertEquals(8, e.getWeight());
     }
 
     @Test
@@ -1082,6 +1089,19 @@ class AnnotationCommandTest {
         assertEquals(c.getClass().getMethod("m2"), e.getMethod());
         assertEquals("opt1", e.getParameters().get(0));
         assertEquals("milly", e.getParameters().get(1));
+    }
+
+    @Test
+    void complexSwitch_1() {
+        ComplexSwitchClass1 c = new ComplexSwitchClass1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("list 4 bob");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertNull(e);
     }
 
 
