@@ -26,6 +26,8 @@ package au.com.grieve.bcf.impl.parser;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
+import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
 import lombok.ToString;
 
 import java.util.List;
@@ -53,6 +55,12 @@ public class FloatParser extends BaseParser<Float> {
 
     @Override
     protected void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException {
+        String input = line.getCurrentWord();
 
+        ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
+        group.getCompletionCandidates().add(new DefaultCompletionCandidate("", getParameters().getOrDefault("placeholder", "<float>")));
+        candidates.add(group);
+
+        line.next();
     }
 }

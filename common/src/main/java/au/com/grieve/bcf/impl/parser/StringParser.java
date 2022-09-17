@@ -59,17 +59,22 @@ public class StringParser extends BaseParser<String> {
 
     @Override
     protected void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException{
-        String input = line.next();
+        String input = line.getCurrentWord();
 
         if (getParameters().containsKey("options")) {
             ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
             group.getCompletionCandidates().addAll(
                     Arrays.stream(getParameters().get("options").split("\\|"))
-//                            .filter(s -> s.startsWith(input))
                             .map(DefaultCompletionCandidate::new)
                             .collect(Collectors.toList())
             );
             candidates.add(group);
+        } else {
+            ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
+            group.getCompletionCandidates().add(new DefaultCompletionCandidate("", getParameters().getOrDefault("placeholder", "<string>")));
+            candidates.add(group);
         }
+
+        line.next();
     }
 }

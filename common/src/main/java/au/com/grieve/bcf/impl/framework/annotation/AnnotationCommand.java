@@ -183,6 +183,11 @@ public class AnnotationCommand implements Command {
             try {
                 candidates.add(new DefaultExecutionCandidate(this, item.getValue(), currentLine.getWordIndex(),
                         currentContext.getResult().stream()
+                                .filter(r -> {
+                                    r.getValue(); // Make sure we are able to return a value. Needed for switches.
+                                    return true;
+                                })
+                                .filter(r -> !r.isSuppressed())
                                 .map(Result::getValue)
                                 .collect(Collectors.toList())
                 ));

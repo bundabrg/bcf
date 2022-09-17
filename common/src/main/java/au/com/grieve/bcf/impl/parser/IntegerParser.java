@@ -68,11 +68,14 @@ public class IntegerParser extends BaseParser<Integer> {
             group.getCompletionCandidates().addAll(
                     IntStream.rangeClosed(min, max)
                             .mapToObj(String::valueOf)
-//                            .filter(s -> s.startsWith(input))
                             .limit(20)
                             .map(DefaultCompletionCandidate::new)
                             .collect(Collectors.toList())
             );
+            candidates.add(group);
+        } else {
+            ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
+            group.getCompletionCandidates().add(new DefaultCompletionCandidate("", getParameters().getOrDefault("placeholder", "<number>")));
             candidates.add(group);
         }
 

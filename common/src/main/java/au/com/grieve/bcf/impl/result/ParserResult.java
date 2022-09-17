@@ -40,6 +40,11 @@ public class ParserResult implements Result {
     }
 
     @Override
+    public boolean isSuppressed() {
+        return parser.getParameters().getOrDefault("suppress", "false").equals("true");
+    }
+
+    @Override
     public Result copy() {
         return new ParserResult(parser, value);
     }

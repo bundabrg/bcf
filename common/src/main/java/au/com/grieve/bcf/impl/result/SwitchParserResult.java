@@ -63,6 +63,11 @@ public class SwitchParserResult implements Result {
     }
 
     @Override
+    public boolean isSuppressed() {
+        return parser.getParameters().getOrDefault("suppress", "false").equals("true");
+    }
+
+    @Override
     public Result copy() {
         SwitchParserResult result = new SwitchParserResult(parser);
         result.value = value;

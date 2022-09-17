@@ -189,6 +189,7 @@ class ArgumentParserChainTest {
         a.parse(line, result, context);
         assertEquals(1, result.size());
         assertEquals("bob", result.get(0).getValue());
+        assertFalse(result.get(0).isSuppressed());
     }
 
     @Test
@@ -199,7 +200,9 @@ class ArgumentParserChainTest {
         List<Result> result = new ArrayList<>();
 
         a.parse(line, result, context);
-        assertEquals(0, result.size());
+        assertEquals(1, result.size());
+        assertEquals("bob", result.get(0).getValue());
+        assertTrue(result.get(0).isSuppressed());
     }
 
     @Test

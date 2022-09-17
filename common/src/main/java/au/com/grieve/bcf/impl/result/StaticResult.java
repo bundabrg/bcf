@@ -26,13 +26,19 @@ package au.com.grieve.bcf.impl.result;
 import au.com.grieve.bcf.Result;
 import lombok.Getter;
 
+@Getter
 public class StaticResult implements Result {
 
-    @Getter
     private final Object value;
+    private final boolean suppressed;
 
     public StaticResult(Object value) {
+        this(value, false);
+    }
+
+    public StaticResult(Object value, boolean suppressed) {
         this.value = value;
+        this.suppressed = suppressed;
     }
 
     @Override

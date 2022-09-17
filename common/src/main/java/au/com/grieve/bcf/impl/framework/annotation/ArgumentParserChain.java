@@ -112,11 +112,7 @@ public class ArgumentParserChain implements ParserChain {
             parseSwitches(line, output, context);
 
             Object result = p.parse(line);
-
-            // Handle suppress - Can this move into parser?
-            if (p.getParameters().getOrDefault("suppress", "false").equals("false")) {
-                output.add(new ParserResult(p, result));
-            }
+            output.add(new ParserResult(p, result));
         }
 
         parseSwitches(line, output, context);

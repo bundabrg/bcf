@@ -35,6 +35,12 @@ public interface Result {
     Object getValue();
 
     /**
+     * Is result suppressed
+     * @return true if suppressed
+     */
+    boolean isSuppressed();
+
+    /**
      * Return a copy of ourselves
      */
     Result copy();
