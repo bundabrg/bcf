@@ -175,21 +175,14 @@ public class AnnotationCommand implements Command {
 
             currentContext.getResult().addAll(result);
 
-            // Make sure all values are available
-            if (currentContext.getResult().stream()
-                    .map(Result::isComplete)
-                    .filter(b -> !b)
-                    .findFirst()
-                    .orElse(true)
-            ) {
+            try {
                 candidates.add(new DefaultExecutionCandidate(this, item.getValue(), currentLine.getWordIndex(),
                         currentContext.getResult().stream()
                                 .map(Result::getValue)
                                 .collect(Collectors.toList())
                 ));
+            } catch (IllegalArgumentException ignored) {
             }
-
-
         }
         return candidates.stream()
                 .filter(Objects::nonNull)

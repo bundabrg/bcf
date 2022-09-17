@@ -183,6 +183,19 @@ class AnnotationCommandTest {
         }
     }
 
+    @Arg("opt1|opt2|opt3(switch=c_sw1, suppress=false)")
+    static class SwitchClassWithDefaults1 extends AnnotationCommand {
+        @Arg("mike|marta(switch=m_sw1, suppress=false, default=marta) art")
+        public void m1() {
+
+        }
+
+        @Arg("mike|milly(switch=m_sw1, suppress=false) art")
+        public void m2() {
+
+        }
+    }
+
     @Test
     void noDefaultDefined() {
         C1 c1 = new C1();
@@ -1039,6 +1052,36 @@ class AnnotationCommandTest {
         assertEquals(c.getClass().getMethod("m5"), e.getMethod());
         assertEquals("opt1", e.getParameters().get(0));
         assertEquals("mike", e.getParameters().get(1));
+    }
+
+    @Test
+    void switchWithDefault_1() throws NoSuchMethodException {
+        SwitchClassWithDefaults1 c = new SwitchClassWithDefaults1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("art -c_sw1 opt1");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m1"), e.getMethod());
+        assertEquals("opt1", e.getParameters().get(0));
+        assertEquals("marta", e.getParameters().get(1));
+    }
+
+    @Test
+    void switchWithDefault_2() throws NoSuchMethodException {
+        SwitchClassWithDefaults1 c = new SwitchClassWithDefaults1();
+        AnnotationContext ctx = AnnotationContext.builder().build();
+        ctx.getParserClasses().put("literal", StringParser.class);
+        ctx.getParserClasses().put("string", StringParser.class);
+        ctx.getParserClasses().put("int", IntegerParser.class);
+        ParsedLine line = new DefaultParsedLine("art -c_sw1 opt1 -m_sw1 milly");
+
+        ExecutionCandidate e = c.execute(line, ctx);
+        assertEquals(c.getClass().getMethod("m2"), e.getMethod());
+        assertEquals("opt1", e.getParameters().get(0));
+        assertEquals("milly", e.getParameters().get(1));
     }
 
 

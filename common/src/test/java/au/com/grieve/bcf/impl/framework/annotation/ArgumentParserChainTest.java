@@ -599,4 +599,32 @@ class ArgumentParserChainTest {
         assertEquals("bob", result.get(2).getValue());
     }
 
+    @Test
+    void parseSwitchDefault_1() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1,default=zoe) @string @string");
+        Context context = new AnnotationContext();
+        List<Result> result = new ArrayList<>();
+        ParsedLine line = new DefaultParsedLine("alice amy");
+
+        a.parse(line, result, context);
+        assertEquals(3, result.size());
+        assertEquals("zoe", result.get(0).getValue());
+        assertEquals("alice", result.get(1).getValue());
+        assertEquals("amy", result.get(2).getValue());
+    }
+
+    @Test
+    void parseSwitchDefault_2() throws EndOfLineException {
+        ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1,default=zoe) @string @string");
+        Context context = new AnnotationContext();
+        List<Result> result = new ArrayList<>();
+        ParsedLine line = new DefaultParsedLine("alice amy -sw1 bob");
+
+        a.parse(line, result, context);
+        assertEquals(3, result.size());
+        assertEquals("bob", result.get(0).getValue());
+        assertEquals("alice", result.get(1).getValue());
+        assertEquals("amy", result.get(2).getValue());
+    }
+
 }
