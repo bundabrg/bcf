@@ -21,41 +21,52 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.completion;
+package au.com.grieve.bcf.impl.result;
 
-import au.com.grieve.bcf.CompletionCandidate;
-import au.com.grieve.bcf.CompletionCandidateGroup;
+import au.com.grieve.bcf.Parser;
+import au.com.grieve.bcf.Result;
+import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import lombok.Getter;
-import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+public class SwitchParserResult implements Result {
 
-@Getter
-@ToString
-public class StaticCompletionCandidateGroup implements CompletionCandidateGroup {
+    @Getter
+    private final Parser<?> parser;
 
-    private final List<CompletionCandidate> completionCandidates = new ArrayList<>();
+    @Getter
+    private boolean complete;
 
-    private final String input;
-    private final String description;
+    private Object value;
 
-    public StaticCompletionCandidateGroup(String input) {
-        this(input, null);
+    public SwitchParserResult(Parser<?> parser) {
+        this.parser = parser;
     }
 
-    public StaticCompletionCandidateGroup(String input, String description) {
-        this.input = input;
-        this.description = description;
+    public SwitchParserResult(Parser<?> parser, Object value) {
+        this(parser);
+        setValue(value);
+    }
+
+    public void setValue(Object value) {
+        this.complete = true;
+        this.value = value;
     }
 
     @Override
-    public List<CompletionCandidate> getMatchingCompletionCandidates() {
-        return getCompletionCandidates().stream()
-                .filter(c -> c.getValue().startsWith(getInput()))
-                .collect(Collectors.toList());
+    public Object getValue() throws IllegalArgumentException {
+        try {
+            return complete ? value : parser.parse(new DefaultParsedLine(""));
+        } catch (EndOfLineException e) {
+            throw new IllegalArgumentException();
+        }
     }
 
-
+    @Override
+    public Result copy() {
+        SwitchParserResult result = new SwitchParserResult(parser);
+        result.value = value;
+        result.complete = complete;
+        return result;
+    }
 }

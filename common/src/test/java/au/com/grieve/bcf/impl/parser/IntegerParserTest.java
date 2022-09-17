@@ -161,7 +161,7 @@ class IntegerParserTest {
 
         assertThrows(EndOfLineException.class, () -> integerParser.complete(line, groups));
         assertEquals(1, groups.size());
-        assertEquals(9, groups.get(0).getCompletionCandidates().size());
+        assertEquals(9, groups.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -175,7 +175,7 @@ class IntegerParserTest {
 
         integerParser.complete(line, groups);
         assertEquals(1, groups.size());
-        assertEquals(4, groups.get(0).getCompletionCandidates().size());
+        assertEquals(4, groups.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test

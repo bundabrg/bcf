@@ -25,8 +25,8 @@ package au.com.grieve.bcf.impl.framework.annotation;
 
 import au.com.grieve.bcf.*;
 import au.com.grieve.bcf.exception.EndOfLineException;
-import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
 import au.com.grieve.bcf.impl.result.ParserResult;
+import au.com.grieve.bcf.impl.result.SwitchParserResult;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -68,7 +68,7 @@ public class ArgumentParserChain implements ParserChain {
             String input = line.getCurrentWord().substring(1);
 
             // Look backwards through output for a non-completed result that matches our switch
-            ParserResult result = Stream.concat(
+            SwitchParserResult result = Stream.concat(
                             context.getResult().stream(),
                             output.stream()
                     ).collect(
@@ -80,8 +80,8 @@ public class ArgumentParserChain implements ParserChain {
                                     }
                             )
                     ).stream()
-                    .filter(r -> r instanceof ParserResult)
-                    .map(r -> (ParserResult) r)
+                    .filter(r -> r instanceof SwitchParserResult)
+                    .map(r -> (SwitchParserResult) r)
                     .filter(r -> !r.isComplete())
                     .filter(r -> r.getParser().getParameters().containsKey("switch"))
                     .filter(r -> List.of(r.getParser().getParameters().get("switch").split("\\|")).contains(input))
@@ -102,8 +102,8 @@ public class ArgumentParserChain implements ParserChain {
         for(Parser<?> p : parsers) {
             // If parser is a switch we add it for later evaluation
             if (p.getParameters().containsKey("switch")) {
-                ParserResult parserResult = new ParserResult(p);
-                output.add(parserResult);
+                Result result = new SwitchParserResult(p);
+                output.add(result);
                 continue;
             }
 
@@ -124,11 +124,12 @@ public class ArgumentParserChain implements ParserChain {
     public void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext context) throws EndOfLineException {
         for(Parser<?> p : parsers) {
             // If parser is a switch we add it for later evaluation
-            if (p.getParameters().containsKey("switch")) {
-                CompletionCandidateGroup group = new ParserCompletionCandidateGroup(p, false);
-
-                continue;
-            }
+//            if (p.getParameters().containsKey("switch")) {
+//                CompletionCandidateGroup group = new SwitchParserCompletionCandidateGroup(p);
+//                candidateGroups.add(group);
+//
+//                continue;
+//            }
 
             ParsedLine lineCopy = line.copy();
 

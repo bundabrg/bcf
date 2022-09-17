@@ -28,7 +28,6 @@ import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import au.com.grieve.bcf.impl.parser.IntegerParser;
 import au.com.grieve.bcf.impl.parser.StringParser;
-import au.com.grieve.bcf.impl.result.ParserResult;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -291,7 +290,7 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(0, result.size());
+        assertEquals(0, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     }
 
     @Test
@@ -302,8 +301,8 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(1, result.size());
-        assertEquals(1, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -314,8 +313,8 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(1, result.size());
-        assertEquals(1, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -326,8 +325,8 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(1, result.size());
-        assertEquals(3, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -338,8 +337,8 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(1, result.size());
-        assertEquals(1, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -350,8 +349,8 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(1, result.size());
-        assertEquals(3, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -362,8 +361,8 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(1, result.size());
-        assertEquals(3, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -374,8 +373,8 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(1, result.size());
-        assertEquals(1, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -386,8 +385,8 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(1, result.size());
-        assertEquals(3, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -398,8 +397,8 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(1, result.size());
-        assertEquals(1, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -410,8 +409,8 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(1, result.size());
-        assertEquals(1, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -422,7 +421,7 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(0, result.size());
+        assertEquals(0, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     }
 
     @Test
@@ -433,7 +432,7 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         a.complete(line, result, context);
-        assertEquals(0, result.size());
+        assertEquals(0, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     }
 
     @Test
@@ -444,7 +443,7 @@ class ArgumentParserChainTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
-        assertEquals(0, result.size());
+        assertEquals(0, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     }
 
     @Test
@@ -524,7 +523,7 @@ class ArgumentParserChainTest {
         a.parse(line, result, context);
         assertEquals(3, result.size());
         assertEquals("-sw1", result.get(0).getValue());
-        assertFalse(((ParserResult) result.get(1)).isComplete());
+        assertThrows(IllegalArgumentException.class, () -> result.get(1).getValue());
         assertEquals("bob", result.get(2).getValue());
     }
 
@@ -568,7 +567,7 @@ class ArgumentParserChainTest {
         assertEquals(3, result.size());
         assertEquals("-sw1", result.get(0).getValue());
         assertEquals("bob", result.get(1).getValue());
-        assertFalse(((ParserResult) result.get(2)).isComplete());
+        assertThrows(IllegalArgumentException.class, () -> result.get(2).getValue());
     }
 
     @Test
@@ -583,7 +582,7 @@ class ArgumentParserChainTest {
         assertEquals(3, result.size());
         assertEquals("alice", result.get(0).getValue());
         assertEquals("-sw1", result.get(1).getValue());
-        assertFalse(((ParserResult) result.get(2)).isComplete());
+        assertThrows(IllegalArgumentException.class, () -> result.get(2).getValue());
     }
 
     @Test
@@ -608,7 +607,7 @@ class ArgumentParserChainTest {
         ParsedLine line = new DefaultParsedLine("alice amy bob");
 
         a.parse(line, result, context);
-        assertFalse(((ParserResult) result.get(0)).isComplete());
+        assertThrows(IllegalArgumentException.class, () -> result.get(0).getValue());
     }
 
     @Test

@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -713,7 +714,7 @@ class AnnotationCommandTest {
         List<CompletionCandidateGroup> groups = new ArrayList<>();
         c.complete(line, groups, ctx);
 
-        assertEquals(0, groups.size());
+        assertEquals(0, groups.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     }
 
     @Test
@@ -728,7 +729,7 @@ class AnnotationCommandTest {
         c.complete(line, groups, ctx);
 
         assertEquals(1, groups.size());
-        assertEquals(2, groups.get(0).getCompletionCandidates().size());
+        assertEquals(2, groups.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -743,7 +744,7 @@ class AnnotationCommandTest {
         c.complete(line, groups, ctx);
 
         assertEquals(1, groups.size());
-        assertEquals(1, groups.get(0).getCompletionCandidates().size());
+        assertEquals(1, groups.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -774,12 +775,12 @@ class AnnotationCommandTest {
         // Should have 2 groups, one with 'mike', and another with 'mike,marta,millie' for the two methods
         assertEquals(2, groups.size());
         assertTrue(groups.stream()
-                .map(g -> g.getCompletionCandidates().size() == 1)
+                .map(g -> g.getMatchingCompletionCandidates().size() == 1)
                 .filter(b -> b)
                 .findFirst()
                 .orElse(false));
         assertTrue(groups.stream()
-                .map(g -> g.getCompletionCandidates().size() == 3)
+                .map(g -> g.getMatchingCompletionCandidates().size() == 3)
                 .filter(b -> b)
                 .findFirst()
                 .orElse(false));
@@ -796,8 +797,8 @@ class AnnotationCommandTest {
         List<CompletionCandidateGroup> groups = new ArrayList<>();
         c.complete(line, groups, ctx);
 
-        assertEquals(1, groups.size());
-        assertEquals("marta", groups.get(0).getCompletionCandidates().get(0).getValue());
+        assertEquals(1, groups.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals("marta", groups.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).collect(Collectors.toList()).get(0).getMatchingCompletionCandidates().get(0).getValue());
     }
 
     @Test
@@ -812,7 +813,7 @@ class AnnotationCommandTest {
         c.complete(line, groups, ctx);
 
         assertEquals(1, groups.size());
-        assertEquals("art", groups.get(0).getCompletionCandidates().get(0).getValue());
+        assertEquals("art", groups.get(0).getMatchingCompletionCandidates().get(0).getValue());
     }
 
     @Test
@@ -827,8 +828,8 @@ class AnnotationCommandTest {
         c.complete(line, groups, ctx);
 
         assertEquals(2, groups.size());
-        assertEquals("mike", groups.get(0).getCompletionCandidates().get(0).getValue());
-        assertEquals("mike", groups.get(1).getCompletionCandidates().get(0).getValue());
+        assertEquals("mike", groups.get(0).getMatchingCompletionCandidates().get(0).getValue());
+        assertEquals("mike", groups.get(1).getMatchingCompletionCandidates().get(0).getValue());
     }
 
     @Test
@@ -844,12 +845,12 @@ class AnnotationCommandTest {
 
         assertEquals(2, groups.size());
         assertTrue(groups.stream()
-                .map(g -> g.getCompletionCandidates().size() == 2)
+                .map(g -> g.getMatchingCompletionCandidates().size() == 2)
                 .filter(b -> b)
                 .findFirst()
                 .orElse(false));
         assertTrue(groups.stream()
-                .map(g -> g.getCompletionCandidates().size() == 1)
+                .map(g -> g.getMatchingCompletionCandidates().size() == 1)
                 .filter(b -> b)
                 .findFirst()
                 .orElse(false));
@@ -866,8 +867,8 @@ class AnnotationCommandTest {
         List<CompletionCandidateGroup> groups = new ArrayList<>();
         c.complete(line, groups, ctx);
 
-        assertEquals(1, groups.size());
-        assertEquals("plate", groups.get(0).getCompletionCandidates().get(0).getValue());
+        assertEquals(1, groups.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals("plate", groups.get(0).getMatchingCompletionCandidates().get(0).getValue());
     }
 
     @Test

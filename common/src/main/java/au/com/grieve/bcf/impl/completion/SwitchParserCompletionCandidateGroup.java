@@ -21,34 +21,39 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.completion;
+
+import au.com.grieve.bcf.CompletionCandidate;
+import au.com.grieve.bcf.Parser;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public interface CompletionCandidateGroup {
 
-    /**
-     * Return the list of all CompletionCandidates that belong to this group
-     * @return List of CompletionCandidates
-     */
-    List<CompletionCandidate> getCompletionCandidates();
+@Getter
+@ToString
+public class SwitchParserCompletionCandidateGroup extends ParserCompletionCandidateGroup {
 
-    /**
-     * Return the list of completion candidates that match the input
-     * @return List of CompletionCandidates
-     */
-    List<CompletionCandidate> getMatchingCompletionCandidates();
+    public SwitchParserCompletionCandidateGroup(Parser<?> parser, String input) {
+        super(parser, input);
+    }
 
-    /**
-     * Get the description of this completion group
-     * @return description
-     */
-    String getDescription();
+    public boolean isComplete() {
+        return getCompletionCandidates().size() > 0;
+    }
 
-    /**
-     * Return the input that caused this completion
-     * @return the input
-     */
-    String getInput();
+    @Override
+    public List<CompletionCandidate> getCompletionCandidates() {
+        if (isComplete()) {
+            return super.getCompletionCandidates();
+        }
 
+        // Return list of switches instead
+        return Stream.of(getParser().getParameters().get("switch").split("\\|"))
+                .map(s -> new DefaultCompletionCandidate("-" + s))
+                .collect(Collectors.toList());
+    }
 }

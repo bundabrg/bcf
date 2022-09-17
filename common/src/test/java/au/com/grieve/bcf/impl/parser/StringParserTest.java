@@ -149,7 +149,7 @@ class StringParserTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         p.complete(line, result);
-        assertEquals(0, result.size());
+        assertEquals(0, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     }
 
     @Test
@@ -161,8 +161,8 @@ class StringParserTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         p.complete(line, result);
-        assertEquals(1, result.size());
-        assertEquals(3, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -174,8 +174,8 @@ class StringParserTest {
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
         p.complete(line, result);
-        assertEquals(1, result.size());
-        assertEquals(1, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
     }
 
     @Test
@@ -200,7 +200,7 @@ class StringParserTest {
         line.next();
 
         p.complete(line, result);
-        assertEquals(1, result.size());
-        assertEquals(3, result.get(0).getCompletionCandidates().size());
+        assertEquals(1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
+        assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
     }
 }

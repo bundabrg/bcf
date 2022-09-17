@@ -931,8 +931,7 @@ class AnnotationCommandManagerTest {
 
         manager.complete("cmd2 m_arg2", groups);
 
-        assertEquals(1, groups.size());
-        assertEquals(1, groups.get(0).getCompletionCandidates().size());
+        assertEquals(2, groups.size());
     }
 
     @Test
@@ -956,7 +955,8 @@ class AnnotationCommandManagerTest {
 
         manager.complete("cmd2 m_arg1", groups);
 
-        assertEquals(0, groups.size());
+        assertEquals(1, groups.size());
+        assertEquals("c_arg1", groups.get(0).getCompletionCandidates().get(0).getValue());
     }
 
     @Test

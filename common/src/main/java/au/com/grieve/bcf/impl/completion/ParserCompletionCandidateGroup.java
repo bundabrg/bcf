@@ -27,11 +27,11 @@ import au.com.grieve.bcf.CompletionCandidate;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.Parser;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @ToString
@@ -40,19 +40,21 @@ public class ParserCompletionCandidateGroup implements CompletionCandidateGroup 
     private final List<CompletionCandidate> completionCandidates = new ArrayList<>();
     private final Parser<?> parser;
 
-    @Setter
-    private boolean complete;
+    private final String input;
 
-    public ParserCompletionCandidateGroup(Parser<?> parser) {
-        this(parser, true);
-    }
-
-    public ParserCompletionCandidateGroup(Parser<?> parser, boolean complete) {
+    public ParserCompletionCandidateGroup(Parser<?> parser, String input) {
         this.parser = parser;
-        this.complete = complete;
+        this.input = input;
     }
 
     public String getDescription() {
         return parser.getParameters().get("description");
+    }
+
+    @Override
+    public List<CompletionCandidate> getMatchingCompletionCandidates() {
+        return getCompletionCandidates().stream()
+                .filter(c -> c.getValue().startsWith(getInput()))
+                .collect(Collectors.toList());
     }
 }

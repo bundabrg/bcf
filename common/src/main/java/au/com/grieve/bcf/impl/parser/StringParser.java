@@ -62,10 +62,10 @@ public class StringParser extends BaseParser<String> {
         String input = line.next();
 
         if (getParameters().containsKey("options")) {
-            ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this);
+            ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
             group.getCompletionCandidates().addAll(
                     Arrays.stream(getParameters().get("options").split("\\|"))
-                            .filter(s -> s.startsWith(input))
+//                            .filter(s -> s.startsWith(input))
                             .map(DefaultCompletionCandidate::new)
                             .collect(Collectors.toList())
             );

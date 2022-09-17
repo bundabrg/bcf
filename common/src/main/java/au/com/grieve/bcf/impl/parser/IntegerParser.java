@@ -64,11 +64,11 @@ public class IntegerParser extends BaseParser<Integer> {
             int min = Integer.parseInt(getParameters().get("min"));
             int max = Integer.parseInt(getParameters().get("max"));
 
-            ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this);
+            ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
             group.getCompletionCandidates().addAll(
                     IntStream.rangeClosed(min, max)
                             .mapToObj(String::valueOf)
-                            .filter(s -> s.startsWith(input))
+//                            .filter(s -> s.startsWith(input))
                             .limit(20)
                             .map(DefaultCompletionCandidate::new)
                             .collect(Collectors.toList())

@@ -25,48 +25,22 @@ package au.com.grieve.bcf.impl.result;
 
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.Result;
-import au.com.grieve.bcf.exception.EndOfLineException;
-import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import lombok.Getter;
 
+@Getter
 public class ParserResult implements Result {
 
-    @Getter
     private final Parser<?> parser;
 
-    @Getter
-    private boolean complete;
-
-    private Object value;
-
-    public ParserResult(Parser<?> parser) {
-        this.parser = parser;
-    }
+    private final Object value;
 
     public ParserResult(Parser<?> parser, Object value) {
-        this(parser);
-        setValue(value);
-    }
-
-    public void setValue(Object value) {
-        this.complete = true;
+        this.parser = parser;
         this.value = value;
     }
 
     @Override
-    public Object getValue() throws IllegalArgumentException {
-        try {
-            return complete ? value : parser.parse(new DefaultParsedLine(""));
-        } catch (EndOfLineException e) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    @Override
     public Result copy() {
-        ParserResult result = new ParserResult(parser);
-        result.value = value;
-        result.complete = complete;
-        return result;
+        return new ParserResult(parser, value);
     }
 }
