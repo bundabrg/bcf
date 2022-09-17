@@ -21,26 +21,28 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.platform.terminalconsole.mapper;
+package au.com.grieve.bcf;
 
+/**
+ * A result that may be completed later
+ */
+public interface Result {
 
-import org.jline.reader.Candidate;
-import org.jline.reader.Completer;
-import org.jline.reader.LineReader;
-import org.jline.reader.ParsedLine;
+    /**
+     * Return the parser that provided this result
+     * @return Parser
+     */
+    Parser<?> getParser();
 
-import java.util.List;
+    /**
+     * Returns true if a value has been assigned
+     * @return True if value assigned
+     */
+    boolean isComplete();
 
-public class CommandCompleter implements Completer {
-
-    private final CommandMap commandMap;
-
-    public CommandCompleter(CommandMap commandMap) {
-        this.commandMap = commandMap;
-    }
-
-    @Override
-    public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
-        candidates.addAll(commandMap.complete(line.line()));
-    }
+    /**
+     * Return the value
+     * @return Result
+     */
+    Object getValue();
 }

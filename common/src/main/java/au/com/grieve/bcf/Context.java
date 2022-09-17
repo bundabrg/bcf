@@ -36,7 +36,7 @@ public interface Context {
      * Return the result so far
      * @return List of parameters
      */
-    List<Object> getResult();
+    List<Result> getResult();
 
     /**
      * Return a copy of ourselves

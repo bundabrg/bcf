@@ -107,10 +107,11 @@ public class AnnotationCommand implements Command {
                 .collect(Collectors.toList());
 
         for (ArgumentParserChain p : classChain) {
-            List<Object> result = new ArrayList<>();
+            List<Result> result = new ArrayList<>();
             ParsedLine currentLine = line.copy();
+            Context currentContext = context.copy();
             try {
-                p.parse(currentLine, result);
+                p.parse(currentLine, result, currentContext);
             } catch (EndOfLineException e) {
                 // Ran out of input to satisfy this chain
                 candidates.add(getErrorExecutionCandidate(context.getCommandChain(), currentLine.getWordIndex()));
@@ -121,7 +122,6 @@ public class AnnotationCommand implements Command {
                 continue;
             }
 
-            Context currentContext = context.copy();
             currentContext.getResult().addAll(result);
 
             // Add a default at this level
@@ -158,10 +158,11 @@ public class AnnotationCommand implements Command {
         for(Map.Entry<String, Method> item : methodArgStrings.entrySet()) {
             ArgumentParserChain methodChain = new ArgumentParserChain(((AnnotationContext) context).getParserClasses(), item.getKey());
 
-            List<Object> result = new ArrayList<>();
+            List<Result> result = new ArrayList<>();
             ParsedLine currentLine = line.copy();
+            Context currentContext = context.copy();
             try {
-                methodChain.parse(currentLine, result);
+                methodChain.parse(currentLine, result, currentContext);
             } catch (EndOfLineException e) {
                 // Ran out of input to satisfy this chain
                 candidates.add(getErrorExecutionCandidate(context.getCommandChain(), currentLine.getWordIndex()));
@@ -172,10 +173,23 @@ public class AnnotationCommand implements Command {
                 continue;
             }
 
-            Context currentContext = context.copy();
             currentContext.getResult().addAll(result);
 
-            candidates.add(new DefaultExecutionCandidate(this, item.getValue(), currentLine.getWordIndex(), currentContext.getResult()));
+            // Make sure all values are available
+            if (currentContext.getResult().stream()
+                    .map(Result::isComplete)
+                    .filter(b -> !b)
+                    .findFirst()
+                    .orElse(true)
+            ) {
+                candidates.add(new DefaultExecutionCandidate(this, item.getValue(), currentLine.getWordIndex(),
+                        currentContext.getResult().stream()
+                                .map(Result::getValue)
+                                .collect(Collectors.toList())
+                ));
+            }
+
+
         }
         return candidates.stream()
                 .filter(Objects::nonNull)
@@ -188,9 +202,9 @@ public class AnnotationCommand implements Command {
         List<ExecutionCandidate> candidates = new ArrayList<>();
 
         if (context.getCommandChain().size() == 0 && ((AnnotationContext) context).getPrefixParserChain() != null) {
-            List<Object> result = new ArrayList<>();
+            List<Result> result = new ArrayList<>();
             try {
-                ((AnnotationContext) context).getPrefixParserChain().parse(line, result);
+                ((AnnotationContext) context).getPrefixParserChain().parse(line, result, context);
             } catch (EndOfLineException | IllegalArgumentException e) {
                 return getErrorExecutionCandidate(context.getCommandChain(), line.getWordIndex());
             }
@@ -218,13 +232,12 @@ public class AnnotationCommand implements Command {
 
         for (ArgumentParserChain p : classChain) {
             ParsedLine currentLine = line.copy();
+            Context currentContext = context.copy();
             try {
-                p.complete(currentLine, candidates);
+                p.complete(currentLine, candidates, currentContext);
             } catch (EndOfLineException e) {
                 continue;
             }
-
-            Context currentContext = context.copy();
 
             completeMethod(currentLine.copy(), candidates, currentContext);
             completeChildren(currentLine.copy(), candidates, currentContext);
@@ -244,8 +257,9 @@ public class AnnotationCommand implements Command {
             ArgumentParserChain methodChain = new ArgumentParserChain(((AnnotationContext) context).getParserClasses(), item.getKey());
 
             ParsedLine currentLine = line.copy();
+            Context currentContext = context.copy();
             try {
-                methodChain.complete(currentLine, candidates);
+                methodChain.complete(currentLine, candidates, currentContext);
             } catch (EndOfLineException ignored) {
             }
         }
@@ -256,7 +270,7 @@ public class AnnotationCommand implements Command {
     public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates, Context context) {
         if (context.getCommandChain().size() == 0 && ((AnnotationContext) context).getPrefixParserChain() != null) {
             try {
-                ((AnnotationContext) context).getPrefixParserChain().complete(line, candidates);
+                ((AnnotationContext) context).getPrefixParserChain().complete(line, candidates, context);
             } catch (EndOfLineException | IllegalArgumentException e) {
                 return;
             }

@@ -21,38 +21,44 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.platform.terminalconsole;
+package au.com.grieve.bcf.impl.result;
 
-import au.com.grieve.bcf.platform.terminalconsole.mapper.CommandCompleter;
-import au.com.grieve.bcf.platform.terminalconsole.mapper.CommandMap;
+import au.com.grieve.bcf.Parser;
+import au.com.grieve.bcf.Result;
+import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import lombok.Getter;
-import net.minecrell.terminalconsole.SimpleTerminalConsole;
-import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
 
-@Getter
-public abstract class TerminalConsole extends SimpleTerminalConsole {
+public class ParserResult implements Result {
 
-    private final CommandMap commandMap;
-    private final CommandCompleter commandCompleter;
+    @Getter
+    private final Parser<?> parser;
 
-    public TerminalConsole() {
-        commandMap = new CommandMap();
-        this.commandCompleter = new CommandCompleter(commandMap);
+    @Getter
+    private boolean complete;
+
+    private Object value;
+
+    public ParserResult(Parser<?> parser) {
+        this.parser = parser;
+    }
+
+    public ParserResult(Parser<?> parser, Object value) {
+        this(parser);
+        setValue(value);
+    }
+
+    public void setValue(Object value) {
+        this.complete = true;
+        this.value = value;
     }
 
     @Override
-    protected LineReader buildReader(LineReaderBuilder builder) {
-        return super.buildReader(builder
-                .completer(commandCompleter)
-        );
-
-    }
-
-    @Override
-    protected void runCommand(String input) {
-        if (!commandMap.execute(input)) {
-            System.err.println("No such command");
+    public Object getValue() throws IllegalArgumentException {
+        try {
+            return complete ? value : parser.parse(new DefaultParsedLine(""));
+        } catch (EndOfLineException e) {
+            throw new IllegalArgumentException();
         }
     }
 }

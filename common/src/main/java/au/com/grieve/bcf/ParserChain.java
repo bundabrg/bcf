@@ -39,14 +39,14 @@ public interface ParserChain {
      * @param line Input line to parse into objects
      * @param output Output data
      */
-    void parse(ParsedLine line, List<Object> output) throws EndOfLineException;
+    void parse(ParsedLine line, List<Result> output, Context context) throws EndOfLineException;
 
     /**
      * Provide completions for the parsed line
      * @param line Input line to parse
      * @param candidateGroups Completion Candidate Groups
      */
-    void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups) throws EndOfLineException;
+    void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, Context context) throws EndOfLineException;
 
 
 }

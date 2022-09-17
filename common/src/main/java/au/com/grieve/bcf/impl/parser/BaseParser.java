@@ -27,6 +27,7 @@ import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -73,7 +74,25 @@ public abstract class BaseParser<RT> extends Parser<RT> {
     @Override
     public RT parse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
         ParsedLine currentLine = line.copy();
-        RT result = doParse(currentLine);
+        RT result;
+        try {
+            result = doParse(currentLine);
+        } catch (EndOfLineException e) {
+            // Handle default
+            if (getParameters().getOrDefault("required", "true").equals("false") ||
+                    getParameters().containsKey("default")) {
+
+                String defaultValue = getParameters().get("default");
+                if (defaultValue != null) {
+                    result = doParse(new DefaultParsedLine(defaultValue));
+                } else {
+                    result = null;
+                }
+            } else {
+                throw e;
+            }
+        }
+
         line.setWordIndex(currentLine.getWordIndex());
         return result;
     }

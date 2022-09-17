@@ -23,12 +23,9 @@
 
 package au.com.grieve.bcf.impl.framework.annotation;
 
-import au.com.grieve.bcf.CompletionCandidateGroup;
-import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.Parser;
-import au.com.grieve.bcf.ParserChain;
+import au.com.grieve.bcf.*;
 import au.com.grieve.bcf.exception.EndOfLineException;
-import au.com.grieve.bcf.impl.line.DefaultParsedLine;
+import au.com.grieve.bcf.impl.result.ParserResult;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -60,37 +57,64 @@ public class ArgumentParserChain implements ParserChain {
         this.parsers.addAll(parseArgumentString(input));
     }
 
-    @Override
-    public void parse(ParsedLine line, List<Object> output) throws EndOfLineException, IllegalArgumentException {
-        for(Parser<?> p : parsers) {
-            Object result;
-            try {
-                result = p.parse(line);
-            } catch (EndOfLineException e) {
-                // Handle defaults
-                if (p.getParameters().getOrDefault("required", "true").equals("false") ||
-                        p.getParameters().containsKey("default")) {
-
-                    String defaultValue = p.getParameters().get("default");
-                    if (defaultValue != null) {
-                        result = p.parse(new DefaultParsedLine(defaultValue));
-                    } else {
-                        result = null;
-                    }
-                } else {
-                    throw e;
-                }
-            }
-
-            // Handle suppress
-            if (p.getParameters().getOrDefault("suppress", "false").equals("false")) {
-                output.add(result);
-            }
+    /**
+     * Try to parse against a switch
+     * @param line Parsed Line
+     * @param context Current context
+     */
+    protected void handleSwitches(ParsedLine line, Context context) throws EndOfLineException, IllegalArgumentException {
+        if (!line.getCurrentWord().startsWith("-")) {
+            return;
         }
+
+        String input = line.getCurrentWord().substring(1);
+
+        List<ParserResult> parserResults = ((AnnotationContext) context).getSwitches().entrySet().stream()
+                .filter(e -> List.of(e.getKey().split("\\|")).contains(input))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+
+
+
+        if (parserResults == null) {
+            return;
+        }
+
+        line.next();
+        ParserResult switchResult = parserResults.remove(0);
+        switchResult.setValue(switchResult.getParser().parse(line));
     }
 
     @Override
-    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups) throws EndOfLineException {
+    public void parse(ParsedLine line, List<Result> output, Context context) throws EndOfLineException, IllegalArgumentException {
+        for(Parser<?> p : parsers) {
+            // If parser is a switch we add it for later evaluation
+            if (p.getParameters().containsKey("switch")) {
+                List<ParserResult> switches = ((AnnotationContext) context).getSwitches().computeIfAbsent(
+                        p.getParameters().get("switch"), k -> new ArrayList<>()
+                );
+                ParserResult parserResult = new ParserResult(p);
+                switches.add(parserResult);
+                output.add(parserResult);
+                continue;
+            }
+
+            handleSwitches(line, context);
+
+            Object result = p.parse(line);
+
+            // Handle suppress - Can this move into parser?
+            if (p.getParameters().getOrDefault("suppress", "false").equals("false")) {
+                output.add(new ParserResult(p, result));
+            }
+        }
+
+        handleSwitches(line, context);
+    }
+
+    @Override
+    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, Context context) throws EndOfLineException {
         for(Parser<?> p : parsers) {
             ParsedLine lineCopy = line.copy();
 
