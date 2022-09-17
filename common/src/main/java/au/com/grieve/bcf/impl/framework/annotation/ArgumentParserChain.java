@@ -25,6 +25,7 @@ package au.com.grieve.bcf.impl.framework.annotation;
 
 import au.com.grieve.bcf.*;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
 import au.com.grieve.bcf.impl.result.ParserResult;
 import lombok.Getter;
 import lombok.ToString;
@@ -61,17 +62,13 @@ public class ArgumentParserChain implements ParserChain {
      * @param line Parsed Line
      * @param context Current context
      */
-    protected void handleSwitches(ParsedLine line, List<Result> output, Context context) throws EndOfLineException, IllegalArgumentException {
+    protected void parseSwitches(ParsedLine line, List<Result> output, ExecuteContext context) throws EndOfLineException, IllegalArgumentException {
         while (line.getCurrentWord().startsWith("-")) {
 
             String input = line.getCurrentWord().substring(1);
-//            System.err.println("  - Handling switch: " + input);
-//            System.err.println("    + output: " + output);
-//            System.err.println("    + contxt: " + context.getResult());
-
 
             // Look backwards through output for a non-completed result that matches our switch
-            Result result = Stream.concat(
+            ParserResult result = Stream.concat(
                             context.getResult().stream(),
                             output.stream()
                     ).collect(
@@ -83,6 +80,8 @@ public class ArgumentParserChain implements ParserChain {
                                     }
                             )
                     ).stream()
+                    .filter(r -> r instanceof ParserResult)
+                    .map(r -> (ParserResult) r)
                     .filter(r -> !r.isComplete())
                     .filter(r -> r.getParser().getParameters().containsKey("switch"))
                     .filter(r -> List.of(r.getParser().getParameters().get("switch").split("\\|")).contains(input))
@@ -90,28 +89,25 @@ public class ArgumentParserChain implements ParserChain {
                     .orElse(null);
 
             if (result == null) {
-//                System.err.println("    - Not found");
                 break;
             }
 
             line.next();
-            ((ParserResult) result).setValue(result.getParser().parse(line));
+            result.setValue(result.getParser().parse(line));
         }
     }
 
     @Override
-    public void parse(ParsedLine line, List<Result> output, Context context) throws EndOfLineException, IllegalArgumentException {
+    public void parse(ParsedLine line, List<Result> output, ExecuteContext context) throws EndOfLineException, IllegalArgumentException {
         for(Parser<?> p : parsers) {
-//            System.err.println("Parser: " + p);
             // If parser is a switch we add it for later evaluation
             if (p.getParameters().containsKey("switch")) {
-//                System.err.println("  - Is a switch");
                 ParserResult parserResult = new ParserResult(p);
                 output.add(parserResult);
                 continue;
             }
 
-            handleSwitches(line, output, context);
+            parseSwitches(line, output, context);
 
             Object result = p.parse(line);
 
@@ -121,12 +117,19 @@ public class ArgumentParserChain implements ParserChain {
             }
         }
 
-        handleSwitches(line, output, context);
+        parseSwitches(line, output, context);
     }
 
     @Override
-    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, Context context) throws EndOfLineException {
+    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext context) throws EndOfLineException {
         for(Parser<?> p : parsers) {
+            // If parser is a switch we add it for later evaluation
+            if (p.getParameters().containsKey("switch")) {
+                CompletionCandidateGroup group = new ParserCompletionCandidateGroup(p, false);
+
+                continue;
+            }
+
             ParsedLine lineCopy = line.copy();
 
             try {

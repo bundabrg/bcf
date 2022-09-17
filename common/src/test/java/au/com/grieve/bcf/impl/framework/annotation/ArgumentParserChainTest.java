@@ -28,6 +28,7 @@ import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import au.com.grieve.bcf.impl.parser.IntegerParser;
 import au.com.grieve.bcf.impl.parser.StringParser;
+import au.com.grieve.bcf.impl.result.ParserResult;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -183,7 +184,7 @@ class ArgumentParserChainTest {
     void parseSuppress_1() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string");
         ParsedLine line = new DefaultParsedLine("bob");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
 
         a.parse(line, result, context);
@@ -194,7 +195,7 @@ class ArgumentParserChainTest {
     @Test
     void parseSuppress_2() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(suppress=true)");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         ParsedLine line = new DefaultParsedLine("bob");
         List<Result> result = new ArrayList<>();
 
@@ -205,7 +206,7 @@ class ArgumentParserChainTest {
     @Test
     void parseDefaultRequired_1() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(default=alice)");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         ParsedLine line = new DefaultParsedLine("bob");
         List<Result> result = new ArrayList<>();
 
@@ -217,7 +218,7 @@ class ArgumentParserChainTest {
     @Test
     void parseDefaultRequired_2() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(default=alice)");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         ParsedLine line = new DefaultParsedLine("");
         List<Result> result = new ArrayList<>();
 
@@ -229,7 +230,7 @@ class ArgumentParserChainTest {
     @Test
     void parseDefaultRequired_3() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(required=false)");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         ParsedLine line = new DefaultParsedLine("bob");
         List<Result> result = new ArrayList<>();
 
@@ -241,7 +242,7 @@ class ArgumentParserChainTest {
     @Test
     void parseDefaultRequired_4() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(required=false)");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         ParsedLine line = new DefaultParsedLine("");
         List<Result> result = new ArrayList<>();
 
@@ -253,7 +254,7 @@ class ArgumentParserChainTest {
     @Test
     void parseDefaultRequired_5() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@int(default=5)");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         ParsedLine line = new DefaultParsedLine("");
         List<Result> result = new ArrayList<>();
 
@@ -265,7 +266,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_1() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -275,7 +276,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_2() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine(" ");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -285,7 +286,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_3() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("b");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -296,7 +297,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_4() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("l");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -308,7 +309,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_5() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("literal1");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -320,7 +321,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_6() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal3");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("literal");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -332,7 +333,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_7() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal3");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("literal1");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -344,7 +345,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_8() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal3 mike|milly|mark");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("l");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -356,7 +357,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_9() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("literal");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -368,7 +369,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_10() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("literal1");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -380,7 +381,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_11() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("literal ");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -392,7 +393,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_12() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("literal ma");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -404,7 +405,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_13() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("literal mark");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -416,7 +417,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_14() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("literal markb");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -427,7 +428,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_15() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("literal mark b");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -438,7 +439,7 @@ class ArgumentParserChainTest {
     @Test
     void complete_16() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "literal1|literal2|literal mike|milly|mark");
-        Context context = new AnnotationContext();
+        CompletionContext context = new AnnotationCompletionContext();
         ParsedLine line = new DefaultParsedLine("l m");
         List<CompletionCandidateGroup> result = new ArrayList<>();
 
@@ -449,7 +450,7 @@ class ArgumentParserChainTest {
     @Test
     void parseSwitch_1() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1) @string @string");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("alice");
 
@@ -461,7 +462,7 @@ class ArgumentParserChainTest {
     @Test
     void parseSwitch_2() {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1) @string @string");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("-sw1 bob");
 
@@ -473,7 +474,7 @@ class ArgumentParserChainTest {
     @Test
     void parseSwitch_3() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1) @string @string");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("alice amy -sw1 bob");
 
@@ -487,7 +488,7 @@ class ArgumentParserChainTest {
     @Test
     void parseSwitch_4() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1) @string @string");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("alice -sw1 bob amy");
 
@@ -501,7 +502,7 @@ class ArgumentParserChainTest {
     @Test
     void parseSwitch_5() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1) @string @string");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("-sw1 bob alice amy");
 
@@ -515,7 +516,7 @@ class ArgumentParserChainTest {
     @Test
     void parseSwitch_6() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string(switch=sw1) @string");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("-sw1 bob alice amy");
 
@@ -523,14 +524,14 @@ class ArgumentParserChainTest {
         a.parse(line, result, context);
         assertEquals(3, result.size());
         assertEquals("-sw1", result.get(0).getValue());
-        assertFalse(result.get(1).isComplete());
+        assertFalse(((ParserResult) result.get(1)).isComplete());
         assertEquals("bob", result.get(2).getValue());
     }
 
     @Test
     void parseSwitch_7() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string(switch=sw1) @string");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("alice -sw1 bob amy");
 
@@ -544,7 +545,7 @@ class ArgumentParserChainTest {
     @Test
     void parseSwitch_8() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string(switch=sw1) @string");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("alice amy -sw1 bob");
 
@@ -558,7 +559,7 @@ class ArgumentParserChainTest {
     @Test
     void parseSwitch_9() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string @string(switch=sw1)");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("-sw1 bob alice amy");
 
@@ -567,13 +568,13 @@ class ArgumentParserChainTest {
         assertEquals(3, result.size());
         assertEquals("-sw1", result.get(0).getValue());
         assertEquals("bob", result.get(1).getValue());
-        assertFalse(result.get(2).isComplete());
+        assertFalse(((ParserResult) result.get(2)).isComplete());
     }
 
     @Test
     void parseSwitch_10() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string @string(switch=sw1)");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("alice -sw1 bob amy");
 
@@ -582,13 +583,13 @@ class ArgumentParserChainTest {
         assertEquals(3, result.size());
         assertEquals("alice", result.get(0).getValue());
         assertEquals("-sw1", result.get(1).getValue());
-        assertFalse(result.get(2).isComplete());
+        assertFalse(((ParserResult) result.get(2)).isComplete());
     }
 
     @Test
     void parseSwitch_11() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string @string @string(switch=sw1)");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("alice amy -sw1 bob");
 
@@ -602,18 +603,18 @@ class ArgumentParserChainTest {
     @Test
     void parseSwitch_12() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1) @string @string");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("alice amy bob");
 
         a.parse(line, result, context);
-        assertFalse(result.get(0).isComplete());
+        assertFalse(((ParserResult) result.get(0)).isComplete());
     }
 
     @Test
     void parseSwitchDefault_1() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1,default=zoe) @string @string");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("alice amy");
 
@@ -627,7 +628,7 @@ class ArgumentParserChainTest {
     @Test
     void parseSwitchDefault_2() throws EndOfLineException {
         ArgumentParserChain a = new ArgumentParserChain(getParserClasses1(), "@string(switch=sw1,default=zoe) @string @string");
-        Context context = new AnnotationContext();
+        ExecuteContext context = new AnnotationExecuteContext();
         List<Result> result = new ArrayList<>();
         ParsedLine line = new DefaultParsedLine("alice amy -sw1 bob");
 

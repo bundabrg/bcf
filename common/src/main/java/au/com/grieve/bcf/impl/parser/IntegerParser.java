@@ -27,7 +27,7 @@ import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
-import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidateGroup;
+import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
 import lombok.ToString;
 
 import java.util.List;
@@ -64,7 +64,7 @@ public class IntegerParser extends BaseParser<Integer> {
             int min = Integer.parseInt(getParameters().get("min"));
             int max = Integer.parseInt(getParameters().get("max"));
 
-            DefaultCompletionCandidateGroup group = new DefaultCompletionCandidateGroup(getParameters().get("description"));
+            ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this);
             group.getCompletionCandidates().addAll(
                     IntStream.rangeClosed(min, max)
                             .mapToObj(String::valueOf)

@@ -21,32 +21,38 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.completion;
 
-import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.CompletionCandidate;
+import au.com.grieve.bcf.CompletionCandidateGroup;
+import au.com.grieve.bcf.Parser;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface ParserChain {
-    /**
-     * Return the list of parsers that make up this parser chain
-     * @return List of Parsers
-     */
-    List<Parser<?>> getParsers();
+@Getter
+@ToString
+public class ParserCompletionCandidateGroup implements CompletionCandidateGroup {
 
-    /**
-     * Parse line
-     * @param line Input line to parse into objects
-     * @param output Output data
-     */
-    void parse(ParsedLine line, List<Result> output, ExecuteContext context) throws EndOfLineException;
+    private final List<CompletionCandidate> completionCandidates = new ArrayList<>();
+    private final Parser<?> parser;
 
-    /**
-     * Provide completions for the parsed line
-     * @param line Input line to parse
-     * @param candidateGroups Completion Candidate Groups
-     */
-    void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext context) throws EndOfLineException;
+    @Setter
+    private boolean complete;
 
+    public ParserCompletionCandidateGroup(Parser<?> parser) {
+        this(parser, true);
+    }
 
+    public ParserCompletionCandidateGroup(Parser<?> parser, boolean complete) {
+        this.parser = parser;
+        this.complete = complete;
+    }
+
+    public String getDescription() {
+        return parser.getParameters().get("description");
+    }
 }

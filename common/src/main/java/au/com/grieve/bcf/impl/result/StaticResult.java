@@ -21,26 +21,22 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.result;
 
-import java.util.List;
+import au.com.grieve.bcf.Result;
+import lombok.Getter;
 
-public interface Context {
-    /**
-     * Return the chain of command classes so far
-     * @return List of Commands
-     */
-    List<Command> getCommandChain();
+public class StaticResult implements Result {
 
-    /**
-     * Return the result so far
-     * @return List of parameters
-     */
-    List<Result> getResult();
+    @Getter
+    private final Object value;
 
-    /**
-     * Return a copy of ourselves
-     * @return Copy
-     */
-    Context copy();
+    public StaticResult(Object value) {
+        this.value = value;
+    }
+
+    @Override
+    public Result copy() {
+        return new StaticResult(value);
+    }
 }

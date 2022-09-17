@@ -27,7 +27,7 @@ import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
-import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidateGroup;
+import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
 import lombok.ToString;
 
 import java.util.Arrays;
@@ -62,7 +62,7 @@ public class StringParser extends BaseParser<String> {
         String input = line.next();
 
         if (getParameters().containsKey("options")) {
-            DefaultCompletionCandidateGroup group = new DefaultCompletionCandidateGroup(getParameters().get("description"));
+            ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this);
             group.getCompletionCandidates().addAll(
                     Arrays.stream(getParameters().get("options").split("\\|"))
                             .filter(s -> s.startsWith(input))

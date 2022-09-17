@@ -24,7 +24,7 @@
 package au.com.grieve.bcf.impl.framework.annotation;
 
 import au.com.grieve.bcf.Command;
-import au.com.grieve.bcf.Context;
+import au.com.grieve.bcf.ExecuteContext;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.Result;
 import lombok.Builder;
@@ -39,26 +39,25 @@ import java.util.stream.Collectors;
 
 @Getter
 @ToString
-public class AnnotationContext implements Context {
+public class AnnotationExecuteContext implements ExecuteContext {
     private final Map<String, Class <? extends Parser<?>>> parserClasses;
     private final List<Command> commandChain = new ArrayList<>();
-//    private final Map<String, List<Result>> switches = new HashMap<>();
     private final List<Result> result = new ArrayList<>();
     private final ArgumentParserChain prefixParserChain;
 
-    public AnnotationContext() {
+    public AnnotationExecuteContext() {
         this(new HashMap<>(), null);
     }
 
     @Builder
-    public AnnotationContext(Map<String, Class <? extends Parser<?>>> parserClasses, ArgumentParserChain prefixParserChain) {
+    public AnnotationExecuteContext(Map<String, Class <? extends Parser<?>>> parserClasses, ArgumentParserChain prefixParserChain) {
         this.parserClasses = parserClasses != null ? parserClasses : new HashMap<>();
         this.prefixParserChain = prefixParserChain;
     }
 
     @Override
-    public Context copy() {
-        AnnotationContext result = AnnotationContext.builder()
+    public ExecuteContext copy() {
+        AnnotationExecuteContext result = AnnotationExecuteContext.builder()
                 .prefixParserChain(prefixParserChain)
                 .build();
         result.parserClasses.putAll(parserClasses);

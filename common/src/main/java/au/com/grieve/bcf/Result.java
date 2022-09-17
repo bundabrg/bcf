@@ -29,25 +29,13 @@ package au.com.grieve.bcf;
 public interface Result {
 
     /**
-     * Return the parser that provided this result
-     * @return Parser
-     */
-    Parser<?> getParser();
-
-    /**
-     * Returns true if a value has been assigned
-     * @return True if value assigned
-     */
-    boolean isComplete();
-
-    /**
      * Return the value
      * @return Result
      */
     Object getValue();
 
     /**
-     * Return a copy of ourself
+     * Return a copy of ourselves
      */
     Result copy();
 }

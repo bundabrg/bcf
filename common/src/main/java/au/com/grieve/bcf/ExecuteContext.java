@@ -23,30 +23,24 @@
 
 package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.exception.EndOfLineException;
-
 import java.util.List;
 
-public interface ParserChain {
+public interface ExecuteContext {
     /**
-     * Return the list of parsers that make up this parser chain
-     * @return List of Parsers
+     * Return the chain of command classes so far
+     * @return List of Commands
      */
-    List<Parser<?>> getParsers();
-
-    /**
-     * Parse line
-     * @param line Input line to parse into objects
-     * @param output Output data
-     */
-    void parse(ParsedLine line, List<Result> output, ExecuteContext context) throws EndOfLineException;
+    List<Command> getCommandChain();
 
     /**
-     * Provide completions for the parsed line
-     * @param line Input line to parse
-     * @param candidateGroups Completion Candidate Groups
+     * Return the result so far
+     * @return List of parameters
      */
-    void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext context) throws EndOfLineException;
+    List<Result> getResult();
 
-
+    /**
+     * Return a copy of ourselves
+     * @return Copy
+     */
+    ExecuteContext copy();
 }

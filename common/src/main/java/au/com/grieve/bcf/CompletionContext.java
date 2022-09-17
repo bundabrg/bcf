@@ -21,30 +21,20 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.completion;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.CompletionCandidate;
-import au.com.grieve.bcf.CompletionCandidateGroup;
-import lombok.Getter;
-import lombok.ToString;
-
-import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@ToString
-public class DefaultCompletionCandidateGroup implements CompletionCandidateGroup {
+public interface CompletionContext {
+    /**
+     * Return the chain of command classes so far
+     * @return List of Commands
+     */
+    List<Command> getCommandChain();
 
-    private final List<CompletionCandidate> completionCandidates = new ArrayList<>();
-
-    private final String description;
-
-    public DefaultCompletionCandidateGroup() {
-        this(null);
-    }
-
-    public DefaultCompletionCandidateGroup(String description) {
-        this.description = description;
-    }
-
+    /**
+     * Return a copy of ourselves
+     * @return Copy
+     */
+    CompletionContext copy();
 }

@@ -21,32 +21,30 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.completion;
 
-import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.CompletionCandidate;
+import au.com.grieve.bcf.CompletionCandidateGroup;
+import lombok.Getter;
+import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface ParserChain {
-    /**
-     * Return the list of parsers that make up this parser chain
-     * @return List of Parsers
-     */
-    List<Parser<?>> getParsers();
+@Getter
+@ToString
+public class StaticCompletionCandidateGroup implements CompletionCandidateGroup {
 
-    /**
-     * Parse line
-     * @param line Input line to parse into objects
-     * @param output Output data
-     */
-    void parse(ParsedLine line, List<Result> output, ExecuteContext context) throws EndOfLineException;
+    private final List<CompletionCandidate> completionCandidates = new ArrayList<>();
 
-    /**
-     * Provide completions for the parsed line
-     * @param line Input line to parse
-     * @param candidateGroups Completion Candidate Groups
-     */
-    void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext context) throws EndOfLineException;
+    private final String description;
 
+    public StaticCompletionCandidateGroup() {
+        this(null);
+    }
+
+    public StaticCompletionCandidateGroup(String description) {
+        this.description = description;
+    }
 
 }
