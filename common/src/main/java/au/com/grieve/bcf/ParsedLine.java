@@ -24,69 +24,74 @@
 package au.com.grieve.bcf;
 
 import au.com.grieve.bcf.exception.EndOfLineException;
-
 import java.util.List;
 
 public interface ParsedLine {
-    /**
-     * Return the full unparsed line
-     * @return Unparsed Line
-     */
-    String getLine();
+  /**
+   * Return the full unparsed line
+   *
+   * @return Unparsed Line
+   */
+  String getLine();
 
-    /**
-     * Get list of words in line
-     * @return list of words
-     */
-    List<String> getWords();
+  /**
+   * Get list of words in line
+   *
+   * @return list of words
+   */
+  List<String> getWords();
 
-    /**
-     * Get any prefix to the line
-     * @return prefix
-     */
-    String getPrefix();
+  /**
+   * Get any prefix to the line
+   *
+   * @return prefix
+   */
+  String getPrefix();
 
-    /**
-     * Get the current word being parsed
-     * @return current word
-     */
-    String getCurrentWord();
+  /**
+   * Get the current word being parsed
+   *
+   * @return current word
+   */
+  String getCurrentWord();
 
-    /**
-     * Get the index of current word in list of words
-     * @return current word index
-     */
-    int getWordIndex();
+  /**
+   * Get the index of current word in list of words
+   *
+   * @return current word index
+   */
+  int getWordIndex();
 
-    /**
-     * Update word index
-     */
-    void setWordIndex(int newIndex);
+  /** Update word index */
+  void setWordIndex(int newIndex);
 
-    /**
-     * Return true if at the end of the line
-     * @return true if end of line
-     */
-    boolean isEol();
+  /**
+   * Return true if at the end of the line
+   *
+   * @return true if end of line
+   */
+  boolean isEol();
 
-    /**
-     * Returns the size of the remaining elements
-     * @return size of remaining elements
-     */
-    int size();
+  /**
+   * Returns the size of the remaining elements
+   *
+   * @return size of remaining elements
+   */
+  int size();
 
-    /**
-     * Return current word and move word index to next word
-     * @return current word
-     */
-    String next() throws EndOfLineException;
+  /**
+   * Return current word and move word index to next word
+   *
+   * @return current word
+   */
+  String next() throws EndOfLineException;
 
-    /**
-     * Return a copy of ourself
-     * @return Copy
-     */
-    ParsedLine copy();
+  /**
+   * Return a copy of ourself
+   *
+   * @return Copy
+   */
+  ParsedLine copy();
 
-    void insert(String input);
-
+  void insert(String input);
 }

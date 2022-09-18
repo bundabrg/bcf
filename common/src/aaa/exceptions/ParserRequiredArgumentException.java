@@ -27,7 +27,7 @@ import au.com.grieve.bcf.core.Parser;
 
 public class ParserRequiredArgumentException extends ParserException {
 
-    public ParserRequiredArgumentException(Parser parser) {
-        super(parser);
-    }
+  public ParserRequiredArgumentException(Parser parser) {
+    super(parser);
+  }
 }

@@ -36,9 +36,6 @@ import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
 import au.com.grieve.bcf.impl.framework.base.BaseCompletionContext;
 import au.com.grieve.bcf.impl.result.ParserResult;
 import au.com.grieve.bcf.impl.result.SwitchParserResult;
-import lombok.Getter;
-import lombok.ToString;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
@@ -49,363 +46,385 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString
 public class StringParserChain<DATA> implements ParserChain<DATA> {
-    private enum State {
-        NAME,
-        PARAM_KEY,
-        PARAM_VALUE,
-        PARAM_VALUE_QUOTE,
-        PARAM_VALUE_QUOTE_END,
-        PARAM_END
+  private final List<ParserConfig> parserConfigs = new ArrayList<>();
+
+  public StringParserChain(String arguments) {
+    parserConfigs.addAll(parseArgumentString(arguments));
+  }
+
+  /**
+   * Try to parse against a switch
+   *
+   * @param line Parsed Line
+   * @param context Current context
+   */
+  protected void parseSwitches(ParsedLine line, List<Result> output, ExecutionContext<DATA> context)
+      throws EndOfLineException, IllegalArgumentException {
+    while (line.getCurrentWord().startsWith("-")) {
+
+      String input = line.getCurrentWord().substring(1);
+
+      // Look backwards through output for a non-completed result that matches our switch
+      SwitchParserResult result =
+          Stream.concat(context.getResult().stream(), output.stream())
+              .collect(
+                  Collectors.collectingAndThen(
+                      Collectors.toList(),
+                      l -> {
+                        Collections.reverse(l);
+                        return l;
+                      }))
+              .stream()
+              .filter(r -> r instanceof SwitchParserResult)
+              .map(r -> (SwitchParserResult) r)
+              .filter(r -> !r.isComplete())
+              .filter(r -> r.getParser().getParameters().containsKey("switch"))
+              .filter(
+                  r ->
+                      List.of(r.getParser().getParameters().get("switch").split("\\|"))
+                          .contains(input))
+              .findFirst()
+              .orElse(null);
+
+      if (result == null) {
+        break;
+      }
+
+      line.next();
+      result.setValue(result.getParser().parse(line));
+    }
+  }
+
+  @Override
+  public void parse(ParsedLine line, List<Result> output, ExecutionContext<DATA> context)
+      throws EndOfLineException, IllegalArgumentException {
+    List<Parser<?>> parsers =
+        parserConfigs.stream()
+            .map(c -> createParser(c, context.getParserClasses()))
+            .collect(Collectors.toList());
+    for (Parser<?> p : parsers) {
+      // If parser is a switch we add it for later evaluation
+      if (p.getParameters().containsKey("switch")) {
+        Result result = new SwitchParserResult(p);
+        output.add(result);
+        continue;
+      }
+
+      parseSwitches(line, output, context);
+
+      Object result = p.parse(line);
+      output.add(new ParserResult(p, result));
     }
 
-    @Getter
-    protected static class ParserConfig {
-        private final String name;
-        private final Map<String, String> parameters = new HashMap<>();
+    parseSwitches(line, output, context);
+  }
 
-        public ParserConfig(String name, Map<String, String> parameters) {
-            this.parameters.putAll(parameters);
+  protected void completeSwitches(
+      ParsedLine line,
+      List<CompletionCandidateGroup> candidateGroups,
+      CompletionContext<DATA> context)
+      throws EndOfLineException {
+    while (line.getCurrentWord().startsWith("-")) {
+      String input = line.getCurrentWord().substring(1);
 
-            // If it does not start with @, then a parser called 'literal' parser will be used with options being the name
-            if (!name.startsWith("@")) {
-                this.parameters.put("options", name);
-                this.parameters.put("suppress", this.parameters.getOrDefault("suppress", "true"));
-                this.name = "literal";
-            } else {
-                this.name = name.substring(1);
-            }
-        }
-    }
+      // Look backwards through candidates for a non-completed result that matches our switch
+      Parser<?> parser =
+          ((BaseCompletionContext<DATA>) context)
+              .getSwitches().stream()
+                  .collect(
+                      Collectors.collectingAndThen(
+                          Collectors.toList(),
+                          l -> {
+                            Collections.reverse(l);
+                            return l;
+                          }))
+                  .stream()
+                  .filter(
+                      r -> List.of(r.getParameters().get("switch").split("\\|")).contains(input))
+                  .findFirst()
+                  .orElse(null);
 
-    private final List<ParserConfig> parserConfigs = new ArrayList<>();
+      if (parser == null) {
+        break;
+      }
 
-    public StringParserChain(String arguments) {
-        parserConfigs.addAll(parseArgumentString(arguments));
-    }
+      line.next();
 
-    /**
-     * Try to parse against a switch
-     * @param line Parsed Line
-     * @param context Current context
-     */
-    protected void parseSwitches(ParsedLine line, List<Result> output, ExecutionContext<DATA> context) throws EndOfLineException, IllegalArgumentException {
-        while (line.getCurrentWord().startsWith("-")) {
+      ParsedLine lineCopy = line.copy();
 
-            String input = line.getCurrentWord().substring(1);
-
-            // Look backwards through output for a non-completed result that matches our switch
-            SwitchParserResult result = Stream.concat(
-                            context.getResult().stream(),
-                            output.stream()
-                    ).collect(
-                            Collectors.collectingAndThen(
-                                    Collectors.toList(),
-                                    l -> {
-                                        Collections.reverse(l);
-                                        return l;
-                                    }
-                            )
-                    ).stream()
-                    .filter(r -> r instanceof SwitchParserResult)
-                    .map(r -> (SwitchParserResult) r)
-                    .filter(r -> !r.isComplete())
-                    .filter(r -> r.getParser().getParameters().containsKey("switch"))
-                    .filter(r -> List.of(r.getParser().getParameters().get("switch").split("\\|")).contains(input))
-                    .findFirst()
-                    .orElse(null);
-
-            if (result == null) {
-                break;
-            }
-
-            line.next();
-            result.setValue(result.getParser().parse(line));
-        }
-    }
-
-    @Override
-    public void parse(ParsedLine line, List<Result> output, ExecutionContext<DATA> context) throws EndOfLineException, IllegalArgumentException {
-        List<Parser<?>> parsers = parserConfigs.stream()
-                .map(c -> createParser(c, context.getParserClasses()))
-                .collect(Collectors.toList());
-        for(Parser<?> p : parsers) {
-            // If parser is a switch we add it for later evaluation
-            if (p.getParameters().containsKey("switch")) {
-                Result result = new SwitchParserResult(p);
-                output.add(result);
-                continue;
-            }
-
-            parseSwitches(line, output, context);
-
-            Object result = p.parse(line);
-            output.add(new ParserResult(p, result));
-        }
-
-        parseSwitches(line, output, context);
-    }
-
-    protected void completeSwitches(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext<DATA> context) throws EndOfLineException {
-        while (line.getCurrentWord().startsWith("-")) {
-            String input = line.getCurrentWord().substring(1);
-
-            // Look backwards through candidates for a non-completed result that matches our switch
-            Parser<?> parser = ((BaseCompletionContext<DATA>) context).getSwitches().stream()
-                    .collect(
-                            Collectors.collectingAndThen(
-                                    Collectors.toList(),
-                                    l -> {
-                                        Collections.reverse(l);
-                                        return l;
-                                    }
-                            )
-                    ).stream()
-                    .filter(r -> List.of(r.getParameters().get("switch").split("\\|")).contains(input))
-                    .findFirst()
-                    .orElse(null);
-
-            if (parser == null) {
-                break;
-            }
-
-            line.next();
-
-            ParsedLine lineCopy = line.copy();
-
-            try {
-                parser.parse(line);
-                ((BaseCompletionContext<DATA>) context).getSwitches().remove(parser);
-            } catch(EndOfLineException | IllegalArgumentException e) {
-                // We may or may not be at the end of input, so we try complete it just in case and if we are then at EOL we
-                // include the results
-                List<CompletionCandidateGroup> groups = new ArrayList<>();
-                try {
-                    parser.complete(line, groups);
-                    if (line.isEol()) {
-                        candidateGroups.addAll(groups);
-                        ((BaseCompletionContext<DATA>) context).getSwitches().remove(parser);
-                    }
-                } catch (IllegalArgumentException ignored) {
-                }
-
-                throw new EndOfLineException();
-            }
-
-            if (line.isEol()) {
-                try {
-                    parser.complete(lineCopy, candidateGroups);
-                } catch (IllegalArgumentException ignored) {
-                }
-                throw new EndOfLineException();
-            }
-        }
-
-        // If we are at the end of the line, add any switches
-        if (line.size() <= 1) {
-            for(Parser<?> p : ((BaseCompletionContext<DATA>) context).getSwitches()) {
-                CompletionCandidateGroup group = new ParserCompletionCandidateGroup(p, line.getCurrentWord());
-                group.getCompletionCandidates().addAll(
-                        Stream.of(p.getParameters().get("switch").split("\\|"))
-                                .map(s -> new DefaultCompletionCandidate("-" + s))
-                                .collect(Collectors.toList())
-                );
-                candidateGroups.add(group);
-            }
-        }
-    }
-
-    @Override
-    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext<DATA> context) throws EndOfLineException {
-        List<Parser<?>> parsers = parserConfigs.stream()
-                .map(c -> createParser(c, context.getParserClasses()))
-                .collect(Collectors.toList());
-        for(Parser<?> p : parsers) {
-            // If parser is a switch we add it for later evaluation
-            if (p.getParameters().containsKey("switch")) {
-                ((BaseCompletionContext<DATA>) context).getSwitches().add(p);
-                continue;
-            }
-
-            completeSwitches(line, candidateGroups, context);
-
-            ParsedLine lineCopy = line.copy();
-
-            try {
-                p.parse(line);
-            } catch (EndOfLineException | IllegalArgumentException e) {
-                // We may or may not be at the end of input, so we try complete it just in case and if we are then at EOL we
-                // include the results
-                List<CompletionCandidateGroup> groups = new ArrayList<>();
-                try {
-                    p.complete(line, groups);
-                    if (line.isEol()) {
-                        candidateGroups.addAll(groups);
-                    }
-                } catch (IllegalArgumentException ignored) {
-                }
-
-                throw new EndOfLineException();
-            }
-
-
-            if (line.isEol()) {
-                try {
-                    p.complete(lineCopy, candidateGroups);
-                } catch (IllegalArgumentException ignored) {
-                }
-                throw new EndOfLineException();
-            }
-        }
-
-        completeSwitches(line, candidateGroups, context);
-    }
-
-    /**
-     * Create a new parser based upon the name.
-     */
-    protected Parser<?> createParser(ParserConfig parserConfig, Map<String, Class<? extends Parser<?>>> parserClasses) {
-        Class<? extends Parser<?>> parserClass = parserClasses.get(parserConfig.getName());
-        if (parserClass == null) {
-            throw new RuntimeException("Unknown parser: " + parserConfig.getName());
-        }
-
+      try {
+        parser.parse(line);
+        ((BaseCompletionContext<DATA>) context).getSwitches().remove(parser);
+      } catch (EndOfLineException | IllegalArgumentException e) {
+        // We may or may not be at the end of input, so we try complete it just in case and if we
+        // are then at EOL we
+        // include the results
+        List<CompletionCandidateGroup> groups = new ArrayList<>();
         try {
-            return parserClass.getConstructor(Map.class)
-                    .newInstance(parserConfig.getParameters());
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+          parser.complete(line, groups);
+          if (line.isEol()) {
+            candidateGroups.addAll(groups);
+            ((BaseCompletionContext<DATA>) context).getSwitches().remove(parser);
+          }
+        } catch (IllegalArgumentException ignored) {
         }
+
+        throw new EndOfLineException();
+      }
+
+      if (line.isEol()) {
+        try {
+          parser.complete(lineCopy, candidateGroups);
+        } catch (IllegalArgumentException ignored) {
+        }
+        throw new EndOfLineException();
+      }
     }
 
-    /**
-     * Parse input into a list of Parsers
-     * @param input Input
-     * @return List of Parsers
-     */
-    protected List<ParserConfig> parseArgumentString(String input) {
-        List<ParserConfig> result = new ArrayList<>();
+    // If we are at the end of the line, add any switches
+    if (line.size() <= 1) {
+      for (Parser<?> p : ((BaseCompletionContext<DATA>) context).getSwitches()) {
+        CompletionCandidateGroup group =
+            new ParserCompletionCandidateGroup(p, line.getCurrentWord());
+        group
+            .getCompletionCandidates()
+            .addAll(
+                Stream.of(p.getParameters().get("switch").split("\\|"))
+                    .map(s -> new DefaultCompletionCandidate("-" + s))
+                    .collect(Collectors.toList()));
+        candidateGroups.add(group);
+      }
+    }
+  }
 
-        try (StringReader reader = new StringReader(input)) {
-            State state = State.NAME;
-            Map<String, String> parameters = new HashMap<>();
-            StringBuilder name = new StringBuilder();
-            StringBuilder key = new StringBuilder();
-            StringBuilder value = new StringBuilder();
-            char quote = ' ';
+  @Override
+  public void complete(
+      ParsedLine line,
+      List<CompletionCandidateGroup> candidateGroups,
+      CompletionContext<DATA> context)
+      throws EndOfLineException {
+    List<Parser<?>> parsers =
+        parserConfigs.stream()
+            .map(c -> createParser(c, context.getParserClasses()))
+            .collect(Collectors.toList());
+    for (Parser<?> p : parsers) {
+      // If parser is a switch we add it for later evaluation
+      if (p.getParameters().containsKey("switch")) {
+        ((BaseCompletionContext<DATA>) context).getSwitches().add(p);
+        continue;
+      }
 
-            while (true) {
-                int i = reader.read();
-                if (i < 0) {
-                    if (state == State.NAME && name.length() > 0) {
-                        result.add(new ParserConfig(name.toString(), new HashMap<>()));
-                    }
-                    break;
+      completeSwitches(line, candidateGroups, context);
+
+      ParsedLine lineCopy = line.copy();
+
+      try {
+        p.parse(line);
+      } catch (EndOfLineException | IllegalArgumentException e) {
+        // We may or may not be at the end of input, so we try complete it just in case and if we
+        // are then at EOL we
+        // include the results
+        List<CompletionCandidateGroup> groups = new ArrayList<>();
+        try {
+          p.complete(line, groups);
+          if (line.isEol()) {
+            candidateGroups.addAll(groups);
+          }
+        } catch (IllegalArgumentException ignored) {
+        }
+
+        throw new EndOfLineException();
+      }
+
+      if (line.isEol()) {
+        try {
+          p.complete(lineCopy, candidateGroups);
+        } catch (IllegalArgumentException ignored) {
+        }
+        throw new EndOfLineException();
+      }
+    }
+
+    completeSwitches(line, candidateGroups, context);
+  }
+
+  /** Create a new parser based upon the name. */
+  protected Parser<?> createParser(
+      ParserConfig parserConfig, Map<String, Class<? extends Parser<?>>> parserClasses) {
+    Class<? extends Parser<?>> parserClass = parserClasses.get(parserConfig.getName());
+    if (parserClass == null) {
+      throw new RuntimeException("Unknown parser: " + parserConfig.getName());
+    }
+
+    try {
+      return parserClass.getConstructor(Map.class).newInstance(parserConfig.getParameters());
+    } catch (InstantiationException
+        | NoSuchMethodException
+        | InvocationTargetException
+        | IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Parse input into a list of Parsers
+   *
+   * @param input Input
+   * @return List of Parsers
+   */
+  protected List<ParserConfig> parseArgumentString(String input) {
+    List<ParserConfig> result = new ArrayList<>();
+
+    try (StringReader reader = new StringReader(input)) {
+      State state = State.NAME;
+      Map<String, String> parameters = new HashMap<>();
+      StringBuilder name = new StringBuilder();
+      StringBuilder key = new StringBuilder();
+      StringBuilder value = new StringBuilder();
+      char quote = ' ';
+
+      while (true) {
+        int i = reader.read();
+        if (i < 0) {
+          if (state == State.NAME && name.length() > 0) {
+            result.add(new ParserConfig(name.toString(), new HashMap<>()));
+          }
+          break;
+        }
+        char c = (char) i;
+
+        switch (state) {
+          case NAME:
+            switch (" (".indexOf(c)) {
+              case 0: // Next Argument
+                if (name.length() > 0) {
+                  result.add(new ParserConfig(name.toString(), new HashMap<>()));
+                  name = new StringBuilder();
                 }
-                char c = (char) i;
-
-                switch (state) {
-                    case NAME:
-                        switch (" (".indexOf(c)) {
-                            case 0: // Next Argument
-                                if (name.length() > 0) {
-                                    result.add(new ParserConfig(name.toString(), new HashMap<>()));
-                                    name = new StringBuilder();
-                                }
-                                break;
-                            case 1:
-                                state = State.PARAM_KEY;
-                                parameters = new HashMap<>();
-                                key = new StringBuilder();
-                                break;
-                            default:
-                                name.append(c);
-                        }
-                        continue;
-                    case PARAM_KEY:
-                        if ("=".indexOf(c) == 0) {
-                            state = State.PARAM_VALUE;
-                            value = new StringBuilder();
-                        } else {
-                            key.append(c);
-                        }
-                        continue;
-                    case PARAM_VALUE:
-                        switch (",)\"'".indexOf(c)) {
-                            case 0:
-                                parameters.put(key.toString().trim(), value.toString().trim());
-                                key = new StringBuilder();
-                                state = State.PARAM_KEY;
-                                break;
-                            case 1:
-                                parameters.put(key.toString().trim(), value.toString().trim());
-                                result.add(new ParserConfig(name.toString(), parameters));
-                                name = new StringBuilder();
-                                state = State.PARAM_END;
-                                break;
-                            case 2:
-                            case 3:
-                                if (value.length() == 0) {
-                                    quote = c;
-                                    state = State.PARAM_VALUE_QUOTE;
-                                }
-                                break;
-                            default:
-                                value.append(c);
-                        }
-                        continue;
-                    case PARAM_VALUE_QUOTE:
-                        switch ("\"'\\".indexOf(c)) {
-                            case 0:
-                            case 1:
-                                if (c == quote) {
-                                    parameters.put(key.toString().trim(), value.toString().trim());
-                                    key = new StringBuilder();
-                                    state = State.PARAM_VALUE_QUOTE_END;
-                                } else {
-                                    value.append(c);
-                                }
-                                break;
-                            case 2:
-//                                value.append(c);
-                                i = reader.read();
-                                if (i < 0) {
-                                    break;
-                                }
-                                value.append((char) i);
-                                break;
-                            default:
-                                value.append(c);
-                        }
-                        continue;
-                    case PARAM_VALUE_QUOTE_END:
-                        switch (",)".indexOf(c)) {
-                            case 0:
-                                state = State.PARAM_KEY;
-                                break;
-                            case 1:
-                                result.add(new ParserConfig(name.toString(), parameters));
-                                name = new StringBuilder();
-                                state = State.PARAM_END;
-                                break;
-                        }
-                        continue;
-                    case PARAM_END:
-                        if (" ".indexOf(c) == 0) {
-                            state = State.NAME;
-                        }
-                        // continue;
-                }
+                break;
+              case 1:
+                state = State.PARAM_KEY;
+                parameters = new HashMap<>();
+                key = new StringBuilder();
+                break;
+              default:
+                name.append(c);
             }
-        } catch (IOException ignored) {
-
+            continue;
+          case PARAM_KEY:
+            if ("=".indexOf(c) == 0) {
+              state = State.PARAM_VALUE;
+              value = new StringBuilder();
+            } else {
+              key.append(c);
+            }
+            continue;
+          case PARAM_VALUE:
+            switch (",)\"'".indexOf(c)) {
+              case 0:
+                parameters.put(key.toString().trim(), value.toString().trim());
+                key = new StringBuilder();
+                state = State.PARAM_KEY;
+                break;
+              case 1:
+                parameters.put(key.toString().trim(), value.toString().trim());
+                result.add(new ParserConfig(name.toString(), parameters));
+                name = new StringBuilder();
+                state = State.PARAM_END;
+                break;
+              case 2:
+              case 3:
+                if (value.length() == 0) {
+                  quote = c;
+                  state = State.PARAM_VALUE_QUOTE;
+                }
+                break;
+              default:
+                value.append(c);
+            }
+            continue;
+          case PARAM_VALUE_QUOTE:
+            switch ("\"'\\".indexOf(c)) {
+              case 0:
+              case 1:
+                if (c == quote) {
+                  parameters.put(key.toString().trim(), value.toString().trim());
+                  key = new StringBuilder();
+                  state = State.PARAM_VALUE_QUOTE_END;
+                } else {
+                  value.append(c);
+                }
+                break;
+              case 2:
+                //                                value.append(c);
+                i = reader.read();
+                if (i < 0) {
+                  break;
+                }
+                value.append((char) i);
+                break;
+              default:
+                value.append(c);
+            }
+            continue;
+          case PARAM_VALUE_QUOTE_END:
+            switch (",)".indexOf(c)) {
+              case 0:
+                state = State.PARAM_KEY;
+                break;
+              case 1:
+                result.add(new ParserConfig(name.toString(), parameters));
+                name = new StringBuilder();
+                state = State.PARAM_END;
+                break;
+            }
+            continue;
+          case PARAM_END:
+            if (" ".indexOf(c) == 0) {
+              state = State.NAME;
+            }
+            // continue;
         }
+      }
+    } catch (IOException ignored) {
 
-
-
-        return result;
     }
+
+    return result;
+  }
+
+  private enum State {
+    NAME,
+    PARAM_KEY,
+    PARAM_VALUE,
+    PARAM_VALUE_QUOTE,
+    PARAM_VALUE_QUOTE_END,
+    PARAM_END
+  }
+
+  @Getter
+  protected static class ParserConfig {
+    private final String name;
+    private final Map<String, String> parameters = new HashMap<>();
+
+    public ParserConfig(String name, Map<String, String> parameters) {
+      this.parameters.putAll(parameters);
+
+      // If it does not start with @, then a parser called 'literal' parser will be used with
+      // options being the name
+      if (!name.startsWith("@")) {
+        this.parameters.put("options", name);
+        this.parameters.put("suppress", this.parameters.getOrDefault("suppress", "true"));
+        this.name = "literal";
+      } else {
+        this.name = name.substring(1);
+      }
+    }
+  }
 }

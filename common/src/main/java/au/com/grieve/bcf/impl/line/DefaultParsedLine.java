@@ -25,106 +25,102 @@ package au.com.grieve.bcf.impl.line;
 
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
-import lombok.Getter;
-import lombok.ToString;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString
 public class DefaultParsedLine implements ParsedLine {
-    private final List<String> words;
-    private final String prefix;
-    private int wordIndex = 0;
+  private final List<String> words;
+  private final String prefix;
+  private int wordIndex = 0;
 
-    public DefaultParsedLine(String line) {
-        this(line, "");
+  public DefaultParsedLine(String line) {
+    this(line, "");
+  }
+
+  public DefaultParsedLine(String line, String prefix) {
+    // Line can have at most 1 space at the end as long as its not the only thing in the line
+    String strippedLine = line.strip() + (line.stripLeading().endsWith(" ") ? " " : "");
+
+    this.words =
+        strippedLine.length() > 0
+            ? Arrays.stream(strippedLine.split(" +", -1)).collect(Collectors.toList())
+            : new ArrayList<>();
+
+    this.prefix = prefix;
+  }
+
+  public DefaultParsedLine(List<String> args) {
+    this(args, "");
+  }
+
+  public DefaultParsedLine(List<String> args, String prefix) {
+    this(String.join(" ", args), prefix);
+  }
+
+  /**
+   * Return the unparsed line
+   *
+   * @return Unparsed line
+   */
+  public String getLine() {
+    return String.join(" ", this.words);
+  }
+
+  /**
+   * Return the current word being completed
+   *
+   * @return current word or null if at the end
+   */
+  @ToString.Include
+  public String getCurrentWord() {
+    if (wordIndex >= words.size()) {
+      return "";
     }
 
-    public DefaultParsedLine(String line, String prefix) {
-        // Line can have at most 1 space at the end as long as its not the only thing in the line
-        String strippedLine = line.strip() + (line.stripLeading().endsWith(" ") ? " " : "");
+    return words.get(wordIndex);
+  }
 
-        this.words = strippedLine.length() > 0 ?
-                Arrays.stream(strippedLine.split(" +", -1))
-                        .collect(Collectors.toList())
-                :
-                new ArrayList<>();
+  @Override
+  public void setWordIndex(int newIndex) {
+    assert (newIndex >= 0 && newIndex <= words.size());
+    wordIndex = newIndex;
+  }
 
-        this.prefix = prefix;
+  @Override
+  public boolean isEol() {
+    return wordIndex >= words.size();
+  }
+
+  @Override
+  public int size() {
+    return words.size() - wordIndex;
+  }
+
+  @Override
+  public String next() throws EndOfLineException {
+    if (wordIndex >= words.size()) {
+      throw new EndOfLineException();
     }
+    return words.get(wordIndex++);
+  }
 
-    public DefaultParsedLine(List<String> args) {
-        this(args, "");
-    }
+  @Override
+  public DefaultParsedLine copy() {
+    DefaultParsedLine result = new DefaultParsedLine(words, prefix);
+    result.wordIndex = wordIndex;
+    return result;
+  }
 
-    public DefaultParsedLine(List<String> args, String prefix) {
-        this(String.join(" ", args), prefix);
-    }
-
-    /**
-     * Return the unparsed line
-      * @return Unparsed line
-     */
-    public String getLine() {
-        return String.join(" ", this.words);
-    }
-
-    /**
-     * Return the current word being completed
-     * @return current word or null if at the end
-     */
-    @ToString.Include
-    public String getCurrentWord() {
-        if (wordIndex >= words.size()) {
-            return "";
-        }
-
-        return words.get(wordIndex);
-    }
-
-    @Override
-    public void setWordIndex(int newIndex) {
-        assert(newIndex >=0 && newIndex <= words.size());
-        wordIndex = newIndex;
-    }
-
-    @Override
-    public boolean isEol() {
-        return wordIndex >= words.size();
-    }
-
-    @Override
-    public int size() {
-        return words.size()-wordIndex;
-    }
-
-    @Override
-    public String next() throws EndOfLineException {
-        if (wordIndex >= words.size()) {
-            throw new EndOfLineException();
-        }
-        return words.get(wordIndex++);
-    }
-
-    @Override
-    public DefaultParsedLine copy() {
-        DefaultParsedLine result = new DefaultParsedLine(words, prefix);
-        result.wordIndex = wordIndex;
-        return result;
-    }
-
-    @Override
-    public void insert(String input) {
-        words.addAll(wordIndex,
-                Arrays.stream(input.split(" +"))
-                    .filter(s -> !s.equals(""))
-                    .collect(Collectors.toList())
-        );
-    }
-
-
+  @Override
+  public void insert(String input) {
+    words.addAll(
+        wordIndex,
+        Arrays.stream(input.split(" +")).filter(s -> !s.equals("")).collect(Collectors.toList()));
+  }
 }

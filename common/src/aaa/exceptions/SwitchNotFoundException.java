@@ -26,11 +26,9 @@ package au.com.grieve.bcf.exceptions;
 import lombok.Getter;
 
 public class SwitchNotFoundException extends Exception {
-    @Getter
-    final String switchName;
+  @Getter final String switchName;
 
-    public SwitchNotFoundException(String switchName) {
-        this.switchName = switchName;
-    }
-
+  public SwitchNotFoundException(String switchName) {
+    this.switchName = switchName;
+  }
 }

@@ -31,47 +31,45 @@ import lombok.Getter;
 
 public class SwitchParserResult implements Result {
 
-    @Getter
-    private final Parser<?> parser;
+  @Getter private final Parser<?> parser;
 
-    @Getter
-    private boolean complete;
+  @Getter private boolean complete;
 
-    private Object value;
+  private Object value;
 
-    public SwitchParserResult(Parser<?> parser) {
-        this.parser = parser;
+  public SwitchParserResult(Parser<?> parser) {
+    this.parser = parser;
+  }
+
+  public SwitchParserResult(Parser<?> parser, Object value) {
+    this(parser);
+    setValue(value);
+  }
+
+  @Override
+  public Object getValue() throws IllegalArgumentException {
+    try {
+      return complete ? value : parser.parse(new DefaultParsedLine(""));
+    } catch (EndOfLineException e) {
+      throw new IllegalArgumentException();
     }
+  }
 
-    public SwitchParserResult(Parser<?> parser, Object value) {
-        this(parser);
-        setValue(value);
-    }
+  public void setValue(Object value) {
+    this.complete = true;
+    this.value = value;
+  }
 
-    public void setValue(Object value) {
-        this.complete = true;
-        this.value = value;
-    }
+  @Override
+  public boolean isSuppressed() {
+    return parser.getParameters().getOrDefault("suppress", "false").equals("true");
+  }
 
-    @Override
-    public Object getValue() throws IllegalArgumentException {
-        try {
-            return complete ? value : parser.parse(new DefaultParsedLine(""));
-        } catch (EndOfLineException e) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    @Override
-    public boolean isSuppressed() {
-        return parser.getParameters().getOrDefault("suppress", "false").equals("true");
-    }
-
-    @Override
-    public Result copy() {
-        SwitchParserResult result = new SwitchParserResult(parser);
-        result.value = value;
-        result.complete = complete;
-        return result;
-    }
+  @Override
+  public Result copy() {
+    SwitchParserResult result = new SwitchParserResult(parser);
+    result.value = value;
+    result.complete = complete;
+    return result;
+  }
 }

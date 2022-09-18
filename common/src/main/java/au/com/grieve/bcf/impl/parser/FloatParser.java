@@ -28,39 +28,45 @@ import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
-import lombok.ToString;
-
 import java.util.List;
 import java.util.Map;
+import lombok.ToString;
 
 @ToString(callSuper = true)
 public class FloatParser extends BaseParser<Float> {
-    public FloatParser(Map<String, String> parameters) {
-        super(parameters);
+  public FloatParser(Map<String, String> parameters) {
+    super(parameters);
+  }
+
+  @Override
+  protected Float doParse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
+    float result = Float.parseFloat(line.next());
+    if (getParameters().get("max") != null
+        && result > Float.parseFloat(getParameters().get("max"))) {
+      throw new IllegalArgumentException("Value larger than max");
     }
 
-    @Override
-    protected Float doParse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
-        float result = Float.parseFloat(line.next());
-        if (getParameters().get("max") != null && result > Float.parseFloat(getParameters().get("max"))) {
-            throw new IllegalArgumentException("Value larger than max");
-        }
-
-        if (getParameters().get("min") != null && result < Float.parseFloat(getParameters().get("min"))) {
-            throw new IllegalArgumentException("Value smaller than min");
-        }
-
-        return result;
+    if (getParameters().get("min") != null
+        && result < Float.parseFloat(getParameters().get("min"))) {
+      throw new IllegalArgumentException("Value smaller than min");
     }
 
-    @Override
-    protected void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException {
-        String input = line.getCurrentWord();
+    return result;
+  }
 
-        ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
-        group.getCompletionCandidates().add(new DefaultCompletionCandidate("", getParameters().getOrDefault("placeholder", "<float>")));
-        candidates.add(group);
+  @Override
+  protected void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates)
+      throws EndOfLineException {
+    String input = line.getCurrentWord();
 
-        line.next();
-    }
+    ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
+    group
+        .getCompletionCandidates()
+        .add(
+            new DefaultCompletionCandidate(
+                "", getParameters().getOrDefault("placeholder", "<float>")));
+    candidates.add(group);
+
+    line.next();
+  }
 }

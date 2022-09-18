@@ -30,22 +30,22 @@ import lombok.Getter;
 @Getter
 public class ParserResult implements Result {
 
-    private final Parser<?> parser;
+  private final Parser<?> parser;
 
-    private final Object value;
+  private final Object value;
 
-    public ParserResult(Parser<?> parser, Object value) {
-        this.parser = parser;
-        this.value = value;
-    }
+  public ParserResult(Parser<?> parser, Object value) {
+    this.parser = parser;
+    this.value = value;
+  }
 
-    @Override
-    public boolean isSuppressed() {
-        return parser.getParameters().getOrDefault("suppress", "false").equals("true");
-    }
+  @Override
+  public boolean isSuppressed() {
+    return parser.getParameters().getOrDefault("suppress", "false").equals("true");
+  }
 
-    @Override
-    public Result copy() {
-        return new ParserResult(parser, value);
-    }
+  @Override
+  public Result copy() {
+    return new ParserResult(parser, value);
+  }
 }

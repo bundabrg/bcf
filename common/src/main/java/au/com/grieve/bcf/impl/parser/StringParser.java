@@ -28,53 +28,58 @@ import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
-import lombok.ToString;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.ToString;
 
 @ToString(callSuper = true)
 public class StringParser extends BaseParser<String> {
-    public StringParser(Map<String, String> parameters) {
-        super(parameters);
+  public StringParser(Map<String, String> parameters) {
+    super(parameters);
+  }
+
+  @Override
+  protected String doParse(ParsedLine line) throws EndOfLineException {
+    String result = line.next();
+    if (getParameters().containsKey("options")) {
+      String r = result;
+
+      result =
+          Arrays.stream(getParameters().get("options").split("\\|"))
+              .filter(s -> s.equals(r))
+              .findFirst()
+              .orElseThrow(IllegalArgumentException::new);
     }
 
+    return result;
+  }
 
-    @Override
-    protected String doParse(ParsedLine line) throws EndOfLineException {
-        String result = line.next();
-        if (getParameters().containsKey("options")) {
-            String r = result;
+  @Override
+  protected void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates)
+      throws EndOfLineException {
+    String input = line.getCurrentWord();
 
-            result = Arrays.stream(getParameters().get("options").split("\\|"))
-                    .filter(s -> s.equals(r))
-                    .findFirst()
-                    .orElseThrow(IllegalArgumentException::new);
-        }
-
-        return result;
+    if (getParameters().containsKey("options")) {
+      ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
+      group
+          .getCompletionCandidates()
+          .addAll(
+              Arrays.stream(getParameters().get("options").split("\\|"))
+                  .map(DefaultCompletionCandidate::new)
+                  .collect(Collectors.toList()));
+      candidates.add(group);
+    } else {
+      ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
+      group
+          .getCompletionCandidates()
+          .add(
+              new DefaultCompletionCandidate(
+                  "", getParameters().getOrDefault("placeholder", "<string>")));
+      candidates.add(group);
     }
 
-    @Override
-    protected void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates) throws EndOfLineException{
-        String input = line.getCurrentWord();
-
-        if (getParameters().containsKey("options")) {
-            ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
-            group.getCompletionCandidates().addAll(
-                    Arrays.stream(getParameters().get("options").split("\\|"))
-                            .map(DefaultCompletionCandidate::new)
-                            .collect(Collectors.toList())
-            );
-            candidates.add(group);
-        } else {
-            ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
-            group.getCompletionCandidates().add(new DefaultCompletionCandidate("", getParameters().getOrDefault("placeholder", "<string>")));
-            candidates.add(group);
-        }
-
-        line.next();
-    }
+    line.next();
+  }
 }

@@ -25,39 +25,39 @@ package au.com.grieve.bcf;
 
 import java.util.List;
 
-/**
-* Command - All commands inherit from this class
- */
+/** Command - All commands inherit from this class */
 public interface Command<DATA> {
 
-    /**
-     * Provide completion candidates for the input
-     * @param line The input
-     * @param candidates List of candidates
-     * @param context Context
-     */
-    void complete(ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context);
+  /**
+   * Provide completion candidates for the input
+   *
+   * @param line The input
+   * @param candidates List of candidates
+   * @param context Context
+   */
+  void complete(
+      ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context);
 
-    /**
-     * Return the best execution candidate for the parsed input
-     * @param line The input
-     * @param context Context
-     * @return best execution method
-     */
-    ExecutionCandidate execute(ParsedLine line, ExecutionContext<DATA> context);
+  /**
+   * Return the best execution candidate for the parsed input
+   *
+   * @param line The input
+   * @param context Context
+   * @return best execution method
+   */
+  ExecutionCandidate execute(ParsedLine line, ExecutionContext<DATA> context);
 
-    /**
-     * Add a child command to this one
-     * @param childCommand Child Command
-     */
-    void addChild(Command<DATA> childCommand);
+  /**
+   * Add a child command to this one
+   *
+   * @param childCommand Child Command
+   */
+  void addChild(Command<DATA> childCommand);
 
-    /**
-     * Return the data for Command
-     * @return data for command
-     */
-    CommandData<DATA> getCommandData();
-
-
-
+  /**
+   * Return the data for Command
+   *
+   * @return data for command
+   */
+  CommandData<DATA> getCommandData();
 }

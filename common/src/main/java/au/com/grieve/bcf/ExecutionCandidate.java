@@ -27,40 +27,42 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-/**
- * Contains a method to execute along with all its parameters
- */
+/** Contains a method to execute along with all its parameters */
 public interface ExecutionCandidate {
-    /**
-     * Return the class instance the method is a member of
-     * @return Class of method
-     */
-    Object getInstance();
+  /**
+   * Return the class instance the method is a member of
+   *
+   * @return Class of method
+   */
+  Object getInstance();
 
-    /**
-     * Return the method that will be executed
-     * @return Method
-     */
-    Method getMethod();
+  /**
+   * Return the method that will be executed
+   *
+   * @return Method
+   */
+  Method getMethod();
 
-    /**
-     * Return list of parameters to be passed to the method
-     * @return List of parameters
-     */
-    List<Object> getParameters();
+  /**
+   * Return list of parameters to be passed to the method
+   *
+   * @return List of parameters
+   */
+  List<Object> getParameters();
 
-    /**
-     * Returns the weight of this Candidate. Heavier is better
-     * @return weight
-     */
-    int getWeight();
+  /**
+   * Returns the weight of this Candidate. Heavier is better
+   *
+   * @return weight
+   */
+  int getWeight();
 
-    /**
-     * Invoke the method, prepending passed in args then adding the stored parameters, filling in any missing
-     * parameters with null
-     * @param args Arguments to prepend to the parameters
-     * @return data from the method
-     */
-    Object invoke(Object... args) throws InvocationTargetException, IllegalAccessException;
-
+  /**
+   * Invoke the method, prepending passed in args then adding the stored parameters, filling in any
+   * missing parameters with null
+   *
+   * @param args Arguments to prepend to the parameters
+   * @return data from the method
+   */
+  Object invoke(Object... args) throws InvocationTargetException, IllegalAccessException;
 }

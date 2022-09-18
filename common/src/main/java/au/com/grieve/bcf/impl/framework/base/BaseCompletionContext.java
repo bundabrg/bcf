@@ -26,27 +26,26 @@ package au.com.grieve.bcf.impl.framework.base;
 import au.com.grieve.bcf.Command;
 import au.com.grieve.bcf.CompletionContext;
 import au.com.grieve.bcf.Parser;
-import lombok.Getter;
-import lombok.ToString;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString
 public class BaseCompletionContext<DATA> implements CompletionContext<DATA> {
-    private final Map<String, Class <? extends Parser<?>>> parserClasses = new HashMap<>();
-    private final List<Command<DATA>> commandChain = new ArrayList<>();
-    private final List<Parser<?>> switches = new ArrayList<>();
+  private final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
+  private final List<Command<DATA>> commandChain = new ArrayList<>();
+  private final List<Parser<?>> switches = new ArrayList<>();
 
-    @Override
-    public CompletionContext<DATA> copy() {
-        BaseCompletionContext<DATA> result = new BaseCompletionContext<>();
-        result.getParserClasses().putAll(parserClasses);
-        result.getCommandChain().addAll(commandChain);
-        result.getSwitches().addAll(switches);
-        return result;
-    }
+  @Override
+  public CompletionContext<DATA> copy() {
+    BaseCompletionContext<DATA> result = new BaseCompletionContext<>();
+    result.getParserClasses().putAll(parserClasses);
+    result.getCommandChain().addAll(commandChain);
+    result.getSwitches().addAll(switches);
+    return result;
+  }
 }

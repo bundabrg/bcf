@@ -29,20 +29,20 @@ import lombok.Getter;
 @Getter
 public class StaticResult implements Result {
 
-    private final Object value;
-    private final boolean suppressed;
+  private final Object value;
+  private final boolean suppressed;
 
-    public StaticResult(Object value) {
-        this(value, false);
-    }
+  public StaticResult(Object value) {
+    this(value, false);
+  }
 
-    public StaticResult(Object value, boolean suppressed) {
-        this.value = value;
-        this.suppressed = suppressed;
-    }
+  public StaticResult(Object value, boolean suppressed) {
+    this.value = value;
+    this.suppressed = suppressed;
+  }
 
-    @Override
-    public Result copy() {
-        return new StaticResult(value);
-    }
+  @Override
+  public Result copy() {
+    return new StaticResult(value);
+  }
 }

@@ -27,11 +27,11 @@ import au.com.grieve.bcf.core.Parser;
 
 public class ParserInvalidResultException extends ParserException {
 
-    public ParserInvalidResultException(Parser parser) {
-        super(parser);
-    }
+  public ParserInvalidResultException(Parser parser) {
+    super(parser);
+  }
 
-    public ParserInvalidResultException(Parser parser, String message) {
-        super(parser, message);
-    }
+  public ParserInvalidResultException(Parser parser, String message) {
+    super(parser, message);
+  }
 }

@@ -28,19 +28,18 @@ import lombok.Getter;
 
 public class ParserException extends Exception {
 
-    @Getter
-    final Parser parser;
+  @Getter final Parser parser;
 
-    public ParserException(Parser parser) {
-        this(parser, null, null);
-    }
+  public ParserException(Parser parser) {
+    this(parser, null, null);
+  }
 
-    public ParserException(Parser parser, String message) {
-        this(parser, message, null);
-    }
+  public ParserException(Parser parser, String message) {
+    this(parser, message, null);
+  }
 
-    public ParserException(Parser parser, String message, Throwable err) {
-        super(message, err);
-        this.parser = parser;
-    }
+  public ParserException(Parser parser, String message, Throwable err) {
+    super(message, err);
+    this.parser = parser;
+  }
 }

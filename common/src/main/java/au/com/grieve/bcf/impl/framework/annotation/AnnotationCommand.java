@@ -42,8 +42,6 @@ import au.com.grieve.bcf.impl.framework.base.BaseCommand;
 import au.com.grieve.bcf.impl.framework.base.BaseCommandData;
 import au.com.grieve.bcf.impl.parserchain.StringParserChain;
 import au.com.grieve.bcf.utils.ReflectUtils;
-import lombok.Getter;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,238 +52,253 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Getter;
 
 /**
- * Used by the AnnotationCommandManager as a Base Command class
- * Commands are defined by annotations on methods
+ * Used by the AnnotationCommandManager as a Base Command class Commands are defined by annotations
+ * on methods
  */
 @Getter
 public class AnnotationCommand<DATA> extends BaseCommand<DATA> {
-    private final List<ParserChain<DATA>> classParserChains = new ArrayList<>();
-    private final Map<ParserChain<DATA>, Method> methodParserChains = new HashMap<>();
-    private final Method defaultMethod;
-    private final Method errorMethod;
-    private final CommandData<DATA> commandData;
+  private final List<ParserChain<DATA>> classParserChains = new ArrayList<>();
+  private final Map<ParserChain<DATA>, Method> methodParserChains = new HashMap<>();
+  private final Method defaultMethod;
+  private final Method errorMethod;
+  private final CommandData<DATA> commandData;
 
-    public AnnotationCommand() {
-        // If we are a root command then build command data
-        au.com.grieve.bcf.framework.annotation.annotations.Command commandAnnotation = getClass().getAnnotation(au.com.grieve.bcf.framework.annotation.annotations.Command.class);
-        if (commandAnnotation != null) {
-            String[] commandArgs = commandAnnotation.value().strip().split(" +", 2);
-            String[] commandNames = commandArgs[0].split(("\\|"));
-            commandData = new BaseCommandData<>(
-                    commandNames[0],
-                    Arrays.stream(commandNames).skip(1).toArray(String[]::new),
-                    getClass().isAnnotationPresent(Description.class) ?
-                            getClass().getAnnotation(Description.class).value() :
-                            null,
-                    commandArgs.length > 1 ?
-                            new StringParserChain<>(commandArgs[1]) :
-                            null,
-                    commandAnnotation.input()
-            );
-        } else {
-            commandData = null;
-        }
-
-        // Class Arguments
-        for (Arg arg : ReflectUtils.getAllAnnotationsByType(getClass(), Arg.class)) {
-            classParserChains.add(new StringParserChain<>(String.join(" ", arg.value())));
-        }
-
-        // Method Arguments
-        for (Method method : getClass().getMethods()) {
-            for (Arg arg : method.getAnnotationsByType(Arg.class)) {
-                methodParserChains.put(new StringParserChain<>(String.join(" ", arg.value())), method);
-            }
-        }
-
-        // Check if we have special Methods
-        errorMethod = Arrays.stream(getClass().getMethods())
-                .filter(m -> m.isAnnotationPresent(Error.class))
-                .findFirst()
-                .orElse(null);
-        defaultMethod = Arrays.stream(getClass().getMethods())
-                .filter(m -> m.isAnnotationPresent(Default.class))
-                .findFirst()
-                .orElse(null);
+  public AnnotationCommand() {
+    // If we are a root command then build command data
+    au.com.grieve.bcf.framework.annotation.annotations.Command commandAnnotation =
+        getClass().getAnnotation(au.com.grieve.bcf.framework.annotation.annotations.Command.class);
+    if (commandAnnotation != null) {
+      String[] commandArgs = commandAnnotation.value().strip().split(" +", 2);
+      String[] commandNames = commandArgs[0].split(("\\|"));
+      commandData =
+          new BaseCommandData<>(
+              commandNames[0],
+              Arrays.stream(commandNames).skip(1).toArray(String[]::new),
+              getClass().isAnnotationPresent(Description.class)
+                  ? getClass().getAnnotation(Description.class).value()
+                  : null,
+              commandArgs.length > 1 ? new StringParserChain<>(commandArgs[1]) : null,
+              commandAnnotation.input());
+    } else {
+      commandData = null;
     }
 
-    protected ExecutionCandidate executeClass(ParsedLine line, ExecutionContext<DATA> context) {
-        List<ExecutionCandidate> candidates = new ArrayList<>();
-
-        for (ParserChain<DATA> p : classParserChains) {
-            List<Result> result = new ArrayList<>();
-            ParsedLine currentLine = line.copy();
-            ExecutionContext<DATA> currentContext = context.copy();
-            try {
-                p.parse(currentLine, result, currentContext);
-            } catch (EndOfLineException e) {
-                // Ran out of input to satisfy this chain
-                candidates.add(getErrorExecutionCandidate(context, currentLine.getWordIndex()));
-                continue;
-            } catch (IllegalArgumentException e) {
-                // Error has occurred
-                candidates.add(getErrorExecutionCandidate(context, currentLine.getWordIndex()));
-                continue;
-            }
-
-            currentContext.getResult().addAll(result);
-
-            // Add a default at this level
-            candidates.add(getDefaultExecutionCandidate(currentContext, currentLine.getWordIndex()));
-
-            candidates.add(executeMethod(currentLine.copy(), currentContext));
-            candidates.add(executeChildren(currentLine.copy(), currentContext));
-        }
-
-        return candidates.stream()
-                .filter(Objects::nonNull)
-                .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
-                .orElse(null);
+    // Class Arguments
+    for (Arg arg : ReflectUtils.getAllAnnotationsByType(getClass(), Arg.class)) {
+      classParserChains.add(new StringParserChain<>(String.join(" ", arg.value())));
     }
 
-    protected ExecutionCandidate executeChildren(ParsedLine line, ExecutionContext<DATA> context) {
-        List<ExecutionCandidate> candidates = new ArrayList<>();
-
-        for(Command<DATA> cmd : getChildren()) {
-            ExecutionContext<DATA> currentContext = context.copy();
-            currentContext.getCommandChain().add(this);
-            candidates.add(cmd.execute(line.copy(), currentContext));
-        }
-
-        return candidates.stream()
-                .filter(Objects::nonNull)
-                .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
-                .orElse(null);
+    // Method Arguments
+    for (Method method : getClass().getMethods()) {
+      for (Arg arg : method.getAnnotationsByType(Arg.class)) {
+        methodParserChains.put(new StringParserChain<>(String.join(" ", arg.value())), method);
+      }
     }
 
-    protected ExecutionCandidate executeMethod(ParsedLine line, ExecutionContext<DATA> context) {
-        List<ExecutionCandidate> candidates = new ArrayList<>();
+    // Check if we have special Methods
+    errorMethod =
+        Arrays.stream(getClass().getMethods())
+            .filter(m -> m.isAnnotationPresent(Error.class))
+            .findFirst()
+            .orElse(null);
+    defaultMethod =
+        Arrays.stream(getClass().getMethods())
+            .filter(m -> m.isAnnotationPresent(Default.class))
+            .findFirst()
+            .orElse(null);
+  }
 
-        for(Map.Entry<ParserChain<DATA>, Method> item : methodParserChains.entrySet()) {
-            List<Result> result = new ArrayList<>();
-            ParsedLine currentLine = line.copy();
-            ExecutionContext<DATA> currentContext = context.copy();
-            try {
-                item.getKey().parse(currentLine, result, currentContext);
-            } catch (EndOfLineException e) {
-                // Ran out of input to satisfy this chain
-                candidates.add(getErrorExecutionCandidate(context, currentLine.getWordIndex()));
-                continue;
-            } catch (IllegalArgumentException e) {
-                // Error has occurred
-                candidates.add(getErrorExecutionCandidate(context, currentLine.getWordIndex()));
-                continue;
-            }
+  protected ExecutionCandidate executeClass(ParsedLine line, ExecutionContext<DATA> context) {
+    List<ExecutionCandidate> candidates = new ArrayList<>();
 
-            // If we have input left then we reject this pathway
-            if (!currentLine.isEol()) {
-                continue;
-            }
+    for (ParserChain<DATA> p : classParserChains) {
+      List<Result> result = new ArrayList<>();
+      ParsedLine currentLine = line.copy();
+      ExecutionContext<DATA> currentContext = context.copy();
+      try {
+        p.parse(currentLine, result, currentContext);
+      } catch (EndOfLineException e) {
+        // Ran out of input to satisfy this chain
+        candidates.add(getErrorExecutionCandidate(context, currentLine.getWordIndex()));
+        continue;
+      } catch (IllegalArgumentException e) {
+        // Error has occurred
+        candidates.add(getErrorExecutionCandidate(context, currentLine.getWordIndex()));
+        continue;
+      }
 
-            currentContext.getResult().addAll(result);
+      currentContext.getResult().addAll(result);
 
-            try {
-                candidates.add(new DefaultExecutionCandidate(this, item.getValue(), currentLine.getWordIndex(),
-                        Stream.concat(
-                                Stream.of(currentContext), // Add context first
-                                currentContext.getResult().stream()
-                                        .filter(r -> {
-                                            r.getValue(); // Make sure we are able to return a value. Needed for switches.
-                                            return true;
-                                        })
-                                        .filter(r -> !r.isSuppressed())
-                                        .map(Result::getValue)
-                        )
-                                .collect(Collectors.toList())
-                ));
-            } catch (IllegalArgumentException ignored) {
-            }
-        }
-        return candidates.stream()
-                .filter(Objects::nonNull)
-                .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
-                .orElse(null);
+      // Add a default at this level
+      candidates.add(getDefaultExecutionCandidate(currentContext, currentLine.getWordIndex()));
+
+      candidates.add(executeMethod(currentLine.copy(), currentContext));
+      candidates.add(executeChildren(currentLine.copy(), currentContext));
     }
 
-    @Override
-    public ExecutionCandidate execute(ParsedLine line, ExecutionContext<DATA> context) {
-        List<ExecutionCandidate> candidates = new ArrayList<>();
+    return candidates.stream()
+        .filter(Objects::nonNull)
+        .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
+        .orElse(null);
+  }
 
-        if (context.getCommandChain().size() == 0 && getCommandData() != null && getCommandData().getParserChain() != null) {
-            List<Result> result = new ArrayList<>();
-            try {
-                getCommandData().getParserChain().parse(line, result, context);
-            } catch (EndOfLineException | IllegalArgumentException e) {
-                return getErrorExecutionCandidate(context, line.getWordIndex());
-            }
-        }
+  protected ExecutionCandidate executeChildren(ParsedLine line, ExecutionContext<DATA> context) {
+    List<ExecutionCandidate> candidates = new ArrayList<>();
 
-        if (classParserChains.size() > 0) {
-            candidates.add(executeClass(line.copy(), context));
-        } else {
-            // Add a default at this level
-            candidates.add(getDefaultExecutionCandidate(context, line.getWordIndex()));
-
-            candidates.add(executeMethod(line.copy(), context));
-            candidates.add(executeChildren(line.copy(), context));
-        }
-        return candidates.stream()
-                .filter(Objects::nonNull)
-                .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
-                .orElse(getDefaultExecutionCandidate(context, line.getWordIndex()));
+    for (Command<DATA> cmd : getChildren()) {
+      ExecutionContext<DATA> currentContext = context.copy();
+      currentContext.getCommandChain().add(this);
+      candidates.add(cmd.execute(line.copy(), currentContext));
     }
 
-    protected void completeClass(ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context) {
-        for (ParserChain<DATA> p : classParserChains) {
-            ParsedLine currentLine = line.copy();
-            CompletionContext<DATA> currentContext = context.copy();
-            try {
-                p.complete(currentLine, candidates, currentContext);
-            } catch (EndOfLineException e) {
-                continue;
-            }
+    return candidates.stream()
+        .filter(Objects::nonNull)
+        .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
+        .orElse(null);
+  }
 
-            completeMethod(currentLine.copy(), candidates, currentContext);
-            completeChildren(currentLine.copy(), candidates, currentContext);
-        }
+  protected ExecutionCandidate executeMethod(ParsedLine line, ExecutionContext<DATA> context) {
+    List<ExecutionCandidate> candidates = new ArrayList<>();
+
+    for (Map.Entry<ParserChain<DATA>, Method> item : methodParserChains.entrySet()) {
+      List<Result> result = new ArrayList<>();
+      ParsedLine currentLine = line.copy();
+      ExecutionContext<DATA> currentContext = context.copy();
+      try {
+        item.getKey().parse(currentLine, result, currentContext);
+      } catch (EndOfLineException e) {
+        // Ran out of input to satisfy this chain
+        candidates.add(getErrorExecutionCandidate(context, currentLine.getWordIndex()));
+        continue;
+      } catch (IllegalArgumentException e) {
+        // Error has occurred
+        candidates.add(getErrorExecutionCandidate(context, currentLine.getWordIndex()));
+        continue;
+      }
+
+      // If we have input left then we reject this pathway
+      if (!currentLine.isEol()) {
+        continue;
+      }
+
+      currentContext.getResult().addAll(result);
+
+      try {
+        candidates.add(
+            new DefaultExecutionCandidate(
+                this,
+                item.getValue(),
+                currentLine.getWordIndex(),
+                Stream.concat(
+                        Stream.of(currentContext), // Add context first
+                        currentContext.getResult().stream()
+                            .filter(
+                                r -> {
+                                  r
+                                      .getValue(); // Make sure we are able to return a value.
+                                                   // Needed for switches.
+                                  return true;
+                                })
+                            .filter(r -> !r.isSuppressed())
+                            .map(Result::getValue))
+                    .collect(Collectors.toList())));
+      } catch (IllegalArgumentException ignored) {
+      }
+    }
+    return candidates.stream()
+        .filter(Objects::nonNull)
+        .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
+        .orElse(null);
+  }
+
+  @Override
+  public ExecutionCandidate execute(ParsedLine line, ExecutionContext<DATA> context) {
+    List<ExecutionCandidate> candidates = new ArrayList<>();
+
+    if (context.getCommandChain().size() == 0
+        && getCommandData() != null
+        && getCommandData().getParserChain() != null) {
+      List<Result> result = new ArrayList<>();
+      try {
+        getCommandData().getParserChain().parse(line, result, context);
+      } catch (EndOfLineException | IllegalArgumentException e) {
+        return getErrorExecutionCandidate(context, line.getWordIndex());
+      }
     }
 
-    protected void completeChildren(ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context) {
-        for(Command<DATA> cmd : getChildren()) {
-            CompletionContext<DATA> currentContext = context.copy();
-            currentContext.getCommandChain().add(this);
-            cmd.complete(line.copy(), candidates, currentContext);
-        }
+    if (classParserChains.size() > 0) {
+      candidates.add(executeClass(line.copy(), context));
+    } else {
+      // Add a default at this level
+      candidates.add(getDefaultExecutionCandidate(context, line.getWordIndex()));
+
+      candidates.add(executeMethod(line.copy(), context));
+      candidates.add(executeChildren(line.copy(), context));
+    }
+    return candidates.stream()
+        .filter(Objects::nonNull)
+        .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
+        .orElse(getDefaultExecutionCandidate(context, line.getWordIndex()));
+  }
+
+  protected void completeClass(
+      ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context) {
+    for (ParserChain<DATA> p : classParserChains) {
+      ParsedLine currentLine = line.copy();
+      CompletionContext<DATA> currentContext = context.copy();
+      try {
+        p.complete(currentLine, candidates, currentContext);
+      } catch (EndOfLineException e) {
+        continue;
+      }
+
+      completeMethod(currentLine.copy(), candidates, currentContext);
+      completeChildren(currentLine.copy(), candidates, currentContext);
+    }
+  }
+
+  protected void completeChildren(
+      ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context) {
+    for (Command<DATA> cmd : getChildren()) {
+      CompletionContext<DATA> currentContext = context.copy();
+      currentContext.getCommandChain().add(this);
+      cmd.complete(line.copy(), candidates, currentContext);
+    }
+  }
+
+  protected void completeMethod(
+      ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context) {
+    for (Map.Entry<ParserChain<DATA>, Method> item : methodParserChains.entrySet()) {
+      ParsedLine currentLine = line.copy();
+      CompletionContext<DATA> currentContext = context.copy();
+      try {
+        item.getKey().complete(currentLine, candidates, currentContext);
+      } catch (EndOfLineException ignored) {
+      }
+    }
+  }
+
+  @Override
+  public void complete(
+      ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context) {
+    if (context.getCommandChain().size() == 0
+        && getCommandData() != null
+        && getCommandData().getParserChain() != null) {
+      try {
+        getCommandData().getParserChain().complete(line, candidates, context);
+      } catch (EndOfLineException | IllegalArgumentException e) {
+        return;
+      }
     }
 
-    protected void completeMethod(ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context) {
-        for(Map.Entry<ParserChain<DATA>, Method> item : methodParserChains.entrySet()) {
-            ParsedLine currentLine = line.copy();
-            CompletionContext<DATA> currentContext = context.copy();
-            try {
-                item.getKey().complete(currentLine, candidates, currentContext);
-            } catch (EndOfLineException ignored) {
-            }
-        }
+    if (classParserChains.size() > 0) {
+      completeClass(line.copy(), candidates, context);
+    } else {
+      completeMethod(line.copy(), candidates, context);
+      completeChildren(line.copy(), candidates, context);
     }
-
-    @Override
-    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context) {
-        if (context.getCommandChain().size() == 0 && getCommandData() != null && getCommandData().getParserChain() != null) {
-            try {
-                getCommandData().getParserChain().complete(line, candidates, context);
-            } catch (EndOfLineException | IllegalArgumentException e) {
-                return;
-            }
-        }
-
-        if (classParserChains.size() > 0) {
-            completeClass(line.copy(), candidates, context);
-        } else {
-            completeMethod(line.copy(), candidates, context);
-            completeChildren(line.copy(), candidates, context);
-        }
-    }
+  }
 }

@@ -24,41 +24,42 @@
 package au.com.grieve.bcf.impl.execution;
 
 import au.com.grieve.bcf.ExecutionCandidate;
-import lombok.Getter;
-import lombok.ToString;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString
 public class DefaultExecutionCandidate implements ExecutionCandidate {
 
-    private final Object instance;
-    private final Method method;
-    private final List<Object> parameters;
-    private final int weight;
+  private final Object instance;
+  private final Method method;
+  private final List<Object> parameters;
+  private final int weight;
 
-    public DefaultExecutionCandidate(Object instance, Method method, int weight, List<Object> parameters) {
-        this.instance = instance;
-        this.method = method;
-        this.weight = weight;
-        this.parameters = new ArrayList<>(parameters);
+  public DefaultExecutionCandidate(
+      Object instance, Method method, int weight, List<Object> parameters) {
+
+    this.instance = instance;
+    this.method = method;
+    this.weight = weight;
+    this.parameters = new ArrayList<>(parameters);
+  }
+
+  @Override
+  public Object invoke(Object... args) throws InvocationTargetException, IllegalAccessException {
+    List<Object> allArgs = new ArrayList<>(Arrays.asList(args));
+    allArgs.addAll(parameters);
+
+    // Fill out extra parameters with null
+    while (allArgs.size() < method.getParameterCount()) {
+      allArgs.add(null);
     }
 
-    @Override
-    public Object invoke(Object... args) throws InvocationTargetException, IllegalAccessException {
-        List<Object> allArgs = new ArrayList<>(Arrays.asList(args));
-        allArgs.addAll(parameters);
-
-        // Fill out extra parameters with null
-        while (allArgs.size() < method.getParameterCount()) {
-            allArgs.add(null);
-        }
-
-        return method.invoke(instance, allArgs.toArray());
-    }
+    return method.invoke(instance, allArgs.toArray());
+  }
 }

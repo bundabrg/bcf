@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Command {
-    String value();
-    String input() default "";
-}
+  String value();
 
+  String input() default "";
+}

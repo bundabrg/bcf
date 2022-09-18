@@ -31,16 +31,16 @@ import lombok.ToString;
 @Getter
 @ToString
 public class DefaultCompletionCandidate implements CompletionCandidate {
-    private final String value;
-    private final String title;
+  private final String value;
+  private final String title;
 
-    public DefaultCompletionCandidate(String value) {
-        this(value, value);
-    }
+  public DefaultCompletionCandidate(String value) {
+    this(value, value);
+  }
 
-    @Builder
-    public DefaultCompletionCandidate(String value, String title) {
-        this.value = value;
-        this.title = title != null ? title : value;
-    }
+  @Builder
+  public DefaultCompletionCandidate(String value, String title) {
+    this.value = value;
+    this.title = title != null ? title : value;
+  }
 }

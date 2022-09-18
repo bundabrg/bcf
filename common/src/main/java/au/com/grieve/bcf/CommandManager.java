@@ -27,32 +27,38 @@ import java.util.List;
 
 public interface CommandManager<DATA> {
 
-    /**
-     * Register a command
-     * @param command Command to register
-     */
-    void registerCommand(Command<DATA> command);
+  /**
+   * Register a command
+   *
+   * @param command Command to register
+   */
+  void registerCommand(Command<DATA> command);
 
-    /**
-     * Register a Sub-Command to all existing instances of a parent class
-     * @param parent Parent command class
-     * @param command Command to register
-     */
-    void registerCommand(Class<? extends Command<DATA>> parent, Command<DATA> command);
+  /**
+   * Register a Sub-Command to all existing instances of a parent class
+   *
+   * @param parent Parent command class
+   * @param command Command to register
+   */
+  void registerCommand(Class<? extends Command<DATA>> parent, Command<DATA> command);
 
-    /**
-     * Provide completion candidates for the input
-     * @param line The input
-     * @param candidates List of candidates
-     */
-    void complete(String line, List<CompletionCandidateGroup> candidates);
-    void complete(ParsedLine line, List<CompletionCandidateGroup> candidates);
+  /**
+   * Provide completion candidates for the input
+   *
+   * @param line The input
+   * @param candidates List of candidates
+   */
+  void complete(String line, List<CompletionCandidateGroup> candidates);
 
-    /**
-     * Return the best execution candidate for the parsed input
-     * @param line The input
-     * @return best execution method
-     */
-    ExecutionCandidate execute(String line, DATA data);
-    ExecutionCandidate execute(ParsedLine line, DATA data);
+  void complete(ParsedLine line, List<CompletionCandidateGroup> candidates);
+
+  /**
+   * Return the best execution candidate for the parsed input
+   *
+   * @param line The input
+   * @return best execution method
+   */
+  ExecutionCandidate execute(String line, DATA data);
+
+  ExecutionCandidate execute(ParsedLine line, DATA data);
 }

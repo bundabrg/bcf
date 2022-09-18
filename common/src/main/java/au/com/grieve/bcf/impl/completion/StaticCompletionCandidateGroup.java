@@ -25,37 +25,34 @@ package au.com.grieve.bcf.impl.completion;
 
 import au.com.grieve.bcf.CompletionCandidate;
 import au.com.grieve.bcf.CompletionCandidateGroup;
-import lombok.Getter;
-import lombok.ToString;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString
 public class StaticCompletionCandidateGroup implements CompletionCandidateGroup {
 
-    private final List<CompletionCandidate> completionCandidates = new ArrayList<>();
+  private final List<CompletionCandidate> completionCandidates = new ArrayList<>();
 
-    private final String input;
-    private final String description;
+  private final String input;
+  private final String description;
 
-    public StaticCompletionCandidateGroup(String input) {
-        this(input, null);
-    }
+  public StaticCompletionCandidateGroup(String input) {
+    this(input, null);
+  }
 
-    public StaticCompletionCandidateGroup(String input, String description) {
-        this.input = input;
-        this.description = description;
-    }
+  public StaticCompletionCandidateGroup(String input, String description) {
+    this.input = input;
+    this.description = description;
+  }
 
-    @Override
-    public List<CompletionCandidate> getMatchingCompletionCandidates() {
-        return getCompletionCandidates().stream()
-                .filter(c -> c.getValue().startsWith(getInput()))
-                .collect(Collectors.toList());
-    }
-
-
+  @Override
+  public List<CompletionCandidate> getMatchingCompletionCandidates() {
+    return getCompletionCandidates().stream()
+        .filter(c -> c.getValue().startsWith(getInput()))
+        .collect(Collectors.toList());
+  }
 }

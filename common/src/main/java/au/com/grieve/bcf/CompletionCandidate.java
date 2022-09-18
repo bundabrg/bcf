@@ -23,20 +23,19 @@
 
 package au.com.grieve.bcf;
 
-/**
- * A candidate for completion
- */
+/** A candidate for completion */
 public interface CompletionCandidate {
-    /**
-     * Return the value of the Completion
-     * @return value
-     */
-    String getValue();
+  /**
+   * Return the value of the Completion
+   *
+   * @return value
+   */
+  String getValue();
 
-    /**
-     * Get Title of the value which can be shown instead of value
-     * @return title
-     */
-    String getTitle();
-
+  /**
+   * Get Title of the value which can be shown instead of value
+   *
+   * @return title
+   */
+  String getTitle();
 }

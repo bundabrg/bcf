@@ -23,171 +23,170 @@
 
 package au.com.grieve.bcf.impl.parser;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Test;
 
 class IntegerParserTest {
 
-    @Test
-    void parseSimple_1() {
-        IntegerParser integerParser = new IntegerParser(new HashMap<>());
-        ParsedLine line = new DefaultParsedLine("");
+  @Test
+  void parseSimple_1() {
+    IntegerParser integerParser = new IntegerParser(new HashMap<>());
+    ParsedLine line = new DefaultParsedLine("");
 
-        assertThrows(EndOfLineException.class, () -> integerParser.parse(line));
-        assertEquals(0, line.getWordIndex());
-    }
+    assertThrows(EndOfLineException.class, () -> integerParser.parse(line));
+    assertEquals(0, line.getWordIndex());
+  }
 
-    @Test
-    void parseSimple_2() {
-        IntegerParser integerParser = new IntegerParser(new HashMap<>());
-        ParsedLine line = new DefaultParsedLine("a");
+  @Test
+  void parseSimple_2() {
+    IntegerParser integerParser = new IntegerParser(new HashMap<>());
+    ParsedLine line = new DefaultParsedLine("a");
 
-        assertThrows(IllegalArgumentException.class, () -> integerParser.parse(line));
-        assertEquals(0, line.getWordIndex());
-    }
+    assertThrows(IllegalArgumentException.class, () -> integerParser.parse(line));
+    assertEquals(0, line.getWordIndex());
+  }
 
-    @Test
-    void parseSimple_3() throws EndOfLineException {
-        IntegerParser integerParser = new IntegerParser(new HashMap<>());
-        ParsedLine line = new DefaultParsedLine("1");
+  @Test
+  void parseSimple_3() throws EndOfLineException {
+    IntegerParser integerParser = new IntegerParser(new HashMap<>());
+    ParsedLine line = new DefaultParsedLine("1");
 
-        assertEquals(1, integerParser.parse(line));
-        assertEquals(1, line.getWordIndex());
-    }
+    assertEquals(1, integerParser.parse(line));
+    assertEquals(1, line.getWordIndex());
+  }
 
-    @Test
-    void parseSimple_4() throws EndOfLineException {
-        IntegerParser integerParser = new IntegerParser(new HashMap<>());
-        ParsedLine line = new DefaultParsedLine("1 a");
+  @Test
+  void parseSimple_4() throws EndOfLineException {
+    IntegerParser integerParser = new IntegerParser(new HashMap<>());
+    ParsedLine line = new DefaultParsedLine("1 a");
 
-        assertEquals(1, integerParser.parse(line));
-        assertEquals(1, line.getWordIndex());
-    }
+    assertEquals(1, integerParser.parse(line));
+    assertEquals(1, line.getWordIndex());
+  }
 
-    @Test
-    void parseSimple_5() {
-        IntegerParser integerParser = new IntegerParser(new HashMap<>());
-        ParsedLine line = new DefaultParsedLine("a 1");
+  @Test
+  void parseSimple_5() {
+    IntegerParser integerParser = new IntegerParser(new HashMap<>());
+    ParsedLine line = new DefaultParsedLine("a 1");
 
-        assertThrows(IllegalArgumentException.class, () -> integerParser.parse(line));
-        assertEquals(0, line.getWordIndex());
-    }
+    assertThrows(IllegalArgumentException.class, () -> integerParser.parse(line));
+    assertEquals(0, line.getWordIndex());
+  }
 
-    @Test
-    void optionsMin_1() {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("min", "13");
-        IntegerParser integerParser = new IntegerParser(parameters);
-        ParsedLine line = new DefaultParsedLine("5");
+  @Test
+  void optionsMin_1() {
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("min", "13");
+    IntegerParser integerParser = new IntegerParser(parameters);
+    ParsedLine line = new DefaultParsedLine("5");
 
-        assertThrows(IllegalArgumentException.class, () -> integerParser.parse(line));
-        assertEquals(0, line.getWordIndex());
-    }
+    assertThrows(IllegalArgumentException.class, () -> integerParser.parse(line));
+    assertEquals(0, line.getWordIndex());
+  }
 
-    @Test
-    void optionsMin_2() throws EndOfLineException {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("min", "13");
-        IntegerParser integerParser = new IntegerParser(parameters);
-        ParsedLine line = new DefaultParsedLine("100");
+  @Test
+  void optionsMin_2() throws EndOfLineException {
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("min", "13");
+    IntegerParser integerParser = new IntegerParser(parameters);
+    ParsedLine line = new DefaultParsedLine("100");
 
-        assertEquals(100, integerParser.parse(line));
-        assertEquals(1, line.getWordIndex());
-    }
+    assertEquals(100, integerParser.parse(line));
+    assertEquals(1, line.getWordIndex());
+  }
 
-    @Test
-    void optionsMin_3() throws EndOfLineException {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("min", "13");
-        IntegerParser integerParser = new IntegerParser(parameters);
-        ParsedLine line = new DefaultParsedLine("13");
+  @Test
+  void optionsMin_3() throws EndOfLineException {
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("min", "13");
+    IntegerParser integerParser = new IntegerParser(parameters);
+    ParsedLine line = new DefaultParsedLine("13");
 
-        assertEquals(13, integerParser.parse(line));
-        assertEquals(1, line.getWordIndex());
-    }
+    assertEquals(13, integerParser.parse(line));
+    assertEquals(1, line.getWordIndex());
+  }
 
-    @Test
-    void optionsMax_1() {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("max", "13");
-        IntegerParser integerParser = new IntegerParser(parameters);
-        ParsedLine line = new DefaultParsedLine("100");
+  @Test
+  void optionsMax_1() {
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("max", "13");
+    IntegerParser integerParser = new IntegerParser(parameters);
+    ParsedLine line = new DefaultParsedLine("100");
 
-        assertThrows(IllegalArgumentException.class, () -> integerParser.parse(line));
-        assertEquals(0, line.getWordIndex());
-    }
+    assertThrows(IllegalArgumentException.class, () -> integerParser.parse(line));
+    assertEquals(0, line.getWordIndex());
+  }
 
-    @Test
-    void optionsMax_2() throws EndOfLineException {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("max", "13");
-        IntegerParser integerParser = new IntegerParser(parameters);
-        ParsedLine line = new DefaultParsedLine("5");
+  @Test
+  void optionsMax_2() throws EndOfLineException {
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("max", "13");
+    IntegerParser integerParser = new IntegerParser(parameters);
+    ParsedLine line = new DefaultParsedLine("5");
 
-        assertEquals(5, integerParser.parse(line));
-        assertEquals(1, line.getWordIndex());
-    }
+    assertEquals(5, integerParser.parse(line));
+    assertEquals(1, line.getWordIndex());
+  }
 
-    @Test
-    void optionsMax_3() throws EndOfLineException {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("max", "13");
-        IntegerParser integerParser = new IntegerParser(parameters);
-        ParsedLine line = new DefaultParsedLine("13");
+  @Test
+  void optionsMax_3() throws EndOfLineException {
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("max", "13");
+    IntegerParser integerParser = new IntegerParser(parameters);
+    ParsedLine line = new DefaultParsedLine("13");
 
-        assertEquals(13, integerParser.parse(line));
-        assertEquals(1, line.getWordIndex());
-    }
+    assertEquals(13, integerParser.parse(line));
+    assertEquals(1, line.getWordIndex());
+  }
 
-    @Test
-    void completionMinMax_1() {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("min", "5");
-        parameters.put("max", "13");
-        ParsedLine line = new DefaultParsedLine("");
-        List<CompletionCandidateGroup> groups = new ArrayList<>();
-        IntegerParser integerParser = new IntegerParser(parameters);
+  @Test
+  void completionMinMax_1() {
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("min", "5");
+    parameters.put("max", "13");
+    ParsedLine line = new DefaultParsedLine("");
+    List<CompletionCandidateGroup> groups = new ArrayList<>();
+    IntegerParser integerParser = new IntegerParser(parameters);
 
-        assertThrows(EndOfLineException.class, () -> integerParser.complete(line, groups));
-        assertEquals(1, groups.size());
-        assertEquals(9, groups.get(0).getMatchingCompletionCandidates().size());
-    }
+    assertThrows(EndOfLineException.class, () -> integerParser.complete(line, groups));
+    assertEquals(1, groups.size());
+    assertEquals(9, groups.get(0).getMatchingCompletionCandidates().size());
+  }
 
-    @Test
-    void completionMinMax_2() throws EndOfLineException {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("min", "5");
-        parameters.put("max", "13");
-        ParsedLine line = new DefaultParsedLine("1");
-        List<CompletionCandidateGroup> groups = new ArrayList<>();
-        IntegerParser integerParser = new IntegerParser(parameters);
+  @Test
+  void completionMinMax_2() throws EndOfLineException {
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("min", "5");
+    parameters.put("max", "13");
+    ParsedLine line = new DefaultParsedLine("1");
+    List<CompletionCandidateGroup> groups = new ArrayList<>();
+    IntegerParser integerParser = new IntegerParser(parameters);
 
-        integerParser.complete(line, groups);
-        assertEquals(1, groups.size());
-        assertEquals(4, groups.get(0).getMatchingCompletionCandidates().size());
-    }
+    integerParser.complete(line, groups);
+    assertEquals(1, groups.size());
+    assertEquals(4, groups.get(0).getMatchingCompletionCandidates().size());
+  }
 
-    @Test
-    void completionMinMax_3() throws EndOfLineException {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("min", "13");
-        parameters.put("max", "5");
-        ParsedLine line = new DefaultParsedLine("1");
-        List<CompletionCandidateGroup> groups = new ArrayList<>();
-        IntegerParser integerParser = new IntegerParser(parameters);
+  @Test
+  void completionMinMax_3() throws EndOfLineException {
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("min", "13");
+    parameters.put("max", "5");
+    ParsedLine line = new DefaultParsedLine("1");
+    List<CompletionCandidateGroup> groups = new ArrayList<>();
+    IntegerParser integerParser = new IntegerParser(parameters);
 
-        integerParser.complete(line, groups);
-        assertEquals(0, groups.size());
-    }
+    integerParser.complete(line, groups);
+    assertEquals(0, groups.size());
+  }
 }

@@ -27,28 +27,31 @@ import java.util.List;
 
 public interface CompletionCandidateGroup {
 
-    /**
-     * Return the list of all CompletionCandidates that belong to this group
-     * @return List of CompletionCandidates
-     */
-    List<CompletionCandidate> getCompletionCandidates();
+  /**
+   * Return the list of all CompletionCandidates that belong to this group
+   *
+   * @return List of CompletionCandidates
+   */
+  List<CompletionCandidate> getCompletionCandidates();
 
-    /**
-     * Return the list of completion candidates that match the input
-     * @return List of CompletionCandidates
-     */
-    List<CompletionCandidate> getMatchingCompletionCandidates();
+  /**
+   * Return the list of completion candidates that match the input
+   *
+   * @return List of CompletionCandidates
+   */
+  List<CompletionCandidate> getMatchingCompletionCandidates();
 
-    /**
-     * Get the description of this completion group
-     * @return description
-     */
-    String getDescription();
+  /**
+   * Get the description of this completion group
+   *
+   * @return description
+   */
+  String getDescription();
 
-    /**
-     * Return the input that caused this completion
-     * @return the input
-     */
-    String getInput();
-
+  /**
+   * Return the input that caused this completion
+   *
+   * @return the input
+   */
+  String getInput();
 }

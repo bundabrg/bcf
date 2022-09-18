@@ -27,32 +27,35 @@ import au.com.grieve.bcf.CommandData;
 import au.com.grieve.bcf.ParserChain;
 import lombok.Getter;
 
-/**
- * Data about a root command
- */
-
+/** Data about a root command */
 @Getter
 public class BaseCommandData<DATA> implements CommandData<DATA> {
-    // Name of the command
-    private final String name;
+  // Name of the command
+  private final String name;
 
-    // Aliases of command, if any
-    private final String[] aliases;
+  // Aliases of command, if any
+  private final String[] aliases;
 
-    // Description of the command
-    private final String description;
+  // Description of the command
+  private final String description;
 
-    // A parserChain to prepend to any children
-    private final ParserChain<DATA> parserChain;
+  // A parserChain to prepend to any children
+  private final ParserChain<DATA> parserChain;
 
-    // Input to prepend to any supplied input
-    private final String input;
+  // Input to prepend to any supplied input
+  private final String input;
 
-    public BaseCommandData(String name, String[] aliases, String description, ParserChain<DATA> parserChain, String input) {
-        this.name = name;
-        this.aliases = aliases;
-        this.description = description;
-        this.parserChain = parserChain;
-        this.input = input;
-    }
+  public BaseCommandData(
+      String name,
+      String[] aliases,
+      String description,
+      ParserChain<DATA> parserChain,
+      String input) {
+
+    this.name = name;
+    this.aliases = aliases;
+    this.description = description;
+    this.parserChain = parserChain;
+    this.input = input;
+  }
 }

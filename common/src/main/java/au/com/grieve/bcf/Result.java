@@ -23,25 +23,23 @@
 
 package au.com.grieve.bcf;
 
-/**
- * A result that may be completed later
- */
+/** A result that may be completed later */
 public interface Result {
 
-    /**
-     * Return the value
-     * @return Result
-     */
-    Object getValue();
+  /**
+   * Return the value
+   *
+   * @return Result
+   */
+  Object getValue();
 
-    /**
-     * Is result suppressed
-     * @return true if suppressed
-     */
-    boolean isSuppressed();
+  /**
+   * Is result suppressed
+   *
+   * @return true if suppressed
+   */
+  boolean isSuppressed();
 
-    /**
-     * Return a copy of ourselves
-     */
-    Result copy();
+  /** Return a copy of ourselves */
+  Result copy();
 }

@@ -27,33 +27,38 @@ import java.util.List;
 import java.util.Map;
 
 public interface ExecutionContext<DATA> {
-    /**
-     * Return Parser classes
-     * @return parser classes
-     */
-    Map<String, Class <? extends Parser<?>>> getParserClasses();
+  /**
+   * Return Parser classes
+   *
+   * @return parser classes
+   */
+  Map<String, Class<? extends Parser<?>>> getParserClasses();
 
-    /**
-     * Return the chain of command classes so far
-     * @return List of Commands
-     */
-    List<Command<DATA>> getCommandChain();
+  /**
+   * Return the chain of command classes so far
+   *
+   * @return List of Commands
+   */
+  List<Command<DATA>> getCommandChain();
 
-    /**
-     * Return the result so far
-     * @return List of parameters
-     */
-    List<Result> getResult();
+  /**
+   * Return the result so far
+   *
+   * @return List of parameters
+   */
+  List<Result> getResult();
 
-    /**
-     * Return a copy of ourselves
-     * @return Copy
-     */
-    ExecutionContext<DATA> copy();
+  /**
+   * Return a copy of ourselves
+   *
+   * @return Copy
+   */
+  ExecutionContext<DATA> copy();
 
-    /**
-     * Return the associated data
-     * @return data
-     */
-    DATA getData();
+  /**
+   * Return the associated data
+   *
+   * @return data
+   */
+  DATA getData();
 }

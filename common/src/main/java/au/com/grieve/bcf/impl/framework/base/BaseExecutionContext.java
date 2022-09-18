@@ -27,41 +27,36 @@ import au.com.grieve.bcf.Command;
 import au.com.grieve.bcf.ExecutionContext;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.Result;
-import lombok.Getter;
-import lombok.ToString;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString
 public class BaseExecutionContext<DATA> implements ExecutionContext<DATA> {
-    private final Map<String, Class <? extends Parser<?>>> parserClasses = new HashMap<>();
-    private final List<Command<DATA>> commandChain = new ArrayList<>();
-    private final List<Result> result = new ArrayList<>();
-    private final DATA data;
+  private final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
+  private final List<Command<DATA>> commandChain = new ArrayList<>();
+  private final List<Result> result = new ArrayList<>();
+  private final DATA data;
 
-    public BaseExecutionContext() {
-        this(null);
-    }
+  public BaseExecutionContext() {
+    this(null);
+  }
 
-    public BaseExecutionContext(DATA data) {
-        this.data = data;
-    }
+  public BaseExecutionContext(DATA data) {
+    this.data = data;
+  }
 
-    @Override
-    public ExecutionContext<DATA> copy() {
-        BaseExecutionContext<DATA> result = new BaseExecutionContext<>(data);
-        result.parserClasses.putAll(parserClasses);
-        result.getCommandChain().addAll(commandChain);
-        result.getResult().addAll(
-                this.result.stream()
-                        .map(Result::copy)
-                        .collect(Collectors.toList())
-        );
-        return result;
-    }
+  @Override
+  public ExecutionContext<DATA> copy() {
+    BaseExecutionContext<DATA> result = new BaseExecutionContext<>(data);
+    result.parserClasses.putAll(parserClasses);
+    result.getCommandChain().addAll(commandChain);
+    result.getResult().addAll(this.result.stream().map(Result::copy).collect(Collectors.toList()));
+    return result;
+  }
 }
