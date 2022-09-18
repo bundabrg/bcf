@@ -24,40 +24,36 @@
 package au.com.grieve.bcf;
 
 import java.util.List;
+import java.util.Map;
 
-/**
-* Command - All commands inherit from this class
- */
-public interface Command<DATA> {
+public interface ExecutionContext<DATA> {
+    /**
+     * Return Parser classes
+     * @return parser classes
+     */
+    Map<String, Class <? extends Parser<?>>> getParserClasses();
 
     /**
-     * Provide completion candidates for the input
-     * @param line The input
-     * @param candidates List of candidates
-     * @param context Context
+     * Return the chain of command classes so far
+     * @return List of Commands
      */
-    void complete(ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context);
+    List<Command<DATA>> getCommandChain();
 
     /**
-     * Return the best execution candidate for the parsed input
-     * @param line The input
-     * @param context Context
-     * @return best execution method
+     * Return the result so far
+     * @return List of parameters
      */
-    ExecutionCandidate execute(ParsedLine line, ExecutionContext<DATA> context);
+    List<Result> getResult();
 
     /**
-     * Add a child command to this one
-     * @param childCommand Child Command
+     * Return a copy of ourselves
+     * @return Copy
      */
-    void addChild(Command<DATA> childCommand);
+    ExecutionContext<DATA> copy();
 
     /**
-     * Return the data for Command
-     * @return data for command
+     * Return the associated data
+     * @return data
      */
-    CommandData<DATA> getCommandData();
-
-
-
+    DATA getData();
 }

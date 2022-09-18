@@ -23,24 +23,35 @@
 
 package au.com.grieve.bcf;
 
-import java.util.List;
-
-public interface ExecuteContext {
+public interface CommandData<DATA> {
     /**
-     * Return the chain of command classes so far
-     * @return List of Commands
+     * Get the name of the command
+     * @return command name
      */
-    List<Command> getCommandChain();
+    String getName();
 
     /**
-     * Return the result so far
-     * @return List of parameters
+     * Get any aliases of the command
+     * @return aliases to command
      */
-    List<Result> getResult();
+    String[] getAliases();
+
 
     /**
-     * Return a copy of ourselves
-     * @return Copy
+     * Get the description of the command
+     * @return command description
      */
-    ExecuteContext copy();
+    String getDescription();
+
+    /**
+     * Get parserChain to prepend to any chains
+     * @return parserChain to prepend
+     */
+    ParserChain<DATA> getParserChain();
+
+    /**
+     * Get input to prepend to supplied input
+     * @return input to prepend
+     */
+    String getInput();
 }

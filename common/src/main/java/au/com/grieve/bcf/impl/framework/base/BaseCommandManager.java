@@ -21,12 +21,18 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.framework.annotation;
+package au.com.grieve.bcf.impl.framework.base;
 
-import au.com.grieve.bcf.*;
+import au.com.grieve.bcf.Command;
+import au.com.grieve.bcf.CommandData;
+import au.com.grieve.bcf.CommandManager;
+import au.com.grieve.bcf.CompletionCandidateGroup;
+import au.com.grieve.bcf.CompletionContext;
+import au.com.grieve.bcf.ExecutionCandidate;
+import au.com.grieve.bcf.ExecutionContext;
+import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.exception.EndOfLineException;
-import au.com.grieve.bcf.framework.annotation.annotations.Command;
-import au.com.grieve.bcf.framework.annotation.annotations.Description;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import au.com.grieve.bcf.impl.completion.StaticCompletionCandidateGroup;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
@@ -34,28 +40,24 @@ import au.com.grieve.bcf.impl.parser.DoubleParser;
 import au.com.grieve.bcf.impl.parser.FloatParser;
 import au.com.grieve.bcf.impl.parser.IntegerParser;
 import au.com.grieve.bcf.impl.parser.StringParser;
-import lombok.Builder;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
-public class AnnotationCommandManager implements CommandManager<AnnotationCommand> {
-    private final Map<String, CommandConfig> commandsByName = new HashMap<>();
+public class BaseCommandManager<DATA> implements CommandManager<DATA> {
+    private final Map<String, Command<DATA>> commandsByName = new HashMap<>();
     private final Map<String, String> commandAliases = new HashMap<>();
-    private final Map<Class<? extends AnnotationCommand>, Set<AnnotationCommand>> commmandInstances = new HashMap<>();
+    private final Map<Class<?>, Set<Command<DATA>>> commandInstances = new HashMap<>();
     private final Map<String, Class<? extends Parser<?>>> parsers = new HashMap<>();
 
-    @Builder
-    protected static class CommandConfig {
-        AnnotationCommand command;
-        String description;
-        ArgumentParserChain prefixParserChain;
-        String input;
-    }
-
-    public AnnotationCommandManager() {
+    public BaseCommandManager() {
         registerDefaultParsers();
     }
 
@@ -84,8 +86,8 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
      * When child commands are added later we use this to know where to add the children to
      * @param command Command to add
      */
-    protected void addInstance(AnnotationCommand command) {
-        Set<AnnotationCommand> instances = this.commmandInstances.computeIfAbsent(command.getClass(), k -> new HashSet<>());
+    protected void addInstance(Command<DATA> command) {
+        Set<Command<DATA>> instances = this.commandInstances.computeIfAbsent(command.getClass(), k -> new HashSet<>());
         instances.add(command);
     }
 
@@ -94,13 +96,9 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
      * @param command Command to register
      */
     @Override
-    public void registerCommand(AnnotationCommand command) {
-        if (!command.getClass().isAnnotationPresent(Command.class)) {
-            throw new RuntimeException("Missing required @Command");
-        }
-
-        if (command.getClass().getAnnotation(Command.class).value().strip().equals("")) {
-            throw new RuntimeException("Empty @Command");
+    public void registerCommand(Command<DATA> command) {
+        if (command.getCommandData() == null || command.getCommandData().getName().strip().equals("")) {
+            throw new RuntimeException("Invalid Root Command. Perhaps this is supposed to be a child command?");
         }
 
         addCommand(command);
@@ -112,41 +110,27 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
      * Can be overridden to allow hooking into other command managers
      * @param command Command to add
      */
-    protected void addCommand(AnnotationCommand command) {
-        Command commandData = command.getClass().getAnnotation(Command.class);
-        String[] commandValue = commandData.value().strip().split(" ",2);
+    protected void addCommand(Command<DATA> command) {
+        CommandData<DATA> commandData = command.getCommandData();
 
-        List<String> commandNames = List.of(
-                commandValue[0].split("\\|")
-        );
+        // TODO Handle collisions
+        if (!commandsByName.containsKey(commandData.getName())) {
+            commandsByName.put(commandData.getName(), command);
 
-        if (!commandsByName.containsKey(commandNames.get(0))) {
-            commandsByName.put(commandNames.get(0), CommandConfig.builder()
-                    .command(command)
-                    .prefixParserChain(commandValue.length > 1 ? new ArgumentParserChain(getParsers(), commandValue[1]) : null)
-                    .input(commandData.input())
-                    .description(command.getClass().isAnnotationPresent(Description.class) ?
-                            command.getClass().getAnnotation(Description.class).value() :
-                            null
-                    )
-                    .build());
+            // Add aliases that don't exist yet
+            commandAliases.putAll(Arrays.stream(commandData.getAliases())
+                    .filter(s -> !commandAliases.containsKey(s))
+                    .collect(Collectors.toMap(s -> s, s -> commandData.getName()))
+            );
         }
-
-        // Add aliases that don't exist yet
-        commandAliases.putAll(commandNames.stream()
-                .skip(1)
-                .filter(s -> !commandAliases.containsKey(s))
-                .collect(Collectors.toMap(s -> s, s -> commandNames.get(0)))
-        );
     }
-
 
     /**
      * Find a command by name
      * @param name Name
      * @return Command that matches name else null
      */
-    protected CommandConfig findCommand(String name) {
+    protected Command<DATA> findCommand(String name) {
         return commandsByName.getOrDefault(name, commandsByName.get(commandAliases.get(name)));
     }
 
@@ -156,10 +140,11 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
      * @param command Command to register
      */
     @Override
-    public void registerCommand(Class<? extends AnnotationCommand> parent, AnnotationCommand command) {
-        Set<AnnotationCommand> instances = this.commmandInstances.get(parent);
+    public void registerCommand(Class<? extends Command<DATA>> parent, Command<DATA> command) {
+        Set<Command<DATA>> instances = this.commandInstances.get(parent);
 
-        if (command.getClass().isAnnotationPresent(Command.class)) {
+        // If it is a root command we add it as a command as well
+        if (command.getCommandData() != null) {
             addCommand(command);
         }
 
@@ -175,8 +160,8 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
     }
 
     @Override
-    public ExecutionCandidate execute(String line) {
-       return execute(new DefaultParsedLine(line));
+    public ExecutionCandidate execute(String line, DATA data) {
+       return execute(new DefaultParsedLine(line), data);
     }
 
     @Override
@@ -187,11 +172,13 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
             Map<String, CompletionCandidateGroup> commandGroups = new HashMap<>();
             String input = line.isEol() ? "" : line.getCurrentWord();
 
-            for (Map.Entry<String, CommandConfig> item : commandsByName.entrySet()) {
+            for (Map.Entry<String, Command<DATA>> item : commandsByName.entrySet()) {
                 if (!item.getKey().startsWith(input)) {
                     continue;
                 }
-                CompletionCandidateGroup group = new StaticCompletionCandidateGroup(item.getValue().description);
+
+                CompletionCandidateGroup group = new StaticCompletionCandidateGroup(
+                        item.getValue().getCommandData().getDescription());
 
                 // Add command name
                 group.getCompletionCandidates().add(new DefaultCompletionCandidate(item.getKey()));
@@ -208,7 +195,8 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
                 // Check if we already have a group, otherwise create one now
                 CompletionCandidateGroup group = commandGroups.getOrDefault(
                         item.getValue(),
-                        new StaticCompletionCandidateGroup(commandsByName.get(item.getValue()).description)
+                        new StaticCompletionCandidateGroup(
+                                commandsByName.get(item.getValue()).getCommandData().getDescription())
                 );
                 commandGroups.put(item.getValue(), group);
 
@@ -225,26 +213,24 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
             return;
         }
 
-        CommandConfig commandConfig = findCommand(commandName);
-        if (commandConfig == null) {
+        Command<DATA> command = findCommand(commandName);
+        if (command == null) {
             return;
         }
+        CommandData<DATA> commandData = command.getCommandData();
 
         // Prepend any additional input from the command to the input
-        if (commandConfig.input.length() > 0) {
-            line.insert(commandConfig.input);
+        if (commandData.getInput().length() > 0) {
+            line.insert(commandData.getInput());
         }
 
-        AnnotationCompletionContext context = AnnotationCompletionContext.builder()
-                .prefixParserChain(commandConfig.prefixParserChain)
-                .parserClasses(getParsers())
-                .build();
-
-        commandConfig.command.complete(line, candidates, context);
+        CompletionContext<DATA> context = new BaseCompletionContext<>();
+        context.getParserClasses().putAll(parsers);
+        command.complete(line, candidates, context);
     }
 
     @Override
-    public ExecutionCandidate execute(ParsedLine line) {
+    public ExecutionCandidate execute(ParsedLine line, DATA data) {
         String commandName;
         try {
             commandName = line.next();
@@ -252,22 +238,21 @@ public class AnnotationCommandManager implements CommandManager<AnnotationComman
             return null;
         }
 
-        CommandConfig commandConfig = findCommand(commandName);
-        if (commandConfig == null) {
+        Command<DATA> command = findCommand(commandName);
+        if (command == null) {
             return null;
         }
+        CommandData<DATA> commandData = command.getCommandData();
 
         // Prepend any additional input from the command to the input
-        if (commandConfig.input.length() > 0) {
-            line.insert(commandConfig.input);
+        if (commandData.getInput().length() > 0) {
+            line.insert(commandData.getInput());
         }
 
-        AnnotationExecuteContext context = AnnotationExecuteContext.builder()
-                .prefixParserChain(commandConfig.prefixParserChain)
-                .parserClasses(getParsers())
-                .build();
+        ExecutionContext<DATA> context = new BaseExecutionContext<>(data);
+        context.getParserClasses().putAll(parsers);
 
-        return commandConfig.command.execute(line, context);
+        return command.execute(line, context);
 
     }
 }

@@ -21,43 +21,38 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.framework.base;
 
-import java.util.List;
+import au.com.grieve.bcf.CommandData;
+import au.com.grieve.bcf.ParserChain;
+import lombok.Getter;
 
 /**
-* Command - All commands inherit from this class
+ * Data about a root command
  */
-public interface Command<DATA> {
 
-    /**
-     * Provide completion candidates for the input
-     * @param line The input
-     * @param candidates List of candidates
-     * @param context Context
-     */
-    void complete(ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context);
+@Getter
+public class BaseCommandData<DATA> implements CommandData<DATA> {
+    // Name of the command
+    private final String name;
 
-    /**
-     * Return the best execution candidate for the parsed input
-     * @param line The input
-     * @param context Context
-     * @return best execution method
-     */
-    ExecutionCandidate execute(ParsedLine line, ExecutionContext<DATA> context);
+    // Aliases of command, if any
+    private final String[] aliases;
 
-    /**
-     * Add a child command to this one
-     * @param childCommand Child Command
-     */
-    void addChild(Command<DATA> childCommand);
+    // Description of the command
+    private final String description;
 
-    /**
-     * Return the data for Command
-     * @return data for command
-     */
-    CommandData<DATA> getCommandData();
+    // A parserChain to prepend to any children
+    private final ParserChain<DATA> parserChain;
 
+    // Input to prepend to any supplied input
+    private final String input;
 
-
+    public BaseCommandData(String name, String[] aliases, String description, ParserChain<DATA> parserChain, String input) {
+        this.name = name;
+        this.aliases = aliases;
+        this.description = description;
+        this.parserChain = parserChain;
+        this.input = input;
+    }
 }

@@ -21,12 +21,19 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.framework.annotation;
+package au.com.grieve.bcf.impl.parserchain;
 
-import au.com.grieve.bcf.*;
+import au.com.grieve.bcf.CompletionCandidateGroup;
+import au.com.grieve.bcf.CompletionContext;
+import au.com.grieve.bcf.ExecutionContext;
+import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.Parser;
+import au.com.grieve.bcf.ParserChain;
+import au.com.grieve.bcf.Result;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
+import au.com.grieve.bcf.impl.framework.base.BaseCompletionContext;
 import au.com.grieve.bcf.impl.result.ParserResult;
 import au.com.grieve.bcf.impl.result.SwitchParserResult;
 import lombok.Getter;
@@ -35,13 +42,17 @@ import lombok.ToString;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Getter
 @ToString
-public class ArgumentParserChain implements ParserChain {
+public class StringParserChain<DATA> implements ParserChain<DATA> {
     private enum State {
         NAME,
         PARAM_KEY,
@@ -51,12 +62,29 @@ public class ArgumentParserChain implements ParserChain {
         PARAM_END
     }
 
-    private final Map<String, Class<? extends Parser<?>>> parserClasses;
-    private final List<Parser<?>> parsers = new ArrayList<>();
+    @Getter
+    protected static class ParserConfig {
+        private final String name;
+        private final Map<String, String> parameters = new HashMap<>();
 
-    public ArgumentParserChain(Map<String, Class<? extends Parser<?>>> parserClasses, String input) {
-        this.parserClasses = parserClasses;
-        this.parsers.addAll(parseArgumentString(input));
+        public ParserConfig(String name, Map<String, String> parameters) {
+            this.parameters.putAll(parameters);
+
+            // If it does not start with @, then a parser called 'literal' parser will be used with options being the name
+            if (!name.startsWith("@")) {
+                this.parameters.put("options", name);
+                this.parameters.put("suppress", this.parameters.getOrDefault("suppress", "true"));
+                this.name = "literal";
+            } else {
+                this.name = name.substring(1);
+            }
+        }
+    }
+
+    private final List<ParserConfig> parserConfigs = new ArrayList<>();
+
+    public StringParserChain(String arguments) {
+        parserConfigs.addAll(parseArgumentString(arguments));
     }
 
     /**
@@ -64,7 +92,7 @@ public class ArgumentParserChain implements ParserChain {
      * @param line Parsed Line
      * @param context Current context
      */
-    protected void parseSwitches(ParsedLine line, List<Result> output, ExecuteContext context) throws EndOfLineException, IllegalArgumentException {
+    protected void parseSwitches(ParsedLine line, List<Result> output, ExecutionContext<DATA> context) throws EndOfLineException, IllegalArgumentException {
         while (line.getCurrentWord().startsWith("-")) {
 
             String input = line.getCurrentWord().substring(1);
@@ -100,7 +128,10 @@ public class ArgumentParserChain implements ParserChain {
     }
 
     @Override
-    public void parse(ParsedLine line, List<Result> output, ExecuteContext context) throws EndOfLineException, IllegalArgumentException {
+    public void parse(ParsedLine line, List<Result> output, ExecutionContext<DATA> context) throws EndOfLineException, IllegalArgumentException {
+        List<Parser<?>> parsers = parserConfigs.stream()
+                .map(c -> createParser(c, context.getParserClasses()))
+                .collect(Collectors.toList());
         for(Parser<?> p : parsers) {
             // If parser is a switch we add it for later evaluation
             if (p.getParameters().containsKey("switch")) {
@@ -118,12 +149,12 @@ public class ArgumentParserChain implements ParserChain {
         parseSwitches(line, output, context);
     }
 
-    protected void completeSwitches(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext context) throws EndOfLineException {
+    protected void completeSwitches(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext<DATA> context) throws EndOfLineException {
         while (line.getCurrentWord().startsWith("-")) {
             String input = line.getCurrentWord().substring(1);
 
             // Look backwards through candidates for a non-completed result that matches our switch
-            Parser<?> parser = ((AnnotationCompletionContext) context).getSwitches().stream()
+            Parser<?> parser = ((BaseCompletionContext<DATA>) context).getSwitches().stream()
                     .collect(
                             Collectors.collectingAndThen(
                                     Collectors.toList(),
@@ -147,7 +178,7 @@ public class ArgumentParserChain implements ParserChain {
 
             try {
                 parser.parse(line);
-                ((AnnotationCompletionContext) context).getSwitches().remove(parser);
+                ((BaseCompletionContext<DATA>) context).getSwitches().remove(parser);
             } catch(EndOfLineException | IllegalArgumentException e) {
                 // We may or may not be at the end of input, so we try complete it just in case and if we are then at EOL we
                 // include the results
@@ -156,7 +187,7 @@ public class ArgumentParserChain implements ParserChain {
                     parser.complete(line, groups);
                     if (line.isEol()) {
                         candidateGroups.addAll(groups);
-                        ((AnnotationCompletionContext) context).getSwitches().remove(parser);
+                        ((BaseCompletionContext<DATA>) context).getSwitches().remove(parser);
                     }
                 } catch (IllegalArgumentException ignored) {
                 }
@@ -175,7 +206,7 @@ public class ArgumentParserChain implements ParserChain {
 
         // If we are at the end of the line, add any switches
         if (line.size() <= 1) {
-            for(Parser<?> p : ((AnnotationCompletionContext) context).getSwitches()) {
+            for(Parser<?> p : ((BaseCompletionContext<DATA>) context).getSwitches()) {
                 CompletionCandidateGroup group = new ParserCompletionCandidateGroup(p, line.getCurrentWord());
                 group.getCompletionCandidates().addAll(
                         Stream.of(p.getParameters().get("switch").split("\\|"))
@@ -188,11 +219,14 @@ public class ArgumentParserChain implements ParserChain {
     }
 
     @Override
-    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext context) throws EndOfLineException {
+    public void complete(ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext<DATA> context) throws EndOfLineException {
+        List<Parser<?>> parsers = parserConfigs.stream()
+                .map(c -> createParser(c, context.getParserClasses()))
+                .collect(Collectors.toList());
         for(Parser<?> p : parsers) {
             // If parser is a switch we add it for later evaluation
             if (p.getParameters().containsKey("switch")) {
-                ((AnnotationCompletionContext) context).getSwitches().add(p);
+                ((BaseCompletionContext<DATA>) context).getSwitches().add(p);
                 continue;
             }
 
@@ -232,30 +266,16 @@ public class ArgumentParserChain implements ParserChain {
 
     /**
      * Create a new parser based upon the name.
-     *
-     * @param name Name of parser
-     * @param parameters Parameters to parser
-     * @return Parser
      */
-    protected Parser<?> createParser(String name, Map<String, String> parameters) {
-        // If it does not start with @, then a parser called 'literal' parser will be used with options being the name
-        if (!name.startsWith("@")) {
-            parameters.put("options", name);
-            parameters.put("suppress", parameters.getOrDefault("suppress", "true"));
-            name="literal";
-        } else {
-            name = name.substring(1);
-        }
-
-        Class<? extends Parser<?>> parserClass = this.parserClasses.get(name);
+    protected Parser<?> createParser(ParserConfig parserConfig, Map<String, Class<? extends Parser<?>>> parserClasses) {
+        Class<? extends Parser<?>> parserClass = parserClasses.get(parserConfig.getName());
         if (parserClass == null) {
-            throw new RuntimeException("Unknown parser: " + name);
+            throw new RuntimeException("Unknown parser: " + parserConfig.getName());
         }
-
 
         try {
             return parserClass.getConstructor(Map.class)
-                    .newInstance(parameters);
+                    .newInstance(parserConfig.getParameters());
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -266,8 +286,8 @@ public class ArgumentParserChain implements ParserChain {
      * @param input Input
      * @return List of Parsers
      */
-    protected List<Parser<?>> parseArgumentString(String input) {
-        List<Parser<?>> result = new ArrayList<>();
+    protected List<ParserConfig> parseArgumentString(String input) {
+        List<ParserConfig> result = new ArrayList<>();
 
         try (StringReader reader = new StringReader(input)) {
             State state = State.NAME;
@@ -281,7 +301,7 @@ public class ArgumentParserChain implements ParserChain {
                 int i = reader.read();
                 if (i < 0) {
                     if (state == State.NAME && name.length() > 0) {
-                        result.add(createParser(name.toString(), new HashMap<>()));
+                        result.add(new ParserConfig(name.toString(), new HashMap<>()));
                     }
                     break;
                 }
@@ -292,7 +312,7 @@ public class ArgumentParserChain implements ParserChain {
                         switch (" (".indexOf(c)) {
                             case 0: // Next Argument
                                 if (name.length() > 0) {
-                                    result.add(createParser(name.toString(), new HashMap<>()));
+                                    result.add(new ParserConfig(name.toString(), new HashMap<>()));
                                     name = new StringBuilder();
                                 }
                                 break;
@@ -322,7 +342,7 @@ public class ArgumentParserChain implements ParserChain {
                                 break;
                             case 1:
                                 parameters.put(key.toString().trim(), value.toString().trim());
-                                result.add(createParser(name.toString(), parameters));
+                                result.add(new ParserConfig(name.toString(), parameters));
                                 name = new StringBuilder();
                                 state = State.PARAM_END;
                                 break;
@@ -367,7 +387,7 @@ public class ArgumentParserChain implements ParserChain {
                                 state = State.PARAM_KEY;
                                 break;
                             case 1:
-                                result.add(createParser(name.toString(), parameters));
+                                result.add(new ParserConfig(name.toString(), parameters));
                                 name = new StringBuilder();
                                 state = State.PARAM_END;
                                 break;
