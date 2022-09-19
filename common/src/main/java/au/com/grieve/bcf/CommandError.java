@@ -23,8 +23,27 @@
 
 package au.com.grieve.bcf;
 
-public interface ExecutionError {
-  ParsedLine getParsedLine();
+/** Provides a generic way of creating an merging errors */
+public interface CommandError {
 
-  CommandError getError();
+  /**
+   * Get name of error
+   *
+   * @return error name
+   */
+  String getName();
+
+  /**
+   * Return a string representation of this error
+   *
+   * @return Error string
+   */
+  String toString();
+
+  /**
+   * Merge another error into this one
+   *
+   * @param error Error to merge
+   */
+  void merge(CommandError error);
 }

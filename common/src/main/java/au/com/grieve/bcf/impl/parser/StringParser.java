@@ -29,6 +29,7 @@ import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
+import au.com.grieve.bcf.impl.error.InvalidOptionError;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +48,7 @@ public class StringParser extends BaseParser<String> {
     if (getParameters().containsKey("options")) {
       List<String> options = List.of(getParameters().get("options").split("\\|"));
       if (!options.contains(result)) {
-        throw new ParserSyntaxException(
-            line,
-            "invalid_option",
-            "'" + result + "' must be one of: " + String.join(", ", options));
+        throw new ParserSyntaxException(line, new InvalidOptionError(options));
       }
     }
 

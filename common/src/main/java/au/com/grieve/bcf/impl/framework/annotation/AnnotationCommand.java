@@ -37,6 +37,8 @@ import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.framework.annotation.annotations.Arg;
 import au.com.grieve.bcf.framework.annotation.annotations.Default;
 import au.com.grieve.bcf.framework.annotation.annotations.Error;
+import au.com.grieve.bcf.impl.error.InputExpected;
+import au.com.grieve.bcf.impl.error.MissingRequired;
 import au.com.grieve.bcf.impl.execution.DefaultExecutionCandidate;
 import au.com.grieve.bcf.impl.framework.base.BaseCommand;
 import au.com.grieve.bcf.impl.framework.base.BaseCommandData;
@@ -124,13 +126,11 @@ public class AnnotationCommand extends BaseCommand {
         p.parse(currentContext, result);
       } catch (EndOfLineException e) {
         // Ran out of input to satisfy this chain
-        errors.add(
-            new BaseExecutionError(
-                currentContext.getParsedLine(), "input_expected", "More input expected"));
+        errors.add(new BaseExecutionError(currentContext.getParsedLine(), new InputExpected()));
         continue;
       } catch (ParserSyntaxException e) {
         // Error has occurred
-        errors.add(new BaseExecutionError(e.getLine(), e.getName(), e.getMessage()));
+        errors.add(new BaseExecutionError(e.getLine(), e.getError()));
         continue;
       }
 
@@ -166,13 +166,11 @@ public class AnnotationCommand extends BaseCommand {
         item.getKey().parse(currentContext, result);
       } catch (EndOfLineException e) {
         // Ran out of input to satisfy this chain
-        errors.add(
-            new BaseExecutionError(
-                currentContext.getParsedLine(), "input_expected", "More input expected"));
+        errors.add(new BaseExecutionError(currentContext.getParsedLine(), new InputExpected()));
         continue;
       } catch (ParserSyntaxException e) {
         // Error has occurred
-        errors.add(new BaseExecutionError(e.getLine(), e.getName(), e.getMessage()));
+        errors.add(new BaseExecutionError(e.getLine(), e.getError()));
         continue;
       }
 
@@ -197,9 +195,8 @@ public class AnnotationCommand extends BaseCommand {
             errors.add(
                 new BaseExecutionError(
                     currentContext.getParsedLine().copy(),
-                    "missing_required",
-                    "A required parameter is missing: -"
-                        + r.getParser().getParameters().get("switch").split("\\|")[0]));
+                    new MissingRequired(
+                        "-" + r.getParser().getParameters().get("switch").split("\\|")[0])));
             isError = true;
           }
         }
@@ -243,13 +240,11 @@ public class AnnotationCommand extends BaseCommand {
       try {
         getCommandData().getParserChain().parse(context, result);
       } catch (EndOfLineException e) {
-        errors.add(
-            new BaseExecutionError(
-                context.getParsedLine(), "input_expected", "More input expected"));
+        errors.add(new BaseExecutionError(context.getParsedLine(), new InputExpected()));
 
         return getErrorExecutionCandidate(context, context.getParsedLine().getWordIndex(), errors);
       } catch (ParserSyntaxException e) {
-        errors.add(new BaseExecutionError(e.getLine(), e.getName(), e.getMessage()));
+        errors.add(new BaseExecutionError(e.getLine(), e.getError()));
 
         return getErrorExecutionCandidate(context, e.getLine().getWordIndex(), errors);
       }

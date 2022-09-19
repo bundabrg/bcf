@@ -21,10 +21,37 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.error;
 
-public interface ExecutionError {
-  ParsedLine getParsedLine();
+import au.com.grieve.bcf.CommandError;
+import java.util.HashSet;
+import java.util.Set;
+import lombok.Getter;
 
-  CommandError getError();
+@Getter
+public class InvalidFormat implements CommandError {
+  private final Set<String> format = new HashSet<>();
+
+  public InvalidFormat(String format) {
+    this.format.add(format);
+  }
+
+  @Override
+  public String getName() {
+    return "invalid_format";
+  }
+
+  @Override
+  public void merge(CommandError error) {
+    assert (error instanceof InvalidFormat);
+    this.format.addAll(((InvalidFormat) error).getFormat());
+  }
+
+  @Override
+  public String toString() {
+    return "Invalid format, should be"
+        + (format.size() > 0 ? " one of" : "")
+        + ": "
+        + String.join(", ", format);
+  }
 }

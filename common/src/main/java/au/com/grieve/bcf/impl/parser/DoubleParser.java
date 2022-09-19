@@ -29,6 +29,9 @@ import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
+import au.com.grieve.bcf.impl.error.InvalidFormat;
+import au.com.grieve.bcf.impl.error.NumberTooBigError;
+import au.com.grieve.bcf.impl.error.NumberTooSmallError;
 import java.util.List;
 import java.util.Map;
 import lombok.ToString;
@@ -47,24 +50,17 @@ public class DoubleParser extends BaseParser<Double> {
     try {
       result = Double.parseDouble(input);
     } catch (IllegalArgumentException e) {
-      throw new ParserSyntaxException(
-          line, "invalid_number", "Not a valid double number: '" + input + "'");
+      throw new ParserSyntaxException(line, new InvalidFormat("double number"));
     }
 
     if (getParameters().get("max") != null
         && result > Double.parseDouble(getParameters().get("max"))) {
-      throw new ParserSyntaxException(
-          line,
-          "number_too_big",
-          "'" + result + "' is larger than the maximum '" + getParameters().get("max") + "'");
+      throw new ParserSyntaxException(line, new NumberTooBigError(getParameters().get("max")));
     }
 
     if (getParameters().get("min") != null
         && result < Double.parseDouble(getParameters().get("min"))) {
-      throw new ParserSyntaxException(
-          line,
-          "number_too_small",
-          "'" + result + "' is smaller than the minimum '" + getParameters().get("min") + "'");
+      throw new ParserSyntaxException(line, new NumberTooSmallError(getParameters().get("min")));
     }
 
     return result;

@@ -24,14 +24,17 @@
 package au.com.grieve.bcf.impl.framework.base;
 
 import au.com.grieve.bcf.Command;
+import au.com.grieve.bcf.CommandError;
 import au.com.grieve.bcf.ExecutionCandidate;
 import au.com.grieve.bcf.ExecutionContext;
 import au.com.grieve.bcf.ExecutionError;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.impl.execution.DefaultExecutionCandidate;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -55,13 +58,24 @@ public abstract class BaseCommand implements Command {
    */
   protected String buildErrorMessage(List<ExecutionError> errors) {
     ParsedLine line = errors.get(0).getParsedLine();
-    System.err.println(errors);
+
+    // Merge all the errors together
+    Map<Class<? extends CommandError>, CommandError> commandErrors = new HashMap<>();
+    for (ExecutionError e : errors) {
+      if (!commandErrors.containsKey(e.getError().getClass())) {
+        commandErrors.put(e.getError().getClass(), e.getError());
+        continue;
+      }
+      commandErrors.get(e.getError().getClass()).merge(e.getError());
+    }
 
     return "Error: "
-        + errors.stream().map(ExecutionError::getName).distinct().collect(Collectors.joining(", "))
-        + " at: "
+        + commandErrors.values().stream()
+            .map(CommandError::toString)
+            .collect(Collectors.joining("; or "))
+        + " -- at: '"
         + String.join(" ", line.getWords().subList(0, line.getWordIndex()))
-        + "<--[HERE]";
+        + "<--[HERE]'";
   }
 
   protected ExecutionCandidate getErrorExecutionCandidate(

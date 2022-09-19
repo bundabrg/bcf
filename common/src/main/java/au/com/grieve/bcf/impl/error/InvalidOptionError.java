@@ -21,10 +21,38 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.error;
 
-public interface ExecutionError {
-  ParsedLine getParsedLine();
+import au.com.grieve.bcf.CommandError;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import lombok.Getter;
 
-  CommandError getError();
+@Getter
+public class InvalidOptionError implements CommandError {
+  private final Set<String> options = new HashSet<>();
+
+  public InvalidOptionError(List<String> options) {
+    this.options.addAll(options);
+  }
+
+  @Override
+  public String getName() {
+    return "invalid_option";
+  }
+
+  @Override
+  public void merge(CommandError error) {
+    assert (error instanceof InvalidOptionError);
+    this.options.addAll(((InvalidOptionError) error).getOptions());
+  }
+
+  @Override
+  public String toString() {
+    return "Invalid choice, should be"
+        + (options.size() > 1 ? " one of" : "")
+        + ": "
+        + String.join(", ", options);
+  }
 }

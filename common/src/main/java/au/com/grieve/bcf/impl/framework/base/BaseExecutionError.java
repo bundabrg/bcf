@@ -23,6 +23,7 @@
 
 package au.com.grieve.bcf.impl.framework.base;
 
+import au.com.grieve.bcf.CommandError;
 import au.com.grieve.bcf.ExecutionError;
 import au.com.grieve.bcf.ParsedLine;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,5 @@ import lombok.ToString;
 @ToString
 public class BaseExecutionError implements ExecutionError {
   ParsedLine parsedLine;
-  String name;
-  String message;
+  CommandError error;
 }

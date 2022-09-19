@@ -21,10 +21,43 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.error;
 
-public interface ExecutionError {
-  ParsedLine getParsedLine();
+import au.com.grieve.bcf.CommandError;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import lombok.Getter;
 
-  CommandError getError();
+@Getter
+public class MissingRequired implements CommandError {
+  private final Set<String> missing = new HashSet<>();
+
+  public MissingRequired(Collection<String> missing) {
+    this.missing.addAll(missing);
+  }
+
+  public MissingRequired(String missing) {
+    this.missing.add(missing);
+  }
+
+  @Override
+  public String getName() {
+    return "missing_required";
+  }
+
+  @Override
+  public void merge(CommandError error) {
+    assert (error instanceof MissingRequired);
+    this.missing.addAll(((MissingRequired) error).getMissing());
+  }
+
+  @Override
+  public String toString() {
+    if (missing.size() == 1) {
+      return "A required parameter is missing: " + missing.stream().findFirst().orElse(null);
+    }
+
+    return "The following required parameters are missing: " + String.join(", ", missing);
+  }
 }

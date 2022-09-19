@@ -21,10 +21,24 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.error;
 
-public interface ExecutionError {
-  ParsedLine getParsedLine();
+import au.com.grieve.bcf.CommandError;
+import lombok.Getter;
 
-  CommandError getError();
+@Getter
+public class InputExpected implements CommandError {
+
+  @Override
+  public String getName() {
+    return "input_expected";
+  }
+
+  @Override
+  public void merge(CommandError error) {}
+
+  @Override
+  public String toString() {
+    return "More input is expected";
+  }
 }

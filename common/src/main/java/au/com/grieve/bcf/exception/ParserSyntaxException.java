@@ -23,24 +23,25 @@
 
 package au.com.grieve.bcf.exception;
 
+import au.com.grieve.bcf.CommandError;
 import au.com.grieve.bcf.ParsedLine;
 import java.io.IOException;
 import lombok.Getter;
 
 @Getter
 public class ParserSyntaxException extends IOException {
-  private final String name;
+  private final CommandError error;
   private final ParsedLine line;
 
-  public ParserSyntaxException(ParsedLine line, String name, String message, Throwable cause) {
-    super(message, cause);
-    this.name = name;
+  public ParserSyntaxException(ParsedLine line, CommandError error, Throwable cause) {
+    super(error.toString(), cause);
+    this.error = error;
     this.line = line;
   }
 
-  public ParserSyntaxException(ParsedLine line, String name, String message) {
-    super(message);
-    this.name = name;
+  public ParserSyntaxException(ParsedLine line, CommandError error) {
+    super(error.toString());
+    this.error = error;
     this.line = line;
   }
 }

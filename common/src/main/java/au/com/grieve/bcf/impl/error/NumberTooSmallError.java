@@ -21,10 +21,34 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.error;
 
-public interface ExecutionError {
-  ParsedLine getParsedLine();
+import au.com.grieve.bcf.CommandError;
+import lombok.Getter;
 
-  CommandError getError();
+@Getter
+public class NumberTooSmallError implements CommandError {
+  private String limit;
+
+  public NumberTooSmallError(String limit) {
+    this.limit = limit;
+  }
+
+  @Override
+  public String getName() {
+    return "number_too_small";
+  }
+
+  @Override
+  public void merge(CommandError error) {
+    assert (error instanceof NumberTooSmallError);
+    if (Double.parseDouble(((NumberTooSmallError) error).getLimit()) < Double.parseDouble(limit)) {
+      limit = ((NumberTooSmallError) error).getLimit();
+    }
+  }
+
+  @Override
+  public String toString() {
+    return "Number too small: should be greater or equal to " + limit;
+  }
 }
