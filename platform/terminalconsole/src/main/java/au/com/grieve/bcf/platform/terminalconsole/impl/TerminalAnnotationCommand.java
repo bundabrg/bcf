@@ -24,17 +24,17 @@
 package au.com.grieve.bcf.platform.terminalconsole.impl;
 
 import au.com.grieve.bcf.ExecutionContext;
+import au.com.grieve.bcf.ExecutionError;
 import au.com.grieve.bcf.framework.annotation.annotations.Default;
 import au.com.grieve.bcf.framework.annotation.annotations.Error;
 import au.com.grieve.bcf.impl.framework.annotation.AnnotationCommand;
+import java.util.List;
 
 public class TerminalAnnotationCommand extends AnnotationCommand {
   @Error
-  public void onError(ExecutionContext ctx, String name, String message) {
+  public void onError(ExecutionContext ctx, List<ExecutionError> errors) {
     // TODO
-    System.err.println("Error: " + ctx);
-    System.err.println("Name: " + name);
-    System.err.println("Message: " + message);
+    System.err.println(buildErrorMessage(errors));
   }
 
   // Default Default

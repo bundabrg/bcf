@@ -167,7 +167,7 @@ class AnnotationCommandTest {
 
     // Success
     assertEquals(c2.getClass().getMethod("m1"), e.getMethod());
-    assertEquals(6, e.getWeight());
+    assertEquals(7, e.getWeight());
   }
 
   @Test
@@ -178,7 +178,7 @@ class AnnotationCommandTest {
 
     // Success
     assertEquals(c2.getClass().getMethod("m2"), e.getMethod());
-    assertEquals(6, e.getWeight());
+    assertEquals(7, e.getWeight());
   }
 
   @Test
@@ -233,7 +233,7 @@ class AnnotationCommandTest {
 
     // Success
     assertEquals(c3.getClass().getMethod("m1"), e.getMethod());
-    assertEquals(3, e.getWeight());
+    assertEquals(4, e.getWeight());
   }
 
   @Test
@@ -244,7 +244,7 @@ class AnnotationCommandTest {
 
     // Success
     assertEquals(c3.getClass().getMethod("m2"), e.getMethod());
-    assertEquals(3, e.getWeight());
+    assertEquals(4, e.getWeight());
   }
 
   // Child Class Tests
@@ -411,7 +411,7 @@ class AnnotationCommandTest {
 
     // Success
     assertEquals(child2.getClass().getMethod("m1"), e.getMethod());
-    assertEquals(9, e.getWeight());
+    assertEquals(10, e.getWeight());
   }
 
   @Test
@@ -443,7 +443,7 @@ class AnnotationCommandTest {
 
     // Success
     assertEquals(child2.getClass().getMethod("m2"), e.getMethod());
-    assertEquals(9, e.getWeight());
+    assertEquals(10, e.getWeight());
   }
 
   @Test

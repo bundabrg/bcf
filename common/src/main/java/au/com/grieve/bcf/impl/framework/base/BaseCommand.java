@@ -27,6 +27,7 @@ import au.com.grieve.bcf.Command;
 import au.com.grieve.bcf.ExecutionCandidate;
 import au.com.grieve.bcf.ExecutionContext;
 import au.com.grieve.bcf.ExecutionError;
+import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.impl.execution.DefaultExecutionCandidate;
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -46,6 +47,27 @@ public abstract class BaseCommand implements Command {
 
   protected abstract Method getErrorMethod();
 
+  /**
+   * Return a message based on the list of errors
+   *
+   * @param errors List of Errors
+   * @return Error Message
+   */
+  protected String buildErrorMessage(List<ExecutionError> errors) {
+    ParsedLine line = errors.get(0).getParsedLine();
+
+    return errors.size() == 1
+        ? "Error: "
+        : "Errors: "
+            + errors.stream()
+                .map(ExecutionError::getName)
+                .distinct()
+                .collect(Collectors.joining(", "))
+            + " at: "
+            + String.join(" ", line.getWords().subList(0, line.getWordIndex()))
+            + "<--[HERE]";
+  }
+
   protected ExecutionCandidate getErrorExecutionCandidate(
       ExecutionContext context, int weight, List<ExecutionError> errors) {
     for (Command cmd :
@@ -57,7 +79,7 @@ public abstract class BaseCommand implements Command {
             cmd,
             method,
             weight,
-            Stream.concat(context.getPrependArguments().stream(), Stream.of(errors))
+            Stream.concat(context.getPrependArguments().stream(), Stream.of(context, errors))
                 .collect(Collectors.toList()));
       }
     }

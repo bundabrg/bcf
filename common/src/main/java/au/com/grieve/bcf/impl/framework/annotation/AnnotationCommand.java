@@ -187,7 +187,7 @@ public class AnnotationCommand extends BaseCommand {
             new DefaultExecutionCandidate(
                 this,
                 item.getValue(),
-                currentContext.getParsedLine().getWordIndex(),
+                currentContext.getParsedLine().getWordIndex() + 1,
                 Stream.concat(
                         currentContext
                             // Add prepend arguments first
