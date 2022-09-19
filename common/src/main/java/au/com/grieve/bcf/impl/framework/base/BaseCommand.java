@@ -55,17 +55,13 @@ public abstract class BaseCommand implements Command {
    */
   protected String buildErrorMessage(List<ExecutionError> errors) {
     ParsedLine line = errors.get(0).getParsedLine();
+    System.err.println(errors);
 
-    return errors.size() == 1
-        ? "Error: "
-        : "Errors: "
-            + errors.stream()
-                .map(ExecutionError::getName)
-                .distinct()
-                .collect(Collectors.joining(", "))
-            + " at: "
-            + String.join(" ", line.getWords().subList(0, line.getWordIndex()))
-            + "<--[HERE]";
+    return "Error: "
+        + errors.stream().map(ExecutionError::getName).distinct().collect(Collectors.joining(", "))
+        + " at: "
+        + String.join(" ", line.getWords().subList(0, line.getWordIndex()))
+        + "<--[HERE]";
   }
 
   protected ExecutionCandidate getErrorExecutionCandidate(

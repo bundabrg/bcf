@@ -40,6 +40,13 @@ public interface Result {
    */
   boolean isSuppressed();
 
+  /**
+   * Is a result available?
+   *
+   * @return true if ready
+   */
+  boolean isComplete();
+
   /** Return a copy of ourselves */
   Result copy();
 }

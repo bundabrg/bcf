@@ -406,6 +406,7 @@ public class StringParserChain implements ParserChain {
   }
 
   @Getter
+  @ToString
   protected static class ParserConfig {
     private final String name;
     private final Map<String, String> parameters = new HashMap<>();

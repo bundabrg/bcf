@@ -45,6 +45,11 @@ public class ParserResult implements Result {
   }
 
   @Override
+  public boolean isComplete() {
+    return true;
+  }
+
+  @Override
   public Result copy() {
     return new ParserResult(parser, value);
   }

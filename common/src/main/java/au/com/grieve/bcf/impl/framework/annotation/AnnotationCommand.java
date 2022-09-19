@@ -42,6 +42,7 @@ import au.com.grieve.bcf.impl.framework.base.BaseCommand;
 import au.com.grieve.bcf.impl.framework.base.BaseCommandData;
 import au.com.grieve.bcf.impl.framework.base.BaseExecutionError;
 import au.com.grieve.bcf.impl.parserchain.StringParserChain;
+import au.com.grieve.bcf.impl.result.SwitchParserResult;
 import au.com.grieve.bcf.utils.ReflectUtils;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -182,30 +183,54 @@ public class AnnotationCommand extends BaseCommand {
 
       currentContext.getResult().addAll(result);
 
-      try {
-        candidates.add(
-            new DefaultExecutionCandidate(
-                this,
-                item.getValue(),
-                currentContext.getParsedLine().getWordIndex() + 1,
-                Stream.concat(
-                        currentContext
-                            // Add prepend arguments first
-                            .getPrependArguments()
-                            .stream(),
-                        currentContext.getResult().stream()
-                            .filter(
-                                r -> {
-                                  // Make sure we are able to return a value.
-                                  // Needed for switches.
-                                  r.getValue();
-                                  return true;
-                                })
-                            .filter(r -> !r.isSuppressed())
-                            .map(Result::getValue))
-                    .collect(Collectors.toList())));
-      } catch (IllegalArgumentException ignored) {
+      // Check for required switches values
+      boolean isError = false;
+      for (SwitchParserResult r :
+          currentContext.getResult().stream()
+              .filter(r -> r instanceof SwitchParserResult)
+              .map(r -> (SwitchParserResult) r)
+              .collect(Collectors.toList())) {
+        if (!r.isComplete()) {
+          try {
+            r.getValue();
+          } catch (IllegalArgumentException e) {
+            errors.add(
+                new BaseExecutionError(
+                    currentContext.getParsedLine().copy(),
+                    "missing_required",
+                    "A required parameter is missing: -"
+                        + r.getParser().getParameters().get("switch").split("\\|")[0]));
+            isError = true;
+          }
+        }
       }
+
+      if (isError) {
+        continue;
+      }
+
+      candidates.add(
+          new DefaultExecutionCandidate(
+              this,
+              item.getValue(),
+              currentContext.getParsedLine().getWordIndex() + 1,
+              Stream.concat(
+                      currentContext
+                          // Add prepend arguments first
+                          .getPrependArguments()
+                          .stream(),
+                      currentContext.getResult().stream()
+                          //                          .filter(
+                          //                              r -> {
+                          //                                // Make sure we are able to return a
+                          // value.
+                          //                                // Needed for switches.
+                          //                                r.getValue();
+                          //                                return true;
+                          //                              })
+                          .filter(r -> !r.isSuppressed())
+                          .map(Result::getValue))
+                  .collect(Collectors.toList())));
     }
   }
 
@@ -264,19 +289,18 @@ public class AnnotationCommand extends BaseCommand {
 
     errors.addAll(localErrors);
 
-    // If we have any errors left AND an error method we pass them to the error method
-    if (localErrors.size() > 0 && getErrorMethod() != null) {
-      // Find heaviest error
-      int errorWeight =
-          localErrors.stream()
-              .map(e -> e.getParsedLine().getWordIndex())
-              .max(Integer::compare)
-              .orElse(0);
+    // Find heaviest error
+    int errorWeight =
+        errors.stream().map(e -> e.getParsedLine().getWordIndex()).max(Integer::compare).orElse(0);
 
+    // If we have any errors left AND an error method we pass them to the error method
+    if (errorWeight > (bestCandidate != null ? bestCandidate.getWeight() : 0)
+        && getErrorMethod() != null) {
+      // Find heaviest error
       return getErrorExecutionCandidate(
           context,
           errorWeight,
-          localErrors.stream()
+          errors.stream()
               .filter(e -> e.getParsedLine().getWordIndex() == errorWeight)
               .collect(Collectors.toList()));
     }

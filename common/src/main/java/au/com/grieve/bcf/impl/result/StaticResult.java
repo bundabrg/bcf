@@ -42,6 +42,11 @@ public class StaticResult implements Result {
   }
 
   @Override
+  public boolean isComplete() {
+    return true;
+  }
+
+  @Override
   public Result copy() {
     return new StaticResult(value);
   }
