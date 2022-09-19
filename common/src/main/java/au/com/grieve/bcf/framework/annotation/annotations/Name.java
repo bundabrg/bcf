@@ -28,8 +28,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/** */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface Description {
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface Name {
   String value();
 }

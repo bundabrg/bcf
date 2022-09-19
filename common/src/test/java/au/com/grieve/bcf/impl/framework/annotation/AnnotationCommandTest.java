@@ -24,6 +24,7 @@
 package au.com.grieve.bcf.impl.framework.annotation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,8 +32,8 @@ import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.CompletionContext;
 import au.com.grieve.bcf.ExecutionCandidate;
 import au.com.grieve.bcf.ExecutionContext;
-import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.framework.annotation.annotations.Arg;
+import au.com.grieve.bcf.framework.annotation.annotations.Command;
 import au.com.grieve.bcf.framework.annotation.annotations.Default;
 import au.com.grieve.bcf.framework.annotation.annotations.Error;
 import au.com.grieve.bcf.impl.framework.base.BaseCompletionContext;
@@ -40,7 +41,6 @@ import au.com.grieve.bcf.impl.framework.base.BaseExecutionContext;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import au.com.grieve.bcf.impl.parser.IntegerParser;
 import au.com.grieve.bcf.impl.parser.StringParser;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -48,16 +48,16 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("unused")
 class AnnotationCommandTest {
 
-  ExecutionContext defaultExecutionContext() {
-    ExecutionContext result = new BaseExecutionContext();
+  ExecutionContext defaultExecutionContext(String line) {
+    ExecutionContext result = new BaseExecutionContext(new DefaultParsedLine(line));
     result.getParserClasses().put("literal", StringParser.class);
     result.getParserClasses().put("string", StringParser.class);
     result.getParserClasses().put("int", IntegerParser.class);
     return result;
   }
 
-  CompletionContext defaultCompletionContext() {
-    CompletionContext result = new BaseCompletionContext();
+  CompletionContext defaultCompletionContext(String line) {
+    CompletionContext result = new BaseCompletionContext(new DefaultParsedLine(line));
     result.getParserClasses().put("literal", StringParser.class);
     result.getParserClasses().put("string", StringParser.class);
     result.getParserClasses().put("int", IntegerParser.class);
@@ -67,17 +67,15 @@ class AnnotationCommandTest {
   @Test
   void noDefaultDefined() {
     C1 c1 = new C1();
-    ParsedLine line = new DefaultParsedLine("bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    assertNull(c1.execute(line, ctx));
+    ExecutionContext ctx = defaultExecutionContext("bob");
+    assertNull(c1.execute(ctx));
   }
 
   @Test
   void noArgMatchOnClass_1() throws NoSuchMethodException {
     C2 c2 = new C2();
-    ParsedLine line = new DefaultParsedLine("");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 0
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
@@ -87,9 +85,8 @@ class AnnotationCommandTest {
   @Test
   void noArgMatchOnClass_2() throws NoSuchMethodException {
     C2 c2 = new C2();
-    ParsedLine line = new DefaultParsedLine("bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("bob");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 0
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
@@ -99,9 +96,8 @@ class AnnotationCommandTest {
   @Test
   void someArgMatchOnClass_1() throws NoSuchMethodException {
     C2 c2 = new C2();
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 2
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
@@ -111,9 +107,8 @@ class AnnotationCommandTest {
   @Test
   void someArgMatchOnClass_2() throws NoSuchMethodException {
     C2 c2 = new C2();
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2 bob");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 2
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
@@ -123,9 +118,8 @@ class AnnotationCommandTest {
   @Test
   void argMatchClassNotMethod_1() throws NoSuchMethodException {
     C2 c2 = new C2();
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2 c_arg3");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be default method with a weight of 3
     assertEquals(c2.getClass().getMethod("d"), e.getMethod());
@@ -135,9 +129,8 @@ class AnnotationCommandTest {
   @Test
   void argMatchClassNotMethod_2() throws NoSuchMethodException {
     C2 c2 = new C2();
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2 c_arg3 bob");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be default method with a weight of 3
     assertEquals(c2.getClass().getMethod("d"), e.getMethod());
@@ -147,9 +140,8 @@ class AnnotationCommandTest {
   @Test
   void argMatchClassSomeMethod_1() throws NoSuchMethodException {
     C2 c2 = new C2();
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 5
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
@@ -159,9 +151,8 @@ class AnnotationCommandTest {
   @Test
   void argMatchClassSomeMethod_2() throws NoSuchMethodException {
     C2 c2 = new C2();
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 bob");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 5
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
@@ -171,9 +162,8 @@ class AnnotationCommandTest {
   @Test
   void argMatchClassAndMethod_1() throws NoSuchMethodException {
     C2 c2 = new C2();
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Success
     assertEquals(c2.getClass().getMethod("m1"), e.getMethod());
@@ -183,9 +173,8 @@ class AnnotationCommandTest {
   @Test
   void argMatchClassAndMethod_2() throws NoSuchMethodException {
     C2 c2 = new C2();
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3_m2");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3_m2");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Success
     assertEquals(c2.getClass().getMethod("m2"), e.getMethod());
@@ -195,9 +184,8 @@ class AnnotationCommandTest {
   @Test
   void noArgMatchOnMethod_1() throws NoSuchMethodException {
     C3 c3 = new C3();
-    ParsedLine line = new DefaultParsedLine("");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c3.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("");
+    ExecutionCandidate e = c3.execute(ctx);
 
     // Should be default method with a weight of 0
     assertEquals(c3.getClass().getMethod("d"), e.getMethod());
@@ -207,9 +195,8 @@ class AnnotationCommandTest {
   @Test
   void noArgMatchOnMethod_2() throws NoSuchMethodException {
     C3 c3 = new C3();
-    ParsedLine line = new DefaultParsedLine("bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c3.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("bob");
+    ExecutionCandidate e = c3.execute(ctx);
 
     // Should be default method with a weight of 0
     assertEquals(c3.getClass().getMethod("d"), e.getMethod());
@@ -219,9 +206,8 @@ class AnnotationCommandTest {
   @Test
   void someMatchOnMethod_1() throws NoSuchMethodException {
     C3 c3 = new C3();
-    ParsedLine line = new DefaultParsedLine("m_arg1 m_arg2");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c3.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("m_arg1 m_arg2");
+    ExecutionCandidate e = c3.execute(ctx);
 
     // Should be error method with a weight of 2
     assertEquals(c3.getClass().getMethod("e"), e.getMethod());
@@ -231,9 +217,8 @@ class AnnotationCommandTest {
   @Test
   void someMatchOnMethod_2() throws NoSuchMethodException {
     C3 c3 = new C3();
-    ParsedLine line = new DefaultParsedLine("m_arg1 m_arg2 bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c3.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("m_arg1 m_arg2 bob");
+    ExecutionCandidate e = c3.execute(ctx);
 
     // Should be error method with a weight of 2
     assertEquals(c3.getClass().getMethod("e"), e.getMethod());
@@ -243,9 +228,8 @@ class AnnotationCommandTest {
   @Test
   void argMatchMethod_1() throws NoSuchMethodException {
     C3 c3 = new C3();
-    ParsedLine line = new DefaultParsedLine("m_arg1 m_arg2 m_arg3");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c3.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("m_arg1 m_arg2 m_arg3");
+    ExecutionCandidate e = c3.execute(ctx);
 
     // Success
     assertEquals(c3.getClass().getMethod("m1"), e.getMethod());
@@ -255,9 +239,8 @@ class AnnotationCommandTest {
   @Test
   void argMatchMethod_2() throws NoSuchMethodException {
     C3 c3 = new C3();
-    ParsedLine line = new DefaultParsedLine("m_arg1 m_arg2 m_arg3_m2");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c3.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("m_arg1 m_arg2 m_arg3_m2");
+    ExecutionCandidate e = c3.execute(ctx);
 
     // Success
     assertEquals(c3.getClass().getMethod("m2"), e.getMethod());
@@ -271,9 +254,8 @@ class AnnotationCommandTest {
     Child1 child1 = new Child1();
     c2.addChild(child1);
 
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2 c_arg3");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be default method with a weight of 3 on parent
     assertEquals(c2.getClass().getMethod("d"), e.getMethod());
@@ -286,9 +268,8 @@ class AnnotationCommandTest {
     Child1 child1 = new Child1();
     c2.addChild(child1);
 
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2 c_arg3 bob");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be default method with a weight of 3 on parent
     assertEquals(c2.getClass().getMethod("d"), e.getMethod());
@@ -301,9 +282,8 @@ class AnnotationCommandTest {
     Child1 child1 = new Child1();
     c2.addChild(child1);
 
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 5 on parent as child has no error
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
@@ -316,9 +296,9 @@ class AnnotationCommandTest {
     Child1 child1 = new Child1();
     c2.addChild(child1);
 
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx =
+        defaultExecutionContext("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 bob");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 5 on parent as child has no error
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
@@ -331,9 +311,8 @@ class AnnotationCommandTest {
     Child2 child2 = new Child2();
     c2.addChild(child2);
 
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 5 on child
     assertEquals(child2.getClass().getMethod("e"), e.getMethod());
@@ -348,9 +327,9 @@ class AnnotationCommandTest {
     Child2 child2 = new Child2();
     c2.addChild(child2);
 
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx =
+        defaultExecutionContext("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 bob");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 5 on child
     assertEquals(child2.getClass().getMethod("e"), e.getMethod());
@@ -363,10 +342,9 @@ class AnnotationCommandTest {
     Child1 child1 = new Child1();
     c2.addChild(child1);
 
-    ParsedLine line =
-        new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx =
+        defaultExecutionContext("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be default method with a weight of 6 on parent as child has no default
     assertEquals(c2.getClass().getMethod("d"), e.getMethod());
@@ -379,10 +357,9 @@ class AnnotationCommandTest {
     Child2 child2 = new Child2();
     c2.addChild(child2);
 
-    ParsedLine line =
-        new DefaultParsedLine("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx =
+        defaultExecutionContext("c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be default method with a weight of 6 on child
     assertEquals(child2.getClass().getMethod("d"), e.getMethod());
@@ -395,11 +372,10 @@ class AnnotationCommandTest {
     Child2 child2 = new Child2();
     c2.addChild(child2);
 
-    ParsedLine line =
-        new DefaultParsedLine(
+    ExecutionContext ctx =
+        defaultExecutionContext(
             "c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3 m_arg1 m_arg2");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 8 on child
     assertEquals(child2.getClass().getMethod("e"), e.getMethod());
@@ -412,11 +388,10 @@ class AnnotationCommandTest {
     Child2 child2 = new Child2();
     c2.addChild(child2);
 
-    ParsedLine line =
-        new DefaultParsedLine(
+    ExecutionContext ctx =
+        defaultExecutionContext(
             "c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3 m_arg1 m_arg2 bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 8 on child
     assertEquals(child2.getClass().getMethod("e"), e.getMethod());
@@ -429,11 +404,10 @@ class AnnotationCommandTest {
     Child2 child2 = new Child2();
     c2.addChild(child2);
 
-    ParsedLine line =
-        new DefaultParsedLine(
+    ExecutionContext ctx =
+        defaultExecutionContext(
             "c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3 m_arg1 m_arg2 m_arg3");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Success
     assertEquals(child2.getClass().getMethod("m1"), e.getMethod());
@@ -446,11 +420,10 @@ class AnnotationCommandTest {
     Child2 child2 = new Child2();
     c2.addChild(child2);
 
-    ParsedLine line =
-        new DefaultParsedLine(
+    ExecutionContext ctx =
+        defaultExecutionContext(
             "c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3 m_arg1 m_arg2 m_arg3 bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Error
     assertEquals(child2.getClass().getMethod("e"), e.getMethod());
@@ -463,11 +436,10 @@ class AnnotationCommandTest {
     Child2 child2 = new Child2();
     c2.addChild(child2);
 
-    ParsedLine line =
-        new DefaultParsedLine(
+    ExecutionContext ctx =
+        defaultExecutionContext(
             "c_arg1 c_arg2 c_arg3 child_arg1 child_arg2 child_arg3 m_arg1 m_arg2 m_arg3_m2");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Success
     assertEquals(child2.getClass().getMethod("m2"), e.getMethod());
@@ -477,9 +449,8 @@ class AnnotationCommandTest {
   @Test
   void extendedClass_1() throws NoSuchMethodException {
     C2Extended c2 = new C2Extended();
-    ParsedLine line = new DefaultParsedLine("bob");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("bob");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 0
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
@@ -489,9 +460,8 @@ class AnnotationCommandTest {
   @Test
   void extendedClass_2() throws NoSuchMethodException {
     C2Extended c2 = new C2Extended();
-    ParsedLine line = new DefaultParsedLine("c_arg1 c_arg2 c_arg3");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c2.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 c_arg2 c_arg3");
+    ExecutionCandidate e = c2.execute(ctx);
 
     // Should be default method with a weight of 3
     assertEquals(c2.getClass().getMethod("d"), e.getMethod());
@@ -501,9 +471,8 @@ class AnnotationCommandTest {
   @Test
   void parameters_1() throws NoSuchMethodException {
     ParamClass c = new ParamClass();
-    ParsedLine line = new DefaultParsedLine("c_arg1 arg1 arg2 23");
-    ExecutionContext ctx = defaultExecutionContext();
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionContext ctx = defaultExecutionContext("c_arg1 arg1 arg2 23");
+    ExecutionCandidate e = c.execute(ctx);
 
     // Should be m1
     assertEquals(
@@ -516,10 +485,8 @@ class AnnotationCommandTest {
   @Test
   void complete_1() {
     CompletionClass c = new CompletionClass();
-    ParsedLine line = new DefaultParsedLine("");
-    CompletionContext ctx = defaultCompletionContext();
-    List<CompletionCandidateGroup> groups = new ArrayList<>();
-    c.complete(line, groups, ctx);
+    CompletionContext ctx = defaultCompletionContext("");
+    List<CompletionCandidateGroup> groups = c.complete(ctx);
 
     assertEquals(0, groups.size());
   }
@@ -527,10 +494,8 @@ class AnnotationCommandTest {
   @Test
   void complete_2() {
     CompletionClass c = new CompletionClass();
-    ParsedLine line = new DefaultParsedLine(" ");
-    CompletionContext ctx = defaultCompletionContext();
-    List<CompletionCandidateGroup> groups = new ArrayList<>();
-    c.complete(line, groups, ctx);
+    CompletionContext ctx = defaultCompletionContext(" ");
+    List<CompletionCandidateGroup> groups = c.complete(ctx);
 
     assertEquals(0, groups.size());
   }
@@ -538,10 +503,8 @@ class AnnotationCommandTest {
   @Test
   void complete_3() {
     CompletionClass c = new CompletionClass();
-    ParsedLine line = new DefaultParsedLine("b");
-    CompletionContext ctx = defaultCompletionContext();
-    List<CompletionCandidateGroup> groups = new ArrayList<>();
-    c.complete(line, groups, ctx);
+    CompletionContext ctx = defaultCompletionContext("b");
+    List<CompletionCandidateGroup> groups = c.complete(ctx);
 
     assertEquals(
         0, groups.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
@@ -550,10 +513,8 @@ class AnnotationCommandTest {
   @Test
   void complete_4() {
     CompletionClass c = new CompletionClass();
-    ParsedLine line = new DefaultParsedLine("f");
-    CompletionContext ctx = defaultCompletionContext();
-    List<CompletionCandidateGroup> groups = new ArrayList<>();
-    c.complete(line, groups, ctx);
+    CompletionContext ctx = defaultCompletionContext("f");
+    List<CompletionCandidateGroup> groups = c.complete(ctx);
 
     assertEquals(1, groups.size());
     assertEquals(2, groups.get(0).getMatchingCompletionCandidates().size());
@@ -562,10 +523,8 @@ class AnnotationCommandTest {
   @Test
   void complete_5() {
     CompletionClass c = new CompletionClass();
-    ParsedLine line = new DefaultParsedLine("firs");
-    CompletionContext ctx = defaultCompletionContext();
-    List<CompletionCandidateGroup> groups = new ArrayList<>();
-    c.complete(line, groups, ctx);
+    CompletionContext ctx = defaultCompletionContext("firs");
+    List<CompletionCandidateGroup> groups = c.complete(ctx);
 
     assertEquals(1, groups.size());
     assertEquals(1, groups.get(0).getMatchingCompletionCandidates().size());
@@ -574,10 +533,8 @@ class AnnotationCommandTest {
   @Test
   void complete_6() {
     CompletionClass c = new CompletionClass();
-    ParsedLine line = new DefaultParsedLine("firs m");
-    CompletionContext ctx = defaultCompletionContext();
-    List<CompletionCandidateGroup> groups = new ArrayList<>();
-    c.complete(line, groups, ctx);
+    CompletionContext ctx = defaultCompletionContext("firs m");
+    List<CompletionCandidateGroup> groups = c.complete(ctx);
 
     assertEquals(0, groups.size());
   }
@@ -585,10 +542,8 @@ class AnnotationCommandTest {
   @Test
   void complete_7() {
     CompletionClass c = new CompletionClass();
-    ParsedLine line = new DefaultParsedLine("first m");
-    CompletionContext ctx = defaultCompletionContext();
-    List<CompletionCandidateGroup> groups = new ArrayList<>();
-    c.complete(line, groups, ctx);
+    CompletionContext ctx = defaultCompletionContext("first m");
+    List<CompletionCandidateGroup> groups = c.complete(ctx);
 
     // Should have 2 groups, one with 'mike', and another with 'mike,marta,millie' for the two
     // methods
@@ -610,10 +565,8 @@ class AnnotationCommandTest {
   @Test
   void complete_8() {
     CompletionClass c = new CompletionClass();
-    ParsedLine line = new DefaultParsedLine("first marta");
-    CompletionContext ctx = defaultCompletionContext();
-    List<CompletionCandidateGroup> groups = new ArrayList<>();
-    c.complete(line, groups, ctx);
+    CompletionContext ctx = defaultCompletionContext("first marta");
+    List<CompletionCandidateGroup> groups = c.complete(ctx);
 
     assertEquals(
         1, groups.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
@@ -631,10 +584,8 @@ class AnnotationCommandTest {
   @Test
   void complete_9() {
     CompletionClass c = new CompletionClass();
-    ParsedLine line = new DefaultParsedLine("first marta ");
-    CompletionContext ctx = defaultCompletionContext();
-    List<CompletionCandidateGroup> groups = new ArrayList<>();
-    c.complete(line, groups, ctx);
+    CompletionContext ctx = defaultCompletionContext("first marta ");
+    List<CompletionCandidateGroup> groups = c.complete(ctx);
 
     assertEquals(1, groups.size());
     assertEquals("art", groups.get(0).getMatchingCompletionCandidates().get(0).getValue());
@@ -643,10 +594,8 @@ class AnnotationCommandTest {
   @Test
   void complete_10() {
     CompletionClass c = new CompletionClass();
-    ParsedLine line = new DefaultParsedLine("first mike");
-    CompletionContext ctx = defaultCompletionContext();
-    List<CompletionCandidateGroup> groups = new ArrayList<>();
-    c.complete(line, groups, ctx);
+    CompletionContext ctx = defaultCompletionContext("first mike");
+    List<CompletionCandidateGroup> groups = c.complete(ctx);
 
     assertEquals(2, groups.size());
     assertEquals("mike", groups.get(0).getMatchingCompletionCandidates().get(0).getValue());
@@ -656,10 +605,8 @@ class AnnotationCommandTest {
   @Test
   void complete_11() {
     CompletionClass c = new CompletionClass();
-    ParsedLine line = new DefaultParsedLine("first mike ");
-    CompletionContext ctx = defaultCompletionContext();
-    List<CompletionCandidateGroup> groups = new ArrayList<>();
-    c.complete(line, groups, ctx);
+    CompletionContext ctx = defaultCompletionContext("first mike ");
+    List<CompletionCandidateGroup> groups = c.complete(ctx);
 
     assertEquals(2, groups.size());
     assertTrue(
@@ -679,10 +626,8 @@ class AnnotationCommandTest {
   @Test
   void complete_12() {
     CompletionClass c = new CompletionClass();
-    ParsedLine line = new DefaultParsedLine("first mike p");
-    CompletionContext ctx = defaultCompletionContext();
-    List<CompletionCandidateGroup> groups = new ArrayList<>();
-    c.complete(line, groups, ctx);
+    CompletionContext ctx = defaultCompletionContext("first mike p");
+    List<CompletionCandidateGroup> groups = c.complete(ctx);
 
     assertEquals(
         1, groups.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
@@ -699,20 +644,18 @@ class AnnotationCommandTest {
   @Test
   void switchTest_1() {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("opt1 mike art");
+    ExecutionContext ctx = defaultExecutionContext("opt1 mike art");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertNull(e);
   }
 
   @Test
   void switchTest_2() throws NoSuchMethodException {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("-c_sw1 opt1 -m_sw2 mike art");
+    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw2 mike art");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m2"), e.getMethod());
     assertEquals("opt1", e.getParameters().get(0));
     assertEquals("mike", e.getParameters().get(1));
@@ -721,10 +664,9 @@ class AnnotationCommandTest {
   @Test
   void switchTest_3() throws NoSuchMethodException {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("-c_sw1 opt1 art -m_sw2 mike");
+    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 art -m_sw2 mike");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m2"), e.getMethod());
     assertEquals("opt1", e.getParameters().get(0));
     assertEquals("mike", e.getParameters().get(1));
@@ -733,10 +675,9 @@ class AnnotationCommandTest {
   @Test
   void switchTest_4() throws NoSuchMethodException {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("-m_sw2 mike art -c_sw1 opt1");
+    ExecutionContext ctx = defaultExecutionContext("-m_sw2 mike art -c_sw1 opt1");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m2"), e.getMethod());
     assertEquals("opt1", e.getParameters().get(0));
     assertEquals("mike", e.getParameters().get(1));
@@ -745,10 +686,9 @@ class AnnotationCommandTest {
   @Test
   void switchTest_5() throws NoSuchMethodException {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("art -c_sw1 opt1 -m_sw2 mike");
+    ExecutionContext ctx = defaultExecutionContext("art -c_sw1 opt1 -m_sw2 mike");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m2"), e.getMethod());
     assertEquals("opt1", e.getParameters().get(0));
     assertEquals("mike", e.getParameters().get(1));
@@ -757,10 +697,9 @@ class AnnotationCommandTest {
   @Test
   void switchTest_6() throws NoSuchMethodException {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("art -m_sw2 mike -c_sw1 opt1");
+    ExecutionContext ctx = defaultExecutionContext("art -m_sw2 mike -c_sw1 opt1");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m2"), e.getMethod());
     assertEquals("opt1", e.getParameters().get(0));
     assertEquals("mike", e.getParameters().get(1));
@@ -769,20 +708,18 @@ class AnnotationCommandTest {
   @Test
   void switchTest_7() {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("-c_sw1 opt1 -m_sw1 bob art");
+    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw1 bob art");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertNull(e);
   }
 
   @Test
   void switchTest_8() throws NoSuchMethodException {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("-c_sw1 opt1 -m_sw1 milly art");
+    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw1 milly art");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m1"), e.getMethod());
     assertEquals("opt1", e.getParameters().get(0));
     assertEquals("milly", e.getParameters().get(1));
@@ -791,10 +728,9 @@ class AnnotationCommandTest {
   @Test
   void switchTest_9() throws NoSuchMethodException {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("art -c_sw1 opt1 -m_sw1 milly");
+    ExecutionContext ctx = defaultExecutionContext("art -c_sw1 opt1 -m_sw1 milly");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m1"), e.getMethod());
     assertEquals("opt1", e.getParameters().get(0));
     assertEquals("milly", e.getParameters().get(1));
@@ -803,10 +739,9 @@ class AnnotationCommandTest {
   @Test
   void switchTest_10() throws NoSuchMethodException {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("art -m_sw1 zoe -c_sw1 opt2");
+    ExecutionContext ctx = defaultExecutionContext("art -m_sw1 zoe -c_sw1 opt2");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m3"), e.getMethod());
     assertEquals("opt2", e.getParameters().get(0));
     assertEquals("zoe", e.getParameters().get(1));
@@ -815,10 +750,9 @@ class AnnotationCommandTest {
   @Test
   void switchTest_11() throws NoSuchMethodException {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("-c_sw1 opt1 -m_sw3 mike art plate");
+    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw3 mike art plate");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m4"), e.getMethod());
     assertEquals("opt1", e.getParameters().get(0));
     assertEquals("mike", e.getParameters().get(1));
@@ -827,10 +761,9 @@ class AnnotationCommandTest {
   @Test
   void switchTest_12() throws NoSuchMethodException {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("-c_sw1 opt1 -m_sw3 mike art");
+    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw3 mike art");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m6"), e.getMethod());
     assertEquals("opt1", e.getParameters().get(0));
     assertEquals("mike", e.getParameters().get(1));
@@ -839,10 +772,9 @@ class AnnotationCommandTest {
   @Test
   void switchTest_13() throws NoSuchMethodException {
     SwitchClass1 c = new SwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("art angel -m_sw3 mike -c_sw1 opt1");
+    ExecutionContext ctx = defaultExecutionContext("art angel -m_sw3 mike -c_sw1 opt1");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m5"), e.getMethod());
     assertEquals("opt1", e.getParameters().get(0));
     assertEquals("mike", e.getParameters().get(1));
@@ -851,10 +783,9 @@ class AnnotationCommandTest {
   @Test
   void switchWithDefault_1() throws NoSuchMethodException {
     SwitchClassWithDefaults1 c = new SwitchClassWithDefaults1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("art -c_sw1 opt1");
+    ExecutionContext ctx = defaultExecutionContext("art -c_sw1 opt1");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m1"), e.getMethod());
     assertEquals("opt1", e.getParameters().get(0));
     assertEquals("marta", e.getParameters().get(1));
@@ -863,10 +794,9 @@ class AnnotationCommandTest {
   @Test
   void switchWithDefault_2() throws NoSuchMethodException {
     SwitchClassWithDefaults1 c = new SwitchClassWithDefaults1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("art -c_sw1 opt1 -m_sw1 milly");
+    ExecutionContext ctx = defaultExecutionContext("art -c_sw1 opt1 -m_sw1 milly");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertEquals(c.getClass().getMethod("m2"), e.getMethod());
     assertEquals("opt1", e.getParameters().get(0));
     assertEquals("milly", e.getParameters().get(1));
@@ -875,11 +805,20 @@ class AnnotationCommandTest {
   @Test
   void complexSwitch_1() {
     ComplexSwitchClass1 c = new ComplexSwitchClass1();
-    ExecutionContext ctx = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("list 4 bob");
+    ExecutionContext ctx = defaultExecutionContext("list 4 bob");
 
-    ExecutionCandidate e = c.execute(line, ctx);
+    ExecutionCandidate e = c.execute(ctx);
     assertNull(e);
+  }
+
+  @Test
+  void classWithCommand_1() {
+    AnnotationCommand c = new ClassWithCommand();
+    assertNotNull(c.getCommandData());
+    assertEquals("cmd1", c.getCommandData().getName());
+    assertEquals(2, c.getCommandData().getAliases().length);
+    assertEquals("input", c.getCommandData().getInput());
+    assertNotNull(c.getCommandData().getParserChain());
   }
 
   @Arg("c_arg1 c_arg2 c_arg3")
@@ -986,4 +925,10 @@ class AnnotationCommandTest {
         "list(description=List Process) @int(min=1,max=6,switch=page,default=1,description=Page Number) @string(description=Process Name)")
     public void onList(Integer pageNo, String processName) {}
   }
+
+  @Command(
+      value = "cmd1|cmd2|cmd3 c_arg1 c_arg2 c_arg3",
+      description = "description",
+      input = "input")
+  static class ClassWithCommand extends AnnotationCommand {}
 }

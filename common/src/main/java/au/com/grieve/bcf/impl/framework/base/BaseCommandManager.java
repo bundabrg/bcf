@@ -40,6 +40,7 @@ import au.com.grieve.bcf.impl.parser.DoubleParser;
 import au.com.grieve.bcf.impl.parser.FloatParser;
 import au.com.grieve.bcf.impl.parser.IntegerParser;
 import au.com.grieve.bcf.impl.parser.StringParser;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -159,8 +160,8 @@ public class BaseCommandManager implements CommandManager {
   }
 
   @Override
-  public void complete(String line, List<CompletionCandidateGroup> candidates) {
-    complete(new DefaultParsedLine(line), candidates);
+  public List<CompletionCandidateGroup> complete(String line) {
+    return complete(new DefaultParsedLine(line));
   }
 
   @Override
@@ -169,7 +170,7 @@ public class BaseCommandManager implements CommandManager {
   }
 
   @Override
-  public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates) {
+  public List<CompletionCandidateGroup> complete(ParsedLine line) {
     // If at the end of the line we do the completion against command names
     if (line.isEol() || line.size() == 1) {
       // Store groups with the commands so that we can group aliases properly
@@ -182,7 +183,8 @@ public class BaseCommandManager implements CommandManager {
         }
 
         CompletionCandidateGroup group =
-            new StaticCompletionCandidateGroup(item.getValue().getCommandData().getDescription());
+            new StaticCompletionCandidateGroup(
+                input, item.getValue().getCommandData().getDescription());
 
         // Add command name
         group.getCompletionCandidates().add(new DefaultCompletionCandidate(item.getKey()));
@@ -201,25 +203,24 @@ public class BaseCommandManager implements CommandManager {
             commandGroups.getOrDefault(
                 item.getValue(),
                 new StaticCompletionCandidateGroup(
-                    commandsByName.get(item.getValue()).getCommandData().getDescription()));
+                    input, commandsByName.get(item.getValue()).getCommandData().getDescription()));
         commandGroups.put(item.getValue(), group);
 
         group.getCompletionCandidates().add(new DefaultCompletionCandidate(item.getKey()));
       }
-      candidates.addAll(commandGroups.values());
-      return;
+      return new ArrayList<>(commandGroups.values());
     }
 
     String commandName;
     try {
       commandName = line.next();
     } catch (EndOfLineException e) {
-      return;
+      return new ArrayList<>();
     }
 
     Command command = findCommand(commandName);
     if (command == null) {
-      return;
+      return new ArrayList<>();
     }
     CommandData commandData = command.getCommandData();
 
@@ -228,9 +229,9 @@ public class BaseCommandManager implements CommandManager {
       line.insert(commandData.getInput());
     }
 
-    CompletionContext context = new BaseCompletionContext();
+    CompletionContext context = new BaseCompletionContext(line.copy());
     context.getParserClasses().putAll(parsers);
-    command.complete(line, candidates, context);
+    return command.complete(context);
   }
 
   @Override
@@ -253,10 +254,10 @@ public class BaseCommandManager implements CommandManager {
       line.insert(commandData.getInput());
     }
 
-    ExecutionContext context = new BaseExecutionContext();
+    ExecutionContext context = new BaseExecutionContext(line.copy());
     context.getParserClasses().putAll(parsers);
     context.getPrependArguments().addAll(List.of(args));
 
-    return command.execute(line, context);
+    return command.execute(context);
   }
 }

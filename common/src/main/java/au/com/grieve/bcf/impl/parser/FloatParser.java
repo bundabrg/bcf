@@ -40,15 +40,25 @@ public class FloatParser extends BaseParser<Float> {
 
   @Override
   protected Float doParse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
-    float result = Float.parseFloat(line.next());
+    String input = line.next();
+    float result;
+
+    try {
+      result = Float.parseFloat(input);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Not a valid floating point number: '" + input + "'");
+    }
+
     if (getParameters().get("max") != null
         && result > Float.parseFloat(getParameters().get("max"))) {
-      throw new IllegalArgumentException("Value larger than max");
+      throw new IllegalArgumentException(
+          "'" + result + "' is larger than the maximum '" + getParameters().get("max") + "'");
     }
 
     if (getParameters().get("min") != null
         && result < Float.parseFloat(getParameters().get("min"))) {
-      throw new IllegalArgumentException("Value smaller than min");
+      throw new IllegalArgumentException(
+          "'" + result + "' is smaller than the minimum '" + getParameters().get("min") + "'");
     }
 
     return result;

@@ -31,21 +31,17 @@ public interface Command {
   /**
    * Provide completion candidates for the input
    *
-   * @param line The input
-   * @param candidates List of candidates
    * @param context Context
    */
-  void complete(
-      ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext context);
+  List<CompletionCandidateGroup> complete(CompletionContext context);
 
   /**
    * Return the best execution candidate for the parsed input
    *
-   * @param line The input
    * @param context Context
    * @return best execution method
    */
-  ExecutionCandidate execute(ParsedLine line, ExecutionContext context);
+  ExecutionCandidate execute(ExecutionContext context);
 
   /**
    * Add a child command to this one

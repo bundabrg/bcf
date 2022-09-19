@@ -27,22 +27,10 @@ import au.com.grieve.bcf.exception.EndOfLineException;
 import java.util.List;
 
 public interface ParserChain {
-  /**
-   * Parse line
-   *
-   * @param line Input line to parse into objects
-   * @param output Output data
-   */
-  void parse(ParsedLine line, List<Result> output, ExecutionContext context)
-      throws EndOfLineException;
+  /** Parse line */
+  void parse(ExecutionContext context, List<Result> results) throws EndOfLineException;
 
-  /**
-   * Provide completions for the parsed line
-   *
-   * @param line Input line to parse
-   * @param candidateGroups Completion Candidate Groups
-   */
-  void complete(
-      ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext context)
+  /** Provide completions for the parsed line */
+  void complete(CompletionContext context, List<CompletionCandidateGroup> candidateGroups)
       throws EndOfLineException;
 }

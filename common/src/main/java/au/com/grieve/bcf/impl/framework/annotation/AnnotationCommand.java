@@ -29,14 +29,13 @@ import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.CompletionContext;
 import au.com.grieve.bcf.ExecutionCandidate;
 import au.com.grieve.bcf.ExecutionContext;
-import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.ParserChain;
 import au.com.grieve.bcf.Result;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.framework.annotation.annotations.Arg;
 import au.com.grieve.bcf.framework.annotation.annotations.Default;
-import au.com.grieve.bcf.framework.annotation.annotations.Description;
 import au.com.grieve.bcf.framework.annotation.annotations.Error;
+import au.com.grieve.bcf.framework.annotation.annotations.Name;
 import au.com.grieve.bcf.impl.execution.DefaultExecutionCandidate;
 import au.com.grieve.bcf.impl.framework.base.BaseCommand;
 import au.com.grieve.bcf.impl.framework.base.BaseCommandData;
@@ -77,8 +76,9 @@ public class AnnotationCommand extends BaseCommand {
           new BaseCommandData(
               commandNames[0],
               Arrays.stream(commandNames).skip(1).toArray(String[]::new),
-              getClass().isAnnotationPresent(Description.class)
-                  ? getClass().getAnnotation(Description.class).value()
+              commandAnnotation.description() != null
+                      && commandAnnotation.description().length() > 0
+                  ? commandAnnotation.description()
                   : null,
               commandArgs.length > 1 ? new StringParserChain(commandArgs[1]) : null,
               commandAnnotation.input());
@@ -111,32 +111,43 @@ public class AnnotationCommand extends BaseCommand {
             .orElse(null);
   }
 
-  protected ExecutionCandidate executeClass(ParsedLine line, ExecutionContext context) {
+  protected ExecutionCandidate executeClass(ExecutionContext context) {
     List<ExecutionCandidate> candidates = new ArrayList<>();
 
     for (ParserChain p : classParserChains) {
       List<Result> result = new ArrayList<>();
-      ParsedLine currentLine = line.copy();
       ExecutionContext currentContext = context.copy();
       try {
-        p.parse(currentLine, result, currentContext);
+        p.parse(currentContext, result);
       } catch (EndOfLineException e) {
         // Ran out of input to satisfy this chain
-        candidates.add(getErrorExecutionCandidate(context, currentLine.getWordIndex()));
+        candidates.add(
+            getErrorExecutionCandidate(
+                currentContext,
+                currentContext.getParsedLine().getWordIndex(),
+                findName(currentContext.getCommandChain()),
+                "More input expected"));
         continue;
       } catch (IllegalArgumentException e) {
         // Error has occurred
-        candidates.add(getErrorExecutionCandidate(context, currentLine.getWordIndex()));
+        candidates.add(
+            getErrorExecutionCandidate(
+                currentContext,
+                currentContext.getParsedLine().getWordIndex(),
+                findName(currentContext.getCommandChain()),
+                e.getMessage()));
         continue;
       }
 
       currentContext.getResult().addAll(result);
 
       // Add a default at this level
-      candidates.add(getDefaultExecutionCandidate(currentContext, currentLine.getWordIndex()));
+      candidates.add(
+          getDefaultExecutionCandidate(
+              currentContext, currentContext.getParsedLine().getWordIndex()));
 
-      candidates.add(executeMethod(currentLine.copy(), currentContext));
-      candidates.add(executeChildren(currentLine.copy(), currentContext));
+      candidates.add(executeMethod(currentContext));
+      candidates.add(executeChildren(currentContext));
     }
 
     return candidates.stream()
@@ -145,13 +156,13 @@ public class AnnotationCommand extends BaseCommand {
         .orElse(null);
   }
 
-  protected ExecutionCandidate executeChildren(ParsedLine line, ExecutionContext context) {
+  protected ExecutionCandidate executeChildren(ExecutionContext context) {
     List<ExecutionCandidate> candidates = new ArrayList<>();
 
     for (Command cmd : getChildren()) {
       ExecutionContext currentContext = context.copy();
-      currentContext.getCommandChain().add(this);
-      candidates.add(cmd.execute(line.copy(), currentContext));
+      currentContext.getCommandChain().add(0, this);
+      candidates.add(cmd.execute(currentContext));
     }
 
     return candidates.stream()
@@ -160,27 +171,58 @@ public class AnnotationCommand extends BaseCommand {
         .orElse(null);
   }
 
-  protected ExecutionCandidate executeMethod(ParsedLine line, ExecutionContext context) {
+  /**
+   * Find closest Name tag and return its value
+   *
+   * @return Name tag
+   */
+  protected String findName(Method method, List<Command> commandChain) {
+    if (method != null && method.isAnnotationPresent(Name.class)) {
+      return method.getAnnotation(Name.class).value();
+    }
+
+    return Stream.concat(Stream.of(this), commandChain.stream())
+        .map(c -> c.getClass().getAnnotation(Name.class))
+        .filter(Objects::nonNull)
+        .map(Name::value)
+        .findFirst()
+        .orElse(null);
+  }
+
+  protected String findName(List<Command> commandChain) {
+    return findName(null, commandChain);
+  }
+
+  protected ExecutionCandidate executeMethod(ExecutionContext context) {
     List<ExecutionCandidate> candidates = new ArrayList<>();
 
     for (Map.Entry<ParserChain, Method> item : methodParserChains.entrySet()) {
       List<Result> result = new ArrayList<>();
-      ParsedLine currentLine = line.copy();
       ExecutionContext currentContext = context.copy();
       try {
-        item.getKey().parse(currentLine, result, currentContext);
+        item.getKey().parse(currentContext, result);
       } catch (EndOfLineException e) {
         // Ran out of input to satisfy this chain
-        candidates.add(getErrorExecutionCandidate(context, currentLine.getWordIndex()));
+        candidates.add(
+            getErrorExecutionCandidate(
+                currentContext,
+                currentContext.getParsedLine().getWordIndex(),
+                findName(item.getValue(), currentContext.getCommandChain()),
+                "More input expected")); // TODO
         continue;
       } catch (IllegalArgumentException e) {
         // Error has occurred
-        candidates.add(getErrorExecutionCandidate(context, currentLine.getWordIndex()));
+        candidates.add(
+            getErrorExecutionCandidate(
+                currentContext,
+                currentContext.getParsedLine().getWordIndex(),
+                findName(item.getValue(), currentContext.getCommandChain()),
+                e.getMessage()));
         continue;
       }
 
       // If we have input left then we reject this pathway
-      if (!currentLine.isEol()) {
+      if (!currentContext.getParsedLine().isEol()) {
         continue;
       }
 
@@ -191,16 +233,18 @@ public class AnnotationCommand extends BaseCommand {
             new DefaultExecutionCandidate(
                 this,
                 item.getValue(),
-                currentLine.getWordIndex(),
+                currentContext.getParsedLine().getWordIndex(),
                 Stream.concat(
                         currentContext
+                            // Add prepend arguments first
                             .getPrependArguments()
-                            .stream(), // Add prepend arguments first
+                            .stream(),
                         currentContext.getResult().stream()
                             .filter(
                                 r -> {
-                                  r.getValue(); // Make sure we are able to return a value.
+                                  // Make sure we are able to return a value.
                                   // Needed for switches.
+                                  r.getValue();
                                   return true;
                                 })
                             .filter(r -> !r.isSuppressed())
@@ -216,7 +260,7 @@ public class AnnotationCommand extends BaseCommand {
   }
 
   @Override
-  public ExecutionCandidate execute(ParsedLine line, ExecutionContext context) {
+  public ExecutionCandidate execute(ExecutionContext context) {
     List<ExecutionCandidate> candidates = new ArrayList<>();
 
     if (context.getCommandChain().size() == 0
@@ -224,82 +268,93 @@ public class AnnotationCommand extends BaseCommand {
         && getCommandData().getParserChain() != null) {
       List<Result> result = new ArrayList<>();
       try {
-        getCommandData().getParserChain().parse(line, result, context);
-      } catch (EndOfLineException | IllegalArgumentException e) {
-        return getErrorExecutionCandidate(context, line.getWordIndex());
+        getCommandData().getParserChain().parse(context, result);
+      } catch (EndOfLineException e) {
+        return getErrorExecutionCandidate(
+            context,
+            context.getParsedLine().getWordIndex(),
+            findName(context.getCommandChain()),
+            "More input expected");
+      } catch (IllegalArgumentException e) {
+        return getErrorExecutionCandidate(
+            context,
+            context.getParsedLine().getWordIndex(),
+            findName(context.getCommandChain()),
+            e.getMessage());
       }
     }
 
     if (classParserChains.size() > 0) {
-      candidates.add(executeClass(line.copy(), context));
+      candidates.add(executeClass(context));
     } else {
       // Add a default at this level
-      candidates.add(getDefaultExecutionCandidate(context, line.getWordIndex()));
+      candidates.add(getDefaultExecutionCandidate(context, context.getParsedLine().getWordIndex()));
 
-      candidates.add(executeMethod(line.copy(), context));
-      candidates.add(executeChildren(line.copy(), context));
+      candidates.add(executeMethod(context));
+      candidates.add(executeChildren(context));
     }
     return candidates.stream()
         .filter(Objects::nonNull)
         .max(Comparator.comparingInt(ExecutionCandidate::getWeight))
-        .orElse(getDefaultExecutionCandidate(context, line.getWordIndex()));
+        .orElse(getDefaultExecutionCandidate(context, context.getParsedLine().getWordIndex()));
   }
 
   protected void completeClass(
-      ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext context) {
+      CompletionContext context, List<CompletionCandidateGroup> candidates) {
     for (ParserChain p : classParserChains) {
-      ParsedLine currentLine = line.copy();
       CompletionContext currentContext = context.copy();
       try {
-        p.complete(currentLine, candidates, currentContext);
+        p.complete(currentContext, candidates);
       } catch (EndOfLineException e) {
         continue;
       }
 
-      completeMethod(currentLine.copy(), candidates, currentContext);
-      completeChildren(currentLine.copy(), candidates, currentContext);
+      completeMethod(currentContext, candidates);
+      completeChildren(currentContext, candidates);
     }
   }
 
   protected void completeChildren(
-      ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext context) {
+      CompletionContext context, List<CompletionCandidateGroup> candidates) {
     for (Command cmd : getChildren()) {
       CompletionContext currentContext = context.copy();
-      currentContext.getCommandChain().add(this);
-      cmd.complete(line.copy(), candidates, currentContext);
+      currentContext.getCommandChain().add(0, this);
+      candidates.addAll(cmd.complete(currentContext));
     }
   }
 
   protected void completeMethod(
-      ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext context) {
+      CompletionContext context, List<CompletionCandidateGroup> candidates) {
     for (Map.Entry<ParserChain, Method> item : methodParserChains.entrySet()) {
-      ParsedLine currentLine = line.copy();
       CompletionContext currentContext = context.copy();
       try {
-        item.getKey().complete(currentLine, candidates, currentContext);
+        item.getKey().complete(currentContext, candidates);
       } catch (EndOfLineException ignored) {
       }
     }
   }
 
   @Override
-  public void complete(
-      ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext context) {
+  public List<CompletionCandidateGroup> complete(CompletionContext context) {
+    List<CompletionCandidateGroup> candidates = new ArrayList<>();
+
     if (context.getCommandChain().size() == 0
         && getCommandData() != null
         && getCommandData().getParserChain() != null) {
       try {
-        getCommandData().getParserChain().complete(line, candidates, context);
+        getCommandData().getParserChain().complete(context, candidates);
       } catch (EndOfLineException | IllegalArgumentException e) {
-        return;
+        return candidates;
       }
     }
 
     if (classParserChains.size() > 0) {
-      completeClass(line.copy(), candidates, context);
+      completeClass(context, candidates);
     } else {
-      completeMethod(line.copy(), candidates, context);
-      completeChildren(line.copy(), candidates, context);
+      completeMethod(context, candidates);
+      completeChildren(context, candidates);
     }
+
+    return candidates;
   }
 }

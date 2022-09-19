@@ -26,9 +26,11 @@ package au.com.grieve.bcf.impl.framework.base;
 import au.com.grieve.bcf.CommandData;
 import au.com.grieve.bcf.ParserChain;
 import lombok.Getter;
+import lombok.ToString;
 
 /** Data about a root command */
 @Getter
+@ToString
 public class BaseCommandData implements CommandData {
   // Name of the command
   private final String name;

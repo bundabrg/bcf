@@ -25,6 +25,7 @@ package au.com.grieve.bcf.impl.framework.base;
 
 import au.com.grieve.bcf.Command;
 import au.com.grieve.bcf.CompletionContext;
+import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,10 +40,15 @@ public class BaseCompletionContext implements CompletionContext {
   private final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
   private final List<Command> commandChain = new ArrayList<>();
   private final List<Parser<?>> switches = new ArrayList<>();
+  private final ParsedLine parsedLine;
+
+  public BaseCompletionContext(ParsedLine parsedLine) {
+    this.parsedLine = parsedLine;
+  }
 
   @Override
   public CompletionContext copy() {
-    BaseCompletionContext result = new BaseCompletionContext();
+    BaseCompletionContext result = new BaseCompletionContext(parsedLine.copy());
     result.getParserClasses().putAll(parserClasses);
     result.getCommandChain().addAll(commandChain);
     result.getSwitches().addAll(switches);

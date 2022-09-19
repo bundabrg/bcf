@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.CompletionContext;
 import au.com.grieve.bcf.ExecutionContext;
-import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Result;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.impl.framework.base.BaseCompletionContext;
@@ -46,16 +45,16 @@ import org.junit.jupiter.api.Test;
 
 class StringParserChainTest {
 
-  ExecutionContext defaultExecutionContext() {
-    ExecutionContext result = new BaseExecutionContext();
+  ExecutionContext defaultExecutionContext(String line) {
+    ExecutionContext result = new BaseExecutionContext(new DefaultParsedLine(line));
     result.getParserClasses().put("literal", StringParser.class);
     result.getParserClasses().put("string", StringParser.class);
     result.getParserClasses().put("int", IntegerParser.class);
     return result;
   }
 
-  CompletionContext defaultCompletionContext() {
-    CompletionContext result = new BaseCompletionContext();
+  CompletionContext defaultCompletionContext(String line) {
+    CompletionContext result = new BaseCompletionContext(new DefaultParsedLine(line));
     result.getParserClasses().put("literal", StringParser.class);
     result.getParserClasses().put("string", StringParser.class);
     result.getParserClasses().put("int", IntegerParser.class);
@@ -131,11 +130,10 @@ class StringParserChainTest {
   @Test
   void parseSuppress_1() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string");
-    ParsedLine line = new DefaultParsedLine("bob");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("bob");
     List<Result> result = new ArrayList<>();
+    a.parse(context, result);
 
-    a.parse(line, result, context);
     assertEquals(1, result.size());
     assertEquals("bob", result.get(0).getValue());
     assertFalse(result.get(0).isSuppressed());
@@ -144,11 +142,10 @@ class StringParserChainTest {
   @Test
   void parseSuppress_2() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string(suppress=true)");
-    ExecutionContext context = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("bob");
+    ExecutionContext context = defaultExecutionContext("bob");
     List<Result> result = new ArrayList<>();
+    a.parse(context, result);
 
-    a.parse(line, result, context);
     assertEquals(1, result.size());
     assertEquals("bob", result.get(0).getValue());
     assertTrue(result.get(0).isSuppressed());
@@ -157,11 +154,10 @@ class StringParserChainTest {
   @Test
   void parseDefaultRequired_1() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string(default=alice)");
-    ExecutionContext context = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("bob");
+    ExecutionContext context = defaultExecutionContext("bob");
     List<Result> result = new ArrayList<>();
+    a.parse(context, result);
 
-    a.parse(line, result, context);
     assertEquals(1, result.size());
     assertEquals("bob", result.get(0).getValue());
   }
@@ -169,11 +165,10 @@ class StringParserChainTest {
   @Test
   void parseDefaultRequired_2() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string(default=alice)");
-    ExecutionContext context = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("");
+    ExecutionContext context = defaultExecutionContext("");
     List<Result> result = new ArrayList<>();
+    a.parse(context, result);
 
-    a.parse(line, result, context);
     assertEquals(1, result.size());
     assertEquals("alice", result.get(0).getValue());
   }
@@ -181,11 +176,10 @@ class StringParserChainTest {
   @Test
   void parseDefaultRequired_3() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string(required=false)");
-    ExecutionContext context = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("bob");
+    ExecutionContext context = defaultExecutionContext("bob");
     List<Result> result = new ArrayList<>();
+    a.parse(context, result);
 
-    a.parse(line, result, context);
     assertEquals(1, result.size());
     assertEquals("bob", result.get(0).getValue());
   }
@@ -193,11 +187,10 @@ class StringParserChainTest {
   @Test
   void parseDefaultRequired_4() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string(required=false)");
-    ExecutionContext context = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("");
+    ExecutionContext context = defaultExecutionContext("");
     List<Result> result = new ArrayList<>();
+    a.parse(context, result);
 
-    a.parse(line, result, context);
     assertEquals(1, result.size());
     assertNull(result.get(0).getValue());
   }
@@ -205,11 +198,10 @@ class StringParserChainTest {
   @Test
   void parseDefaultRequired_5() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@int(default=5)");
-    ExecutionContext context = defaultExecutionContext();
-    ParsedLine line = new DefaultParsedLine("");
+    ExecutionContext context = defaultExecutionContext("");
     List<Result> result = new ArrayList<>();
+    a.parse(context, result);
 
-    a.parse(line, result, context);
     assertEquals(1, result.size());
     assertEquals(5, result.get(0).getValue());
   }
@@ -217,31 +209,28 @@ class StringParserChainTest {
   @Test
   void complete_1() {
     StringParserChain a = new StringParserChain("literal1");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("");
+    CompletionContext context = defaultCompletionContext("");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
   }
 
   @Test
   void complete_2() {
     StringParserChain a = new StringParserChain("literal1");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine(" ");
+    CompletionContext context = defaultCompletionContext(" ");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
   }
 
   @Test
   void complete_3() {
     StringParserChain a = new StringParserChain("literal1");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("b");
+    CompletionContext context = defaultCompletionContext("b");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         0, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
   }
@@ -249,11 +238,10 @@ class StringParserChainTest {
   @Test
   void complete_4() {
     StringParserChain a = new StringParserChain("literal1");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("l");
+    CompletionContext context = defaultCompletionContext("l");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
@@ -262,11 +250,10 @@ class StringParserChainTest {
   @Test
   void complete_5() {
     StringParserChain a = new StringParserChain("literal1");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("literal1");
+    CompletionContext context = defaultCompletionContext("literal1");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
@@ -275,11 +262,10 @@ class StringParserChainTest {
   @Test
   void complete_6() {
     StringParserChain a = new StringParserChain("literal1|literal2|literal3");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("literal");
+    CompletionContext context = defaultCompletionContext("literal");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
@@ -288,11 +274,10 @@ class StringParserChainTest {
   @Test
   void complete_7() {
     StringParserChain a = new StringParserChain("literal1|literal2|literal3");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("literal1");
+    CompletionContext context = defaultCompletionContext("literal1");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
@@ -301,11 +286,10 @@ class StringParserChainTest {
   @Test
   void complete_8() {
     StringParserChain a = new StringParserChain("literal1|literal2|literal3 mike|milly|mark");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("l");
+    CompletionContext context = defaultCompletionContext("l");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
@@ -314,11 +298,10 @@ class StringParserChainTest {
   @Test
   void complete_9() {
     StringParserChain a = new StringParserChain("literal1|literal2|literal mike|milly|mark");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("literal");
+    CompletionContext context = defaultCompletionContext("literal");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
@@ -327,11 +310,10 @@ class StringParserChainTest {
   @Test
   void complete_10() {
     StringParserChain a = new StringParserChain("literal1|literal2|literal mike|milly|mark");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("literal1");
+    CompletionContext context = defaultCompletionContext("literal1");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
@@ -340,11 +322,10 @@ class StringParserChainTest {
   @Test
   void complete_11() {
     StringParserChain a = new StringParserChain("literal1|literal2|literal mike|milly|mark");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("literal ");
+    CompletionContext context = defaultCompletionContext("literal ");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
@@ -353,11 +334,10 @@ class StringParserChainTest {
   @Test
   void complete_12() {
     StringParserChain a = new StringParserChain("literal1|literal2|literal mike|milly|mark");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("literal ma");
+    CompletionContext context = defaultCompletionContext("literal ma");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
@@ -366,11 +346,10 @@ class StringParserChainTest {
   @Test
   void complete_13() {
     StringParserChain a = new StringParserChain("literal1|literal2|literal mike|milly|mark");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("literal mark");
+    CompletionContext context = defaultCompletionContext("literal mark");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
@@ -379,11 +358,10 @@ class StringParserChainTest {
   @Test
   void complete_14() {
     StringParserChain a = new StringParserChain("literal1|literal2|literal mike|milly|mark");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("literal markb");
+    CompletionContext context = defaultCompletionContext("literal markb");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         0, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
   }
@@ -391,11 +369,10 @@ class StringParserChainTest {
   @Test
   void complete_15() throws EndOfLineException {
     StringParserChain a = new StringParserChain("literal1|literal2|literal mike|milly|mark");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("literal mark b");
+    CompletionContext context = defaultCompletionContext("literal mark b");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    a.complete(line, result, context);
+    a.complete(context, result);
     assertEquals(
         0, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
   }
@@ -403,11 +380,10 @@ class StringParserChainTest {
   @Test
   void complete_16() {
     StringParserChain a = new StringParserChain("literal1|literal2|literal mike|milly|mark");
-    CompletionContext context = defaultCompletionContext();
-    ParsedLine line = new DefaultParsedLine("l m");
+    CompletionContext context = defaultCompletionContext("l m");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> a.complete(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.complete(context, result));
     assertEquals(
         0, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
   }
@@ -415,22 +391,20 @@ class StringParserChainTest {
   @Test
   void parseSwitch_1() {
     StringParserChain a = new StringParserChain("@string(switch=sw1) @string @string");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("alice");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("alice");
 
-    assertThrows(EndOfLineException.class, () -> a.parse(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.parse(context, result));
     assertEquals(2, result.size());
   }
 
   @Test
   void parseSwitch_2() {
     StringParserChain a = new StringParserChain("@string(switch=sw1) @string @string");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("-sw1 bob");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("-sw1 bob");
 
-    assertThrows(EndOfLineException.class, () -> a.parse(line, result, context));
+    assertThrows(EndOfLineException.class, () -> a.parse(context, result));
     assertEquals(1, result.size());
     assertEquals("bob", result.get(0).getValue());
   }
@@ -438,11 +412,10 @@ class StringParserChainTest {
   @Test
   void parseSwitch_3() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string(switch=sw1) @string @string");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("alice amy -sw1 bob");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("alice amy -sw1 bob");
 
-    a.parse(line, result, context);
+    a.parse(context, result);
     assertEquals(3, result.size());
     assertEquals("bob", result.get(0).getValue());
     assertEquals("alice", result.get(1).getValue());
@@ -452,11 +425,10 @@ class StringParserChainTest {
   @Test
   void parseSwitch_4() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string(switch=sw1) @string @string");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("alice -sw1 bob amy");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("alice -sw1 bob amy");
 
-    a.parse(line, result, context);
+    a.parse(context, result);
     assertEquals(3, result.size());
     assertEquals("bob", result.get(0).getValue());
     assertEquals("alice", result.get(1).getValue());
@@ -466,11 +438,10 @@ class StringParserChainTest {
   @Test
   void parseSwitch_5() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string(switch=sw1) @string @string");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("-sw1 bob alice amy");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("-sw1 bob alice amy");
 
-    a.parse(line, result, context);
+    a.parse(context, result);
     assertEquals(3, result.size());
     assertEquals("bob", result.get(0).getValue());
     assertEquals("alice", result.get(1).getValue());
@@ -480,12 +451,11 @@ class StringParserChainTest {
   @Test
   void parseSwitch_6() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string @string(switch=sw1) @string");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("-sw1 bob alice amy");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("-sw1 bob alice amy");
 
     // The switch is invalid, so it'll end up in the other parameters
-    a.parse(line, result, context);
+    a.parse(context, result);
     assertEquals(3, result.size());
     assertEquals("-sw1", result.get(0).getValue());
     assertThrows(IllegalArgumentException.class, () -> result.get(1).getValue());
@@ -495,11 +465,10 @@ class StringParserChainTest {
   @Test
   void parseSwitch_7() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string @string(switch=sw1) @string");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("alice -sw1 bob amy");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("alice -sw1 bob amy");
 
-    a.parse(line, result, context);
+    a.parse(context, result);
     assertEquals(3, result.size());
     assertEquals("alice", result.get(0).getValue());
     assertEquals("bob", result.get(1).getValue());
@@ -509,11 +478,10 @@ class StringParserChainTest {
   @Test
   void parseSwitch_8() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string @string(switch=sw1) @string");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("alice amy -sw1 bob");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("alice amy -sw1 bob");
 
-    a.parse(line, result, context);
+    a.parse(context, result);
     assertEquals(3, result.size());
     assertEquals("alice", result.get(0).getValue());
     assertEquals("bob", result.get(1).getValue());
@@ -523,12 +491,11 @@ class StringParserChainTest {
   @Test
   void parseSwitch_9() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string @string @string(switch=sw1)");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("-sw1 bob alice amy");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("-sw1 bob alice amy");
 
     // The switch is invalid, so it'll end up in the other parameters
-    a.parse(line, result, context);
+    a.parse(context, result);
     assertEquals(3, result.size());
     assertEquals("-sw1", result.get(0).getValue());
     assertEquals("bob", result.get(1).getValue());
@@ -538,12 +505,11 @@ class StringParserChainTest {
   @Test
   void parseSwitch_10() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string @string @string(switch=sw1)");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("alice -sw1 bob amy");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("alice -sw1 bob amy");
 
     // The switch is invalid, so it'll end up in the other parameters
-    a.parse(line, result, context);
+    a.parse(context, result);
     assertEquals(3, result.size());
     assertEquals("alice", result.get(0).getValue());
     assertEquals("-sw1", result.get(1).getValue());
@@ -553,11 +519,10 @@ class StringParserChainTest {
   @Test
   void parseSwitch_11() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string @string @string(switch=sw1)");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("alice amy -sw1 bob");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("alice amy -sw1 bob");
 
-    a.parse(line, result, context);
+    a.parse(context, result);
     assertEquals(3, result.size());
     assertEquals("alice", result.get(0).getValue());
     assertEquals("amy", result.get(1).getValue());
@@ -567,22 +532,20 @@ class StringParserChainTest {
   @Test
   void parseSwitch_12() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string(switch=sw1) @string @string");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("alice amy bob");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("alice amy bob");
 
-    a.parse(line, result, context);
+    a.parse(context, result);
     assertThrows(IllegalArgumentException.class, () -> result.get(0).getValue());
   }
 
   @Test
   void parseSwitchDefault_1() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string(switch=sw1,default=zoe) @string @string");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("alice amy");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("alice amy");
 
-    a.parse(line, result, context);
+    a.parse(context, result);
     assertEquals(3, result.size());
     assertEquals("zoe", result.get(0).getValue());
     assertEquals("alice", result.get(1).getValue());
@@ -592,11 +555,10 @@ class StringParserChainTest {
   @Test
   void parseSwitchDefault_2() throws EndOfLineException {
     StringParserChain a = new StringParserChain("@string(switch=sw1,default=zoe) @string @string");
-    ExecutionContext context = defaultExecutionContext();
+    ExecutionContext context = defaultExecutionContext("alice amy -sw1 bob");
     List<Result> result = new ArrayList<>();
-    ParsedLine line = new DefaultParsedLine("alice amy -sw1 bob");
 
-    a.parse(line, result, context);
+    a.parse(context, result);
     assertEquals(3, result.size());
     assertEquals("bob", result.get(0).getValue());
     assertEquals("alice", result.get(1).getValue());

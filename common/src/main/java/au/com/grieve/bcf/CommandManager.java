@@ -46,11 +46,10 @@ public interface CommandManager {
    * Provide completion candidates for the input
    *
    * @param line The input
-   * @param candidates List of candidates
    */
-  void complete(String line, List<CompletionCandidateGroup> candidates);
+  List<CompletionCandidateGroup> complete(String line);
 
-  void complete(ParsedLine line, List<CompletionCandidateGroup> candidates);
+  List<CompletionCandidateGroup> complete(ParsedLine line);
 
   /**
    * Return the best execution candidate for the parsed input

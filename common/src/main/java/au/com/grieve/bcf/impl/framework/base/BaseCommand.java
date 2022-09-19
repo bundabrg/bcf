@@ -44,7 +44,8 @@ public abstract class BaseCommand implements Command {
 
   protected abstract Method getErrorMethod();
 
-  protected ExecutionCandidate getErrorExecutionCandidate(ExecutionContext context, int weight) {
+  protected ExecutionCandidate getErrorExecutionCandidate(
+      ExecutionContext context, int weight, String name, String message) {
     for (Command cmd :
         Stream.concat(Stream.of(this), context.getCommandChain().stream())
             .collect(Collectors.toList())) {
@@ -54,7 +55,7 @@ public abstract class BaseCommand implements Command {
             cmd,
             method,
             weight,
-            Stream.concat(context.getPrependArguments().stream(), Stream.of(context))
+            Stream.concat(context.getPrependArguments().stream(), Stream.of(context, name, message))
                 .collect(Collectors.toList()));
       }
     }

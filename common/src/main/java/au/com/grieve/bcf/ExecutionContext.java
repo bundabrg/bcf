@@ -56,6 +56,13 @@ public interface ExecutionContext {
   List<Result> getResult();
 
   /**
+   * Return the parsed line so far
+   *
+   * @return Parsed Line
+   */
+  ParsedLine getParsedLine();
+
+  /**
    * Return a copy of ourselves
    *
    * @return Copy

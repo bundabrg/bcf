@@ -25,6 +25,7 @@ package au.com.grieve.bcf.impl.framework.base;
 
 import au.com.grieve.bcf.Command;
 import au.com.grieve.bcf.ExecutionContext;
+import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.Result;
 import java.util.ArrayList;
@@ -42,10 +43,15 @@ public class BaseExecutionContext implements ExecutionContext {
   private final List<Object> prependArguments = new ArrayList<>();
   private final List<Command> commandChain = new ArrayList<>();
   private final List<Result> result = new ArrayList<>();
+  private final ParsedLine parsedLine;
+
+  public BaseExecutionContext(ParsedLine parsedLine) {
+    this.parsedLine = parsedLine;
+  }
 
   @Override
   public ExecutionContext copy() {
-    BaseExecutionContext result = new BaseExecutionContext();
+    BaseExecutionContext result = new BaseExecutionContext(parsedLine.copy());
     result.parserClasses.putAll(parserClasses);
     result.getCommandChain().addAll(commandChain);
     result.getResult().addAll(this.result.stream().map(Result::copy).collect(Collectors.toList()));

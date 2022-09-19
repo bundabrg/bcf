@@ -43,6 +43,13 @@ public interface CompletionContext {
   List<Command> getCommandChain();
 
   /**
+   * Return the parsed line so far
+   *
+   * @return Parsed Line
+   */
+  ParsedLine getParsedLine();
+
+  /**
    * Return a copy of ourselves
    *
    * @return Copy

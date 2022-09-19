@@ -35,6 +35,11 @@
             <configuration>
               <createDependencyReducedPom>true</createDependencyReducedPom>
               <finalName>bcf-${project.artifactId}-${project.version}</finalName>
+              <artifactSet>
+                <includes>
+                  <include>au.com.grieve.bcf:*</include>
+                </includes>
+              </artifactSet>
             </configuration>
             <goals>
               <goal>shade</goal>

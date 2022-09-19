@@ -24,7 +24,6 @@
 package au.com.grieve.bcf.platform.terminalconsole.impl;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jline.reader.Candidate;
@@ -41,8 +40,7 @@ public class TerminalCommandCompleter implements Completer {
 
   @Override
   public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
-    List<CompletionCandidateGroup> completionCandidateGroups = new ArrayList<>();
-    manager.complete(line.line(), completionCandidateGroups);
+    List<CompletionCandidateGroup> completionCandidateGroups = manager.complete(line.line());
 
     // Convert to jline. We provide all the completions so jline can filter them and allow
     // typo completion as well.

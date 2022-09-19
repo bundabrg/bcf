@@ -30,15 +30,17 @@ import au.com.grieve.bcf.impl.framework.annotation.AnnotationCommand;
 
 public class TerminalAnnotationCommand extends AnnotationCommand {
   @Error
-  public void onError(ExecutionContext ctx) {
+  public void onError(ExecutionContext ctx, String name, String message) {
     // TODO
-    System.err.println("Error");
+    System.err.println("Error: " + ctx);
+    System.err.println("Name: " + name);
+    System.err.println("Message: " + message);
   }
 
   // Default Default
   @Default
   public void onDefault(ExecutionContext ctx) {
     // TODO
-    System.err.println("Default");
+    System.err.println("Default: " + ctx);
   }
 }

@@ -44,13 +44,11 @@ public class StringParser extends BaseParser<String> {
   protected String doParse(ParsedLine line) throws EndOfLineException {
     String result = line.next();
     if (getParameters().containsKey("options")) {
-      String r = result;
-
-      result =
-          Arrays.stream(getParameters().get("options").split("\\|"))
-              .filter(s -> s.equals(r))
-              .findFirst()
-              .orElseThrow(IllegalArgumentException::new);
+      List<String> options = List.of(getParameters().get("options").split("\\|"));
+      if (!options.contains(result)) {
+        throw new IllegalArgumentException(
+            "'" + result + "' must be one of: " + String.join(", ", options));
+      }
     }
 
     return result;

@@ -36,16 +36,12 @@ import au.com.grieve.bcf.framework.annotation.annotations.Command;
 import au.com.grieve.bcf.framework.annotation.annotations.Default;
 import au.com.grieve.bcf.framework.annotation.annotations.Error;
 import au.com.grieve.bcf.impl.framework.annotation.AnnotationCommand;
-import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("unused")
-class AnnotationCommandManagerTest {
+class AnnotationBaseCommandManagerTest {
 
-  @Nested
-  class AnnotationCommandTests {
     @Test
     public void registerCommandNoCommand() {
       BaseCommandManager manager = new BaseCommandManager();
@@ -473,9 +469,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommand();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("");
 
       assertEquals(1, groups.size());
       assertEquals(3, groups.get(0).getCompletionCandidates().size());
@@ -486,9 +480,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommand();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete(" ", groups);
+    List<CompletionCandidateGroup> groups = manager.complete(" ");
 
       assertEquals(1, groups.size());
       assertEquals(3, groups.get(0).getCompletionCandidates().size());
@@ -499,9 +491,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommand();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("c", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("c");
 
       assertEquals(1, groups.size());
       assertEquals(3, groups.get(0).getCompletionCandidates().size());
@@ -512,9 +502,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommand();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("d", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("d");
 
       assertEquals(0, groups.size());
     }
@@ -524,9 +512,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommand();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("cmd2", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("cmd2");
 
       assertEquals(1, groups.size());
       assertEquals(1, groups.get(0).getCompletionCandidates().size());
@@ -537,9 +523,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommand();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("cmd2 ", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("cmd2 ");
 
       assertEquals(2, groups.size());
       assertTrue(
@@ -561,10 +545,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommand();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("cmd2 m_arg2", groups);
-
+    List<CompletionCandidateGroup> groups = manager.complete("cmd2 m_arg2");
       assertEquals(2, groups.size());
     }
 
@@ -573,9 +554,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommand();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("cmd2 m_arg1", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("cmd2 m_arg1");
 
       assertEquals(2, groups.size());
     }
@@ -585,9 +564,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommandSingleParam();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("cmd2 m_arg1", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("cmd2 m_arg1");
 
       assertEquals(1, groups.size());
       assertEquals("c_arg1", groups.get(0).getCompletionCandidates().get(0).getValue());
@@ -598,9 +575,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommandSingleParam();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("cmd2 ", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("cmd2 ");
 
       assertEquals(1, groups.size());
       assertEquals("c_arg1", groups.get(0).getCompletionCandidates().get(0).getValue());
@@ -611,9 +586,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommandSingleParam();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("cmd2 c_arg1 ", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("cmd2 c_arg1 ");
 
       assertEquals(2, groups.size());
       assertTrue(
@@ -635,9 +608,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommandSingleParamSingleInput();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("cmd2", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("cmd2");
 
       assertEquals(1, groups.size());
     }
@@ -647,9 +618,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommandSingleParamSingleInput();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("cmd2 ", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("cmd2 ");
 
       assertEquals(2, groups.size());
       assertTrue(
@@ -671,9 +640,7 @@ class AnnotationCommandManagerTest {
       AnnotationCommand c1 = new ClassWithMultiCommandSingleParamMultiInput();
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("cmd2 ", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("cmd2 ");
 
       assertEquals(2, groups.size());
       assertTrue(
@@ -699,21 +666,19 @@ class AnnotationCommandManagerTest {
       BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       manager.registerCommand(c2);
-      List<CompletionCandidateGroup> groups = new ArrayList<>();
-
-      manager.complete("", groups);
+    List<CompletionCandidateGroup> groups = manager.complete("");
 
       assertEquals(2, groups.size());
       assertTrue(groups.stream().allMatch(g -> g.getCompletionCandidates().size() == 2));
     }
 
-    class ClassNoCommand extends AnnotationCommand {}
+  static class ClassNoCommand extends AnnotationCommand {}
 
-    @Command("")
-    class ClassWithEmptyCommand extends AnnotationCommand {}
+  @Command("")
+  static class ClassWithEmptyCommand extends AnnotationCommand {}
 
-    @Command("cmd1")
-    class ClassWithSingleCommand extends AnnotationCommand {
+  @Command("cmd1")
+  static class ClassWithSingleCommand extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -724,8 +689,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command("cmd1")
-    class ClassWithSingleCommand2 extends AnnotationCommand {
+  @Command("cmd1")
+  static class ClassWithSingleCommand2 extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -736,8 +701,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command("cmd1 c_arg1 c_arg2 c_arg3")
-    class ParentCommand extends AnnotationCommand {
+  @Command("cmd1 c_arg1 c_arg2 c_arg3")
+  static class ParentCommand extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -748,9 +713,9 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command(value = "cmd2 c_arg1 c_arg2 c_arg3", input = "c_arg1 c_arg2 c_arg3 child")
-    @Arg("child")
-    class ChildCommand extends AnnotationCommand {
+  @Command(value = "cmd2 c_arg1 c_arg2 c_arg3", input = "c_arg1 c_arg2 c_arg3 child")
+  @Arg("child")
+  static class ChildCommand extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -761,8 +726,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command(value = "cmd1", input = "m_arg1")
-    class ClassWithSingleCommandSingleInput extends AnnotationCommand {
+  @Command(value = "cmd1", input = "m_arg1")
+  static class ClassWithSingleCommandSingleInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -773,8 +738,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command(value = "cmd1", input = "m_arg1 m_arg2 m_arg3")
-    class ClassWithSingleCommandMultiInput extends AnnotationCommand {
+  @Command(value = "cmd1", input = "m_arg1 m_arg2 m_arg3")
+  static class ClassWithSingleCommandMultiInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -785,8 +750,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command("cmd1 c_arg1")
-    class ClassWithSingleCommandSingleParam extends AnnotationCommand {
+  @Command("cmd1 c_arg1")
+  static class ClassWithSingleCommandSingleParam extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -797,8 +762,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command(value = "cmd1 c_arg1", input = "c_arg1")
-    class ClassWithSingleCommandSingleParamSingleInput extends AnnotationCommand {
+  @Command(value = "cmd1 c_arg1", input = "c_arg1")
+  static class ClassWithSingleCommandSingleParamSingleInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -809,8 +774,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command(value = "cmd1 c_arg1", input = "c_arg1 m_arg1 m_arg2")
-    class ClassWithSingleCommandSingleParamMultipleInput extends AnnotationCommand {
+  @Command(value = "cmd1 c_arg1", input = "c_arg1 m_arg1 m_arg2")
+  static class ClassWithSingleCommandSingleParamMultipleInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -821,8 +786,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command("cmd1 c_arg1 c_arg2 c_arg3")
-    class ClassWithSingleCommandMultiParam extends AnnotationCommand {
+  @Command("cmd1 c_arg1 c_arg2 c_arg3")
+  static class ClassWithSingleCommandMultiParam extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -833,8 +798,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command(value = "cmd1 c_arg1 c_arg2 c_arg3", input = "c_arg1")
-    class ClassWithSingleCommandMultiParamSingleInput extends AnnotationCommand {
+  @Command(value = "cmd1 c_arg1 c_arg2 c_arg3", input = "c_arg1")
+  static class ClassWithSingleCommandMultiParamSingleInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -845,8 +810,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command(value = "cmd1 c_arg1 c_arg2 c_arg3", input = "c_arg1 c_arg2 c_arg3 m_arg1 m_arg2")
-    class ClassWithSingleCommandMultiParamMultiInput extends AnnotationCommand {
+  @Command(value = "cmd1 c_arg1 c_arg2 c_arg3", input = "c_arg1 c_arg2 c_arg3 m_arg1 m_arg2")
+  static class ClassWithSingleCommandMultiParamMultiInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -857,23 +822,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command("cmd1|cmd2|cmd3")
-    class ClassWithMultiCommand extends AnnotationCommand {
-      @Default
-      public void d() {}
-
-      @Error
-      public void e() {}
-
-      @Arg("m_arg1 m_arg2 m_arg3")
-      public void m1() {}
-
-      @Arg("m_arg2|m_arg1 m_arg3")
-      public void m2() {}
-    }
-
-    @Command("cmd1|cmd2|cmd3 c_arg1")
-    class ClassWithMultiCommandSingleParam extends AnnotationCommand {
+  @Command("cmd1|cmd2|cmd3")
+  static class ClassWithMultiCommand extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -887,8 +837,8 @@ class AnnotationCommandManagerTest {
       public void m2() {}
     }
 
-    @Command(value = "cmd1|cmd2|cmd3 c_arg1", input = "c_arg1")
-    class ClassWithMultiCommandSingleParamSingleInput extends AnnotationCommand {
+  @Command("cmd1|cmd2|cmd3 c_arg1")
+  static class ClassWithMultiCommandSingleParam extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -902,8 +852,8 @@ class AnnotationCommandManagerTest {
       public void m2() {}
     }
 
-    @Command(value = "cmd1|cmd2|cmd3 c_arg1", input = "c_arg1 m_arg1")
-    class ClassWithMultiCommandSingleParamMultiInput extends AnnotationCommand {
+  @Command(value = "cmd1|cmd2|cmd3 c_arg1", input = "c_arg1")
+  static class ClassWithMultiCommandSingleParamSingleInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -917,8 +867,23 @@ class AnnotationCommandManagerTest {
       public void m2() {}
     }
 
-    @Command("cmd1|cmd2|cmd3 c_arg1 c_arg2 c_arg3")
-    class ClassWithMultiCommandMultiParam extends AnnotationCommand {
+  @Command(value = "cmd1|cmd2|cmd3 c_arg1", input = "c_arg1 m_arg1")
+  static class ClassWithMultiCommandSingleParamMultiInput extends AnnotationCommand {
+      @Default
+      public void d() {}
+
+      @Error
+      public void e() {}
+
+      @Arg("m_arg1 m_arg2 m_arg3")
+      public void m1() {}
+
+      @Arg("m_arg2|m_arg1 m_arg3")
+      public void m2() {}
+    }
+
+  @Command("cmd1|cmd2|cmd3 c_arg1 c_arg2 c_arg3")
+  static class ClassWithMultiCommandMultiParam extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -929,8 +894,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command("cmd1|cmd4|cmd5")
-    class ClassWithOverlappingName extends AnnotationCommand {
+  @Command("cmd1|cmd4|cmd5")
+  static class ClassWithOverlappingName extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -941,8 +906,8 @@ class AnnotationCommandManagerTest {
       public void m1() {}
     }
 
-    @Command("cmd4|cmd2|cmd5")
-    class ClassWithOverlappingAlias extends AnnotationCommand {
+  @Command("cmd4|cmd2|cmd5")
+  static class ClassWithOverlappingAlias extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -952,5 +917,4 @@ class AnnotationCommandManagerTest {
       @Arg("m_arg1 m_arg2 m_arg3")
       public void m1() {}
     }
-  }
 }
