@@ -23,7 +23,7 @@
 
 package au.com.grieve.bcf;
 
-public interface CommandData<DATA> {
+public interface CommandData {
   /**
    * Get the name of the command
    *
@@ -50,7 +50,7 @@ public interface CommandData<DATA> {
    *
    * @return parserChain to prepend
    */
-  ParserChain<DATA> getParserChain();
+  ParserChain getParserChain();
 
   /**
    * Get input to prepend to supplied input

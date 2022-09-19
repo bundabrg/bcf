@@ -26,7 +26,7 @@ package au.com.grieve.bcf;
 import java.util.List;
 import java.util.Map;
 
-public interface CompletionContext<DATA> {
+public interface CompletionContext {
 
   /**
    * Return Parser classes
@@ -40,18 +40,12 @@ public interface CompletionContext<DATA> {
    *
    * @return List of Commands
    */
-  List<Command<DATA>> getCommandChain();
+  List<Command> getCommandChain();
 
   /**
    * Return a copy of ourselves
    *
    * @return Copy
    */
-  CompletionContext<DATA> copy();
-
-  //    /**
-  //     * Return the associated data
-  //     * @return data
-  //     */
-  //    DATA getData();
+  CompletionContext copy();
 }

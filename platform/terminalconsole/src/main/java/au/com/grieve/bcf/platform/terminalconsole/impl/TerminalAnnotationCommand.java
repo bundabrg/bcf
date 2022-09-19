@@ -23,21 +23,22 @@
 
 package au.com.grieve.bcf.platform.terminalconsole.impl;
 
+import au.com.grieve.bcf.ExecutionContext;
 import au.com.grieve.bcf.framework.annotation.annotations.Default;
 import au.com.grieve.bcf.framework.annotation.annotations.Error;
 import au.com.grieve.bcf.impl.framework.annotation.AnnotationCommand;
 
-public class TerminalCommand extends AnnotationCommand {
-    @Error
-    public void onError() {
-        //TODO
-        System.err.println("Error");
-    }
+public class TerminalAnnotationCommand extends AnnotationCommand {
+  @Error
+  public void onError(ExecutionContext ctx) {
+    // TODO
+    System.err.println("Error");
+  }
 
-    // Default Default
-    @Default
-    public void onDefault() {
-        //TODO
-        System.err.println("Default");
-    }
+  // Default Default
+  @Default
+  public void onDefault(ExecutionContext ctx) {
+    // TODO
+    System.err.println("Default");
+  }
 }

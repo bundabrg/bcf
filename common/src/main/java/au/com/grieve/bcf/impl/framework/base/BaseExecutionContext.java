@@ -37,23 +37,15 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class BaseExecutionContext<DATA> implements ExecutionContext<DATA> {
+public class BaseExecutionContext implements ExecutionContext {
   private final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
-  private final List<Command<DATA>> commandChain = new ArrayList<>();
+  private final List<Object> prependArguments = new ArrayList<>();
+  private final List<Command> commandChain = new ArrayList<>();
   private final List<Result> result = new ArrayList<>();
-  private final DATA data;
-
-  public BaseExecutionContext() {
-    this(null);
-  }
-
-  public BaseExecutionContext(DATA data) {
-    this.data = data;
-  }
 
   @Override
-  public ExecutionContext<DATA> copy() {
-    BaseExecutionContext<DATA> result = new BaseExecutionContext<>(data);
+  public ExecutionContext copy() {
+    BaseExecutionContext result = new BaseExecutionContext();
     result.parserClasses.putAll(parserClasses);
     result.getCommandChain().addAll(commandChain);
     result.getResult().addAll(this.result.stream().map(Result::copy).collect(Collectors.toList()));

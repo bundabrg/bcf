@@ -26,7 +26,7 @@ package au.com.grieve.bcf;
 import java.util.List;
 import java.util.Map;
 
-public interface ExecutionContext<DATA> {
+public interface ExecutionContext {
   /**
    * Return Parser classes
    *
@@ -35,11 +35,18 @@ public interface ExecutionContext<DATA> {
   Map<String, Class<? extends Parser<?>>> getParserClasses();
 
   /**
+   * Return a list of arguments to prepend to the result
+   *
+   * @return List of arguments
+   */
+  List<Object> getPrependArguments();
+
+  /**
    * Return the chain of command classes so far
    *
    * @return List of Commands
    */
-  List<Command<DATA>> getCommandChain();
+  List<Command> getCommandChain();
 
   /**
    * Return the result so far
@@ -53,12 +60,5 @@ public interface ExecutionContext<DATA> {
    *
    * @return Copy
    */
-  ExecutionContext<DATA> copy();
-
-  /**
-   * Return the associated data
-   *
-   * @return data
-   */
-  DATA getData();
+  ExecutionContext copy();
 }

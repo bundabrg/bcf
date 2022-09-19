@@ -26,7 +26,7 @@ package au.com.grieve.bcf;
 import java.util.List;
 
 /** Command - All commands inherit from this class */
-public interface Command<DATA> {
+public interface Command {
 
   /**
    * Provide completion candidates for the input
@@ -36,7 +36,7 @@ public interface Command<DATA> {
    * @param context Context
    */
   void complete(
-      ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext<DATA> context);
+      ParsedLine line, List<CompletionCandidateGroup> candidates, CompletionContext context);
 
   /**
    * Return the best execution candidate for the parsed input
@@ -45,19 +45,19 @@ public interface Command<DATA> {
    * @param context Context
    * @return best execution method
    */
-  ExecutionCandidate execute(ParsedLine line, ExecutionContext<DATA> context);
+  ExecutionCandidate execute(ParsedLine line, ExecutionContext context);
 
   /**
    * Add a child command to this one
    *
    * @param childCommand Child Command
    */
-  void addChild(Command<DATA> childCommand);
+  void addChild(Command childCommand);
 
   /**
    * Return the data for Command
    *
    * @return data for command
    */
-  CommandData<DATA> getCommandData();
+  CommandData getCommandData();
 }

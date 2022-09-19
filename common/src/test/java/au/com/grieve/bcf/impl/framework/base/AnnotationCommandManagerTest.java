@@ -48,339 +48,336 @@ class AnnotationCommandManagerTest {
   class AnnotationCommandTests {
     @Test
     public void registerCommandNoCommand() {
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      BaseCommandManager manager = new BaseCommandManager();
       assertThrows(RuntimeException.class, () -> manager.registerCommand(new ClassNoCommand()));
     }
 
     @Test
     public void registerCommandEmptyCommand() {
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      BaseCommandManager manager = new BaseCommandManager();
       assertThrows(
           RuntimeException.class, () -> manager.registerCommand(new ClassWithEmptyCommand()));
     }
 
     @Test
     public void executeCommandSingle_1() {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("", null);
+      ExecutionCandidate e = manager.execute("");
 
       assertNull(e);
     }
 
     @Test
     public void executeCommandSingle_2() {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("bob", null);
+      ExecutionCandidate e = manager.execute("bob");
 
       assertNull(e);
     }
 
     @Test
     public void executeCommandSingle_3() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1", null);
+      ExecutionCandidate e = manager.execute("cmd1");
 
       assertEquals(c1.getClass().getMethod("d"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingle_4() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 bob", null);
+      ExecutionCandidate e = manager.execute("cmd1 bob");
 
       assertEquals(c1.getClass().getMethod("d"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingle_5() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2");
 
       assertEquals(c1.getClass().getMethod("e"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingle_6() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingle_7() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandSingleInput();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandSingleInput();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("e"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingle_8() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandSingleInput();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandSingleInput();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingle_9() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandMultiInput();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandMultiInput();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1", null);
+      ExecutionCandidate e = manager.execute("cmd1");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingleParamSingle_1() {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("", null);
+      ExecutionCandidate e = manager.execute("");
 
       assertNull(e);
     }
 
     @Test
     public void executeCommandSingleParamSingle_2() {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("bob", null);
+      ExecutionCandidate e = manager.execute("bob");
 
       assertNull(e);
     }
 
     @Test
     public void executeCommandSingleParamSingle_3() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1", null);
+      ExecutionCandidate e = manager.execute("cmd1");
 
       assertEquals(c1.getClass().getMethod("e"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingleParamSingle_4() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 bob", null);
+      ExecutionCandidate e = manager.execute("cmd1 bob");
 
       assertEquals(c1.getClass().getMethod("e"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingleParamSingle_5() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2");
 
       assertEquals(c1.getClass().getMethod("e"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingleParamSingle_6() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("e"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingleParamSingle_7() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("e"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingleParamSingle_8() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 c_arg1 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 c_arg1 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingleParamSingle_9() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandSingleParamSingleInput();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandSingleParamSingleInput();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingleParamSingle_10() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandSingleParamMultipleInput();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandSingleParamMultipleInput();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingleParamMulti_1() {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandMultiParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandMultiParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("", null);
+      ExecutionCandidate e = manager.execute("");
 
       assertNull(e);
     }
 
     @Test
     public void executeCommandSingleParamMulti_2() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandMultiParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandMultiParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e =
-          manager.execute("cmd1 c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingleParamMulti_3() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandMultiParamSingleInput();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandMultiParamSingleInput();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandSingleParamMulti_4() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommandMultiParamMultiInput();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommandMultiParamMultiInput();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandMulti_1() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandMulti_2() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd2 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd2 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandMulti_3() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("bob m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("bob m_arg1 m_arg2 m_arg3");
 
       assertNull(e);
     }
 
     @Test
     public void executeCommandMultiParamSingle_1() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd1 c_arg1 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 c_arg1 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandMultiParamSingle_2() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("cmd2 c_arg1 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd2 c_arg1 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandMultiParamSingle_3() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e = manager.execute("bpb c_arg1 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("bpb c_arg1 m_arg1 m_arg2 m_arg3");
 
       assertNull(e);
     }
 
     @Test
     public void executeCommandMultiParamMulti_1() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommandMultiParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommandMultiParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e =
-          manager.execute("cmd1 c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void executeCommandMultiParamMulti_2() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommandMultiParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommandMultiParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
-      ExecutionCandidate e =
-          manager.execute("cmd2 c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd2 c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
     }
 
     @Test
     public void registerOverlap_1() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithSingleCommand();
-      AnnotationCommand<Object> c2 = new ClassWithSingleCommand2();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithSingleCommand();
+      AnnotationCommand c2 = new ClassWithSingleCommand2();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       manager.registerCommand(c2);
 
-      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
       assertNotEquals(c2.getClass().getMethod("m1"), e.getMethod());
@@ -388,13 +385,13 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void registerOverlap_2() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithOverlappingName();
-      AnnotationCommand<Object> c2 = new ClassWithOverlappingAlias();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithOverlappingName();
+      AnnotationCommand c2 = new ClassWithOverlappingAlias();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       manager.registerCommand(c2);
 
-      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
       assertNotEquals(c2.getClass().getMethod("m1"), e.getMethod());
@@ -402,13 +399,13 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void registerOverlap_3() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithOverlappingName();
-      AnnotationCommand<Object> c2 = new ClassWithOverlappingAlias();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithOverlappingName();
+      AnnotationCommand c2 = new ClassWithOverlappingAlias();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       manager.registerCommand(c2);
 
-      ExecutionCandidate e = manager.execute("cmd5 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd5 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
       assertNotEquals(c2.getClass().getMethod("m1"), e.getMethod());
@@ -416,13 +413,13 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void registerOverlap_4() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ClassWithOverlappingName();
-      AnnotationCommand<Object> c2 = new ClassWithOverlappingAlias();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithOverlappingName();
+      AnnotationCommand c2 = new ClassWithOverlappingAlias();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       manager.registerCommand(c2);
 
-      ExecutionCandidate e = manager.execute("cmd4 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd4 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c2.getClass().getMethod("m1"), e.getMethod());
       assertNotEquals(c1.getClass().getMethod("m1"), e.getMethod());
@@ -430,14 +427,13 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void childCommand_1() throws NoSuchMethodException {
-      au.com.grieve.bcf.Command<Object> c1 = new ParentCommand();
-      AnnotationCommand<Object> c2 = new ChildCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ParentCommand();
+      AnnotationCommand c2 = new ChildCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       manager.registerCommand(ParentCommand.class, c2);
 
-      ExecutionCandidate e =
-          manager.execute("cmd1 c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd1 c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c1.getClass().getMethod("m1"), e.getMethod());
       assertNotEquals(c2.getClass().getMethod("m1"), e.getMethod());
@@ -445,14 +441,14 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void childCommand_2() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ParentCommand();
-      AnnotationCommand<Object> c2 = new ChildCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ParentCommand();
+      AnnotationCommand c2 = new ChildCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       manager.registerCommand(ParentCommand.class, c2);
 
       ExecutionCandidate e =
-          manager.execute("cmd1 c_arg1 c_arg2 c_arg3 child m_arg1 m_arg2 m_arg3", null);
+          manager.execute("cmd1 c_arg1 c_arg2 c_arg3 child m_arg1 m_arg2 m_arg3");
 
       assertEquals(c2.getClass().getMethod("m1"), e.getMethod());
       assertNotEquals(c1.getClass().getMethod("m1"), e.getMethod());
@@ -460,13 +456,13 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void childCommand_3() throws NoSuchMethodException {
-      AnnotationCommand<Object> c1 = new ParentCommand();
-      AnnotationCommand<Object> c2 = new ChildCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ParentCommand();
+      AnnotationCommand c2 = new ChildCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       manager.registerCommand(ParentCommand.class, c2);
 
-      ExecutionCandidate e = manager.execute("cmd2 m_arg1 m_arg2 m_arg3", null);
+      ExecutionCandidate e = manager.execute("cmd2 m_arg1 m_arg2 m_arg3");
 
       assertEquals(c2.getClass().getMethod("m1"), e.getMethod());
       assertNotEquals(c1.getClass().getMethod("m1"), e.getMethod());
@@ -474,8 +470,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommand_1() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -487,8 +483,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommand_2() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -500,8 +496,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommand_3() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -513,8 +509,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommand_4() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -525,8 +521,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommand_5() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -538,8 +534,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommand_6() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -562,8 +558,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommand_7() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -574,8 +570,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommand_8() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommand();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommand();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -586,8 +582,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommandSingleParam_1() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -599,8 +595,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommandSingleParam_2() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -612,8 +608,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommandSingleParam_3() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommandSingleParam();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommandSingleParam();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -636,8 +632,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommandSingleParamSingleInput_1() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommandSingleParamSingleInput();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommandSingleParamSingleInput();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -648,8 +644,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommandSingleParamSingleInput_2() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommandSingleParamSingleInput();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommandSingleParamSingleInput();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -672,8 +668,8 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeSingleMultiCommandSingleParamMultiInput_1() {
-      AnnotationCommand<Object> c1 = new ClassWithMultiCommandSingleParamMultiInput();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithMultiCommandSingleParamMultiInput();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
 
@@ -698,9 +694,9 @@ class AnnotationCommandManagerTest {
 
     @Test
     public void completeMultipleCommands_1() {
-      AnnotationCommand<Object> c1 = new ClassWithOverlappingName();
-      AnnotationCommand<Object> c2 = new ClassWithOverlappingAlias();
-      BaseCommandManager<Object> manager = new BaseCommandManager<>();
+      AnnotationCommand c1 = new ClassWithOverlappingName();
+      AnnotationCommand c2 = new ClassWithOverlappingAlias();
+      BaseCommandManager manager = new BaseCommandManager();
       manager.registerCommand(c1);
       manager.registerCommand(c2);
       List<CompletionCandidateGroup> groups = new ArrayList<>();
@@ -711,13 +707,13 @@ class AnnotationCommandManagerTest {
       assertTrue(groups.stream().allMatch(g -> g.getCompletionCandidates().size() == 2));
     }
 
-    class ClassNoCommand extends AnnotationCommand<Object> {}
+    class ClassNoCommand extends AnnotationCommand {}
 
     @Command("")
-    class ClassWithEmptyCommand extends AnnotationCommand<Object> {}
+    class ClassWithEmptyCommand extends AnnotationCommand {}
 
     @Command("cmd1")
-    class ClassWithSingleCommand extends AnnotationCommand<Object> {
+    class ClassWithSingleCommand extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -729,7 +725,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command("cmd1")
-    class ClassWithSingleCommand2 extends AnnotationCommand<Object> {
+    class ClassWithSingleCommand2 extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -741,7 +737,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command("cmd1 c_arg1 c_arg2 c_arg3")
-    class ParentCommand extends AnnotationCommand<Object> {
+    class ParentCommand extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -754,7 +750,7 @@ class AnnotationCommandManagerTest {
 
     @Command(value = "cmd2 c_arg1 c_arg2 c_arg3", input = "c_arg1 c_arg2 c_arg3 child")
     @Arg("child")
-    class ChildCommand extends AnnotationCommand<Object> {
+    class ChildCommand extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -766,7 +762,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command(value = "cmd1", input = "m_arg1")
-    class ClassWithSingleCommandSingleInput extends AnnotationCommand<Object> {
+    class ClassWithSingleCommandSingleInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -778,7 +774,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command(value = "cmd1", input = "m_arg1 m_arg2 m_arg3")
-    class ClassWithSingleCommandMultiInput extends AnnotationCommand<Object> {
+    class ClassWithSingleCommandMultiInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -790,7 +786,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command("cmd1 c_arg1")
-    class ClassWithSingleCommandSingleParam extends AnnotationCommand<Object> {
+    class ClassWithSingleCommandSingleParam extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -802,7 +798,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command(value = "cmd1 c_arg1", input = "c_arg1")
-    class ClassWithSingleCommandSingleParamSingleInput extends AnnotationCommand<Object> {
+    class ClassWithSingleCommandSingleParamSingleInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -814,7 +810,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command(value = "cmd1 c_arg1", input = "c_arg1 m_arg1 m_arg2")
-    class ClassWithSingleCommandSingleParamMultipleInput extends AnnotationCommand<Object> {
+    class ClassWithSingleCommandSingleParamMultipleInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -826,7 +822,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command("cmd1 c_arg1 c_arg2 c_arg3")
-    class ClassWithSingleCommandMultiParam extends AnnotationCommand<Object> {
+    class ClassWithSingleCommandMultiParam extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -838,7 +834,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command(value = "cmd1 c_arg1 c_arg2 c_arg3", input = "c_arg1")
-    class ClassWithSingleCommandMultiParamSingleInput extends AnnotationCommand<Object> {
+    class ClassWithSingleCommandMultiParamSingleInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -850,7 +846,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command(value = "cmd1 c_arg1 c_arg2 c_arg3", input = "c_arg1 c_arg2 c_arg3 m_arg1 m_arg2")
-    class ClassWithSingleCommandMultiParamMultiInput extends AnnotationCommand<Object> {
+    class ClassWithSingleCommandMultiParamMultiInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -862,7 +858,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command("cmd1|cmd2|cmd3")
-    class ClassWithMultiCommand extends AnnotationCommand<Object> {
+    class ClassWithMultiCommand extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -877,7 +873,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command("cmd1|cmd2|cmd3 c_arg1")
-    class ClassWithMultiCommandSingleParam extends AnnotationCommand<Object> {
+    class ClassWithMultiCommandSingleParam extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -892,7 +888,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command(value = "cmd1|cmd2|cmd3 c_arg1", input = "c_arg1")
-    class ClassWithMultiCommandSingleParamSingleInput extends AnnotationCommand<Object> {
+    class ClassWithMultiCommandSingleParamSingleInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -907,7 +903,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command(value = "cmd1|cmd2|cmd3 c_arg1", input = "c_arg1 m_arg1")
-    class ClassWithMultiCommandSingleParamMultiInput extends AnnotationCommand<Object> {
+    class ClassWithMultiCommandSingleParamMultiInput extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -922,7 +918,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command("cmd1|cmd2|cmd3 c_arg1 c_arg2 c_arg3")
-    class ClassWithMultiCommandMultiParam extends AnnotationCommand<Object> {
+    class ClassWithMultiCommandMultiParam extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -934,7 +930,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command("cmd1|cmd4|cmd5")
-    class ClassWithOverlappingName extends AnnotationCommand<Object> {
+    class ClassWithOverlappingName extends AnnotationCommand {
       @Default
       public void d() {}
 
@@ -946,7 +942,7 @@ class AnnotationCommandManagerTest {
     }
 
     @Command("cmd4|cmd2|cmd5")
-    class ClassWithOverlappingAlias extends AnnotationCommand<Object> {
+    class ClassWithOverlappingAlias extends AnnotationCommand {
       @Default
       public void d() {}
 

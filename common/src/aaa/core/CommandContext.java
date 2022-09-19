@@ -51,7 +51,8 @@ public class CommandContext {
     return new CommandContext(this);
     //        try {
     //            return getClass().getConstructor(CommandContext.class).newInstance(this);
-    //        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
+    //        } catch (InstantiationException | NoSuchMethodException |
+    // InvocationTargetException |
     // IllegalAccessException e) {
     //            throw new RuntimeException(e);
     //        }

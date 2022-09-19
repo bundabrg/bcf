@@ -87,7 +87,8 @@ public class CommandRoot {
   public CommandExecute execute(BaseCommand command, List<String> input, CommandContext context) {
     List<CommandExecute> commandExecutes = new ArrayList<>();
 
-    // Go through class Args first if they exist, as long as they are not on our commandRoot class
+    // Go through class Args first if they exist, as long as they are not on our commandRoot
+    // class
     // (to allow @Commands to override @Args)
     if (command.getClass().getAnnotationsByType(Arg.class).length > 0) {
       for (Arg classArgs : command.getClass().getAnnotationsByType(Arg.class)) {
@@ -259,7 +260,8 @@ public class CommandRoot {
       BaseCommand command, List<String> input, CommandContext context) {
     List<DefaultCompletionCandidate> ret = new ArrayList<>();
 
-    // Go through class Args first as long as it's not our commandroot command to allow @Command to
+    // Go through class Args first as long as it's not our commandroot command to allow @Command
+    // to
     // override @Args
     if (command.getClass().getAnnotationsByType(Arg.class).length > 0) {
       for (Arg classArgs : command.getClass().getAnnotationsByType(Arg.class)) {

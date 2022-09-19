@@ -35,14 +35,14 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class BaseCompletionContext<DATA> implements CompletionContext<DATA> {
+public class BaseCompletionContext implements CompletionContext {
   private final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
-  private final List<Command<DATA>> commandChain = new ArrayList<>();
+  private final List<Command> commandChain = new ArrayList<>();
   private final List<Parser<?>> switches = new ArrayList<>();
 
   @Override
-  public CompletionContext<DATA> copy() {
-    BaseCompletionContext<DATA> result = new BaseCompletionContext<>();
+  public CompletionContext copy() {
+    BaseCompletionContext result = new BaseCompletionContext();
     result.getParserClasses().putAll(parserClasses);
     result.getCommandChain().addAll(commandChain);
     result.getSwitches().addAll(switches);

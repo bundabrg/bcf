@@ -50,10 +50,10 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 
 @Getter
-public class BaseCommandManager<DATA> implements CommandManager<DATA> {
-  private final Map<String, Command<DATA>> commandsByName = new HashMap<>();
+public class BaseCommandManager implements CommandManager {
+  private final Map<String, Command> commandsByName = new HashMap<>();
   private final Map<String, String> commandAliases = new HashMap<>();
-  private final Map<Class<?>, Set<Command<DATA>>> commandInstances = new HashMap<>();
+  private final Map<Class<?>, Set<Command>> commandInstances = new HashMap<>();
   private final Map<String, Class<? extends Parser<?>>> parsers = new HashMap<>();
 
   public BaseCommandManager() {
@@ -85,8 +85,8 @@ public class BaseCommandManager<DATA> implements CommandManager<DATA> {
    *
    * @param command Command to add
    */
-  protected void addInstance(Command<DATA> command) {
-    Set<Command<DATA>> instances =
+  protected void addInstance(Command command) {
+    Set<Command> instances =
         this.commandInstances.computeIfAbsent(command.getClass(), k -> new HashSet<>());
     instances.add(command);
   }
@@ -97,7 +97,7 @@ public class BaseCommandManager<DATA> implements CommandManager<DATA> {
    * @param command Command to register
    */
   @Override
-  public void registerCommand(Command<DATA> command) {
+  public void registerCommand(Command command) {
     if (command.getCommandData() == null || command.getCommandData().getName().strip().equals("")) {
       throw new RuntimeException(
           "Invalid Root Command. Perhaps this is supposed to be a child command?");
@@ -112,8 +112,8 @@ public class BaseCommandManager<DATA> implements CommandManager<DATA> {
    *
    * @param command Command to add
    */
-  protected void addCommand(Command<DATA> command) {
-    CommandData<DATA> commandData = command.getCommandData();
+  protected void addCommand(Command command) {
+    CommandData commandData = command.getCommandData();
 
     // TODO Handle collisions
     if (!commandsByName.containsKey(commandData.getName())) {
@@ -133,7 +133,7 @@ public class BaseCommandManager<DATA> implements CommandManager<DATA> {
    * @param name Name
    * @return Command that matches name else null
    */
-  protected Command<DATA> findCommand(String name) {
+  protected Command findCommand(String name) {
     return commandsByName.getOrDefault(name, commandsByName.get(commandAliases.get(name)));
   }
 
@@ -144,8 +144,8 @@ public class BaseCommandManager<DATA> implements CommandManager<DATA> {
    * @param command Command to register
    */
   @Override
-  public void registerCommand(Class<? extends Command<DATA>> parent, Command<DATA> command) {
-    Set<Command<DATA>> instances = this.commandInstances.get(parent);
+  public void registerCommand(Class<? extends Command> parent, Command command) {
+    Set<Command> instances = this.commandInstances.get(parent);
 
     // If it is a root command we add it as a command as well
     if (command.getCommandData() != null) {
@@ -164,8 +164,8 @@ public class BaseCommandManager<DATA> implements CommandManager<DATA> {
   }
 
   @Override
-  public ExecutionCandidate execute(String line, DATA data) {
-    return execute(new DefaultParsedLine(line), data);
+  public ExecutionCandidate execute(String line, Object... args) {
+    return execute(new DefaultParsedLine(line), args);
   }
 
   @Override
@@ -176,7 +176,7 @@ public class BaseCommandManager<DATA> implements CommandManager<DATA> {
       Map<String, CompletionCandidateGroup> commandGroups = new HashMap<>();
       String input = line.isEol() ? "" : line.getCurrentWord();
 
-      for (Map.Entry<String, Command<DATA>> item : commandsByName.entrySet()) {
+      for (Map.Entry<String, Command> item : commandsByName.entrySet()) {
         if (!item.getKey().startsWith(input)) {
           continue;
         }
@@ -217,24 +217,24 @@ public class BaseCommandManager<DATA> implements CommandManager<DATA> {
       return;
     }
 
-    Command<DATA> command = findCommand(commandName);
+    Command command = findCommand(commandName);
     if (command == null) {
       return;
     }
-    CommandData<DATA> commandData = command.getCommandData();
+    CommandData commandData = command.getCommandData();
 
     // Prepend any additional input from the command to the input
     if (commandData.getInput().length() > 0) {
       line.insert(commandData.getInput());
     }
 
-    CompletionContext<DATA> context = new BaseCompletionContext<>();
+    CompletionContext context = new BaseCompletionContext();
     context.getParserClasses().putAll(parsers);
     command.complete(line, candidates, context);
   }
 
   @Override
-  public ExecutionCandidate execute(ParsedLine line, DATA data) {
+  public ExecutionCandidate execute(ParsedLine line, Object... args) {
     String commandName;
     try {
       commandName = line.next();
@@ -242,19 +242,20 @@ public class BaseCommandManager<DATA> implements CommandManager<DATA> {
       return null;
     }
 
-    Command<DATA> command = findCommand(commandName);
+    Command command = findCommand(commandName);
     if (command == null) {
       return null;
     }
-    CommandData<DATA> commandData = command.getCommandData();
+    CommandData commandData = command.getCommandData();
 
     // Prepend any additional input from the command to the input
     if (commandData.getInput().length() > 0) {
       line.insert(commandData.getInput());
     }
 
-    ExecutionContext<DATA> context = new BaseExecutionContext<>(data);
+    ExecutionContext context = new BaseExecutionContext();
     context.getParserClasses().putAll(parsers);
+    context.getPrependArguments().addAll(List.of(args));
 
     return command.execute(line, context);
   }

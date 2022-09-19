@@ -29,7 +29,7 @@ import lombok.Getter;
 
 /** Data about a root command */
 @Getter
-public class BaseCommandData<DATA> implements CommandData<DATA> {
+public class BaseCommandData implements CommandData {
   // Name of the command
   private final String name;
 
@@ -40,17 +40,13 @@ public class BaseCommandData<DATA> implements CommandData<DATA> {
   private final String description;
 
   // A parserChain to prepend to any children
-  private final ParserChain<DATA> parserChain;
+  private final ParserChain parserChain;
 
   // Input to prepend to any supplied input
   private final String input;
 
   public BaseCommandData(
-      String name,
-      String[] aliases,
-      String description,
-      ParserChain<DATA> parserChain,
-      String input) {
+      String name, String[] aliases, String description, ParserChain parserChain, String input) {
 
     this.name = name;
     this.aliases = aliases;

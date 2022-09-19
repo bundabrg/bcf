@@ -51,7 +51,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class StringParserChain<DATA> implements ParserChain<DATA> {
+public class StringParserChain implements ParserChain {
   private final List<ParserConfig> parserConfigs = new ArrayList<>();
 
   public StringParserChain(String arguments) {
@@ -64,7 +64,7 @@ public class StringParserChain<DATA> implements ParserChain<DATA> {
    * @param line Parsed Line
    * @param context Current context
    */
-  protected void parseSwitches(ParsedLine line, List<Result> output, ExecutionContext<DATA> context)
+  protected void parseSwitches(ParsedLine line, List<Result> output, ExecutionContext context)
       throws EndOfLineException, IllegalArgumentException {
     while (line.getCurrentWord().startsWith("-")) {
 
@@ -102,7 +102,7 @@ public class StringParserChain<DATA> implements ParserChain<DATA> {
   }
 
   @Override
-  public void parse(ParsedLine line, List<Result> output, ExecutionContext<DATA> context)
+  public void parse(ParsedLine line, List<Result> output, ExecutionContext context)
       throws EndOfLineException, IllegalArgumentException {
     List<Parser<?>> parsers =
         parserConfigs.stream()
@@ -126,16 +126,14 @@ public class StringParserChain<DATA> implements ParserChain<DATA> {
   }
 
   protected void completeSwitches(
-      ParsedLine line,
-      List<CompletionCandidateGroup> candidateGroups,
-      CompletionContext<DATA> context)
+      ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext context)
       throws EndOfLineException {
     while (line.getCurrentWord().startsWith("-")) {
       String input = line.getCurrentWord().substring(1);
 
       // Look backwards through candidates for a non-completed result that matches our switch
       Parser<?> parser =
-          ((BaseCompletionContext<DATA>) context)
+          ((BaseCompletionContext) context)
               .getSwitches().stream()
                   .collect(
                       Collectors.collectingAndThen(
@@ -160,9 +158,10 @@ public class StringParserChain<DATA> implements ParserChain<DATA> {
 
       try {
         parser.parse(line);
-        ((BaseCompletionContext<DATA>) context).getSwitches().remove(parser);
+        ((BaseCompletionContext) context).getSwitches().remove(parser);
       } catch (EndOfLineException | IllegalArgumentException e) {
-        // We may or may not be at the end of input, so we try complete it just in case and if we
+        // We may or may not be at the end of input, so we try complete it just in case and
+        // if we
         // are then at EOL we
         // include the results
         List<CompletionCandidateGroup> groups = new ArrayList<>();
@@ -170,7 +169,7 @@ public class StringParserChain<DATA> implements ParserChain<DATA> {
           parser.complete(line, groups);
           if (line.isEol()) {
             candidateGroups.addAll(groups);
-            ((BaseCompletionContext<DATA>) context).getSwitches().remove(parser);
+            ((BaseCompletionContext) context).getSwitches().remove(parser);
           }
         } catch (IllegalArgumentException ignored) {
         }
@@ -189,7 +188,7 @@ public class StringParserChain<DATA> implements ParserChain<DATA> {
 
     // If we are at the end of the line, add any switches
     if (line.size() <= 1) {
-      for (Parser<?> p : ((BaseCompletionContext<DATA>) context).getSwitches()) {
+      for (Parser<?> p : ((BaseCompletionContext) context).getSwitches()) {
         CompletionCandidateGroup group =
             new ParserCompletionCandidateGroup(p, line.getCurrentWord());
         group
@@ -205,9 +204,7 @@ public class StringParserChain<DATA> implements ParserChain<DATA> {
 
   @Override
   public void complete(
-      ParsedLine line,
-      List<CompletionCandidateGroup> candidateGroups,
-      CompletionContext<DATA> context)
+      ParsedLine line, List<CompletionCandidateGroup> candidateGroups, CompletionContext context)
       throws EndOfLineException {
     List<Parser<?>> parsers =
         parserConfigs.stream()
@@ -216,7 +213,7 @@ public class StringParserChain<DATA> implements ParserChain<DATA> {
     for (Parser<?> p : parsers) {
       // If parser is a switch we add it for later evaluation
       if (p.getParameters().containsKey("switch")) {
-        ((BaseCompletionContext<DATA>) context).getSwitches().add(p);
+        ((BaseCompletionContext) context).getSwitches().add(p);
         continue;
       }
 
@@ -227,7 +224,8 @@ public class StringParserChain<DATA> implements ParserChain<DATA> {
       try {
         p.parse(line);
       } catch (EndOfLineException | IllegalArgumentException e) {
-        // We may or may not be at the end of input, so we try complete it just in case and if we
+        // We may or may not be at the end of input, so we try complete it just in case and
+        // if we
         // are then at EOL we
         // include the results
         List<CompletionCandidateGroup> groups = new ArrayList<>();

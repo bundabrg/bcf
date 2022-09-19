@@ -24,45 +24,41 @@
 package au.com.grieve.bcf.platform.terminalconsole.impl;
 
 import au.com.grieve.bcf.ExecutionCandidate;
+import java.lang.reflect.InvocationTargetException;
 import lombok.Getter;
 import net.minecrell.terminalconsole.SimpleTerminalConsole;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 
-import java.lang.reflect.InvocationTargetException;
-
 @Getter
 public abstract class TerminalCommandConsole extends SimpleTerminalConsole {
 
-    private final TerminalCommandManager manager;
-    private final TerminalCommandCompleter commandCompleter;
+  private final TerminalCommandManager manager;
+  private final TerminalCommandCompleter commandCompleter;
 
-    public TerminalCommandConsole(TerminalCommandManager manager) {
-        this.manager = manager;
-        this.commandCompleter = new TerminalCommandCompleter(manager);
+  public TerminalCommandConsole(TerminalCommandManager manager) {
+    this.manager = manager;
+    this.commandCompleter = new TerminalCommandCompleter(manager);
+  }
+
+  @Override
+  protected LineReader buildReader(LineReaderBuilder builder) {
+    return super.buildReader(builder.completer(commandCompleter));
+  }
+
+  @Override
+  protected void runCommand(String input) {
+    ExecutionCandidate executionCandidate = manager.execute(input);
+
+    if (executionCandidate == null) {
+      System.err.println("No such command");
+      return;
     }
 
-    @Override
-    protected LineReader buildReader(LineReaderBuilder builder) {
-        return super.buildReader(builder
-                .completer(commandCompleter)
-        );
-
+    try {
+      executionCandidate.invoke();
+    } catch (InvocationTargetException | IllegalAccessException e) {
+      throw new RuntimeException(e);
     }
-
-    @Override
-    protected void runCommand(String input) {
-        ExecutionCandidate executionCandidate = manager.execute(input);
-
-        if (executionCandidate == null) {
-            System.err.println("No such command");
-            return;
-        }
-
-        try {
-            executionCandidate.invoke();
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
+  }
 }

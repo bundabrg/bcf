@@ -23,7 +23,6 @@
 
 package au.com.grieve.bcf.platform.terminalconsole.impl;
 
-import au.com.grieve.bcf.impl.framework.annotation.AnnotationCommandManager;
+import au.com.grieve.bcf.impl.framework.base.BaseCommandManager;
 
-public class TerminalCommandManager extends AnnotationCommandManager {
-}
+public class TerminalCommandManager extends BaseCommandManager {}

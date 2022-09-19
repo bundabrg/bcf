@@ -28,7 +28,6 @@ import au.com.grieve.bcf.ExecutionCandidate;
 import au.com.grieve.bcf.ExecutionContext;
 import au.com.grieve.bcf.impl.execution.DefaultExecutionCandidate;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,8 +35,8 @@ import java.util.stream.Stream;
 import lombok.Getter;
 
 @Getter
-public abstract class BaseCommand<DATA> implements Command<DATA> {
-  private final Set<Command<DATA>> children = new HashSet<>();
+public abstract class BaseCommand implements Command {
+  private final Set<Command> children = new HashSet<>();
 
   public BaseCommand() {}
 
@@ -45,34 +44,42 @@ public abstract class BaseCommand<DATA> implements Command<DATA> {
 
   protected abstract Method getErrorMethod();
 
-  protected ExecutionCandidate getErrorExecutionCandidate(
-      ExecutionContext<DATA> context, int weight) {
-    for (Command<DATA> cmd :
+  protected ExecutionCandidate getErrorExecutionCandidate(ExecutionContext context, int weight) {
+    for (Command cmd :
         Stream.concat(Stream.of(this), context.getCommandChain().stream())
             .collect(Collectors.toList())) {
-      Method method = ((BaseCommand<DATA>) cmd).getErrorMethod();
+      Method method = ((BaseCommand) cmd).getErrorMethod();
       if (method != null) {
-        return new DefaultExecutionCandidate(cmd, method, weight, new ArrayList<>());
+        return new DefaultExecutionCandidate(
+            cmd,
+            method,
+            weight,
+            Stream.concat(context.getPrependArguments().stream(), Stream.of(context))
+                .collect(Collectors.toList()));
       }
     }
     return null;
   }
 
-  protected ExecutionCandidate getDefaultExecutionCandidate(
-      ExecutionContext<DATA> context, int weight) {
-    for (Command<DATA> cmd :
+  protected ExecutionCandidate getDefaultExecutionCandidate(ExecutionContext context, int weight) {
+    for (Command cmd :
         Stream.concat(Stream.of(this), context.getCommandChain().stream())
             .collect(Collectors.toList())) {
-      Method method = ((BaseCommand<DATA>) cmd).getDefaultMethod();
+      Method method = ((BaseCommand) cmd).getDefaultMethod();
       if (method != null) {
-        return new DefaultExecutionCandidate(cmd, method, weight, new ArrayList<>());
+        return new DefaultExecutionCandidate(
+            cmd,
+            method,
+            weight,
+            Stream.concat(context.getPrependArguments().stream(), Stream.of(context))
+                .collect(Collectors.toList()));
       }
     }
     return null;
   }
 
   @Override
-  public void addChild(Command<DATA> childCommand) {
+  public void addChild(Command childCommand) {
     this.children.add(childCommand);
   }
 }
