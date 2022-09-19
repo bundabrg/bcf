@@ -24,11 +24,13 @@
 package au.com.grieve.bcf;
 
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserSyntaxException;
 import java.util.List;
 
 public interface ParserChain {
   /** Parse line */
-  void parse(ExecutionContext context, List<Result> results) throws EndOfLineException;
+  void parse(ExecutionContext context, List<Result> results)
+      throws EndOfLineException, ParserSyntaxException;
 
   /** Provide completions for the parsed line */
   void complete(CompletionContext context, List<CompletionCandidateGroup> candidateGroups)

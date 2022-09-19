@@ -31,6 +31,7 @@ import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.ParserChain;
 import au.com.grieve.bcf.Result;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
 import au.com.grieve.bcf.impl.framework.base.BaseCompletionContext;
@@ -64,7 +65,7 @@ public class StringParserChain implements ParserChain {
    * @param context Current context
    */
   protected void parseSwitches(ExecutionContext context, List<Result> output)
-      throws EndOfLineException, IllegalArgumentException {
+      throws EndOfLineException, ParserSyntaxException {
     while (context.getParsedLine().getCurrentWord().startsWith("-")) {
 
       String input = context.getParsedLine().getCurrentWord().substring(1);
@@ -102,7 +103,7 @@ public class StringParserChain implements ParserChain {
 
   @Override
   public void parse(ExecutionContext context, List<Result> results)
-      throws EndOfLineException, IllegalArgumentException {
+      throws EndOfLineException, ParserSyntaxException {
     List<Parser<?>> parsers =
         parserConfigs.stream()
             .map(c -> createParser(c, context.getParserClasses()))
@@ -158,7 +159,7 @@ public class StringParserChain implements ParserChain {
       try {
         parser.parse(context.getParsedLine());
         ((BaseCompletionContext) context).getSwitches().remove(parser);
-      } catch (EndOfLineException | IllegalArgumentException e) {
+      } catch (EndOfLineException | ParserSyntaxException e) {
         // We may or may not be at the end of input, so we try complete it just in case and
         // if we
         // are then at EOL we
@@ -221,7 +222,7 @@ public class StringParserChain implements ParserChain {
 
       try {
         p.parse(context.getParsedLine());
-      } catch (EndOfLineException | IllegalArgumentException e) {
+      } catch (EndOfLineException | ParserSyntaxException e) {
         // We may or may not be at the end of input, so we try complete it just in case and
         // if we
         // are then at EOL we

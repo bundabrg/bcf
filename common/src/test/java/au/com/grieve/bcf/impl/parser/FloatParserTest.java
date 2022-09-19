@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,12 +50,12 @@ class FloatParserTest {
     FloatParser floatParser = new FloatParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a");
 
-    assertThrows(IllegalArgumentException.class, () -> floatParser.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> floatParser.parse(line));
     assertEquals(0, line.getWordIndex());
   }
 
   @Test
-  void parseSimple_3() throws EndOfLineException {
+  void parseSimple_3() throws EndOfLineException, ParserSyntaxException {
     FloatParser floatParser = new FloatParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1");
 
@@ -63,7 +64,7 @@ class FloatParserTest {
   }
 
   @Test
-  void parseSimple_4() throws EndOfLineException {
+  void parseSimple_4() throws EndOfLineException, ParserSyntaxException {
     FloatParser floatParser = new FloatParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1 a");
 
@@ -76,7 +77,7 @@ class FloatParserTest {
     FloatParser floatParser = new FloatParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a 1");
 
-    assertThrows(IllegalArgumentException.class, () -> floatParser.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> floatParser.parse(line));
     assertEquals(0, line.getWordIndex());
   }
 
@@ -87,12 +88,12 @@ class FloatParserTest {
     FloatParser floatParser = new FloatParser(parameters);
     ParsedLine line = new DefaultParsedLine("5");
 
-    assertThrows(IllegalArgumentException.class, () -> floatParser.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> floatParser.parse(line));
     assertEquals(0, line.getWordIndex());
   }
 
   @Test
-  void optionsMin_2() throws EndOfLineException {
+  void optionsMin_2() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("min", "13");
     FloatParser floatParser = new FloatParser(parameters);
@@ -103,7 +104,7 @@ class FloatParserTest {
   }
 
   @Test
-  void optionsMin_3() throws EndOfLineException {
+  void optionsMin_3() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("min", "13");
     FloatParser floatParser = new FloatParser(parameters);
@@ -120,12 +121,12 @@ class FloatParserTest {
     FloatParser floatParser = new FloatParser(parameters);
     ParsedLine line = new DefaultParsedLine("100");
 
-    assertThrows(IllegalArgumentException.class, () -> floatParser.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> floatParser.parse(line));
     assertEquals(0, line.getWordIndex());
   }
 
   @Test
-  void optionsMax_2() throws EndOfLineException {
+  void optionsMax_2() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("max", "13");
     FloatParser floatParser = new FloatParser(parameters);
@@ -136,7 +137,7 @@ class FloatParserTest {
   }
 
   @Test
-  void optionsMax_3() throws EndOfLineException {
+  void optionsMax_3() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("max", "13");
     FloatParser floatParser = new FloatParser(parameters);

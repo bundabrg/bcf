@@ -24,6 +24,7 @@
 package au.com.grieve.bcf;
 
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserSyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,5 +60,5 @@ public abstract class Parser<RT> {
    * @param line The input
    * @return returned object
    */
-  public abstract RT parse(ParsedLine line) throws EndOfLineException, IllegalArgumentException;
+  public abstract RT parse(ParsedLine line) throws EndOfLineException, ParserSyntaxException;
 }

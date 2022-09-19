@@ -21,41 +21,19 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.framework.base;
 
-import java.util.List;
+import au.com.grieve.bcf.ExecutionError;
+import au.com.grieve.bcf.ParsedLine;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
-/** Command - All commands inherit from this class */
-public interface Command {
-
-  /**
-   * Provide completion candidates for the input
-   *
-   * @param context Context
-   */
-  List<CompletionCandidateGroup> complete(CompletionContext context);
-
-  /**
-   * Return the best execution candidate for the parsed input
-   *
-   * @param context Context
-   * @return best execution method
-   */
-  ExecutionCandidate execute(ExecutionContext context);
-
-  ExecutionCandidate execute(ExecutionContext context, List<ExecutionError> errors);
-
-  /**
-   * Add a child command to this one
-   *
-   * @param childCommand Child Command
-   */
-  void addChild(Command childCommand);
-
-  /**
-   * Return the data for Command
-   *
-   * @return data for command
-   */
-  CommandData getCommandData();
+@AllArgsConstructor
+@Getter
+@ToString
+public class BaseExecutionError implements ExecutionError {
+  ParsedLine parsedLine;
+  String name;
+  String message;
 }

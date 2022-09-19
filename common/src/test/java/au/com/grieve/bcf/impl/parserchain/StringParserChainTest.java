@@ -34,6 +34,7 @@ import au.com.grieve.bcf.CompletionContext;
 import au.com.grieve.bcf.ExecutionContext;
 import au.com.grieve.bcf.Result;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.framework.base.BaseCompletionContext;
 import au.com.grieve.bcf.impl.framework.base.BaseExecutionContext;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
@@ -128,7 +129,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSuppress_1() throws EndOfLineException {
+  void parseSuppress_1() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string");
     ExecutionContext context = defaultExecutionContext("bob");
     List<Result> result = new ArrayList<>();
@@ -140,7 +141,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSuppress_2() throws EndOfLineException {
+  void parseSuppress_2() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string(suppress=true)");
     ExecutionContext context = defaultExecutionContext("bob");
     List<Result> result = new ArrayList<>();
@@ -152,7 +153,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseDefaultRequired_1() throws EndOfLineException {
+  void parseDefaultRequired_1() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string(default=alice)");
     ExecutionContext context = defaultExecutionContext("bob");
     List<Result> result = new ArrayList<>();
@@ -163,7 +164,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseDefaultRequired_2() throws EndOfLineException {
+  void parseDefaultRequired_2() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string(default=alice)");
     ExecutionContext context = defaultExecutionContext("");
     List<Result> result = new ArrayList<>();
@@ -174,7 +175,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseDefaultRequired_3() throws EndOfLineException {
+  void parseDefaultRequired_3() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string(required=false)");
     ExecutionContext context = defaultExecutionContext("bob");
     List<Result> result = new ArrayList<>();
@@ -185,7 +186,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseDefaultRequired_4() throws EndOfLineException {
+  void parseDefaultRequired_4() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string(required=false)");
     ExecutionContext context = defaultExecutionContext("");
     List<Result> result = new ArrayList<>();
@@ -196,7 +197,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseDefaultRequired_5() throws EndOfLineException {
+  void parseDefaultRequired_5() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@int(default=5)");
     ExecutionContext context = defaultExecutionContext("");
     List<Result> result = new ArrayList<>();
@@ -367,7 +368,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void complete_15() throws EndOfLineException {
+  void complete_15() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("literal1|literal2|literal mike|milly|mark");
     CompletionContext context = defaultCompletionContext("literal mark b");
     List<CompletionCandidateGroup> result = new ArrayList<>();
@@ -410,7 +411,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSwitch_3() throws EndOfLineException {
+  void parseSwitch_3() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string(switch=sw1) @string @string");
     ExecutionContext context = defaultExecutionContext("alice amy -sw1 bob");
     List<Result> result = new ArrayList<>();
@@ -423,7 +424,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSwitch_4() throws EndOfLineException {
+  void parseSwitch_4() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string(switch=sw1) @string @string");
     ExecutionContext context = defaultExecutionContext("alice -sw1 bob amy");
     List<Result> result = new ArrayList<>();
@@ -436,7 +437,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSwitch_5() throws EndOfLineException {
+  void parseSwitch_5() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string(switch=sw1) @string @string");
     ExecutionContext context = defaultExecutionContext("-sw1 bob alice amy");
     List<Result> result = new ArrayList<>();
@@ -449,7 +450,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSwitch_6() throws EndOfLineException {
+  void parseSwitch_6() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string @string(switch=sw1) @string");
     ExecutionContext context = defaultExecutionContext("-sw1 bob alice amy");
     List<Result> result = new ArrayList<>();
@@ -463,7 +464,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSwitch_7() throws EndOfLineException {
+  void parseSwitch_7() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string @string(switch=sw1) @string");
     ExecutionContext context = defaultExecutionContext("alice -sw1 bob amy");
     List<Result> result = new ArrayList<>();
@@ -476,7 +477,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSwitch_8() throws EndOfLineException {
+  void parseSwitch_8() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string @string(switch=sw1) @string");
     ExecutionContext context = defaultExecutionContext("alice amy -sw1 bob");
     List<Result> result = new ArrayList<>();
@@ -489,7 +490,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSwitch_9() throws EndOfLineException {
+  void parseSwitch_9() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string @string @string(switch=sw1)");
     ExecutionContext context = defaultExecutionContext("-sw1 bob alice amy");
     List<Result> result = new ArrayList<>();
@@ -503,7 +504,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSwitch_10() throws EndOfLineException {
+  void parseSwitch_10() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string @string @string(switch=sw1)");
     ExecutionContext context = defaultExecutionContext("alice -sw1 bob amy");
     List<Result> result = new ArrayList<>();
@@ -517,7 +518,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSwitch_11() throws EndOfLineException {
+  void parseSwitch_11() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string @string @string(switch=sw1)");
     ExecutionContext context = defaultExecutionContext("alice amy -sw1 bob");
     List<Result> result = new ArrayList<>();
@@ -530,7 +531,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSwitch_12() throws EndOfLineException {
+  void parseSwitch_12() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string(switch=sw1) @string @string");
     ExecutionContext context = defaultExecutionContext("alice amy bob");
     List<Result> result = new ArrayList<>();
@@ -540,7 +541,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSwitchDefault_1() throws EndOfLineException {
+  void parseSwitchDefault_1() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string(switch=sw1,default=zoe) @string @string");
     ExecutionContext context = defaultExecutionContext("alice amy");
     List<Result> result = new ArrayList<>();
@@ -553,7 +554,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void parseSwitchDefault_2() throws EndOfLineException {
+  void parseSwitchDefault_2() throws EndOfLineException, ParserSyntaxException {
     StringParserChain a = new StringParserChain("@string(switch=sw1,default=zoe) @string @string");
     ExecutionContext context = defaultExecutionContext("alice amy -sw1 bob");
     List<Result> result = new ArrayList<>();

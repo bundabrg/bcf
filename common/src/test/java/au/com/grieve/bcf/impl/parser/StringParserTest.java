@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +52,7 @@ class StringParserTest {
   }
 
   @Test
-  void parseSimple_2() throws EndOfLineException {
+  void parseSimple_2() throws EndOfLineException, ParserSyntaxException {
     StringParser stringParser = new StringParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1");
 
@@ -60,7 +61,7 @@ class StringParserTest {
   }
 
   @Test
-  void parseSimple_3() throws EndOfLineException {
+  void parseSimple_3() throws EndOfLineException, ParserSyntaxException {
     StringParser stringParser = new StringParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1 a");
 
@@ -69,7 +70,7 @@ class StringParserTest {
   }
 
   @Test
-  void parseSimple_4() throws EndOfLineException {
+  void parseSimple_4() throws EndOfLineException, ParserSyntaxException {
     StringParser stringParser = new StringParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a 1");
 
@@ -78,7 +79,7 @@ class StringParserTest {
   }
 
   @Test
-  void singleOption_1() throws EndOfLineException {
+  void singleOption_1() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("options", "option1");
     StringParser sp1 = new StringParser(parameters);
@@ -95,12 +96,12 @@ class StringParserTest {
     StringParser sp1 = new StringParser(parameters);
     ParsedLine line = new DefaultParsedLine("bob");
 
-    assertThrows(IllegalArgumentException.class, () -> sp1.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> sp1.parse(line));
     assertEquals(0, line.getWordIndex());
   }
 
   @Test
-  void multipleOptions_1() throws EndOfLineException {
+  void multipleOptions_1() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("options", "option1|option2|option3");
     StringParser sp2 = new StringParser(parameters);
@@ -112,7 +113,7 @@ class StringParserTest {
     assertEquals(2, line.getWordIndex());
     assertEquals("option3", sp2.parse(line));
     assertEquals(3, line.getWordIndex());
-    assertThrows(IllegalArgumentException.class, () -> sp2.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> sp2.parse(line));
     assertEquals(3, line.getWordIndex());
   }
 
@@ -139,7 +140,7 @@ class StringParserTest {
   }
 
   @Test
-  void completionSingleInput_1() throws EndOfLineException {
+  void completionSingleInput_1() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("options", "option1|option2|option3");
     StringParser p = new StringParser(parameters);
@@ -152,7 +153,7 @@ class StringParserTest {
   }
 
   @Test
-  void completionSingleInput_2() throws EndOfLineException {
+  void completionSingleInput_2() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("options", "option1|option2|option3");
     StringParser p = new StringParser(parameters);
@@ -166,7 +167,7 @@ class StringParserTest {
   }
 
   @Test
-  void completionSingleInput_3() throws EndOfLineException {
+  void completionSingleInput_3() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("options", "option1|option2|option3");
     StringParser p = new StringParser(parameters);
@@ -180,7 +181,7 @@ class StringParserTest {
   }
 
   @Test
-  void completionSingleInput_4() throws EndOfLineException {
+  void completionSingleInput_4() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("options", "option1|option2|option3");
     StringParser p = new StringParser(parameters);
@@ -192,7 +193,7 @@ class StringParserTest {
   }
 
   @Test
-  void completionSingleInput_5() throws EndOfLineException {
+  void completionSingleInput_5() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("options", "option1|option2|option3");
     StringParser p = new StringParser(parameters);

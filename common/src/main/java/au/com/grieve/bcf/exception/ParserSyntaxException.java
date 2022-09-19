@@ -21,41 +21,26 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.exception;
 
-import java.util.List;
+import au.com.grieve.bcf.ParsedLine;
+import java.io.IOException;
+import lombok.Getter;
 
-/** Command - All commands inherit from this class */
-public interface Command {
+@Getter
+public class ParserSyntaxException extends IOException {
+  private final String name;
+  private final ParsedLine line;
 
-  /**
-   * Provide completion candidates for the input
-   *
-   * @param context Context
-   */
-  List<CompletionCandidateGroup> complete(CompletionContext context);
+  public ParserSyntaxException(ParsedLine line, String name, String message, Throwable cause) {
+    super(message, cause);
+    this.name = name;
+    this.line = line;
+  }
 
-  /**
-   * Return the best execution candidate for the parsed input
-   *
-   * @param context Context
-   * @return best execution method
-   */
-  ExecutionCandidate execute(ExecutionContext context);
-
-  ExecutionCandidate execute(ExecutionContext context, List<ExecutionError> errors);
-
-  /**
-   * Add a child command to this one
-   *
-   * @param childCommand Child Command
-   */
-  void addChild(Command childCommand);
-
-  /**
-   * Return the data for Command
-   *
-   * @return data for command
-   */
-  CommandData getCommandData();
+  public ParserSyntaxException(ParsedLine line, String name, String message) {
+    super(message);
+    this.name = name;
+    this.line = line;
+  }
 }

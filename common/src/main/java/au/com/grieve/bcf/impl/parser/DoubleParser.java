@@ -26,6 +26,7 @@ package au.com.grieve.bcf.impl.parser;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
 import java.util.List;
@@ -39,25 +40,30 @@ public class DoubleParser extends BaseParser<Double> {
   }
 
   @Override
-  protected Double doParse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
+  protected Double doParse(ParsedLine line) throws EndOfLineException, ParserSyntaxException {
     String input = line.next();
     double result;
 
     try {
       result = Double.parseDouble(input);
     } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("Not a valid double number: '" + input + "'");
+      throw new ParserSyntaxException(
+          line, "invalid_number", "Not a valid double number: '" + input + "'");
     }
 
     if (getParameters().get("max") != null
         && result > Double.parseDouble(getParameters().get("max"))) {
-      throw new IllegalArgumentException(
+      throw new ParserSyntaxException(
+          line,
+          "number_too_big",
           "'" + result + "' is larger than the maximum '" + getParameters().get("max") + "'");
     }
 
     if (getParameters().get("min") != null
         && result < Double.parseDouble(getParameters().get("min"))) {
-      throw new IllegalArgumentException(
+      throw new ParserSyntaxException(
+          line,
+          "number_too_small",
           "'" + result + "' is smaller than the minimum '" + getParameters().get("min") + "'");
     }
 

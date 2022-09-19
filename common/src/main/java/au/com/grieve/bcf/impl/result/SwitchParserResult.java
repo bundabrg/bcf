@@ -26,6 +26,7 @@ package au.com.grieve.bcf.impl.result;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.Result;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import lombok.Getter;
 
@@ -47,10 +48,10 @@ public class SwitchParserResult implements Result {
   }
 
   @Override
-  public Object getValue() throws IllegalArgumentException {
+  public Object getValue() {
     try {
       return complete ? value : parser.parse(new DefaultParsedLine(""));
-    } catch (EndOfLineException e) {
+    } catch (EndOfLineException | ParserSyntaxException e) {
       throw new IllegalArgumentException();
     }
   }

@@ -92,7 +92,7 @@ class AnnotationBaseCommandManagerTest {
       manager.registerCommand(c1);
       ExecutionCandidate e = manager.execute("cmd1 bob");
 
-      assertEquals(c1.getClass().getMethod("d"), e.getMethod());
+    assertEquals(c1.getClass().getMethod("e"), e.getMethod());
     }
 
     @Test

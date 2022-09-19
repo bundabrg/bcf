@@ -21,16 +21,12 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.framework.annotation.annotations;
+package au.com.grieve.bcf;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public interface ExecutionError {
+  ParsedLine getParsedLine();
 
-/** */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
-public @interface Name {
-  String value();
+  String getName();
+
+  String getMessage();
 }

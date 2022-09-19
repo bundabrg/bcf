@@ -27,6 +27,7 @@ import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +73,7 @@ public abstract class BaseParser<RT> extends Parser<RT> {
    * @throws IllegalArgumentException Invalid input
    */
   @Override
-  public RT parse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
+  public RT parse(ParsedLine line) throws EndOfLineException, ParserSyntaxException {
     ParsedLine currentLine = line.copy();
     RT result;
     try {
@@ -103,10 +104,9 @@ public abstract class BaseParser<RT> extends Parser<RT> {
    * @param line The input
    * @return Return Object
    * @throws EndOfLineException Ran out of input
-   * @throws IllegalArgumentException Invalid input
+   * @throws ParserSyntaxException Invalid input
    */
-  protected abstract RT doParse(ParsedLine line)
-      throws EndOfLineException, IllegalArgumentException;
+  protected abstract RT doParse(ParsedLine line) throws EndOfLineException, ParserSyntaxException;
 
   protected abstract void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException;

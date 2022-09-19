@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,12 +53,12 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a");
 
-    assertThrows(IllegalArgumentException.class, () -> integerParser.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(line));
     assertEquals(0, line.getWordIndex());
   }
 
   @Test
-  void parseSimple_3() throws EndOfLineException {
+  void parseSimple_3() throws EndOfLineException, ParserSyntaxException {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1");
 
@@ -66,7 +67,7 @@ class IntegerParserTest {
   }
 
   @Test
-  void parseSimple_4() throws EndOfLineException {
+  void parseSimple_4() throws EndOfLineException, ParserSyntaxException {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1 a");
 
@@ -79,7 +80,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a 1");
 
-    assertThrows(IllegalArgumentException.class, () -> integerParser.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(line));
     assertEquals(0, line.getWordIndex());
   }
 
@@ -90,12 +91,12 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("5");
 
-    assertThrows(IllegalArgumentException.class, () -> integerParser.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(line));
     assertEquals(0, line.getWordIndex());
   }
 
   @Test
-  void optionsMin_2() throws EndOfLineException {
+  void optionsMin_2() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("min", "13");
     IntegerParser integerParser = new IntegerParser(parameters);
@@ -106,7 +107,7 @@ class IntegerParserTest {
   }
 
   @Test
-  void optionsMin_3() throws EndOfLineException {
+  void optionsMin_3() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("min", "13");
     IntegerParser integerParser = new IntegerParser(parameters);
@@ -123,12 +124,12 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("100");
 
-    assertThrows(IllegalArgumentException.class, () -> integerParser.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(line));
     assertEquals(0, line.getWordIndex());
   }
 
   @Test
-  void optionsMax_2() throws EndOfLineException {
+  void optionsMax_2() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("max", "13");
     IntegerParser integerParser = new IntegerParser(parameters);
@@ -139,7 +140,7 @@ class IntegerParserTest {
   }
 
   @Test
-  void optionsMax_3() throws EndOfLineException {
+  void optionsMax_3() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("max", "13");
     IntegerParser integerParser = new IntegerParser(parameters);
@@ -164,7 +165,7 @@ class IntegerParserTest {
   }
 
   @Test
-  void completionMinMax_2() throws EndOfLineException {
+  void completionMinMax_2() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("min", "5");
     parameters.put("max", "13");
@@ -178,7 +179,7 @@ class IntegerParserTest {
   }
 
   @Test
-  void completionMinMax_3() throws EndOfLineException {
+  void completionMinMax_3() throws EndOfLineException, ParserSyntaxException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("min", "13");
     parameters.put("max", "5");

@@ -26,6 +26,7 @@ package au.com.grieve.bcf.impl.parser;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
 import java.util.List;
@@ -39,25 +40,30 @@ public class FloatParser extends BaseParser<Float> {
   }
 
   @Override
-  protected Float doParse(ParsedLine line) throws EndOfLineException, IllegalArgumentException {
+  protected Float doParse(ParsedLine line) throws EndOfLineException, ParserSyntaxException {
     String input = line.next();
     float result;
 
     try {
       result = Float.parseFloat(input);
     } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("Not a valid floating point number: '" + input + "'");
+      throw new ParserSyntaxException(
+          line, "invalid_number", "Not a valid floating point number: '" + input + "'");
     }
 
     if (getParameters().get("max") != null
         && result > Float.parseFloat(getParameters().get("max"))) {
-      throw new IllegalArgumentException(
+      throw new ParserSyntaxException(
+          line,
+          "number_too_big",
           "'" + result + "' is larger than the maximum '" + getParameters().get("max") + "'");
     }
 
     if (getParameters().get("min") != null
         && result < Float.parseFloat(getParameters().get("min"))) {
-      throw new IllegalArgumentException(
+      throw new ParserSyntaxException(
+          line,
+          "number_too_small",
           "'" + result + "' is smaller than the minimum '" + getParameters().get("min") + "'");
     }
 

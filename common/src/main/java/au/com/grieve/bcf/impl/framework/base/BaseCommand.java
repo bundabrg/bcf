@@ -26,9 +26,11 @@ package au.com.grieve.bcf.impl.framework.base;
 import au.com.grieve.bcf.Command;
 import au.com.grieve.bcf.ExecutionCandidate;
 import au.com.grieve.bcf.ExecutionContext;
+import au.com.grieve.bcf.ExecutionError;
 import au.com.grieve.bcf.impl.execution.DefaultExecutionCandidate;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,7 +47,7 @@ public abstract class BaseCommand implements Command {
   protected abstract Method getErrorMethod();
 
   protected ExecutionCandidate getErrorExecutionCandidate(
-      ExecutionContext context, int weight, String name, String message) {
+      ExecutionContext context, int weight, List<ExecutionError> errors) {
     for (Command cmd :
         Stream.concat(Stream.of(this), context.getCommandChain().stream())
             .collect(Collectors.toList())) {
@@ -55,7 +57,7 @@ public abstract class BaseCommand implements Command {
             cmd,
             method,
             weight,
-            Stream.concat(context.getPrependArguments().stream(), Stream.of(context, name, message))
+            Stream.concat(context.getPrependArguments().stream(), Stream.of(errors))
                 .collect(Collectors.toList()));
       }
     }

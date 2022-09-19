@@ -78,7 +78,7 @@ class AnnotationCommandTest {
     ExecutionCandidate e = c2.execute(ctx);
 
     // Should be error method with a weight of 0
-    assertEquals(c2.getClass().getMethod("e"), e.getMethod());
+    assertEquals(c2.getClass().getMethod("d"), e.getMethod());
     assertEquals(0, e.getWeight());
   }
 
@@ -90,7 +90,7 @@ class AnnotationCommandTest {
 
     // Should be error method with a weight of 0
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
-    assertEquals(0, e.getWeight());
+    assertEquals(1, e.getWeight());
   }
 
   @Test
@@ -112,7 +112,7 @@ class AnnotationCommandTest {
 
     // Should be error method with a weight of 2
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
-    assertEquals(2, e.getWeight());
+    assertEquals(3, e.getWeight());
   }
 
   @Test
@@ -133,8 +133,8 @@ class AnnotationCommandTest {
     ExecutionCandidate e = c2.execute(ctx);
 
     // Should be default method with a weight of 3
-    assertEquals(c2.getClass().getMethod("d"), e.getMethod());
-    assertEquals(3, e.getWeight());
+    assertEquals(c2.getClass().getMethod("e"), e.getMethod());
+    assertEquals(4, e.getWeight());
   }
 
   @Test
@@ -156,7 +156,7 @@ class AnnotationCommandTest {
 
     // Should be error method with a weight of 5
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
-    assertEquals(5, e.getWeight());
+    assertEquals(6, e.getWeight());
   }
 
   @Test
@@ -199,8 +199,8 @@ class AnnotationCommandTest {
     ExecutionCandidate e = c3.execute(ctx);
 
     // Should be default method with a weight of 0
-    assertEquals(c3.getClass().getMethod("d"), e.getMethod());
-    assertEquals(0, e.getWeight());
+    assertEquals(c3.getClass().getMethod("e"), e.getMethod());
+    assertEquals(1, e.getWeight());
   }
 
   @Test
@@ -222,7 +222,7 @@ class AnnotationCommandTest {
 
     // Should be error method with a weight of 2
     assertEquals(c3.getClass().getMethod("e"), e.getMethod());
-    assertEquals(2, e.getWeight());
+    assertEquals(3, e.getWeight());
   }
 
   @Test
@@ -272,8 +272,8 @@ class AnnotationCommandTest {
     ExecutionCandidate e = c2.execute(ctx);
 
     // Should be default method with a weight of 3 on parent
-    assertEquals(c2.getClass().getMethod("d"), e.getMethod());
-    assertEquals(3, e.getWeight());
+    assertEquals(c2.getClass().getMethod("e"), e.getMethod());
+    assertEquals(4, e.getWeight());
   }
 
   @Test
@@ -302,7 +302,7 @@ class AnnotationCommandTest {
 
     // Should be error method with a weight of 5 on parent as child has no error
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
-    assertEquals(5, e.getWeight());
+    assertEquals(6, e.getWeight());
   }
 
   @Test
@@ -333,7 +333,7 @@ class AnnotationCommandTest {
 
     // Should be error method with a weight of 5 on child
     assertEquals(child2.getClass().getMethod("e"), e.getMethod());
-    assertEquals(5, e.getWeight());
+    assertEquals(6, e.getWeight());
   }
 
   @Test
@@ -395,7 +395,7 @@ class AnnotationCommandTest {
 
     // Should be error method with a weight of 8 on child
     assertEquals(child2.getClass().getMethod("e"), e.getMethod());
-    assertEquals(8, e.getWeight());
+    assertEquals(9, e.getWeight());
   }
 
   @Test
@@ -427,7 +427,7 @@ class AnnotationCommandTest {
 
     // Error
     assertEquals(child2.getClass().getMethod("e"), e.getMethod());
-    assertEquals(8, e.getWeight());
+    assertEquals(9, e.getWeight());
   }
 
   @Test
@@ -452,9 +452,9 @@ class AnnotationCommandTest {
     ExecutionContext ctx = defaultExecutionContext("bob");
     ExecutionCandidate e = c2.execute(ctx);
 
-    // Should be error method with a weight of 0
+    // Should be error method with a weight of 1
     assertEquals(c2.getClass().getMethod("e"), e.getMethod());
-    assertEquals(0, e.getWeight());
+    assertEquals(1, e.getWeight());
   }
 
   @Test
