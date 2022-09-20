@@ -368,7 +368,7 @@ class StringParserChainTest {
   }
 
   @Test
-  void complete_15() throws EndOfLineException, ParserSyntaxException {
+  void complete_15() throws EndOfLineException {
     StringParserChain a = new StringParserChain("literal1|literal2|literal mike|milly|mark");
     CompletionContext context = defaultCompletionContext("literal mark b");
     List<CompletionCandidateGroup> result = new ArrayList<>();
@@ -548,7 +548,7 @@ class StringParserChainTest {
 
     a.parse(context, result);
     assertEquals(3, result.size());
-    assertEquals("zoe", result.get(0).getValue());
+    assertThrows(IllegalArgumentException.class, () -> result.get(0).getValue());
     assertEquals("alice", result.get(1).getValue());
     assertEquals("amy", result.get(2).getValue());
   }

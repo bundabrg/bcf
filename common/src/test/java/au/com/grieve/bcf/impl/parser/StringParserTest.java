@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
+import au.com.grieve.bcf.Context;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
@@ -40,23 +41,23 @@ import org.junit.jupiter.api.Test;
 class StringParserTest {
 
   @Test
-  void complete() {}
-
-  @Test
   void parseSimple_1() {
     StringParser stringParser = new StringParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("");
 
-    assertThrows(EndOfLineException.class, () -> stringParser.parse(line));
+    assertThrows(EndOfLineException.class, () -> stringParser.parse(new DummyContext(), line));
     assertEquals(0, line.getWordIndex());
   }
+
+  @Test
+  void complete() {}
 
   @Test
   void parseSimple_2() throws EndOfLineException, ParserSyntaxException {
     StringParser stringParser = new StringParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1");
 
-    assertEquals("1", stringParser.parse(line));
+    assertEquals("1", stringParser.parse(new DummyContext(), line));
     assertEquals(1, line.getWordIndex());
   }
 
@@ -65,7 +66,7 @@ class StringParserTest {
     StringParser stringParser = new StringParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1 a");
 
-    assertEquals("1", stringParser.parse(line));
+    assertEquals("1", stringParser.parse(new DummyContext(), line));
     assertEquals(1, line.getWordIndex());
   }
 
@@ -74,7 +75,7 @@ class StringParserTest {
     StringParser stringParser = new StringParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a 1");
 
-    assertEquals("a", stringParser.parse(line));
+    assertEquals("a", stringParser.parse(new DummyContext(), line));
     assertEquals(1, line.getWordIndex());
   }
 
@@ -85,7 +86,7 @@ class StringParserTest {
     StringParser sp1 = new StringParser(parameters);
     ParsedLine line = new DefaultParsedLine("option1");
 
-    assertEquals("option1", sp1.parse(line));
+    assertEquals("option1", sp1.parse(new DummyContext(), line));
     assertEquals(1, line.getWordIndex());
   }
 
@@ -96,7 +97,7 @@ class StringParserTest {
     StringParser sp1 = new StringParser(parameters);
     ParsedLine line = new DefaultParsedLine("bob");
 
-    assertThrows(ParserSyntaxException.class, () -> sp1.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> sp1.parse(new DummyContext(), line));
     assertEquals(0, line.getWordIndex());
   }
 
@@ -107,13 +108,13 @@ class StringParserTest {
     StringParser sp2 = new StringParser(parameters);
     ParsedLine line = new DefaultParsedLine("option1 option2 option3 bob");
 
-    assertEquals("option1", sp2.parse(line));
+    assertEquals("option1", sp2.parse(new DummyContext(), line));
     assertEquals(1, line.getWordIndex());
-    assertEquals("option2", sp2.parse(line));
+    assertEquals("option2", sp2.parse(new DummyContext(), line));
     assertEquals(2, line.getWordIndex());
-    assertEquals("option3", sp2.parse(line));
+    assertEquals("option3", sp2.parse(new DummyContext(), line));
     assertEquals(3, line.getWordIndex());
-    assertThrows(ParserSyntaxException.class, () -> sp2.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> sp2.parse(new DummyContext(), line));
     assertEquals(3, line.getWordIndex());
   }
 
@@ -125,7 +126,7 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine("");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> p.complete(line, result));
+    assertThrows(EndOfLineException.class, () -> p.complete(new DummyContext(), line, result));
   }
 
   @Test
@@ -136,52 +137,52 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine(" ");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> p.complete(line, result));
+    assertThrows(EndOfLineException.class, () -> p.complete(new DummyContext(), line, result));
   }
 
   @Test
-  void completionSingleInput_1() throws EndOfLineException, ParserSyntaxException {
+  void completionSingleInput_1() throws EndOfLineException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("options", "option1|option2|option3");
     StringParser p = new StringParser(parameters);
     ParsedLine line = new DefaultParsedLine("b");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    p.complete(line, result);
+    p.complete(new DummyContext(), line, result);
     assertEquals(
         0, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
   }
 
   @Test
-  void completionSingleInput_2() throws EndOfLineException, ParserSyntaxException {
+  void completionSingleInput_2() throws EndOfLineException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("options", "option1|option2|option3");
     StringParser p = new StringParser(parameters);
     ParsedLine line = new DefaultParsedLine("o");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    p.complete(line, result);
+    p.complete(new DummyContext(), line, result);
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
   }
 
   @Test
-  void completionSingleInput_3() throws EndOfLineException, ParserSyntaxException {
+  void completionSingleInput_3() throws EndOfLineException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("options", "option1|option2|option3");
     StringParser p = new StringParser(parameters);
     ParsedLine line = new DefaultParsedLine("option2");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    p.complete(line, result);
+    p.complete(new DummyContext(), line, result);
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
   }
 
   @Test
-  void completionSingleInput_4() throws EndOfLineException, ParserSyntaxException {
+  void completionSingleInput_4() throws EndOfLineException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("options", "option1|option2|option3");
     StringParser p = new StringParser(parameters);
@@ -189,11 +190,11 @@ class StringParserTest {
     List<CompletionCandidateGroup> result = new ArrayList<>();
     line.next();
 
-    assertThrows(EndOfLineException.class, () -> p.complete(line, result));
+    assertThrows(EndOfLineException.class, () -> p.complete(new DummyContext(), line, result));
   }
 
   @Test
-  void completionSingleInput_5() throws EndOfLineException, ParserSyntaxException {
+  void completionSingleInput_5() throws EndOfLineException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("options", "option1|option2|option3");
     StringParser p = new StringParser(parameters);
@@ -201,9 +202,17 @@ class StringParserTest {
     List<CompletionCandidateGroup> result = new ArrayList<>();
     line.next();
 
-    p.complete(line, result);
+    p.complete(new DummyContext(), line, result);
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
+  }
+
+  static class DummyContext implements Context {
+
+    @Override
+    public Context copy() {
+      return null;
+    }
   }
 }

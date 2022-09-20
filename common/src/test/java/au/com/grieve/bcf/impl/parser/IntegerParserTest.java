@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
+import au.com.grieve.bcf.Context;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
@@ -44,7 +45,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("");
 
-    assertThrows(EndOfLineException.class, () -> integerParser.parse(line));
+    assertThrows(EndOfLineException.class, () -> integerParser.parse(new DummyContext(), line));
     assertEquals(0, line.getWordIndex());
   }
 
@@ -53,7 +54,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a");
 
-    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(new DummyContext(), line));
     assertEquals(0, line.getWordIndex());
   }
 
@@ -62,7 +63,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1");
 
-    assertEquals(1, integerParser.parse(line));
+    assertEquals(1, integerParser.parse(new DummyContext(), line));
     assertEquals(1, line.getWordIndex());
   }
 
@@ -71,7 +72,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1 a");
 
-    assertEquals(1, integerParser.parse(line));
+    assertEquals(1, integerParser.parse(new DummyContext(), line));
     assertEquals(1, line.getWordIndex());
   }
 
@@ -80,7 +81,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a 1");
 
-    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(new DummyContext(), line));
     assertEquals(0, line.getWordIndex());
   }
 
@@ -91,7 +92,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("5");
 
-    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(new DummyContext(), line));
     assertEquals(0, line.getWordIndex());
   }
 
@@ -102,7 +103,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("100");
 
-    assertEquals(100, integerParser.parse(line));
+    assertEquals(100, integerParser.parse(new DummyContext(), line));
     assertEquals(1, line.getWordIndex());
   }
 
@@ -113,7 +114,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("13");
 
-    assertEquals(13, integerParser.parse(line));
+    assertEquals(13, integerParser.parse(new DummyContext(), line));
     assertEquals(1, line.getWordIndex());
   }
 
@@ -124,7 +125,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("100");
 
-    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(line));
+    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(new DummyContext(), line));
     assertEquals(0, line.getWordIndex());
   }
 
@@ -135,7 +136,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("5");
 
-    assertEquals(5, integerParser.parse(line));
+    assertEquals(5, integerParser.parse(new DummyContext(), line));
     assertEquals(1, line.getWordIndex());
   }
 
@@ -146,7 +147,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("13");
 
-    assertEquals(13, integerParser.parse(line));
+    assertEquals(13, integerParser.parse(new DummyContext(), line));
     assertEquals(1, line.getWordIndex());
   }
 
@@ -159,13 +160,14 @@ class IntegerParserTest {
     List<CompletionCandidateGroup> groups = new ArrayList<>();
     IntegerParser integerParser = new IntegerParser(parameters);
 
-    assertThrows(EndOfLineException.class, () -> integerParser.complete(line, groups));
+    assertThrows(
+        EndOfLineException.class, () -> integerParser.complete(new DummyContext(), line, groups));
     assertEquals(1, groups.size());
     assertEquals(9, groups.get(0).getMatchingCompletionCandidates().size());
   }
 
   @Test
-  void completionMinMax_2() throws EndOfLineException, ParserSyntaxException {
+  void completionMinMax_2() throws EndOfLineException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("min", "5");
     parameters.put("max", "13");
@@ -173,13 +175,13 @@ class IntegerParserTest {
     List<CompletionCandidateGroup> groups = new ArrayList<>();
     IntegerParser integerParser = new IntegerParser(parameters);
 
-    integerParser.complete(line, groups);
+    integerParser.complete(new DummyContext(), line, groups);
     assertEquals(1, groups.size());
     assertEquals(4, groups.get(0).getMatchingCompletionCandidates().size());
   }
 
   @Test
-  void completionMinMax_3() throws EndOfLineException, ParserSyntaxException {
+  void completionMinMax_3() throws EndOfLineException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put("min", "13");
     parameters.put("max", "5");
@@ -187,7 +189,15 @@ class IntegerParserTest {
     List<CompletionCandidateGroup> groups = new ArrayList<>();
     IntegerParser integerParser = new IntegerParser(parameters);
 
-    integerParser.complete(line, groups);
+    integerParser.complete(new DummyContext(), line, groups);
     assertEquals(0, groups.size());
+  }
+
+  static class DummyContext implements Context {
+
+    @Override
+    public Context copy() {
+      return null;
+    }
   }
 }

@@ -97,7 +97,7 @@ public class StringParserChain implements ParserChain {
       }
 
       context.getParsedLine().next();
-      result.setValue(result.getParser().parse(context.getParsedLine()));
+      result.setValue(result.getParser().parse(context, context.getParsedLine()));
     }
   }
 
@@ -118,7 +118,7 @@ public class StringParserChain implements ParserChain {
 
       parseSwitches(context, results);
 
-      Object result = p.parse(context.getParsedLine());
+      Object result = p.parse(context, context.getParsedLine());
       results.add(new ParserResult(p, result));
     }
 
@@ -157,7 +157,7 @@ public class StringParserChain implements ParserChain {
       ParsedLine lineCopy = context.getParsedLine().copy();
 
       try {
-        parser.parse(context.getParsedLine());
+        parser.parse(context, context.getParsedLine());
         ((BaseCompletionContext) context).getSwitches().remove(parser);
       } catch (EndOfLineException | ParserSyntaxException e) {
         // We may or may not be at the end of input, so we try complete it just in case and
@@ -166,7 +166,7 @@ public class StringParserChain implements ParserChain {
         // include the results
         List<CompletionCandidateGroup> groups = new ArrayList<>();
         try {
-          parser.complete(context.getParsedLine(), groups);
+          parser.complete(context, context.getParsedLine(), groups);
           if (context.getParsedLine().isEol()) {
             candidateGroups.addAll(groups);
             ((BaseCompletionContext) context).getSwitches().remove(parser);
@@ -179,7 +179,7 @@ public class StringParserChain implements ParserChain {
 
       if (context.getParsedLine().isEol()) {
         try {
-          parser.complete(lineCopy, candidateGroups);
+          parser.complete(context, lineCopy, candidateGroups);
         } catch (IllegalArgumentException ignored) {
         }
         throw new EndOfLineException();
@@ -221,7 +221,7 @@ public class StringParserChain implements ParserChain {
       CompletionContext contextCopy = context.copy();
 
       try {
-        p.parse(context.getParsedLine());
+        p.parse(context, context.getParsedLine());
       } catch (EndOfLineException | ParserSyntaxException e) {
         // We may or may not be at the end of input, so we try complete it just in case and
         // if we
@@ -229,7 +229,7 @@ public class StringParserChain implements ParserChain {
         // include the results
         List<CompletionCandidateGroup> groups = new ArrayList<>();
         try {
-          p.complete(context.getParsedLine(), groups);
+          p.complete(context, context.getParsedLine(), groups);
           if (context.getParsedLine().isEol()) {
             candidateGroups.addAll(groups);
           }
@@ -241,7 +241,7 @@ public class StringParserChain implements ParserChain {
 
       if (context.getParsedLine().isEol()) {
         try {
-          p.complete(contextCopy.getParsedLine(), candidateGroups);
+          p.complete(contextCopy, contextCopy.getParsedLine(), candidateGroups);
         } catch (IllegalArgumentException ignored) {
         }
         throw new EndOfLineException();

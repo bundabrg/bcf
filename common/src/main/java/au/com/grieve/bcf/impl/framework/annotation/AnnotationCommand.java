@@ -43,6 +43,7 @@ import au.com.grieve.bcf.impl.execution.DefaultExecutionCandidate;
 import au.com.grieve.bcf.impl.framework.base.BaseCommand;
 import au.com.grieve.bcf.impl.framework.base.BaseCommandData;
 import au.com.grieve.bcf.impl.framework.base.BaseExecutionError;
+import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import au.com.grieve.bcf.impl.parserchain.StringParserChain;
 import au.com.grieve.bcf.impl.result.SwitchParserResult;
 import au.com.grieve.bcf.utils.ReflectUtils;
@@ -190,13 +191,16 @@ public class AnnotationCommand extends BaseCommand {
               .collect(Collectors.toList())) {
         if (!r.isComplete()) {
           try {
-            r.getValue();
-          } catch (IllegalArgumentException e) {
+            r.setValue(r.getParser().parse(context, new DefaultParsedLine("")));
+          } catch (EndOfLineException e) {
             errors.add(
                 new BaseExecutionError(
                     currentContext.getParsedLine().copy(),
                     new MissingRequired(
                         "-" + r.getParser().getParameters().get("switch").split("\\|")[0])));
+            isError = true;
+          } catch (ParserSyntaxException e) {
+            errors.add(new BaseExecutionError(e.getLine(), e.getError()));
             isError = true;
           }
         }

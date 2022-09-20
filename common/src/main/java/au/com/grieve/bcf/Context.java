@@ -21,13 +21,13 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.exceptions;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.core.Parser;
-
-public class ParserRequiredArgumentException extends ParserException {
-
-  public ParserRequiredArgumentException(Parser parser) {
-    super(parser);
-  }
+public interface Context {
+  /**
+   * Return a copy of ourselves
+   *
+   * @return Copy
+   */
+  Context copy();
 }

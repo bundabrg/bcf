@@ -48,17 +48,19 @@ public abstract class Parser<RT> {
   /**
    * Provide completion candidates for the input
    *
-   * @param line The input
+   * @param context The context
    * @param candidates List of candidates
    */
-  public abstract void complete(ParsedLine line, List<CompletionCandidateGroup> candidates)
+  public abstract void complete(
+      Context context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException;
 
   /**
    * Return a concrete object for the parsed input
    *
-   * @param line The input
+   * @param context The context
    * @return returned object
    */
-  public abstract RT parse(ParsedLine line) throws EndOfLineException, ParserSyntaxException;
+  public abstract RT parse(Context context, ParsedLine line)
+      throws EndOfLineException, ParserSyntaxException;
 }

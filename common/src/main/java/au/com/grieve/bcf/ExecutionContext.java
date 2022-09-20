@@ -26,7 +26,7 @@ package au.com.grieve.bcf;
 import java.util.List;
 import java.util.Map;
 
-public interface ExecutionContext {
+public interface ExecutionContext extends Context {
   /**
    * Return Parser classes
    *

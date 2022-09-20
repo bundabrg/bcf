@@ -24,6 +24,7 @@
 package au.com.grieve.bcf.impl.parser;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
+import au.com.grieve.bcf.Context;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.exception.EndOfLineException;
@@ -44,16 +45,16 @@ public abstract class BaseParser<RT> extends Parser<RT> {
   /**
    * Call doComplete and make sure that errors don't mutate line
    *
-   * @param line The input
+   * @param context The context
    * @param candidates List of candidates
    */
   @Override
-  public void complete(ParsedLine line, List<CompletionCandidateGroup> candidates)
+  public void complete(Context context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
     ParsedLine currentLine = line.copy();
     List<CompletionCandidateGroup> groups = new ArrayList<>();
     try {
-      doComplete(currentLine, groups);
+      doComplete(context, currentLine, groups);
       line.setWordIndex(currentLine.getWordIndex());
     } finally {
       // Only add groups that actually have any candidates
@@ -67,17 +68,18 @@ public abstract class BaseParser<RT> extends Parser<RT> {
   /**
    * Call doParse and make sure that errors don't mutate line
    *
-   * @param line The input
+   * @param context The Context
    * @return Return Object
    * @throws EndOfLineException Ran out of input
    * @throws IllegalArgumentException Invalid input
    */
   @Override
-  public RT parse(ParsedLine line) throws EndOfLineException, ParserSyntaxException {
+  public RT parse(Context context, ParsedLine line)
+      throws EndOfLineException, ParserSyntaxException {
     ParsedLine currentLine = line.copy();
     RT result;
     try {
-      result = doParse(currentLine);
+      result = doParse(context, currentLine);
     } catch (EndOfLineException e) {
       // Handle default
       if (getParameters().getOrDefault("required", "true").equals("false")
@@ -85,7 +87,7 @@ public abstract class BaseParser<RT> extends Parser<RT> {
 
         String defaultValue = getParameters().get("default");
         if (defaultValue != null) {
-          result = doParse(new DefaultParsedLine(defaultValue));
+          result = doParse(context, new DefaultParsedLine(defaultValue));
         } else {
           result = null;
         }
@@ -106,8 +108,10 @@ public abstract class BaseParser<RT> extends Parser<RT> {
    * @throws EndOfLineException Ran out of input
    * @throws ParserSyntaxException Invalid input
    */
-  protected abstract RT doParse(ParsedLine line) throws EndOfLineException, ParserSyntaxException;
+  protected abstract RT doParse(Context context, ParsedLine line)
+      throws EndOfLineException, ParserSyntaxException;
 
-  protected abstract void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates)
+  protected abstract void doComplete(
+      Context context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException;
 }

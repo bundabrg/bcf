@@ -25,9 +25,6 @@ package au.com.grieve.bcf.impl.result;
 
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.Result;
-import au.com.grieve.bcf.exception.EndOfLineException;
-import au.com.grieve.bcf.exception.ParserSyntaxException;
-import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import lombok.Getter;
 
 public class SwitchParserResult implements Result {
@@ -49,11 +46,11 @@ public class SwitchParserResult implements Result {
 
   @Override
   public Object getValue() {
-    try {
-      return complete ? value : parser.parse(new DefaultParsedLine(""));
-    } catch (EndOfLineException | ParserSyntaxException e) {
-      throw new IllegalArgumentException();
+    if (complete) {
+      return value;
     }
+
+    throw new IllegalArgumentException("Value not set");
   }
 
   public void setValue(Object value) {

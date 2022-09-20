@@ -24,6 +24,7 @@
 package au.com.grieve.bcf.impl.parser;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
+import au.com.grieve.bcf.Context;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
@@ -45,7 +46,8 @@ public class IntegerParser extends BaseParser<Integer> {
   }
 
   @Override
-  protected Integer doParse(ParsedLine line) throws EndOfLineException, ParserSyntaxException {
+  protected Integer doParse(Context context, ParsedLine line)
+      throws EndOfLineException, ParserSyntaxException {
     String input = line.next();
     int result;
 
@@ -69,7 +71,8 @@ public class IntegerParser extends BaseParser<Integer> {
   }
 
   @Override
-  protected void doComplete(ParsedLine line, List<CompletionCandidateGroup> candidates)
+  protected void doComplete(
+      Context context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
     String input = line.getCurrentWord();
 
