@@ -21,26 +21,43 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.platform.terminalconsole.impl;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.ExecutionContext;
-import au.com.grieve.bcf.ExecutionError;
-import au.com.grieve.bcf.framework.annotation.annotations.Default;
-import au.com.grieve.bcf.framework.annotation.annotations.Error;
-import au.com.grieve.bcf.impl.framework.annotation.AnnotationCommand;
 import java.util.List;
+import java.util.Map;
 
-public class TerminalAnnotationCommand extends AnnotationCommand {
-  @Error
-  public void onError(ExecutionContext ctx, List<ExecutionError> errors) {
-    // TODO
-    System.err.println(buildErrorMessage(errors));
-  }
+public interface ParserContext extends Context {
+  /**
+   * Return Parser classes
+   *
+   * @return parser classes
+   */
+  Map<String, Class<? extends Parser<?>>> getParserClasses();
 
-  // Default Default
-  @Default
-  public void onDefault(ExecutionContext ctx) {
-    // TODO
-    System.err.println("Default: " + ctx);
-  }
+  /**
+   * Return the chain of command classes so far
+   *
+   * @return List of Commands
+   */
+  List<Command> getCommandChain();
+
+  /**
+   * Return the parsed line so far
+   *
+   * @return Parsed Line
+   */
+  ParsedLine getParsedLine();
+
+  /**
+   * Return the weight so far
+   *
+   * @return weight
+   */
+  int getWeight();
+
+  /** Set the weight */
+  void setWeight(int weight);
+
+  @Override
+  ParserContext copy();
 }

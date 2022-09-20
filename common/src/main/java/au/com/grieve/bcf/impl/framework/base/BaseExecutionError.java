@@ -36,4 +36,5 @@ import lombok.ToString;
 public class BaseExecutionError implements ExecutionError {
   ParsedLine parsedLine;
   CommandError error;
+  int weight;
 }

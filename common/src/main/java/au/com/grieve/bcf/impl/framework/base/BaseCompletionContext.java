@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
@@ -41,6 +42,7 @@ public class BaseCompletionContext implements CompletionContext {
   private final List<Command> commandChain = new ArrayList<>();
   private final List<Parser<?>> switches = new ArrayList<>();
   private final ParsedLine parsedLine;
+  @Setter private int weight = 0;
 
   public BaseCompletionContext(ParsedLine parsedLine) {
     this.parsedLine = parsedLine;
@@ -48,10 +50,13 @@ public class BaseCompletionContext implements CompletionContext {
 
   @Override
   public CompletionContext copy() {
-    BaseCompletionContext result = new BaseCompletionContext(parsedLine.copy());
-    result.getParserClasses().putAll(parserClasses);
-    result.getCommandChain().addAll(commandChain);
-    result.getSwitches().addAll(switches);
-    return result;
+    return copy(new BaseCompletionContext(parsedLine.copy()));
+  }
+
+  protected CompletionContext copy(BaseCompletionContext clone) {
+    clone.getParserClasses().putAll(parserClasses);
+    clone.getCommandChain().addAll(commandChain);
+    clone.getSwitches().addAll(switches);
+    return clone;
   }
 }

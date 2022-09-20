@@ -23,6 +23,4 @@
 
 package au.com.grieve.bcf.exception;
 
-import java.io.IOException;
-
-public class EndOfLineException extends IOException {}
+public class EndOfLineException extends BCFException {}

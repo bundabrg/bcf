@@ -25,11 +25,10 @@ package au.com.grieve.bcf.exception;
 
 import au.com.grieve.bcf.CommandError;
 import au.com.grieve.bcf.ParsedLine;
-import java.io.IOException;
 import lombok.Getter;
 
 @Getter
-public class ParserSyntaxException extends IOException {
+public class ParserSyntaxException extends BCFException {
   private final CommandError error;
   private final ParsedLine line;
 

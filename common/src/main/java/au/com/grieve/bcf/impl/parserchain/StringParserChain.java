@@ -31,9 +31,11 @@ import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.ParserChain;
 import au.com.grieve.bcf.Result;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserChainException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
+import au.com.grieve.bcf.impl.error.InputExpected;
 import au.com.grieve.bcf.impl.framework.base.BaseCompletionContext;
 import au.com.grieve.bcf.impl.result.ParserResult;
 import au.com.grieve.bcf.impl.result.SwitchParserResult;
@@ -102,32 +104,41 @@ public class StringParserChain implements ParserChain {
   }
 
   @Override
-  public void parse(ExecutionContext context, List<Result> results)
-      throws EndOfLineException, ParserSyntaxException {
+  public void parse(ExecutionContext context, List<Result> results) throws ParserChainException {
     List<Parser<?>> parsers =
         parserConfigs.stream()
             .map(c -> createParser(c, context.getParserClasses()))
             .collect(Collectors.toList());
-    for (Parser<?> p : parsers) {
-      // If parser is a switch we add it for later evaluation
-      if (p.getParameters().containsKey("switch")) {
-        Result result = new SwitchParserResult(p);
-        results.add(result);
-        continue;
+
+    try {
+
+      for (Parser<?> p : parsers) {
+        // If parser is a switch we add it for later evaluation
+        if (p.getParameters().containsKey("switch")) {
+          Result result = new SwitchParserResult(p);
+          results.add(result);
+          continue;
+        }
+
+        parseSwitches(context, results);
+
+        Object result = p.parse(context, context.getParsedLine());
+        results.add(new ParserResult(p, result));
+        context.setWeight(context.getWeight() + 1);
       }
 
       parseSwitches(context, results);
-
-      Object result = p.parse(context, context.getParsedLine());
-      results.add(new ParserResult(p, result));
+    } catch (EndOfLineException e) {
+      throw new ParserChainException(
+          context.getParsedLine(), new InputExpected(), context.getWeight());
+    } catch (ParserSyntaxException e) {
+      throw new ParserChainException(e.getLine(), e.getError(), context.getWeight());
     }
-
-    parseSwitches(context, results);
   }
 
   protected void completeSwitches(
       CompletionContext context, List<CompletionCandidateGroup> candidateGroups)
-      throws EndOfLineException {
+      throws EndOfLineException, ParserSyntaxException {
     while (context.getParsedLine().getCurrentWord().startsWith("-")) {
       String input = context.getParsedLine().getCurrentWord().substring(1);
 
@@ -204,51 +215,58 @@ public class StringParserChain implements ParserChain {
 
   @Override
   public void complete(CompletionContext context, List<CompletionCandidateGroup> candidateGroups)
-      throws EndOfLineException {
-    List<Parser<?>> parsers =
-        parserConfigs.stream()
-            .map(c -> createParser(c, context.getParserClasses()))
-            .collect(Collectors.toList());
-    for (Parser<?> p : parsers) {
-      // If parser is a switch we add it for later evaluation
-      if (p.getParameters().containsKey("switch")) {
-        ((BaseCompletionContext) context).getSwitches().add(p);
-        continue;
+      throws ParserChainException {
+
+    try {
+
+      List<Parser<?>> parsers =
+          parserConfigs.stream()
+              .map(c -> createParser(c, context.getParserClasses()))
+              .collect(Collectors.toList());
+      for (Parser<?> p : parsers) {
+        // If parser is a switch we add it for later evaluation
+        if (p.getParameters().containsKey("switch")) {
+          ((BaseCompletionContext) context).getSwitches().add(p);
+          continue;
+        }
+
+        completeSwitches(context, candidateGroups);
+
+        ParsedLine lineCopy = context.getParsedLine().copy();
+
+        try {
+          p.parse(context, context.getParsedLine());
+          context.setWeight(context.getWeight() + 1);
+        } catch (ParserSyntaxException e) {
+          // Try to complete that last bit
+          List<CompletionCandidateGroup> groups = new ArrayList<>();
+          p.complete(context, lineCopy, groups);
+
+          // If we are now at EOL we can use those candidates
+          if (lineCopy.isEol()) {
+            candidateGroups.addAll(groups);
+          }
+          throw e;
+        } catch (EndOfLineException e) {
+          // Try to complete that last bit
+          p.complete(context, lineCopy, candidateGroups);
+          throw e;
+        }
+
+        // If we are at end of line try complete it
+        if (context.getParsedLine().isEol()) {
+          p.complete(context, lineCopy, candidateGroups);
+          return;
+        }
       }
 
       completeSwitches(context, candidateGroups);
-
-      CompletionContext contextCopy = context.copy();
-
-      try {
-        p.parse(context, context.getParsedLine());
-      } catch (EndOfLineException | ParserSyntaxException e) {
-        // We may or may not be at the end of input, so we try complete it just in case and
-        // if we
-        // are then at EOL we
-        // include the results
-        List<CompletionCandidateGroup> groups = new ArrayList<>();
-        try {
-          p.complete(context, context.getParsedLine(), groups);
-          if (context.getParsedLine().isEol()) {
-            candidateGroups.addAll(groups);
-          }
-        } catch (IllegalArgumentException ignored) {
-        }
-
-        throw new EndOfLineException();
-      }
-
-      if (context.getParsedLine().isEol()) {
-        try {
-          p.complete(contextCopy, contextCopy.getParsedLine(), candidateGroups);
-        } catch (IllegalArgumentException ignored) {
-        }
-        throw new EndOfLineException();
-      }
+    } catch (EndOfLineException e) {
+      throw new ParserChainException(
+          context.getParsedLine(), new InputExpected(), context.getWeight());
+    } catch (ParserSyntaxException e) {
+      throw new ParserChainException(e.getLine(), e.getError(), context.getWeight());
     }
-
-    completeSwitches(context, candidateGroups);
   }
 
   /** Create a new parser based upon the name. */

@@ -39,6 +39,14 @@ public class DefaultParsedLine implements ParsedLine {
   private final String prefix;
   private int wordIndex = 0;
 
+  public DefaultParsedLine(String[] args) {
+    this(args, null);
+  }
+
+  public DefaultParsedLine(String[] args, String prefix) {
+    this(List.of(args), "");
+  }
+
   public DefaultParsedLine(String line) {
     this(line, "");
   }

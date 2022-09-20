@@ -89,7 +89,7 @@ public abstract class BaseCommand implements Command {
             cmd,
             method,
             weight,
-            Stream.concat(context.getPrependArguments().stream(), Stream.of(context, errors))
+            Stream.concat(context.getPrependArguments().stream(), Stream.of(errors))
                 .collect(Collectors.toList()));
       }
     }
@@ -102,12 +102,7 @@ public abstract class BaseCommand implements Command {
             .collect(Collectors.toList())) {
       Method method = ((BaseCommand) cmd).getDefaultMethod();
       if (method != null) {
-        return new DefaultExecutionCandidate(
-            cmd,
-            method,
-            weight,
-            Stream.concat(context.getPrependArguments().stream(), Stream.of(context))
-                .collect(Collectors.toList()));
+        return new DefaultExecutionCandidate(cmd, method, weight, context.getPrependArguments());
       }
     }
     return null;

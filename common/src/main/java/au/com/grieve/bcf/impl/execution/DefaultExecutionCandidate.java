@@ -29,6 +29,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -60,6 +61,18 @@ public class DefaultExecutionCandidate implements ExecutionCandidate {
       allArgs.add(null);
     }
 
-    return method.invoke(instance, allArgs.toArray());
+    try {
+      return method.invoke(instance, allArgs.toArray());
+    } catch (InvocationTargetException | IllegalArgumentException e) {
+      throw new RuntimeException(
+          "Failed to execute command: "
+              + instance.getClass().getName()
+              + "#"
+              + method.getName()
+              + "("
+              + Arrays.stream(args).map(Object::toString).collect(Collectors.joining(", "))
+              + ")",
+          e);
+    }
   }
 }

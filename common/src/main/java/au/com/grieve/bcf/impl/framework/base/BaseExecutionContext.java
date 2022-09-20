@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
@@ -44,6 +45,7 @@ public class BaseExecutionContext implements ExecutionContext {
   private final List<Command> commandChain = new ArrayList<>();
   private final List<Result> result = new ArrayList<>();
   private final ParsedLine parsedLine;
+  @Setter private int weight = 0;
 
   public BaseExecutionContext(ParsedLine parsedLine) {
     this.parsedLine = parsedLine;
@@ -52,9 +54,14 @@ public class BaseExecutionContext implements ExecutionContext {
   @Override
   public ExecutionContext copy() {
     BaseExecutionContext result = new BaseExecutionContext(parsedLine.copy());
-    result.parserClasses.putAll(parserClasses);
-    result.getCommandChain().addAll(commandChain);
-    result.getResult().addAll(this.result.stream().map(Result::copy).collect(Collectors.toList()));
-    return result;
+    return copy(result);
+  }
+
+  protected ExecutionContext copy(BaseExecutionContext clone) {
+    clone.getParserClasses().putAll(parserClasses);
+    clone.getCommandChain().addAll(commandChain);
+    clone.getResult().addAll(this.result.stream().map(Result::copy).collect(Collectors.toList()));
+    clone.setWeight(weight);
+    return clone;
   }
 }

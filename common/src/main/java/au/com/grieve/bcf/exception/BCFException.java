@@ -21,15 +21,28 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.exception;
 
-public interface CompletionContext extends ParserContext {
+public class BCFException extends Exception {
 
-  /**
-   * Return a copy of ourselves
-   *
-   * @return Copy
-   */
-  @Override
-  CompletionContext copy();
+  public BCFException() {
+    super();
+  }
+
+  public BCFException(String message) {
+    super(message);
+  }
+
+  public BCFException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public BCFException(Throwable cause) {
+    super(cause);
+  }
+
+  protected BCFException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }

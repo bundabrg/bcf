@@ -33,11 +33,11 @@ import au.com.grieve.bcf.ExecutionError;
 import au.com.grieve.bcf.ParserChain;
 import au.com.grieve.bcf.Result;
 import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserChainException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.framework.annotation.annotations.Arg;
 import au.com.grieve.bcf.framework.annotation.annotations.Default;
 import au.com.grieve.bcf.framework.annotation.annotations.Error;
-import au.com.grieve.bcf.impl.error.InputExpected;
 import au.com.grieve.bcf.impl.error.MissingRequired;
 import au.com.grieve.bcf.impl.execution.DefaultExecutionCandidate;
 import au.com.grieve.bcf.impl.framework.base.BaseCommand;
@@ -127,13 +127,8 @@ public class AnnotationCommand extends BaseCommand {
       ExecutionContext currentContext = context.copy();
       try {
         p.parse(currentContext, result);
-      } catch (EndOfLineException e) {
-        // Ran out of input to satisfy this chain
-        errors.add(new BaseExecutionError(currentContext.getParsedLine(), new InputExpected()));
-        continue;
-      } catch (ParserSyntaxException e) {
-        // Error has occurred
-        errors.add(new BaseExecutionError(e.getLine(), e.getError()));
+      } catch (ParserChainException e) {
+        errors.add(new BaseExecutionError(e.getLine(), e.getError(), e.getWeight()));
         continue;
       }
 
@@ -177,13 +172,8 @@ public class AnnotationCommand extends BaseCommand {
       ExecutionContext currentContext = context.copy();
       try {
         parserChain.parse(currentContext, result);
-      } catch (EndOfLineException e) {
-        // Ran out of input to satisfy this chain
-        errors.add(new BaseExecutionError(currentContext.getParsedLine(), new InputExpected()));
-        continue;
-      } catch (ParserSyntaxException e) {
-        // Error has occurred
-        errors.add(new BaseExecutionError(e.getLine(), e.getError()));
+      } catch (ParserChainException e) {
+        errors.add(new BaseExecutionError(e.getLine(), e.getError(), e.getWeight()));
         continue;
       }
 
@@ -194,7 +184,7 @@ public class AnnotationCommand extends BaseCommand {
 
       currentContext.getResult().addAll(result);
 
-      // Check for required switches values
+      // Check for required switches values. This feels like it shouldn't be in this file
       boolean isError = false;
       for (SwitchParserResult r :
           currentContext.getResult().stream()
@@ -204,15 +194,18 @@ public class AnnotationCommand extends BaseCommand {
         if (!r.isComplete()) {
           try {
             r.setValue(r.getParser().parse(context, new DefaultParsedLine("")));
+            currentContext.setWeight(currentContext.getWeight() + 1);
           } catch (EndOfLineException e) {
             errors.add(
                 new BaseExecutionError(
-                    currentContext.getParsedLine().copy(),
+                    currentContext.getParsedLine(),
                     new MissingRequired(
-                        "-" + r.getParser().getParameters().get("switch").split("\\|")[0])));
+                        "-" + r.getParser().getParameters().get("switch").split("\\|")[0]),
+                    currentContext.getWeight()));
             isError = true;
           } catch (ParserSyntaxException e) {
-            errors.add(new BaseExecutionError(e.getLine(), e.getError()));
+            errors.add(
+                new BaseExecutionError(e.getLine(), e.getError(), currentContext.getWeight()));
             isError = true;
           }
         }
@@ -247,14 +240,9 @@ public class AnnotationCommand extends BaseCommand {
       List<Result> result = new ArrayList<>();
       try {
         getCommandData().getParserChain().parse(context, result);
-      } catch (EndOfLineException e) {
-        errors.add(new BaseExecutionError(context.getParsedLine(), new InputExpected()));
-
+      } catch (ParserChainException e) {
+        errors.add(new BaseExecutionError(e.getLine(), e.getError(), e.getWeight()));
         return getErrorExecutionCandidate(context, context.getParsedLine().getWordIndex(), errors);
-      } catch (ParserSyntaxException e) {
-        errors.add(new BaseExecutionError(e.getLine(), e.getError()));
-
-        return getErrorExecutionCandidate(context, e.getLine().getWordIndex(), errors);
       }
     }
 
@@ -317,7 +305,8 @@ public class AnnotationCommand extends BaseCommand {
       CompletionContext currentContext = context.copy();
       try {
         p.complete(currentContext, candidates);
-      } catch (EndOfLineException e) {
+      } catch (ParserChainException e) {
+        // Ignored for now
         continue;
       }
 
@@ -348,7 +337,8 @@ public class AnnotationCommand extends BaseCommand {
       CompletionContext currentContext = context.copy();
       try {
         parserChain.complete(currentContext, candidates);
-      } catch (EndOfLineException ignored) {
+      } catch (ParserChainException ignored) {
+        // Ignored for now
       }
     }
   }
@@ -362,7 +352,7 @@ public class AnnotationCommand extends BaseCommand {
         && getCommandData().getParserChain() != null) {
       try {
         getCommandData().getParserChain().complete(context, candidates);
-      } catch (EndOfLineException | IllegalArgumentException e) {
+      } catch (ParserChainException e) {
         return candidates;
       }
     }

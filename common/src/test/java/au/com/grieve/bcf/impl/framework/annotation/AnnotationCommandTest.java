@@ -488,7 +488,8 @@ class AnnotationCommandTest {
     CompletionContext ctx = defaultCompletionContext("");
     List<CompletionCandidateGroup> groups = c.complete(ctx);
 
-    assertEquals(0, groups.size());
+    assertEquals(1, groups.size());
+    assertEquals(3, groups.get(0).getCompletionCandidates().size());
   }
 
   @Test
@@ -497,7 +498,8 @@ class AnnotationCommandTest {
     CompletionContext ctx = defaultCompletionContext(" ");
     List<CompletionCandidateGroup> groups = c.complete(ctx);
 
-    assertEquals(0, groups.size());
+    assertEquals(1, groups.size());
+    assertEquals(3, groups.get(0).getCompletionCandidates().size());
   }
 
   @Test

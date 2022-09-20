@@ -21,15 +21,17 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.platform.terminalconsole.impl.command;
 
-public interface CompletionContext extends ParserContext {
+import au.com.grieve.bcf.ExecutionError;
+import au.com.grieve.bcf.framework.annotation.annotations.Error;
+import au.com.grieve.bcf.impl.framework.annotation.AnnotationCommand;
+import java.util.List;
 
-  /**
-   * Return a copy of ourselves
-   *
-   * @return Copy
-   */
-  @Override
-  CompletionContext copy();
+public class TerminalAnnotationCommand extends AnnotationCommand {
+  @Error
+  public void onError(List<ExecutionError> errors) {
+    // TODO
+    System.err.println(buildErrorMessage(errors));
+  }
 }

@@ -53,7 +53,7 @@ public abstract class Parser<RT> {
    */
   public abstract void complete(
       Context context, ParsedLine line, List<CompletionCandidateGroup> candidates)
-      throws EndOfLineException;
+      throws EndOfLineException, ParserSyntaxException;
 
   /**
    * Return a concrete object for the parsed input

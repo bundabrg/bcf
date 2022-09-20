@@ -21,15 +21,29 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.exception;
 
-public interface CompletionContext extends ParserContext {
+import au.com.grieve.bcf.CommandError;
+import au.com.grieve.bcf.ParsedLine;
+import lombok.Getter;
 
-  /**
-   * Return a copy of ourselves
-   *
-   * @return Copy
-   */
-  @Override
-  CompletionContext copy();
+@Getter
+public class ParserChainException extends BCFException {
+  private final ParsedLine line;
+  private final CommandError error;
+  private final int weight;
+
+  public ParserChainException(ParsedLine line, CommandError error, int weight, Throwable cause) {
+    super(error.toString(), cause);
+    this.line = line.copy();
+    this.error = error;
+    this.weight = weight;
+  }
+
+  public ParserChainException(ParsedLine line, CommandError error, int weight) {
+    super(error.toString());
+    this.line = line.copy();
+    this.error = error;
+    this.weight = weight;
+  }
 }
