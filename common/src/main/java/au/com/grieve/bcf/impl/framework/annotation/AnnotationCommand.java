@@ -66,7 +66,7 @@ import lombok.Getter;
 @Getter
 public class AnnotationCommand extends BaseCommand {
   private final List<ParserChain> classParserChains = new ArrayList<>();
-  private final Map<ParserChain, Method> methodParserChains = new HashMap<>();
+  private final Map<Method, List<ParserChain>> methodParserChains = new HashMap<>();
   private final Method defaultMethod;
   private final Method errorMethod;
   private final CommandData commandData;
@@ -99,9 +99,11 @@ public class AnnotationCommand extends BaseCommand {
 
     // Method Arguments
     for (Method method : getClass().getMethods()) {
-      for (Arg arg : method.getAnnotationsByType(Arg.class)) {
-        methodParserChains.put(new StringParserChain(String.join(" ", arg.value())), method);
-      }
+      methodParserChains.put(
+          method,
+          Arrays.stream(method.getAnnotationsByType(Arg.class))
+              .map(a -> new StringParserChain(String.join(" ", a.value())))
+              .collect(Collectors.toList()));
     }
 
     // Check if we have special Methods
@@ -142,7 +144,7 @@ public class AnnotationCommand extends BaseCommand {
           getDefaultExecutionCandidate(
               currentContext, currentContext.getParsedLine().getWordIndex()));
 
-      executeMethod(currentContext, candidates, errors);
+      executeMethods(currentContext, candidates, errors);
       executeChildren(currentContext, candidates, errors);
     }
   }
@@ -157,14 +159,24 @@ public class AnnotationCommand extends BaseCommand {
     }
   }
 
-  protected void executeMethod(
+  protected void executeMethods(
       ExecutionContext context, List<ExecutionCandidate> candidates, List<ExecutionError> errors) {
+    for (Method method : methodParserChains.keySet()) {
+      executeMethod(context, method, candidates, errors);
+    }
+  }
 
-    for (Map.Entry<ParserChain, Method> item : methodParserChains.entrySet()) {
+  protected void executeMethod(
+      ExecutionContext context,
+      Method method,
+      List<ExecutionCandidate> candidates,
+      List<ExecutionError> errors) {
+
+    for (ParserChain parserChain : methodParserChains.get(method)) {
       List<Result> result = new ArrayList<>();
       ExecutionContext currentContext = context.copy();
       try {
-        item.getKey().parse(currentContext, result);
+        parserChain.parse(currentContext, result);
       } catch (EndOfLineException e) {
         // Ran out of input to satisfy this chain
         errors.add(new BaseExecutionError(currentContext.getParsedLine(), new InputExpected()));
@@ -213,7 +225,7 @@ public class AnnotationCommand extends BaseCommand {
       candidates.add(
           new DefaultExecutionCandidate(
               this,
-              item.getValue(),
+              method,
               currentContext.getParsedLine().getWordIndex() + 1,
               Stream.concat(
                       currentContext
@@ -221,14 +233,6 @@ public class AnnotationCommand extends BaseCommand {
                           .getPrependArguments()
                           .stream(),
                       currentContext.getResult().stream()
-                          //                          .filter(
-                          //                              r -> {
-                          //                                // Make sure we are able to return a
-                          // value.
-                          //                                // Needed for switches.
-                          //                                r.getValue();
-                          //                                return true;
-                          //                              })
                           .filter(r -> !r.isSuppressed())
                           .map(Result::getValue))
                   .collect(Collectors.toList())));
@@ -268,7 +272,7 @@ public class AnnotationCommand extends BaseCommand {
       // Add a default at this level
       candidates.add(getDefaultExecutionCandidate(context, context.getParsedLine().getWordIndex()));
 
-      executeMethod(context, candidates, localErrors);
+      executeMethods(context, candidates, localErrors);
       executeChildren(context, candidates, localErrors);
     }
 
@@ -317,7 +321,7 @@ public class AnnotationCommand extends BaseCommand {
         continue;
       }
 
-      completeMethod(currentContext, candidates);
+      completeMethods(currentContext, candidates);
       completeChildren(currentContext, candidates);
     }
   }
@@ -331,12 +335,19 @@ public class AnnotationCommand extends BaseCommand {
     }
   }
 
-  protected void completeMethod(
+  protected void completeMethods(
       CompletionContext context, List<CompletionCandidateGroup> candidates) {
-    for (Map.Entry<ParserChain, Method> item : methodParserChains.entrySet()) {
+    for (Method method : methodParserChains.keySet()) {
+      completeMethod(context, method, candidates);
+    }
+  }
+
+  protected void completeMethod(
+      CompletionContext context, Method method, List<CompletionCandidateGroup> candidates) {
+    for (ParserChain parserChain : methodParserChains.get(method)) {
       CompletionContext currentContext = context.copy();
       try {
-        item.getKey().complete(currentContext, candidates);
+        parserChain.complete(currentContext, candidates);
       } catch (EndOfLineException ignored) {
       }
     }
@@ -359,7 +370,7 @@ public class AnnotationCommand extends BaseCommand {
     if (classParserChains.size() > 0) {
       completeClass(context, candidates);
     } else {
-      completeMethod(context, candidates);
+      completeMethods(context, candidates);
       completeChildren(context, candidates);
     }
 
