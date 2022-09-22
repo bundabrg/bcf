@@ -24,13 +24,13 @@
 package au.com.grieve.bcf.impl.parser;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
-import au.com.grieve.bcf.Context;
 import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
-import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
-import au.com.grieve.bcf.impl.error.InvalidFormat;
+import au.com.grieve.bcf.impl.completion.StaticCompletionCandidateGroup;
+import au.com.grieve.bcf.impl.error.InvalidFormatError;
 import au.com.grieve.bcf.impl.error.NumberTooBigError;
 import au.com.grieve.bcf.impl.error.NumberTooSmallError;
 import java.util.List;
@@ -40,13 +40,13 @@ import java.util.stream.IntStream;
 import lombok.ToString;
 
 @ToString(callSuper = true)
-public class IntegerParser extends BaseParser<Integer> {
+public class IntegerParser extends BaseParser<Object, Integer> {
   public IntegerParser(Map<String, String> parameters) {
     super(parameters);
   }
 
   @Override
-  protected Integer doParse(Context context, ParsedLine line)
+  protected Integer doParse(ParserContext<Object> context, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException {
     String input = line.next();
     int result;
@@ -54,7 +54,7 @@ public class IntegerParser extends BaseParser<Integer> {
     try {
       result = Integer.parseInt(input);
     } catch (IllegalArgumentException e) {
-      throw new ParserSyntaxException(line, new InvalidFormat("number"));
+      throw new ParserSyntaxException(line, new InvalidFormatError("number"));
     }
 
     if (getParameters().get("max") != null
@@ -72,7 +72,7 @@ public class IntegerParser extends BaseParser<Integer> {
 
   @Override
   protected void doComplete(
-      Context context, ParsedLine line, List<CompletionCandidateGroup> candidates)
+      ParserContext<Object> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
     String input = line.getCurrentWord();
 
@@ -81,7 +81,8 @@ public class IntegerParser extends BaseParser<Integer> {
       int min = Integer.parseInt(getParameters().get("min"));
       int max = Integer.parseInt(getParameters().get("max"));
 
-      ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
+      CompletionCandidateGroup group =
+          new StaticCompletionCandidateGroup(input, getParameters().get("description"));
       group
           .getCompletionCandidates()
           .addAll(
@@ -92,7 +93,8 @@ public class IntegerParser extends BaseParser<Integer> {
                   .collect(Collectors.toList()));
       candidates.add(group);
     } else {
-      ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
+      CompletionCandidateGroup group =
+          new StaticCompletionCandidateGroup(input, getParameters().get("description"));
       group
           .getCompletionCandidates()
           .add(

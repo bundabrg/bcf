@@ -23,41 +23,18 @@
 
 package au.com.grieve.bcf;
 
-import java.util.List;
-import java.util.Map;
-
-public interface ParserContext extends Context {
+public interface ParserContext<DATA> {
   /**
-   * Return Parser classes
+   * Return data object
    *
-   * @return parser classes
+   * @return data object
    */
-  Map<String, Class<? extends Parser<?>>> getParserClasses();
+  DATA getData();
 
   /**
-   * Return the chain of command classes so far
+   * Return a copy of ourselves
    *
-   * @return List of Commands
+   * @return copy
    */
-  List<Command> getCommandChain();
-
-  /**
-   * Return the parsed line so far
-   *
-   * @return Parsed Line
-   */
-  ParsedLine getParsedLine();
-
-  /**
-   * Return the weight so far
-   *
-   * @return weight
-   */
-  int getWeight();
-
-  /** Set the weight */
-  void setWeight(int weight);
-
-  @Override
-  ParserContext copy();
+  ParserContext<DATA> copy();
 }

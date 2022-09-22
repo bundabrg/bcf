@@ -23,27 +23,24 @@
 
 package au.com.grieve.bcf;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
+public interface StandaloneCommandManager<DATA> extends CommandManager<DATA> {
+  //  /**
+  //   * Provide completion candidates for the input
+  //   *
+  //   * @param line The input
+  //   */
+  //  List<CompletionCandidateGroup> complete(String line, DATA data);
+  //
+  //  List<CompletionCandidateGroup> complete(ParsedLine line, DATA data);
+  //
+  //  /**
+  //   * Return the best execution candidate for the parsed input
+  //   *
+  //   * @param line The input
+  //   * @return best execution method
+  //   */
+  //  Executor<Object> execute(String line, DATA data);
+  //
+  //  Executor<Object> execute(ParsedLine line, DATA data);
 
-  /**
-   * Get name of error
-   *
-   * @return error name
-   */
-  String getName();
-
-  /**
-   * Return a string representation of this error
-   *
-   * @return Error string
-   */
-  String toString();
-
-  /**
-   * Merge another error into this one
-   *
-   * @param error Error to merge
-   */
-  void merge(CommandError error);
 }

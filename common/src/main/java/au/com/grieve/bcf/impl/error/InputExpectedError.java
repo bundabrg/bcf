@@ -21,29 +21,24 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.error;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
+import au.com.grieve.bcf.CommandError;
+import lombok.Getter;
 
-  /**
-   * Get name of error
-   *
-   * @return error name
-   */
-  String getName();
+@Getter
+public class InputExpectedError implements CommandError {
 
-  /**
-   * Return a string representation of this error
-   *
-   * @return Error string
-   */
-  String toString();
+  @Override
+  public String getName() {
+    return "input_expected";
+  }
 
-  /**
-   * Merge another error into this one
-   *
-   * @param error Error to merge
-   */
-  void merge(CommandError error);
+  @Override
+  public void merge(CommandError error) {}
+
+  @Override
+  public String toString() {
+    return "More input is expected";
+  }
 }

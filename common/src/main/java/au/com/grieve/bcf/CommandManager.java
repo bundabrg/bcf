@@ -23,16 +23,14 @@
 
 package au.com.grieve.bcf;
 
-import java.util.List;
-
-public interface CommandManager {
+public interface CommandManager<DATA> {
 
   /**
    * Register a command
    *
    * @param command Command to register
    */
-  void registerCommand(Command command);
+  void registerCommand(Command<DATA> command);
 
   /**
    * Register a Sub-Command to all existing instances of a parent class
@@ -40,24 +38,5 @@ public interface CommandManager {
    * @param parent Parent command class
    * @param command Command to register
    */
-  void registerCommand(Class<? extends Command> parent, Command command);
-
-  /**
-   * Provide completion candidates for the input
-   *
-   * @param line The input
-   */
-  List<CompletionCandidateGroup> complete(String line);
-
-  List<CompletionCandidateGroup> complete(ParsedLine line);
-
-  /**
-   * Return the best execution candidate for the parsed input
-   *
-   * @param line The input
-   * @return best execution method
-   */
-  ExecutionCandidate execute(String line, Object... args);
-
-  ExecutionCandidate execute(ParsedLine line, Object... args);
+  void registerCommand(Class<? extends Command<DATA>> parent, Command<DATA> command);
 }

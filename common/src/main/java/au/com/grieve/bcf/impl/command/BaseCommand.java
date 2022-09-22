@@ -21,29 +21,21 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.command;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
+import au.com.grieve.bcf.Command;
+import au.com.grieve.bcf.ParserTree;
+import java.util.HashSet;
+import java.util.Set;
+import lombok.Getter;
 
-  /**
-   * Get name of error
-   *
-   * @return error name
-   */
-  String getName();
+@Getter
+public abstract class BaseCommand<DATA> implements Command<DATA> {
+  private final Set<ParserTree<DATA>> children = new HashSet<>();
 
-  /**
-   * Return a string representation of this error
-   *
-   * @return Error string
-   */
-  String toString();
-
-  /**
-   * Merge another error into this one
-   *
-   * @param error Error to merge
-   */
-  void merge(CommandError error);
+  @Override
+  public Command<DATA> then(ParserTree<DATA> childRoot) {
+    children.add(childRoot);
+    return this;
+  }
 }

@@ -21,29 +21,37 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.error;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
+import au.com.grieve.bcf.CommandError;
+import java.util.HashSet;
+import java.util.Set;
+import lombok.Getter;
 
-  /**
-   * Get name of error
-   *
-   * @return error name
-   */
-  String getName();
+@Getter
+public class InvalidFormatError implements CommandError {
+  private final Set<String> format = new HashSet<>();
 
-  /**
-   * Return a string representation of this error
-   *
-   * @return Error string
-   */
-  String toString();
+  public InvalidFormatError(String format) {
+    this.format.add(format);
+  }
 
-  /**
-   * Merge another error into this one
-   *
-   * @param error Error to merge
-   */
-  void merge(CommandError error);
+  @Override
+  public String getName() {
+    return "invalid_format";
+  }
+
+  @Override
+  public void merge(CommandError error) {
+    assert (error instanceof InvalidFormatError);
+    this.format.addAll(((InvalidFormatError) error).getFormat());
+  }
+
+  @Override
+  public String toString() {
+    return "Invalid format, should be"
+        + (format.size() > 0 ? " one of" : "")
+        + ": "
+        + String.join(", ", format);
+  }
 }

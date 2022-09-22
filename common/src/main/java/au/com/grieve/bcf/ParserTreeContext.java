@@ -23,27 +23,44 @@
 
 package au.com.grieve.bcf;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
+import java.util.List;
+
+public interface ParserTreeContext<DATA> extends ParserContext<DATA> {
+  /**
+   * Return the weight so far
+   *
+   * @return weight
+   */
+  int getWeight();
+
+  /** Set the weight */
+  void setWeight(int weight);
 
   /**
-   * Get name of error
+   * Return the results, so far
    *
-   * @return error name
+   * @return list of results
    */
-  String getName();
+  List<Object> getResults();
 
   /**
-   * Return a string representation of this error
+   * Return the parsed line so far
    *
-   * @return Error string
+   * @return parsed line
    */
-  String toString();
+  ParsedLine getLine();
 
   /**
-   * Merge another error into this one
+   * Return the list of errors, so far
    *
-   * @param error Error to merge
+   * @return list of errors
    */
-  void merge(CommandError error);
+  List<CommandErrorCandidate> getErrors();
+
+  /**
+   * Return a copy of ourselves
+   *
+   * @return copy
+   */
+  ParserTreeContext<DATA> copy();
 }

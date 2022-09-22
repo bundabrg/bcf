@@ -23,27 +23,39 @@
 
 package au.com.grieve.bcf;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
-
+public interface CommandRootData<DATA> {
   /**
-   * Get name of error
+   * Get the name of the command
    *
-   * @return error name
+   * @return command name
    */
   String getName();
 
   /**
-   * Return a string representation of this error
+   * Get any aliases of the command
    *
-   * @return Error string
+   * @return aliases to command
    */
-  String toString();
+  String[] getAliases();
 
   /**
-   * Merge another error into this one
+   * Get the description of the command
    *
-   * @param error Error to merge
+   * @return command description
    */
-  void merge(CommandError error);
+  String getDescription();
+
+  /**
+   * Get Command RootNode
+   *
+   * @return root node
+   */
+  ParserTree<DATA> getRoot();
+
+  /**
+   * Get input to prepend to supplied input
+   *
+   * @return input to prepend
+   */
+  String getInput();
 }

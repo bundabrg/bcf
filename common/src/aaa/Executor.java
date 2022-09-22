@@ -23,27 +23,10 @@
 
 package au.com.grieve.bcf;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
-
-  /**
-   * Get name of error
-   *
-   * @return error name
-   */
-  String getName();
-
-  /**
-   * Return a string representation of this error
-   *
-   * @return Error string
-   */
-  String toString();
-
-  /**
-   * Merge another error into this one
-   *
-   * @param error Error to merge
-   */
-  void merge(CommandError error);
+/**
+ * Provides the ability to execute something
+ */
+@FunctionalInterface
+public interface Executor<RT> {
+  RT run(Object ... args);
 }

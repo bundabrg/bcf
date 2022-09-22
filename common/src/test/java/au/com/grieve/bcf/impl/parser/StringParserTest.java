@@ -27,8 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
-import au.com.grieve.bcf.Context;
 import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
@@ -46,7 +46,6 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine("");
 
     assertThrows(EndOfLineException.class, () -> stringParser.parse(new DummyContext(), line));
-    assertEquals(0, line.getWordIndex());
   }
 
   @Test
@@ -58,7 +57,6 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine("1");
 
     assertEquals("1", stringParser.parse(new DummyContext(), line));
-    assertEquals(1, line.getWordIndex());
   }
 
   @Test
@@ -67,7 +65,6 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine("1 a");
 
     assertEquals("1", stringParser.parse(new DummyContext(), line));
-    assertEquals(1, line.getWordIndex());
   }
 
   @Test
@@ -76,7 +73,6 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine("a 1");
 
     assertEquals("a", stringParser.parse(new DummyContext(), line));
-    assertEquals(1, line.getWordIndex());
   }
 
   @Test
@@ -87,7 +83,6 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine("option1");
 
     assertEquals("option1", sp1.parse(new DummyContext(), line));
-    assertEquals(1, line.getWordIndex());
   }
 
   @Test
@@ -98,7 +93,6 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine("bob");
 
     assertThrows(ParserSyntaxException.class, () -> sp1.parse(new DummyContext(), line));
-    assertEquals(0, line.getWordIndex());
   }
 
   @Test
@@ -109,13 +103,9 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine("option1 option2 option3 bob");
 
     assertEquals("option1", sp2.parse(new DummyContext(), line));
-    assertEquals(1, line.getWordIndex());
     assertEquals("option2", sp2.parse(new DummyContext(), line));
-    assertEquals(2, line.getWordIndex());
     assertEquals("option3", sp2.parse(new DummyContext(), line));
-    assertEquals(3, line.getWordIndex());
     assertThrows(ParserSyntaxException.class, () -> sp2.parse(new DummyContext(), line));
-    assertEquals(3, line.getWordIndex());
   }
 
   @Test
@@ -208,11 +198,16 @@ class StringParserTest {
     assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
   }
 
-  static class DummyContext implements Context {
+  static class DummyContext implements ParserContext<Object> {
 
     @Override
-    public Context copy() {
+    public Object getData() {
       return null;
+    }
+
+    @Override
+    public ParserContext<Object> copy() {
+      return new DoubleParserTest.DummyContext();
     }
   }
 }

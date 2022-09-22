@@ -23,39 +23,13 @@
 
 package au.com.grieve.bcf;
 
-import java.util.List;
-
 /** Command - All commands inherit from this class */
-public interface Command {
+public interface Command<DATA> {
 
   /**
-   * Provide completion candidates for the input
+   * Add child parser tree
    *
-   * @param context Context
+   * @param childRoot Child Root Node
    */
-  List<CompletionCandidateGroup> complete(CompletionContext context);
-
-  /**
-   * Return the best execution candidate for the parsed input
-   *
-   * @param context Context
-   * @return best execution method
-   */
-  ExecutionCandidate execute(ExecutionContext context);
-
-  ExecutionCandidate execute(ExecutionContext context, List<ExecutionError> errors);
-
-  /**
-   * Add a child command to this one
-   *
-   * @param childCommand Child Command
-   */
-  void addChild(Command childCommand);
-
-  /**
-   * Return the data for Command
-   *
-   * @return data for command
-   */
-  CommandData getCommandData();
+  Command<DATA> then(ParserTree<DATA> childRoot);
 }

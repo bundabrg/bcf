@@ -23,39 +23,21 @@
 
 package au.com.grieve.bcf;
 
-public interface CommandData {
-  /**
-   * Get the name of the command
-   *
-   * @return command name
-   */
-  String getName();
+import java.util.List;
+
+public interface CommandData<DATA> {
 
   /**
-   * Get any aliases of the command
+   * Return any CommandRoot Data
    *
-   * @return aliases to command
+   * @return CommandRootData
    */
-  String[] getAliases();
+  List<CommandRootData<DATA>> getCommandRootData();
 
   /**
-   * Get the description of the command
+   * Get root node
    *
-   * @return command description
+   * @return root node
    */
-  String getDescription();
-
-  /**
-   * Get parserChain to prepend to any chains
-   *
-   * @return parserChain to prepend
-   */
-  ParserChain getParserChain();
-
-  /**
-   * Get input to prepend to supplied input
-   *
-   * @return input to prepend
-   */
-  String getInput();
+  ParserTree<DATA> getRoot();
 }

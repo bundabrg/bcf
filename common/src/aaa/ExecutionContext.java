@@ -23,27 +23,29 @@
 
 package au.com.grieve.bcf;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
+import java.util.List;
+
+public interface ExecutionContext extends ParserContext {
+
+//  /**
+//   * Return a list of arguments to prepend to the result
+//   *
+//   * @return List of arguments
+//   */
+//  List<Object> getPrependArguments();
 
   /**
-   * Get name of error
+   * Return the result so far
    *
-   * @return error name
+   * @return List of parameters
    */
-  String getName();
+  List<Result> getResult();
 
   /**
-   * Return a string representation of this error
+   * Return a copy of ourselves
    *
-   * @return Error string
+   * @return Copy
    */
-  String toString();
-
-  /**
-   * Merge another error into this one
-   *
-   * @param error Error to merge
-   */
-  void merge(CommandError error);
+  @Override
+  ExecutionContext copy();
 }

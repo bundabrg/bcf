@@ -21,29 +21,16 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.execution;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
+import au.com.grieve.bcf.ExecutionCandidate;
+import au.com.grieve.bcf.Executor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-  /**
-   * Get name of error
-   *
-   * @return error name
-   */
-  String getName();
-
-  /**
-   * Return a string representation of this error
-   *
-   * @return Error string
-   */
-  String toString();
-
-  /**
-   * Merge another error into this one
-   *
-   * @param error Error to merge
-   */
-  void merge(CommandError error);
+@AllArgsConstructor
+@Getter
+public class NodeExecutionCandidate implements ExecutionCandidate<Object> {
+  private final Executor<Object> executor;
+  private final int weight;
 }

@@ -24,22 +24,26 @@
 package au.com.grieve.bcf.impl.parser;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
-import au.com.grieve.bcf.Context;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
+import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
-import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.Getter;
 import lombok.ToString;
 
+@Getter
 @ToString(callSuper = true)
-public abstract class BaseParser<RT> extends Parser<RT> {
+public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
+  private final Map<String, String> parameters = new HashMap<>();
+
   public BaseParser(Map<String, String> parameters) {
-    super(parameters);
+    this.parameters.putAll(parameters);
   }
 
   /**
@@ -49,13 +53,13 @@ public abstract class BaseParser<RT> extends Parser<RT> {
    * @param candidates List of candidates
    */
   @Override
-  public void complete(Context context, ParsedLine line, List<CompletionCandidateGroup> candidates)
+  public void complete(
+      ParserContext<DATA> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
-    ParsedLine currentLine = line.copy();
+
     List<CompletionCandidateGroup> groups = new ArrayList<>();
     try {
-      doComplete(context, currentLine, groups);
-      line.setWordIndex(currentLine.getWordIndex());
+      doComplete(context, line, groups);
     } finally {
       // Only add groups that actually have any candidates
       candidates.addAll(
@@ -66,7 +70,7 @@ public abstract class BaseParser<RT> extends Parser<RT> {
   }
 
   /**
-   * Call doParse and make sure that errors don't mutate line
+   * Call doParse
    *
    * @param context The Context
    * @return Return Object
@@ -74,20 +78,21 @@ public abstract class BaseParser<RT> extends Parser<RT> {
    * @throws IllegalArgumentException Invalid input
    */
   @Override
-  public RT parse(Context context, ParsedLine line)
+  public RT parse(ParserContext<DATA> context, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException {
-    ParsedLine currentLine = line.copy();
     RT result;
     try {
-      result = doParse(context, currentLine);
+      result = doParse(context, line);
     } catch (EndOfLineException e) {
       // Handle default
-      if (getParameters().getOrDefault("required", "true").equals("false")
-          || getParameters().containsKey("default")) {
+      if (parameters.getOrDefault("required", "true").equals("false")
+          || parameters.containsKey("default")) {
 
-        String defaultValue = getParameters().get("default");
+        String defaultValue = parameters.get("default");
         if (defaultValue != null) {
-          result = doParse(context, new DefaultParsedLine(defaultValue));
+          ParsedLine lineCopy = line.copy();
+          lineCopy.insert(defaultValue);
+          result = doParse(context, lineCopy);
         } else {
           result = null;
         }
@@ -96,7 +101,6 @@ public abstract class BaseParser<RT> extends Parser<RT> {
       }
     }
 
-    line.setWordIndex(currentLine.getWordIndex());
     return result;
   }
 
@@ -108,10 +112,10 @@ public abstract class BaseParser<RT> extends Parser<RT> {
    * @throws EndOfLineException Ran out of input
    * @throws ParserSyntaxException Invalid input
    */
-  protected abstract RT doParse(Context context, ParsedLine line)
+  protected abstract RT doParse(ParserContext<DATA> context, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException;
 
   protected abstract void doComplete(
-      Context context, ParsedLine line, List<CompletionCandidateGroup> candidates)
+      ParserContext<DATA> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException;
 }

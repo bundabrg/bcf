@@ -21,29 +21,43 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.error;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
+import au.com.grieve.bcf.CommandError;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import lombok.Getter;
 
-  /**
-   * Get name of error
-   *
-   * @return error name
-   */
-  String getName();
+@Getter
+public class MissingRequiredError implements CommandError {
+  private final Set<String> missing = new HashSet<>();
 
-  /**
-   * Return a string representation of this error
-   *
-   * @return Error string
-   */
-  String toString();
+  public MissingRequiredError(Collection<String> missing) {
+    this.missing.addAll(missing);
+  }
 
-  /**
-   * Merge another error into this one
-   *
-   * @param error Error to merge
-   */
-  void merge(CommandError error);
+  public MissingRequiredError(String missing) {
+    this.missing.add(missing);
+  }
+
+  @Override
+  public String getName() {
+    return "missing_required";
+  }
+
+  @Override
+  public void merge(CommandError error) {
+    assert (error instanceof MissingRequiredError);
+    this.missing.addAll(((MissingRequiredError) error).getMissing());
+  }
+
+  @Override
+  public String toString() {
+    if (missing.size() == 1) {
+      return "A required parameter is missing: " + missing.stream().findFirst().orElse(null);
+    }
+
+    return "The following required parameters are missing: " + String.join(", ", missing);
+  }
 }

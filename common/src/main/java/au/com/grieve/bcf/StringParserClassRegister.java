@@ -23,27 +23,17 @@
 
 package au.com.grieve.bcf;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
+import java.util.Map;
+
+/** Provides a list of String to Class mappings for Parsers */
+public interface StringParserClassRegister<DATA> {
 
   /**
-   * Get name of error
+   * Create a Parser based upon the name
    *
-   * @return error name
+   * @param name Name of registered parser
+   * @param parameters Parameters
+   * @return Parser Object
    */
-  String getName();
-
-  /**
-   * Return a string representation of this error
-   *
-   * @return Error string
-   */
-  String toString();
-
-  /**
-   * Merge another error into this one
-   *
-   * @param error Error to merge
-   */
-  void merge(CommandError error);
+  Parser<DATA, ?> createParser(String name, Map<String, String> parameters);
 }

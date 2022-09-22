@@ -21,29 +21,23 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.parsertree;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
+import au.com.grieve.bcf.ParserTreeContext;
+import au.com.grieve.bcf.ParserTreeHandlerCandidate;
+import au.com.grieve.bcf.exception.EndOfLineException;
 
-  /**
-   * Get name of error
-   *
-   * @return error name
-   */
-  String getName();
+/**
+ * This node does not count towards weight when parsing its children
+ *
+ * @param <DATA>
+ */
+public class NullNode<DATA> extends BaseParserTree<DATA> {
 
-  /**
-   * Return a string representation of this error
-   *
-   * @return Error string
-   */
-  String toString();
-
-  /**
-   * Merge another error into this one
-   *
-   * @param error Error to merge
-   */
-  void merge(CommandError error);
+  @Override
+  public ParserTreeHandlerCandidate<DATA> parse(ParserTreeContext<DATA> context)
+      throws EndOfLineException {
+    context.setWeight(context.getWeight() - 1);
+    return super.parse(context);
+  }
 }

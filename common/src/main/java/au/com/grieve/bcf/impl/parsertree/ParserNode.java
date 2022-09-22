@@ -21,17 +21,47 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.parsertree;
 
+import au.com.grieve.bcf.Parser;
+import au.com.grieve.bcf.ParserTreeContext;
+import au.com.grieve.bcf.ParserTreeHandlerCandidate;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
-import java.util.List;
+import au.com.grieve.bcf.impl.error.DefaultErrorCandidate;
+import lombok.Getter;
+import lombok.ToString;
 
-public interface Parser<DATA, RT> {
-  RT parse(ParserContext<DATA> context, ParsedLine line)
-      throws EndOfLineException, ParserSyntaxException;
+/**
+ * StringParserTree uses a string argument to define the parsers to use. The parsers are later
+ * provided during the parsing stage
+ *
+ * @param <DATA>
+ */
+@Getter
+@ToString
+public class ParserNode<DATA> extends BaseParserTree<DATA> {
 
-  void complete(
-      ParserContext<DATA> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
-      throws EndOfLineException, ParserSyntaxException;
+  private final Parser<DATA, ?> parser;
+
+  public ParserNode(Parser<DATA, ?> parser) {
+    this.parser = parser;
+  }
+
+  @Override
+  public ParserTreeHandlerCandidate<DATA> parse(ParserTreeContext<DATA> context)
+      throws EndOfLineException {
+    try {
+      context.getResults().add(parser.parse(context, context.getLine()));
+    } catch (ParserSyntaxException e) {
+      context
+          .getErrors()
+          .add(new DefaultErrorCandidate(e.getLine(), e.getError(), context.getWeight()));
+      return errorHandler != null
+          ? new ParserTreeHandlerCandidate<>(context, errorHandler, context.getWeight())
+          : null;
+    }
+
+    return super.parse(context);
+  }
 }

@@ -23,27 +23,44 @@
 
 package au.com.grieve.bcf;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
+import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.exception.ParserSyntaxException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import lombok.Getter;
+import lombok.ToString;
+
+/**
+ * Converts input into objects based upon what the parser is expecting. Also provides completion by
+ * providing candidates.
+ */
+@Getter
+@ToString
+public abstract class Parser<RT> {
+
+  private final Map<String, String> parameters = new HashMap<>();
+
+  public Parser(Map<String, String> parameters) {
+    this.parameters.putAll(parameters);
+  }
 
   /**
-   * Get name of error
+   * Provide completion candidates for the input
    *
-   * @return error name
+   * @param context The context
+   * @param candidates List of candidates
    */
-  String getName();
+  public abstract void complete(
+      ParserContext<?> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
+      throws EndOfLineException, ParserSyntaxException;
 
   /**
-   * Return a string representation of this error
+   * Return a concrete object for the parsed input
    *
-   * @return Error string
+   * @param context The context
+   * @return returned object
    */
-  String toString();
-
-  /**
-   * Merge another error into this one
-   *
-   * @param error Error to merge
-   */
-  void merge(CommandError error);
+  public abstract RT parse(ParserContext<?> context, ParsedLine line)
+      throws EndOfLineException, ParserSyntaxException;
 }

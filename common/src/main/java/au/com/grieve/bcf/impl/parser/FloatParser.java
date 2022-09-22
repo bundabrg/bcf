@@ -24,13 +24,13 @@
 package au.com.grieve.bcf.impl.parser;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
-import au.com.grieve.bcf.Context;
 import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
-import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
-import au.com.grieve.bcf.impl.error.InvalidFormat;
+import au.com.grieve.bcf.impl.completion.StaticCompletionCandidateGroup;
+import au.com.grieve.bcf.impl.error.InvalidFormatError;
 import au.com.grieve.bcf.impl.error.NumberTooBigError;
 import au.com.grieve.bcf.impl.error.NumberTooSmallError;
 import java.util.List;
@@ -38,13 +38,13 @@ import java.util.Map;
 import lombok.ToString;
 
 @ToString(callSuper = true)
-public class FloatParser extends BaseParser<Float> {
+public class FloatParser extends BaseParser<Object, Float> {
   public FloatParser(Map<String, String> parameters) {
     super(parameters);
   }
 
   @Override
-  protected Float doParse(Context context, ParsedLine line)
+  protected Float doParse(ParserContext<Object> context, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException {
     String input = line.next();
     float result;
@@ -52,7 +52,7 @@ public class FloatParser extends BaseParser<Float> {
     try {
       result = Float.parseFloat(input);
     } catch (IllegalArgumentException e) {
-      throw new ParserSyntaxException(line, new InvalidFormat("floating point number"));
+      throw new ParserSyntaxException(line, new InvalidFormatError("floating point number"));
     }
 
     if (getParameters().get("max") != null
@@ -70,11 +70,12 @@ public class FloatParser extends BaseParser<Float> {
 
   @Override
   protected void doComplete(
-      Context context, ParsedLine line, List<CompletionCandidateGroup> candidates)
+      ParserContext<Object> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
     String input = line.getCurrentWord();
 
-    ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
+    CompletionCandidateGroup group =
+        new StaticCompletionCandidateGroup(input, getParameters().get("description"));
     group
         .getCompletionCandidates()
         .add(

@@ -23,27 +23,46 @@
 
 package au.com.grieve.bcf;
 
-/** Provides a generic way of creating and merging errors */
-public interface CommandError {
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+
+/** Contains a method to execute along with all its parameters */
+public interface OldExecutionCandidate {
+  /**
+   * Return the class instance the method is a member of
+   *
+   * @return Class of method
+   */
+  Object getInstance();
 
   /**
-   * Get name of error
+   * Return the method that will be executed
    *
-   * @return error name
+   * @return Method
    */
-  String getName();
+  Method getMethod();
 
   /**
-   * Return a string representation of this error
+   * Return list of parameters to be passed to the method
    *
-   * @return Error string
+   * @return List of parameters
    */
-  String toString();
+  List<Object> getParameters();
 
   /**
-   * Merge another error into this one
+   * Returns the weight of this Candidate. Heavier is better
    *
-   * @param error Error to merge
+   * @return weight
    */
-  void merge(CommandError error);
+  int getWeight();
+
+  /**
+   * Invoke the method, prepending passed in args then adding the stored parameters, filling in any
+   * missing parameters with null
+   *
+   * @param args Arguments to prepend to the parameters
+   * @return data from the method
+   */
+  Object invoke(Object... args) throws InvocationTargetException, IllegalAccessException;
 }

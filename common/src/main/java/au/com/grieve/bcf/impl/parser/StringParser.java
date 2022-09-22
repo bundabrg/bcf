@@ -24,12 +24,12 @@
 package au.com.grieve.bcf.impl.parser;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
-import au.com.grieve.bcf.Context;
 import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
-import au.com.grieve.bcf.impl.completion.ParserCompletionCandidateGroup;
+import au.com.grieve.bcf.impl.completion.StaticCompletionCandidateGroup;
 import au.com.grieve.bcf.impl.error.InvalidOptionError;
 import java.util.Arrays;
 import java.util.List;
@@ -38,13 +38,13 @@ import java.util.stream.Collectors;
 import lombok.ToString;
 
 @ToString(callSuper = true)
-public class StringParser extends BaseParser<String> {
+public class StringParser extends BaseParser<Object, String> {
   public StringParser(Map<String, String> parameters) {
     super(parameters);
   }
 
   @Override
-  protected String doParse(Context context, ParsedLine line)
+  protected String doParse(ParserContext<Object> context, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException {
     String result = line.next();
     if (getParameters().containsKey("options")) {
@@ -59,12 +59,13 @@ public class StringParser extends BaseParser<String> {
 
   @Override
   protected void doComplete(
-      Context context, ParsedLine line, List<CompletionCandidateGroup> candidates)
+      ParserContext<Object> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
     String input = line.getCurrentWord();
 
     if (getParameters().containsKey("options")) {
-      ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
+      CompletionCandidateGroup group =
+          new StaticCompletionCandidateGroup(input, getParameters().get("description"));
       group
           .getCompletionCandidates()
           .addAll(
@@ -73,7 +74,8 @@ public class StringParser extends BaseParser<String> {
                   .collect(Collectors.toList()));
       candidates.add(group);
     } else {
-      ParserCompletionCandidateGroup group = new ParserCompletionCandidateGroup(this, input);
+      CompletionCandidateGroup group =
+          new StaticCompletionCandidateGroup(input, getParameters().get("description"));
       group
           .getCompletionCandidates()
           .add(
