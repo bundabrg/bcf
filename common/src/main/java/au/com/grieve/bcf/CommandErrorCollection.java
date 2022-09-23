@@ -21,42 +21,68 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.parsertree;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.Parser;
-import au.com.grieve.bcf.ParserTreeContext;
-import au.com.grieve.bcf.ParserTreeHandlerCandidate;
-import au.com.grieve.bcf.exception.EndOfLineException;
-import au.com.grieve.bcf.exception.ParserSyntaxException;
-import lombok.Getter;
-import lombok.ToString;
+import java.util.Collection;
+import java.util.stream.Stream;
 
-/**
- * StringParserTree uses a string argument to define the parsers to use. The parsers are later
- * provided during the parsing stage
- *
- * @param <DATA>
- */
-@Getter
-@ToString
-public class ParserNode<DATA> extends BaseParserTree<DATA> {
+public interface CommandErrorCollection {
 
-  private final Parser<DATA, ?> parser;
+  /**
+   * Add a new error
+   *
+   * @param error Error to add
+   * @param line Current line
+   * @param weight weight of error
+   */
+  void add(CommandError error, ParsedLine line, int weight);
 
-  public ParserNode(Parser<DATA, ?> parser) {
-    this.parser = parser;
-  }
+  void addAll(CommandErrorCollection collection);
 
-  @Override
-  public ParserTreeHandlerCandidate<DATA> parse(ParserTreeContext<DATA> context)
-      throws EndOfLineException {
-    try {
-      context.getResults().add(parser.parse(context, context.getLine()));
-    } catch (ParserSyntaxException e) {
-      context.getErrors().add(e.getError(), e.getLine(), context.getWeight());
-      return null;
-    }
+  /**
+   * Retrieve list of errors
+   *
+   * @return list of errors
+   */
+  Collection<CommandError> get();
 
-    return super.parse(context);
-  }
+  /**
+   * Return the current weight
+   *
+   * @return weight
+   */
+  int getWeight();
+
+  /**
+   * Return the current line
+   *
+   * @return Parsed Line
+   */
+  ParsedLine getLine();
+
+  /**
+   * Return formatted string
+   *
+   * @return Error string
+   */
+  String format();
+
+  /** Clear errors */
+  void clear();
+
+  Stream<CommandError> stream();
+
+  /**
+   * Return number of errors
+   *
+   * @return number of errors
+   */
+  int size();
+
+  /**
+   * Return a copy of ourself
+   *
+   * @return Clone
+   */
+  CommandErrorCollection copy();
 }

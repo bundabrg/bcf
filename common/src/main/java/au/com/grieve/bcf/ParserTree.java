@@ -78,4 +78,8 @@ public interface ParserTree<DATA> {
    * @return Best Candidate
    */
   ParserTreeHandlerCandidate<DATA> parse(ParserTreeContext<DATA> context) throws EndOfLineException;
+
+  ParserTreeHandlerCandidate<DATA> parse(ParsedLine line, DATA data);
+
+  ParserTreeHandlerCandidate<DATA> parse(String line, DATA data);
 }

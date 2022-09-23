@@ -25,7 +25,6 @@ package au.com.grieve.bcf.impl.parsertree;
 
 import au.com.grieve.bcf.ParserTreeContext;
 import au.com.grieve.bcf.ParserTreeHandlerCandidate;
-import au.com.grieve.bcf.exception.EndOfLineException;
 
 /**
  * This node does not count towards weight when parsing its children
@@ -35,9 +34,8 @@ import au.com.grieve.bcf.exception.EndOfLineException;
 public class NullNode<DATA> extends BaseParserTree<DATA> {
 
   @Override
-  public ParserTreeHandlerCandidate<DATA> parse(ParserTreeContext<DATA> context)
-      throws EndOfLineException {
+  public ParserTreeHandlerCandidate<DATA> parseChildren(ParserTreeContext<DATA> context) {
     context.setWeight(context.getWeight() - 1);
-    return super.parse(context);
+    return super.parseChildren(context);
   }
 }

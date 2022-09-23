@@ -55,7 +55,7 @@ public interface ParserTreeContext<DATA> extends ParserContext<DATA> {
    *
    * @return list of errors
    */
-  List<CommandErrorCandidate> getErrors();
+  CommandErrorCollection getErrors();
 
   /**
    * Return a copy of ourselves

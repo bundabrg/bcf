@@ -23,14 +23,15 @@
 
 package au.com.grieve.bcf.impl.parsertree;
 
+import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.ParserTree;
 import au.com.grieve.bcf.ParserTreeContext;
 import au.com.grieve.bcf.ParserTreeFallbackHandler;
 import au.com.grieve.bcf.ParserTreeHandler;
 import au.com.grieve.bcf.ParserTreeHandlerCandidate;
 import au.com.grieve.bcf.exception.EndOfLineException;
-import au.com.grieve.bcf.impl.error.DefaultErrorCandidate;
 import au.com.grieve.bcf.impl.error.InputExpectedError;
+import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -79,40 +80,77 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
   }
 
   @Override
+  public ParserTreeHandlerCandidate<DATA> parse(ParsedLine line, DATA data) {
+    DefaultParserTreeContext<DATA> context = new DefaultParserTreeContext<>(line, data);
+    try {
+      return parse(context);
+    } catch (EndOfLineException e) {
+
+      if (executeHandler == null) {
+        context.getErrors().add(new InputExpectedError(), context.getLine(), context.getWeight());
+        return errorHandler != null
+            ? new ParserTreeHandlerCandidate<>(context, errorHandler, context.getWeight())
+            : null;
+      }
+      return new ParserTreeHandlerCandidate<>(context, executeHandler, context.getWeight());
+    }
+  }
+
+  @Override
+  public ParserTreeHandlerCandidate<DATA> parse(String line, DATA data) {
+    return parse(new DefaultParsedLine(line), data);
+  }
+
+  @Override
   public ParserTreeHandlerCandidate<DATA> parse(ParserTreeContext<DATA> context)
       throws EndOfLineException {
-    context.setWeight(context.getWeight() + 1);
-    return Stream.of(parseChildren(context.copy()), parseFallback(context.copy()))
-        .filter(Objects::nonNull)
-        .max(Comparator.comparingInt(ParserTreeHandlerCandidate::getWeight))
-        .orElse(null);
+
+    ParserTreeHandlerCandidate<DATA> childCandidate =
+        Stream.of(parseChildren(context), parseFallback(context))
+            .filter(Objects::nonNull)
+            .max(Comparator.comparingInt(ParserTreeHandlerCandidate::getWeight))
+            .orElse(null);
+
+    if (childCandidate != null) {
+      return childCandidate;
+    }
+
+    // Errors? Return an error candidate if possible, else we don't return anything
+    if (context.getErrors().size() > 0) {
+      return errorHandler != null
+          ? new ParserTreeHandlerCandidate<>(context, errorHandler, context.getWeight())
+          : null;
+    }
+
+    // Finally if we are at EOL and have an execute handler we return that
+    if (context.getLine().isEol()) {
+      return executeHandler != null
+          ? new ParserTreeHandlerCandidate<>(context, executeHandler, context.getWeight())
+          : null;
+    }
+
+    return null;
   }
 
   protected ParserTreeHandlerCandidate<DATA> parseChildren(ParserTreeContext<DATA> context) {
+    context.setWeight(context.getWeight() + 1);
     return children.stream()
         .map(
             c -> {
               ParserTreeContext<DATA> childContext = context.copy();
+              childContext.getErrors().clear();
+              ParserTreeHandlerCandidate<DATA> candidate = null;
               try {
-                ParserTreeHandlerCandidate<DATA> candidate = c.parse(childContext);
-                context.getErrors().clear();
+                candidate = c.parse(childContext);
                 context.getErrors().addAll(childContext.getErrors());
-                return candidate;
               } catch (EndOfLineException e) {
-                if (executeHandler != null) {
-                  return new ParserTreeHandlerCandidate<>(
-                      childContext, executeHandler, context.getWeight());
-                } else {
+                if (executeHandler == null) {
                   context
                       .getErrors()
-                      .add(
-                          new DefaultErrorCandidate(
-                              context.getLine(), new InputExpectedError(), context.getWeight()));
-                  return errorHandler != null
-                      ? new ParserTreeHandlerCandidate<>(context, errorHandler, context.getWeight())
-                      : null;
+                      .add(new InputExpectedError(), context.getLine(), context.getWeight());
                 }
               }
+              return candidate;
             })
         .filter(Objects::nonNull)
         .max(Comparator.comparingInt(ParserTreeHandlerCandidate::getWeight))

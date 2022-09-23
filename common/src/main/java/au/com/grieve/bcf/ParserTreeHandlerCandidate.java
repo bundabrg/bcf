@@ -32,4 +32,8 @@ public class ParserTreeHandlerCandidate<DATA> {
   ParserTreeContext<DATA> context;
   ParserTreeHandler<DATA> handler;
   int weight;
+
+  public void execute() {
+    handler.handle(context);
+  }
 }

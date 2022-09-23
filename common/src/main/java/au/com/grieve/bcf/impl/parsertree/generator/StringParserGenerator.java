@@ -36,6 +36,15 @@ public class StringParserGenerator<DATA> {
 
   private final StringParserClassRegister<DATA> register;
 
+  protected ParserNode<DATA> createNode(String name, Map<String, String> parameters) {
+    // If name doesn't start with @ then treat it as a literal
+    if (!name.startsWith("@")) {
+      parameters.put("options", name);
+      name = "literal";
+    }
+    return new ParserNode<>(register.createParser(name, parameters));
+  }
+
   public StringParserGenerator(StringParserClassRegister<DATA> register) {
     this.register = register;
   }
@@ -62,10 +71,8 @@ public class StringParserGenerator<DATA> {
         int i = reader.read();
         if (i < 0) {
           if (state == State.NAME && name.length() > 0) {
-            ParserNode<DATA> node =
-                new ParserNode<>(register.createParser(name.toString(), new HashMap<>()));
+            ParserNode<DATA> node = createNode(name.toString(), new HashMap<>());
             current.then(node);
-            current = node;
           }
           break;
         }
@@ -76,8 +83,7 @@ public class StringParserGenerator<DATA> {
             switch (" (".indexOf(c)) {
               case 0: // Next Argument
                 if (name.length() > 0) {
-                  ParserNode<DATA> node =
-                      new ParserNode<>(register.createParser(name.toString(), new HashMap<>()));
+                  ParserNode<DATA> node = createNode(name.toString(), new HashMap<>());
                   current.then(node);
                   current = node;
                   name = new StringBuilder();
@@ -109,8 +115,7 @@ public class StringParserGenerator<DATA> {
                 break;
               case 1:
                 parameters.put(key.toString().trim(), value.toString().trim());
-                ParserNode<DATA> node =
-                    new ParserNode<>(register.createParser(name.toString(), parameters));
+                ParserNode<DATA> node = createNode(name.toString(), parameters);
                 current.then(node);
                 current = node;
                 name = new StringBuilder();
@@ -140,7 +145,6 @@ public class StringParserGenerator<DATA> {
                 }
                 break;
               case 2:
-                //                                value.append(c);
                 i = reader.read();
                 if (i < 0) {
                   break;
@@ -157,8 +161,7 @@ public class StringParserGenerator<DATA> {
                 state = State.PARAM_KEY;
                 break;
               case 1:
-                ParserNode<DATA> node =
-                    new ParserNode<>(register.createParser(name.toString(), parameters));
+                ParserNode<DATA> node = createNode(name.toString(), parameters);
                 current.then(node);
                 current = node;
                 name = new StringBuilder();

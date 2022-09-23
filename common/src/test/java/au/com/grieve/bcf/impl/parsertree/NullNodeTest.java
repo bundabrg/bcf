@@ -23,40 +23,43 @@
 
 package au.com.grieve.bcf.impl.parsertree;
 
-import au.com.grieve.bcf.Parser;
-import au.com.grieve.bcf.ParserTreeContext;
-import au.com.grieve.bcf.ParserTreeHandlerCandidate;
-import au.com.grieve.bcf.exception.EndOfLineException;
-import au.com.grieve.bcf.exception.ParserSyntaxException;
-import lombok.Getter;
-import lombok.ToString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * StringParserTree uses a string argument to define the parsers to use. The parsers are later
- * provided during the parsing stage
- *
- * @param <DATA>
- */
-@Getter
-@ToString
-public class ParserNode<DATA> extends BaseParserTree<DATA> {
+import au.com.grieve.bcf.ParserTree;
+import org.junit.jupiter.api.Test;
 
-  private final Parser<DATA, ?> parser;
+class NullNodeTest {
 
-  public ParserNode(Parser<DATA, ?> parser) {
-    this.parser = parser;
+  @Test
+  void leafs_1() {
+    ParserTree<Object> node = new NullNode<>();
+    assertEquals(1, node.leafs().size());
   }
 
-  @Override
-  public ParserTreeHandlerCandidate<DATA> parse(ParserTreeContext<DATA> context)
-      throws EndOfLineException {
-    try {
-      context.getResults().add(parser.parse(context, context.getLine()));
-    } catch (ParserSyntaxException e) {
-      context.getErrors().add(e.getError(), e.getLine(), context.getWeight());
-      return null;
-    }
+  @Test
+  void leafs_2() {
+    ParserTree<Object> node = new NullNode<>();
+    node.then(new NullNode<>()).then(new NullNode<>());
+    assertEquals(2, node.leafs().size());
+  }
 
-    return super.parse(context);
+  @Test
+  void leafs_3() {
+    ParserTree<Object> node = new NullNode<>();
+    node.then(new NullNode<>().then(new NullNode<>()).then(new NullNode<>()))
+        .then(new NullNode<>());
+    assertEquals(3, node.leafs().size());
+  }
+
+  @Test
+  void leafs_4() {
+    ParserTree<Object> node1 = new NullNode<>();
+    node1
+        .then(new NullNode<>().then(new NullNode<>()).then(new NullNode<>()))
+        .then(new NullNode<>());
+
+    ParserTree<Object> node2 = new NullNode<>().then(new NullNode<>()).then(node1);
+
+    assertEquals(4, node2.leafs().size());
   }
 }
