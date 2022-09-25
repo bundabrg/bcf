@@ -24,6 +24,7 @@
 package au.com.grieve.bcf;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 import lombok.NonNull;
 
@@ -53,7 +54,7 @@ public interface ParserTree<DATA> {
    * @param handler Execute handler
    * @return Ourself
    */
-  ParserTree<DATA> execute(ExecuteHandler<DATA> handler);
+  ParserTree<DATA> execute(ParserTreeHandler<ExecuteContext<DATA>> handler);
 
   /**
    * Set Error Handler, called when an error occurs
@@ -61,7 +62,7 @@ public interface ParserTree<DATA> {
    * @param handler Error handler
    * @return Ourself
    */
-  ParserTree<DATA> error(ErrorHandler<DATA> handler);
+  ParserTree<DATA> error(ParserTreeHandler<ErrorContext<DATA>> handler);
 
   /**
    * Set a completion handler, called when any completions exist
@@ -69,7 +70,7 @@ public interface ParserTree<DATA> {
    * @param handler Completion handler
    * @return Ourself
    */
-  ParserTree<DATA> complete(CompleteHandler<DATA> handler);
+  ParserTree<DATA> complete(ParserTreeHandler<CompleteContext<DATA>> handler);
 
   /**
    * Set Fallback handler, called when more input exists and no child nodes exist
@@ -78,6 +79,16 @@ public interface ParserTree<DATA> {
    * @return Ourself
    */
   ParserTree<DATA> fallback(ParserTreeFallbackHandler<DATA> handler);
+
+  /**
+   * Walk over every node
+   *
+   * @param consumer
+   * @return
+   */
+  ParserTree<DATA> walk(Consumer<List<ParserTree<DATA>>> consumer);
+
+  void walk(Consumer<List<ParserTree<DATA>>> consumer, List<ParserTree<DATA>> chain);
 
   /**
    * Return the best candidate for the supplied context
@@ -93,4 +104,5 @@ public interface ParserTree<DATA> {
 
   @NonNull
   ParserTreeResult<DATA> parse(String line, DATA data);
+
 }

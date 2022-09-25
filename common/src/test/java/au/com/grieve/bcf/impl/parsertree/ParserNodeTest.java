@@ -29,18 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import au.com.grieve.bcf.CompleteContext;
-import au.com.grieve.bcf.CompleteHandler;
-import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ErrorContext;
-import au.com.grieve.bcf.ErrorHandler;
 import au.com.grieve.bcf.ExecuteContext;
-import au.com.grieve.bcf.ExecuteHandler;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.ParserTree;
 import au.com.grieve.bcf.ParserTreeContext;
 import au.com.grieve.bcf.ParserTreeFallbackHandler;
+import au.com.grieve.bcf.ParserTreeHandler;
 import au.com.grieve.bcf.ParserTreeResult;
-import au.com.grieve.bcf.StringParserClassRegister;
 import au.com.grieve.bcf.impl.error.AmbiguousExecuteHandlersError;
 import au.com.grieve.bcf.impl.error.DefaultErrorCollection;
 import au.com.grieve.bcf.impl.error.InputExpectedError;
@@ -51,7 +47,6 @@ import au.com.grieve.bcf.impl.parsertree.generator.StringParserGenerator;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -60,27 +55,24 @@ class ParserNodeTest {
 
   StringParserGenerator<Object> generator =
       new StringParserGenerator<>(
-          new StringParserClassRegister<Object>() {
-            @Override
-            public Parser<Object, ?> createParser(String name, Map<String, String> parameters) {
-              Map<String, Class<? extends Parser<Object, ?>>> parserClassMap = new HashMap<>();
-              parserClassMap.put("literal", StringParser.class);
-              parserClassMap.put("string", StringParser.class);
-              parserClassMap.put("int", IntegerParser.class);
+          (name, parameters) -> {
+            Map<String, Class<? extends Parser<Object, ?>>> parserClassMap = new HashMap<>();
+            parserClassMap.put("literal", StringParser.class);
+            parserClassMap.put("string", StringParser.class);
+            parserClassMap.put("int", IntegerParser.class);
 
-              Class<? extends Parser<Object, ?>> parserClass = parserClassMap.get(name);
-              if (parserClass == null) {
-                throw new RuntimeException("Unknown parser: " + name);
-              }
+            Class<? extends Parser<Object, ?>> parserClass = parserClassMap.get(name);
+            if (parserClass == null) {
+              throw new RuntimeException("Unknown parser: " + name);
+            }
 
-              try {
-                return parserClass.getConstructor(Map.class).newInstance(parameters);
-              } catch (InstantiationException
-                  | NoSuchMethodException
-                  | InvocationTargetException
-                  | IllegalAccessException e) {
-                throw new RuntimeException(e);
-              }
+            try {
+              return parserClass.getConstructor(Map.class).newInstance(parameters);
+            } catch (InstantiationException
+                | NoSuchMethodException
+                | InvocationTargetException
+                | IllegalAccessException e) {
+              throw new RuntimeException(e);
             }
           });
 
@@ -484,9 +476,9 @@ class ParserNodeTest {
     ParserTreeResult<Object> e = node.parse("mike", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler2);
-    assertEquals(2, e.getExecuteCandidate().getContext().getResults().size());
-    assertEquals("mike", e.getExecuteCandidate().getContext().getResults().get(0));
-    assertEquals("charles", e.getExecuteCandidate().getContext().getResults().get(1));
+    assertEquals(2, e.getExecuteCandidate().getResults().size());
+    assertEquals("mike", e.getExecuteCandidate().getResults().get(0));
+    assertEquals("charles", e.getExecuteCandidate().getResults().get(1));
   }
 
   @Test
@@ -512,10 +504,10 @@ class ParserNodeTest {
     ParserTreeResult<Object> e = node.parse("mike 1", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler2);
-    assertEquals(3, e.getExecuteCandidate().getContext().getResults().size());
-    assertEquals("mike", e.getExecuteCandidate().getContext().getResults().get(0));
-    assertEquals(1, e.getExecuteCandidate().getContext().getResults().get(1));
-    assertEquals("charles", e.getExecuteCandidate().getContext().getResults().get(2));
+    assertEquals(3, e.getExecuteCandidate().getResults().size());
+    assertEquals("mike", e.getExecuteCandidate().getResults().get(0));
+    assertEquals(1, e.getExecuteCandidate().getResults().get(1));
+    assertEquals("charles", e.getExecuteCandidate().getResults().get(2));
   }
 
   @Test
@@ -541,10 +533,10 @@ class ParserNodeTest {
     ParserTreeResult<Object> e = node.parse("mike 11", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler1);
-    assertEquals(3, e.getExecuteCandidate().getContext().getResults().size());
-    assertEquals("mike", e.getExecuteCandidate().getContext().getResults().get(0));
-    assertEquals(11, e.getExecuteCandidate().getContext().getResults().get(1));
-    assertEquals("peter", e.getExecuteCandidate().getContext().getResults().get(2));
+    assertEquals(3, e.getExecuteCandidate().getResults().size());
+    assertEquals("mike", e.getExecuteCandidate().getResults().get(0));
+    assertEquals(11, e.getExecuteCandidate().getResults().get(1));
+    assertEquals("peter", e.getExecuteCandidate().getResults().get(2));
   }
 
   @Test
@@ -672,24 +664,22 @@ class ParserNodeTest {
             .anyMatch(err -> err.getClass() == AmbiguousExecuteHandlersError.class));
   }
 
-  static class TestExecuteHandler implements ExecuteHandler<Object> {
+  static class TestExecuteHandler implements ParserTreeHandler<ExecuteContext<Object>> {
 
     @Override
     public void handle(ExecuteContext<Object> context) {}
   }
 
-  static class TestErrorHandler implements ErrorHandler<Object> {
+  static class TestErrorHandler implements ParserTreeHandler<ErrorContext<Object>> {
 
     @Override
     public void handle(ErrorContext<Object> context) {}
   }
 
-  static class TestCompleteHandler implements CompleteHandler<Object> {
+  static class TestCompleteHandler implements ParserTreeHandler<CompleteContext<Object>> {
 
     @Override
-    public List<CompletionCandidateGroup> handle(CompleteContext<Object> context) {
-      return context.getCompletions();
-    }
+    public void handle(CompleteContext<Object> context) {}
   }
 
   static class TestParserTreeFallbackHandler implements ParserTreeFallbackHandler<Object> {

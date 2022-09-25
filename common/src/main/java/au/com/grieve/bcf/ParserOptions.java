@@ -25,7 +25,6 @@ package au.com.grieve.bcf;
 
 import java.util.List;
 
-@FunctionalInterface
-public interface CompleteHandler<DATA> {
-  List<CompletionCandidateGroup> handle(CompleteContext<DATA> context);
+public interface ParserOptions<RT> {
+  List<RT> getOptions();
 }

@@ -26,6 +26,7 @@ package au.com.grieve.bcf.impl.parser;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.ParserContext;
+import au.com.grieve.bcf.ParserMinMax;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
@@ -37,12 +38,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import lombok.Getter;
 import lombok.ToString;
 
+@Getter
 @ToString(callSuper = true)
-public class IntegerParser extends BaseParser<Object, Integer> {
+public class IntegerParser extends BaseParser<Object, Integer> implements ParserMinMax<Integer> {
+  private final Integer min;
+  private final Integer max;
+
   public IntegerParser(Map<String, String> parameters) {
     super(parameters);
+    min = parameters.containsKey("min") ? Integer.parseInt(parameters.get("min")) : null;
+    max = parameters.containsKey("max") ? Integer.parseInt(parameters.get("max")) : null;
+  }
+
+  public IntegerParser(
+      String description,
+      String defaultValue,
+      boolean suppress,
+      boolean required,
+      String placeholder,
+      Integer min,
+      Integer max) {
+    super(description, defaultValue, suppress, required, placeholder);
+    this.min = min;
+    this.max = max;
   }
 
   @Override
@@ -57,14 +78,12 @@ public class IntegerParser extends BaseParser<Object, Integer> {
       throw new ParserSyntaxException(line, new InvalidFormatError("number"));
     }
 
-    if (getParameters().get("max") != null
-        && result > Integer.parseInt(getParameters().get("max"))) {
-      throw new ParserSyntaxException(line, new NumberTooBigError(getParameters().get("max")));
+    if (getMax() != null && result > getMax()) {
+      throw new ParserSyntaxException(line, new NumberTooBigError(getMax().toString()));
     }
 
-    if (getParameters().get("min") != null
-        && result < Integer.parseInt(getParameters().get("min"))) {
-      throw new ParserSyntaxException(line, new NumberTooSmallError(getParameters().get("min")));
+    if (getMin() != null && result < getMin()) {
+      throw new ParserSyntaxException(line, new NumberTooSmallError(getMin().toString()));
     }
 
     return result;
@@ -77,12 +96,9 @@ public class IntegerParser extends BaseParser<Object, Integer> {
     String input = line.getCurrentWord();
 
     // Show a number range if both min and max defined
-    if (getParameters().containsKey("min") && getParameters().containsKey("max")) {
-      int min = Integer.parseInt(getParameters().get("min"));
-      int max = Integer.parseInt(getParameters().get("max"));
+    if (getMin() != null && getMax() != null) {
 
-      CompletionCandidateGroup group =
-          new StaticCompletionCandidateGroup(input, getParameters().get("description"));
+      CompletionCandidateGroup group = new StaticCompletionCandidateGroup(input, getDescription());
       group
           .getCompletionCandidates()
           .addAll(
@@ -93,13 +109,12 @@ public class IntegerParser extends BaseParser<Object, Integer> {
                   .collect(Collectors.toList()));
       candidates.add(group);
     } else {
-      CompletionCandidateGroup group =
-          new StaticCompletionCandidateGroup(input, getParameters().get("description"));
+      CompletionCandidateGroup group = new StaticCompletionCandidateGroup(input, getDescription());
       group
           .getCompletionCandidates()
           .add(
               new DefaultCompletionCandidate(
-                  "", getParameters().getOrDefault("placeholder", "<number>")));
+                  "", getPlaceholder() != null ? getPlaceholder() : "<number>"));
       candidates.add(group);
     }
 

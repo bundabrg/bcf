@@ -28,6 +28,16 @@ import au.com.grieve.bcf.exception.ParserSyntaxException;
 import java.util.List;
 
 public interface Parser<DATA, RT> {
+  boolean isSuppress();
+
+  boolean isRequired();
+
+  String getDefault();
+
+  String getDescription();
+
+  String getPlaceholder();
+
   RT parse(ParserContext<DATA> context, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException;
 

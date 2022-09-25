@@ -30,20 +30,43 @@ import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.ToString;
 
-@Getter
-@ToString(callSuper = true)
+@ToString
 public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
-  private final Map<String, String> parameters = new HashMap<>();
+  @Getter private final boolean suppress;
+  private final String defaultValue;
+  @Getter private final boolean required;
+  @Getter private final String description;
+  @Getter private final String placeholder;
 
   public BaseParser(Map<String, String> parameters) {
-    this.parameters.putAll(parameters);
+    suppress = parameters.getOrDefault("suppress", "false").equals("true");
+    defaultValue = parameters.get("default");
+    required = parameters.getOrDefault("required", "true").equals("true");
+    description = parameters.get("description");
+    placeholder = parameters.get("placeholder");
+  }
+
+  public BaseParser(
+      String description,
+      String defaultValue,
+      boolean suppress,
+      boolean required,
+      String placeholder) {
+    this.suppress = suppress;
+    this.defaultValue = defaultValue;
+    this.required = required;
+    this.description = description;
+    this.placeholder = placeholder;
+  }
+
+  public String getDefault() {
+    return defaultValue;
   }
 
   /**
@@ -85,13 +108,10 @@ public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
       result = doParse(context, line);
     } catch (EndOfLineException e) {
       // Handle default
-      if (parameters.getOrDefault("required", "true").equals("false")
-          || parameters.containsKey("default")) {
-
-        String defaultValue = parameters.get("default");
-        if (defaultValue != null) {
+      if (!isRequired() || getDefault() != null) {
+        if (getDefault() != null) {
           ParsedLine lineCopy = line.copy();
-          lineCopy.insert(defaultValue);
+          lineCopy.insert(getDefault());
           result = doParse(context, lineCopy);
         } else {
           result = null;

@@ -23,7 +23,20 @@
 
 package au.com.grieve.bcf;
 
-@FunctionalInterface
-public interface ErrorHandler<DATA> {
-  void handle(ErrorContext<DATA> context);
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
+@AllArgsConstructor
+@Getter
+@ToString
+public class ParserTreeCandidate<CTX, DATA> {
+  private final ParsedLine line;
+  private final ParserTreeHandler<CTX> handler;
+  private final List<Object> results;
+  private final CommandErrorCollection errors;
+  private final List<CompletionCandidateGroup> completions;
+  private final DATA data;
+  private final int weight;
 }

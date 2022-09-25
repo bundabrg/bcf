@@ -23,7 +23,6 @@
 
 package au.com.grieve.bcf;
 
-@FunctionalInterface
-public interface ExecuteHandler<DATA> {
-  void handle(ExecuteContext<DATA> context);
+public interface ParserTreeHandler<CTX> {
+  void handle(CTX context);
 }

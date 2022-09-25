@@ -36,19 +36,22 @@ public class StringParserGenerator<DATA> {
 
   private final StringParserClassRegister<DATA> register;
 
+  public StringParserGenerator(StringParserClassRegister<DATA> register) {
+    this.register = register;
+  }
+
   protected ParserNode<DATA> createNode(String name, Map<String, String> parameters) {
     // If name doesn't start with @ then treat it as a literal
     if (!name.startsWith("@")) {
       parameters.put("options", name);
+      if (!parameters.containsKey("suppress")) {
+        parameters.put("suppress", "true");
+      }
       name = "literal";
     } else {
       name = name.substring(1);
     }
     return new ParserNode<>(register.createParser(name, parameters));
-  }
-
-  public StringParserGenerator(StringParserClassRegister<DATA> register) {
-    this.register = register;
   }
 
   /**

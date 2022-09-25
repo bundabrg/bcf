@@ -23,16 +23,8 @@
 
 package au.com.grieve.bcf;
 
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
+public interface ParserMinMax<RT> {
+  RT getMin();
 
-@AllArgsConstructor
-@Getter
-@ToString
-public class ExecuteContext<DATA> {
-  private final ParsedLine line;
-  private final List<Object> results;
-  private final DATA data;
+  RT getMax();
 }

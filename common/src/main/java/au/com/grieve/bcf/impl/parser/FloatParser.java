@@ -26,6 +26,7 @@ package au.com.grieve.bcf.impl.parser;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.ParserContext;
+import au.com.grieve.bcf.ParserMinMax;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
@@ -35,12 +36,32 @@ import au.com.grieve.bcf.impl.error.NumberTooBigError;
 import au.com.grieve.bcf.impl.error.NumberTooSmallError;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
 import lombok.ToString;
 
+@Getter
 @ToString(callSuper = true)
-public class FloatParser extends BaseParser<Object, Float> {
+public class FloatParser extends BaseParser<Object, Float> implements ParserMinMax<Float> {
+  private final Float min;
+  private final Float max;
+
   public FloatParser(Map<String, String> parameters) {
     super(parameters);
+    min = parameters.containsKey("min") ? Float.parseFloat(parameters.get("min")) : null;
+    max = parameters.containsKey("max") ? Float.parseFloat(parameters.get("max")) : null;
+  }
+
+  public FloatParser(
+      String description,
+      String defaultValue,
+      boolean suppress,
+      boolean required,
+      String placeholder,
+      Float min,
+      Float max) {
+    super(description, defaultValue, suppress, required, placeholder);
+    this.min = min;
+    this.max = max;
   }
 
   @Override
@@ -55,14 +76,12 @@ public class FloatParser extends BaseParser<Object, Float> {
       throw new ParserSyntaxException(line, new InvalidFormatError("floating point number"));
     }
 
-    if (getParameters().get("max") != null
-        && result > Float.parseFloat(getParameters().get("max"))) {
-      throw new ParserSyntaxException(line, new NumberTooBigError(getParameters().get("max")));
+    if (getMax() != null && result > getMax()) {
+      throw new ParserSyntaxException(line, new NumberTooBigError(getMax().toString()));
     }
 
-    if (getParameters().get("min") != null
-        && result < Float.parseFloat(getParameters().get("min"))) {
-      throw new ParserSyntaxException(line, new NumberTooSmallError(getParameters().get("min")));
+    if (getMin() != null && result < getMin()) {
+      throw new ParserSyntaxException(line, new NumberTooSmallError(getMin().toString()));
     }
 
     return result;
@@ -74,13 +93,12 @@ public class FloatParser extends BaseParser<Object, Float> {
       throws EndOfLineException {
     String input = line.getCurrentWord();
 
-    CompletionCandidateGroup group =
-        new StaticCompletionCandidateGroup(input, getParameters().get("description"));
+    CompletionCandidateGroup group = new StaticCompletionCandidateGroup(input, getDescription());
     group
         .getCompletionCandidates()
         .add(
             new DefaultCompletionCandidate(
-                "", getParameters().getOrDefault("placeholder", "<float>")));
+                "", getPlaceholder() != null ? getPlaceholder() : "<float>"));
     candidates.add(group);
 
     line.next();

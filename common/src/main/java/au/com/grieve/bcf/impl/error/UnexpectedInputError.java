@@ -21,19 +21,24 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.error;
 
-import java.util.List;
-import lombok.AllArgsConstructor;
+import au.com.grieve.bcf.CommandError;
 import lombok.Getter;
-import lombok.ToString;
 
-@AllArgsConstructor
 @Getter
-@ToString
-public class CompleteCandidate<DATA> {
-  private final ParserTreeContext<DATA> context;
-  private final CompleteHandler<DATA> handler;
-  private final List<CompletionCandidateGroup> completions;
-  private final int weight;
+public class UnexpectedInputError implements CommandError {
+
+  @Override
+  public String getName() {
+    return "unexpected_input";
+  }
+
+  @Override
+  public void merge(CommandError error) {}
+
+  @Override
+  public String toString() {
+    return "Unexpected argument found";
+  }
 }

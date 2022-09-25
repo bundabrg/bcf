@@ -99,34 +99,28 @@ public class AnnotationCommand<DATA> extends BaseCommand<DATA>
     // Build Class Nodes
     List<ParserTree<DATA>> classNodes =
         ReflectUtils.getAllAnnotationsByType(getClass(), Arg.class).stream()
-            .map(
-                a -> {
-                  ParserTree<DATA> node = generator.from(String.join(" ", a.value()));
-
-                  // Add stuff to their leaves
-                  node.forEachLeaf(
-                      n -> {
-                        if (defaultMethod != null) {
-                          n.execute(ctx -> executeMethod(defaultMethod, List.of(ctx)));
-                        }
-                        if (errorMethod != null) {
-                          n.error(ctx -> executeMethod(errorMethod, List.of(ctx)));
-                        }
-
-                        // Add child nodes
-                        getChildren().forEach(n::then);
-
-                        // Add all method nodes
-                        methodNodes.forEach(n::then);
-                      });
-
-                  return node;
-                })
+            .map(a -> generator.from(String.join(" ", a.value())))
             .collect(Collectors.toList());
 
     // Add to root node
     NullNode<DATA> root = new NullNode<>();
     classNodes.forEach(root::then);
+
+    root.forEachLeaf(
+        n -> {
+          // Add Special Methods
+          if (defaultMethod != null) {
+            n.execute(ctx -> executeMethod(defaultMethod, List.of(ctx)));
+          }
+          if (errorMethod != null) {
+            n.error(ctx -> executeMethod(errorMethod, List.of(ctx)));
+          }
+
+          // Add Method Args and Children
+          getChildren().forEach(n::then);
+
+          methodNodes.forEach(n::then);
+        });
 
     List<CommandRootData<DATA>> commandRootData = new ArrayList<>();
 

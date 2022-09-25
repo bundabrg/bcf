@@ -46,7 +46,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <DATA>
  */
 @Getter
-@ToString
+@ToString(callSuper = true)
 public class ParserNode<DATA> extends BaseParserTree<DATA> {
 
   private final Parser<DATA, ?> parser;
@@ -61,21 +61,26 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
     List<CompletionCandidateGroup> completions = new ArrayList<>();
     ParsedLine originalLine = context.getLine().copy();
     try {
-      context.getResults().add(parser.parse(context, context.getLine()));
+      Object result = parser.parse(context, context.getLine());
+      if (!parser.isSuppress()) {
+        context.getResults().add(result);
+      }
 
     } catch (ParserSyntaxException e) {
       errors.add(e.getError(), e.getLine(), context.getWeight());
-      try {
-        parser.complete(context, originalLine, completions);
-      } catch (EndOfLineException ignored) {
+      if (e.getLine().isEol()) {
+        try {
+          parser.complete(context, originalLine, completions);
+        } catch (EndOfLineException ignored) {
+        }
       }
       return new ParserTreeResult<>(null, null, null, errors, completions);
     } catch (EndOfLineException e) {
       errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
-      try {
-        parser.complete(context, originalLine, completions);
-      } catch (EndOfLineException ignored) {
-      }
+      //      try {
+      //        parser.complete(context, originalLine, completions);
+      //      } catch (EndOfLineException ignored) {
+      //      }
       return new ParserTreeResult<>(null, null, null, errors, completions);
     }
 

@@ -26,32 +26,50 @@ package au.com.grieve.bcf.impl.parser;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.ParserContext;
+import au.com.grieve.bcf.ParserOptions;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
 import au.com.grieve.bcf.impl.completion.StaticCompletionCandidateGroup;
 import au.com.grieve.bcf.impl.error.InvalidOptionError;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import lombok.Getter;
 import lombok.ToString;
 
+@Getter
 @ToString(callSuper = true)
-public class StringParser extends BaseParser<Object, String> {
+public class StringParser extends BaseParser<Object, String> implements ParserOptions<String> {
+  private final List<String> options = new ArrayList<>();
+
   public StringParser(Map<String, String> parameters) {
     super(parameters);
+    options.addAll(
+        Stream.of(parameters.getOrDefault("options", "").split("\\|"))
+            .filter(r -> !r.isEmpty())
+            .collect(Collectors.toList()));
+  }
+
+  public StringParser(
+      String description,
+      String defaultValue,
+      boolean suppress,
+      boolean required,
+      String placeholder,
+      List<String> options) {
+    super(description, defaultValue, suppress, required, placeholder);
+    this.options.addAll(options);
   }
 
   @Override
   protected String doParse(ParserContext<Object> context, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException {
     String result = line.next();
-    if (getParameters().containsKey("options")) {
-      List<String> options = List.of(getParameters().get("options").split("\\|"));
-      if (!options.contains(result)) {
-        throw new ParserSyntaxException(line, new InvalidOptionError(options));
-      }
+    if (getOptions().size() > 0 && !getOptions().contains(result)) {
+      throw new ParserSyntaxException(line, new InvalidOptionError(options));
     }
 
     return result;
@@ -63,24 +81,22 @@ public class StringParser extends BaseParser<Object, String> {
       throws EndOfLineException {
     String input = line.getCurrentWord();
 
-    if (getParameters().containsKey("options")) {
-      CompletionCandidateGroup group =
-          new StaticCompletionCandidateGroup(input, getParameters().get("description"));
+    if (getOptions().size() > 0) {
+      CompletionCandidateGroup group = new StaticCompletionCandidateGroup(input, getDescription());
       group
           .getCompletionCandidates()
           .addAll(
-              Arrays.stream(getParameters().get("options").split("\\|"))
+              getOptions().stream()
                   .map(DefaultCompletionCandidate::new)
                   .collect(Collectors.toList()));
       candidates.add(group);
     } else {
-      CompletionCandidateGroup group =
-          new StaticCompletionCandidateGroup(input, getParameters().get("description"));
+      CompletionCandidateGroup group = new StaticCompletionCandidateGroup(input, getDescription());
       group
           .getCompletionCandidates()
           .add(
               new DefaultCompletionCandidate(
-                  "", getParameters().getOrDefault("placeholder", "<string>")));
+                  "", getPlaceholder() != null ? getPlaceholder() : "<string>"));
       candidates.add(group);
     }
 

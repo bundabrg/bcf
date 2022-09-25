@@ -24,21 +24,21 @@
 package au.com.grieve.bcf.impl.parsertree;
 
 import au.com.grieve.bcf.CommandErrorCollection;
-import au.com.grieve.bcf.CompleteCandidate;
-import au.com.grieve.bcf.CompleteHandler;
+import au.com.grieve.bcf.CompleteContext;
 import au.com.grieve.bcf.CompletionCandidateGroup;
-import au.com.grieve.bcf.ErrorCandidate;
-import au.com.grieve.bcf.ErrorHandler;
-import au.com.grieve.bcf.ExecuteCandidate;
-import au.com.grieve.bcf.ExecuteHandler;
+import au.com.grieve.bcf.ErrorContext;
+import au.com.grieve.bcf.ExecuteContext;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.ParserTree;
+import au.com.grieve.bcf.ParserTreeCandidate;
 import au.com.grieve.bcf.ParserTreeContext;
 import au.com.grieve.bcf.ParserTreeFallbackHandler;
+import au.com.grieve.bcf.ParserTreeHandler;
 import au.com.grieve.bcf.ParserTreeResult;
 import au.com.grieve.bcf.impl.error.AmbiguousExecuteHandlersError;
 import au.com.grieve.bcf.impl.error.DefaultErrorCollection;
 import au.com.grieve.bcf.impl.error.InputExpectedError;
+import au.com.grieve.bcf.impl.error.UnexpectedInputError;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,12 +51,14 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
+import lombok.ToString;
 
+@ToString
 public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
-  protected final Collection<ParserTree<DATA>> children = new HashSet<>();
-  protected ExecuteHandler<DATA> executeHandler;
-  protected ErrorHandler<DATA> errorHandler;
-  protected CompleteHandler<DATA> completeHandler;
+  @ToString.Exclude protected final Collection<ParserTree<DATA>> children = new HashSet<>();
+  protected ParserTreeHandler<ExecuteContext<DATA>> executeHandler;
+  protected ParserTreeHandler<ErrorContext<DATA>> errorHandler;
+  protected ParserTreeHandler<CompleteContext<DATA>> completeHandler;
   protected ParserTreeFallbackHandler<DATA> fallbackHandler;
 
   /**
@@ -74,19 +76,19 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
   }
 
   @Override
-  public ParserTree<DATA> execute(ExecuteHandler<DATA> handler) {
+  public ParserTree<DATA> execute(ParserTreeHandler<ExecuteContext<DATA>> handler) {
     executeHandler = handler;
     return this;
   }
 
   @Override
-  public ParserTree<DATA> complete(CompleteHandler<DATA> handler) {
+  public ParserTree<DATA> complete(ParserTreeHandler<CompleteContext<DATA>> handler) {
     completeHandler = handler;
     return this;
   }
 
   @Override
-  public ParserTree<DATA> error(ErrorHandler<DATA> handler) {
+  public ParserTree<DATA> error(ParserTreeHandler<ErrorContext<DATA>> handler) {
     errorHandler = handler;
     return this;
   }
@@ -115,8 +117,15 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
 
   protected @NonNull ParserTreeResult<DATA> parseChildren(ParserTreeContext<DATA> context) {
     context.setWeight(context.getWeight() + 1);
+
     final List<CompletionCandidateGroup> completions = new ArrayList<>();
     final CommandErrorCollection errors = new DefaultErrorCollection();
+
+    // No children or fallback and extra input is an error
+    if (children.size() == 0 && fallbackHandler == null && !context.getLine().isEol()) {
+      errors.add(new UnexpectedInputError(), context.getLine(), context.getWeight());
+    }
+
     List<ParserTreeResult<DATA>> childResults =
         Stream.concat(
                 children.stream().map(c -> c.parse(context.copy())),
@@ -129,33 +138,34 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
             .collect(Collectors.toList());
 
     // Separate everything out
-    Map<ExecuteCandidate<DATA>, ParserTreeResult<DATA>> executeCandidates =
+    Map<ParserTreeCandidate<ExecuteContext<DATA>, DATA>, ParserTreeResult<DATA>> executeCandidates =
         childResults.stream()
             .filter(r -> r.getExecuteCandidate() != null)
             .collect(Collectors.toMap(ParserTreeResult::getExecuteCandidate, r -> r));
-    Map<ErrorCandidate<DATA>, ParserTreeResult<DATA>> errorCandidates =
+    Map<ParserTreeCandidate<ErrorContext<DATA>, DATA>, ParserTreeResult<DATA>> errorCandidates =
         childResults.stream()
             .filter(r -> r.getErrorCandidate() != null)
             .collect(Collectors.toMap(ParserTreeResult::getErrorCandidate, r -> r));
-    Map<CompleteCandidate<DATA>, ParserTreeResult<DATA>> completeCandidates =
-        childResults.stream()
-            .filter(r -> r.getCompleteCandidate() != null)
-            .collect(Collectors.toMap(ParserTreeResult::getCompleteCandidate, r -> r));
+    Map<ParserTreeCandidate<CompleteContext<DATA>, DATA>, ParserTreeResult<DATA>>
+        completeCandidates =
+            childResults.stream()
+                .filter(r -> r.getCompleteCandidate() != null)
+                .collect(Collectors.toMap(ParserTreeResult::getCompleteCandidate, r -> r));
 
     // Find heaviest
     int heaviestExecute =
         executeCandidates.keySet().stream()
-            .map(ExecuteCandidate::getWeight)
+            .map(ParserTreeCandidate::getWeight)
             .max(Integer::compare)
             .orElse(0);
     int heaviestError =
         errorCandidates.keySet().stream()
-            .map(ErrorCandidate::getWeight)
+            .map(ParserTreeCandidate::getWeight)
             .max(Integer::compare)
             .orElse(0);
     int heaviestComplete =
         completeCandidates.keySet().stream()
-            .map(CompleteCandidate::getWeight)
+            .map(ParserTreeCandidate::getWeight)
             .max(Integer::compare)
             .orElse(0);
 
@@ -173,9 +183,9 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
             .filter(e -> e.getKey().getWeight() == heaviestComplete)
             .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 
-    ExecuteCandidate<DATA> executeCandidate = null;
-    ErrorCandidate<DATA> errorCandidate = null;
-    CompleteCandidate<DATA> completeCandidate = null;
+    ParserTreeCandidate<ExecuteContext<DATA>, DATA> executeCandidate = null;
+    ParserTreeCandidate<ErrorContext<DATA>, DATA> errorCandidate = null;
+    ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate = null;
 
     // Check for ambiguous handlers
     if (executeCandidates.size() > 1) {
@@ -201,7 +211,15 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
     if (executeCandidate == null) {
       if (context.getLine().isEol()) {
         if (executeHandler != null) {
-          executeCandidate = new ExecuteCandidate<>(context, executeHandler, context.getWeight());
+          executeCandidate =
+              new ParserTreeCandidate<>(
+                  context.getLine(),
+                  executeHandler,
+                  context.getResults(),
+                  errors,
+                  completions,
+                  context.getData(),
+                  context.getWeight());
         } else {
           errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
         }
@@ -210,13 +228,28 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
 
     // Errors
     if (errorCandidate == null && errors.size() > 0 && errorHandler != null) {
-      errorCandidate = new ErrorCandidate<>(context, errorHandler, errors, context.getWeight());
+      errorCandidate =
+          new ParserTreeCandidate<>(
+              context.getLine(),
+              errorHandler,
+              context.getResults(),
+              errors,
+              completions,
+              context.getData(),
+              context.getWeight());
     }
 
     // Completions
     if (completeCandidate == null && completions.size() > 0 && completeHandler != null) {
       completeCandidate =
-          new CompleteCandidate<>(context, completeHandler, completions, context.getWeight());
+          new ParserTreeCandidate<>(
+              context.getLine(),
+              completeHandler,
+              context.getResults(),
+              errors,
+              completions,
+              context.getData(),
+              context.getWeight());
     }
 
     return new ParserTreeResult<>(
@@ -241,5 +274,17 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
       return Collections.singleton(this);
     }
     return children.stream().flatMap(c -> c.leafs().stream()).collect(Collectors.toSet());
+  }
+
+  @Override
+  public ParserTree<DATA> walk(Consumer<List<ParserTree<DATA>>> consumer) {
+    walk(consumer, new ArrayList<>());
+    return this;
+  }
+
+  public void walk(Consumer<List<ParserTree<DATA>>> consumer, List<ParserTree<DATA>> chain) {
+    chain.add(this);
+    consumer.accept(chain);
+    children.forEach(c -> c.walk(consumer, chain));
   }
 }

@@ -23,7 +23,6 @@
 
 package au.com.grieve.bcf;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.ToString;
@@ -31,16 +30,16 @@ import lombok.ToString;
 @Getter
 @ToString
 public class ParserTreeResult<DATA> {
-  private final ExecuteCandidate<DATA> executeCandidate;
-  private final ErrorCandidate<DATA> errorCandidate;
-  private final CompleteCandidate<DATA> completeCandidate;
+  private final ParserTreeCandidate<ExecuteContext<DATA>, DATA> executeCandidate;
+  private final ParserTreeCandidate<ErrorContext<DATA>, DATA> errorCandidate;
+  private final ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate;
   private final CommandErrorCollection errors;
   private final List<CompletionCandidateGroup> completions;
 
   public ParserTreeResult(
-      ExecuteCandidate<DATA> executeCandidate,
-      ErrorCandidate<DATA> errorCandidate,
-      CompleteCandidate<DATA> completeCandidate,
+      ParserTreeCandidate<ExecuteContext<DATA>, DATA> executeCandidate,
+      ParserTreeCandidate<ErrorContext<DATA>, DATA> errorCandidate,
+      ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate,
       CommandErrorCollection errors,
       List<CompletionCandidateGroup> completions) {
     this.executeCandidate = executeCandidate;
@@ -60,28 +59,27 @@ public class ParserTreeResult<DATA> {
           .getHandler()
           .handle(
               new ExecuteContext<>(
-                  executeCandidate.getContext().getResults(),
-                  executeCandidate.getContext().getData()));
+                  executeCandidate.getLine(),
+                  executeCandidate.getResults(),
+                  executeCandidate.getData()));
     } else {
       errorCandidate
           .getHandler()
           .handle(
               new ErrorContext<>(
-                  errorCandidate.getContext().getLine(),
-                  errorCandidate.getErrors(),
-                  errorCandidate.getContext().getData()));
+                  errorCandidate.getLine(), errorCandidate.getErrors(), errorCandidate.getData()));
     }
   }
 
-  public List<CompletionCandidateGroup> complete() {
-    return completeCandidate != null
-        ? completeCandidate
-            .getHandler()
-            .handle(
-                new CompleteContext<>(
-                    completeCandidate.getContext().getLine(),
-                    completeCandidate.getCompletions(),
-                    completeCandidate.getContext().getData()))
-        : new ArrayList<>();
+  public void complete() {
+    if (completeCandidate != null) {
+      completeCandidate
+          .getHandler()
+          .handle(
+              new CompleteContext<>(
+                  completeCandidate.getLine(),
+                  completeCandidate.getCompletions(),
+                  completeCandidate.getData()));
+    }
   }
 }
