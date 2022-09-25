@@ -21,18 +21,18 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.error;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.CommandError;
-import au.com.grieve.bcf.CommandErrorCandidate;
-import au.com.grieve.bcf.ParsedLine;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 @AllArgsConstructor
 @Getter
-public class DefaultErrorCandidate implements CommandErrorCandidate {
-  private final ParsedLine parsedLine;
-  private final CommandError error;
-  private final int weight;
+@ToString
+public class CompleteContext<DATA> {
+  private final ParsedLine line;
+  private final List<CompletionCandidateGroup> completions;
+  private final DATA data;
 }

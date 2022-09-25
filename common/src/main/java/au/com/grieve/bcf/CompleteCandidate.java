@@ -21,42 +21,19 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.framework.base;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.Command;
-import au.com.grieve.bcf.CompletionContext;
-import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.Parser;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
+@AllArgsConstructor
 @Getter
 @ToString
-public class BaseCompletionContext implements CompletionContext {
-  private final Map<String, Class<? extends Parser<?>>> parserClasses = new HashMap<>();
-  private final List<Command> commandChain = new ArrayList<>();
-  private final List<Parser<?>> switches = new ArrayList<>();
-  private final ParsedLine parsedLine;
-  @Setter private int weight = 0;
-
-  public BaseCompletionContext(ParsedLine parsedLine) {
-    this.parsedLine = parsedLine;
-  }
-
-  @Override
-  public CompletionContext copy() {
-    return copy(new BaseCompletionContext(parsedLine.copy()));
-  }
-
-  protected CompletionContext copy(BaseCompletionContext clone) {
-    clone.getParserClasses().putAll(parserClasses);
-    clone.getCommandChain().addAll(commandChain);
-    clone.getSwitches().addAll(switches);
-    return clone;
-  }
+public class CompleteCandidate<DATA> {
+  private final ParserTreeContext<DATA> context;
+  private final CompleteHandler<DATA> handler;
+  private final List<CompletionCandidateGroup> completions;
+  private final int weight;
 }

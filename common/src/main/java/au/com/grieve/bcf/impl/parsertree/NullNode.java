@@ -24,7 +24,8 @@
 package au.com.grieve.bcf.impl.parsertree;
 
 import au.com.grieve.bcf.ParserTreeContext;
-import au.com.grieve.bcf.ParserTreeHandlerCandidate;
+import au.com.grieve.bcf.ParserTreeResult;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This node does not count towards weight when parsing its children
@@ -34,7 +35,7 @@ import au.com.grieve.bcf.ParserTreeHandlerCandidate;
 public class NullNode<DATA> extends BaseParserTree<DATA> {
 
   @Override
-  public ParserTreeHandlerCandidate<DATA> parseChildren(ParserTreeContext<DATA> context) {
+  public @NotNull ParserTreeResult<DATA> parseChildren(ParserTreeContext<DATA> context) {
     context.setWeight(context.getWeight() - 1);
     return super.parseChildren(context);
   }

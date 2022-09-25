@@ -33,5 +33,5 @@ public interface Parser<DATA, RT> {
 
   void complete(
       ParserContext<DATA> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
-      throws EndOfLineException, ParserSyntaxException;
+      throws EndOfLineException;
 }

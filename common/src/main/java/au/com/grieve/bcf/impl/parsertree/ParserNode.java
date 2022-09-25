@@ -23,13 +23,21 @@
 
 package au.com.grieve.bcf.impl.parsertree;
 
+import au.com.grieve.bcf.CommandErrorCollection;
+import au.com.grieve.bcf.CompletionCandidateGroup;
+import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.ParserTreeContext;
-import au.com.grieve.bcf.ParserTreeHandlerCandidate;
+import au.com.grieve.bcf.ParserTreeResult;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
+import au.com.grieve.bcf.impl.error.DefaultErrorCollection;
+import au.com.grieve.bcf.impl.error.InputExpectedError;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * StringParserTree uses a string argument to define the parsers to use. The parsers are later
@@ -48,15 +56,38 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
   }
 
   @Override
-  public ParserTreeHandlerCandidate<DATA> parse(ParserTreeContext<DATA> context)
-      throws EndOfLineException {
+  public @NotNull ParserTreeResult<DATA> parse(ParserTreeContext<DATA> context) {
+    CommandErrorCollection errors = new DefaultErrorCollection();
+    List<CompletionCandidateGroup> completions = new ArrayList<>();
+    ParsedLine originalLine = context.getLine().copy();
     try {
       context.getResults().add(parser.parse(context, context.getLine()));
+
     } catch (ParserSyntaxException e) {
-      context.getErrors().add(e.getError(), e.getLine(), context.getWeight());
-      return null;
+      errors.add(e.getError(), e.getLine(), context.getWeight());
+      try {
+        parser.complete(context, originalLine, completions);
+      } catch (EndOfLineException ignored) {
+      }
+      return new ParserTreeResult<>(null, null, null, errors, completions);
+    } catch (EndOfLineException e) {
+      errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
+      try {
+        parser.complete(context, originalLine, completions);
+      } catch (EndOfLineException ignored) {
+      }
+      return new ParserTreeResult<>(null, null, null, errors, completions);
     }
 
-    return super.parse(context);
+    ParserTreeResult<DATA> childResult = parseChildren(context.copy());
+
+    // If we are at the EOL then return completions as well
+    if (context.getLine().isEol()) {
+      try {
+        parser.complete(context, originalLine, childResult.getCompletions());
+      } catch (EndOfLineException ignored) {
+      }
+    }
+    return childResult;
   }
 }

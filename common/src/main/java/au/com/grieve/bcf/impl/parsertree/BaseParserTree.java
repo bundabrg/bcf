@@ -23,28 +23,40 @@
 
 package au.com.grieve.bcf.impl.parsertree;
 
+import au.com.grieve.bcf.CommandErrorCollection;
+import au.com.grieve.bcf.CompleteCandidate;
+import au.com.grieve.bcf.CompleteHandler;
+import au.com.grieve.bcf.CompletionCandidateGroup;
+import au.com.grieve.bcf.ErrorCandidate;
+import au.com.grieve.bcf.ErrorHandler;
+import au.com.grieve.bcf.ExecuteCandidate;
+import au.com.grieve.bcf.ExecuteHandler;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.ParserTree;
 import au.com.grieve.bcf.ParserTreeContext;
 import au.com.grieve.bcf.ParserTreeFallbackHandler;
-import au.com.grieve.bcf.ParserTreeHandler;
-import au.com.grieve.bcf.ParserTreeHandlerCandidate;
-import au.com.grieve.bcf.exception.EndOfLineException;
+import au.com.grieve.bcf.ParserTreeResult;
+import au.com.grieve.bcf.impl.error.AmbiguousExecuteHandlersError;
+import au.com.grieve.bcf.impl.error.DefaultErrorCollection;
 import au.com.grieve.bcf.impl.error.InputExpectedError;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Objects;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.NonNull;
 
 public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
   protected final Collection<ParserTree<DATA>> children = new HashSet<>();
-  protected ParserTreeHandler<DATA> executeHandler;
-  protected ParserTreeHandler<DATA> errorHandler;
+  protected ExecuteHandler<DATA> executeHandler;
+  protected ErrorHandler<DATA> errorHandler;
+  protected CompleteHandler<DATA> completeHandler;
   protected ParserTreeFallbackHandler<DATA> fallbackHandler;
 
   /**
@@ -62,13 +74,19 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
   }
 
   @Override
-  public ParserTree<DATA> execute(ParserTreeHandler<DATA> handler) {
+  public ParserTree<DATA> execute(ExecuteHandler<DATA> handler) {
     executeHandler = handler;
     return this;
   }
 
   @Override
-  public ParserTree<DATA> error(ParserTreeHandler<DATA> handler) {
+  public ParserTree<DATA> complete(CompleteHandler<DATA> handler) {
+    completeHandler = handler;
+    return this;
+  }
+
+  @Override
+  public ParserTree<DATA> error(ErrorHandler<DATA> handler) {
     errorHandler = handler;
     return this;
   }
@@ -80,85 +98,135 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
   }
 
   @Override
-  public ParserTreeHandlerCandidate<DATA> parse(ParsedLine line, DATA data) {
+  public @NonNull ParserTreeResult<DATA> parse(ParsedLine line, DATA data) {
     DefaultParserTreeContext<DATA> context = new DefaultParserTreeContext<>(line, data);
-    try {
-      return parse(context);
-    } catch (EndOfLineException e) {
-
-      if (executeHandler == null) {
-        context.getErrors().add(new InputExpectedError(), context.getLine(), context.getWeight());
-        return errorHandler != null
-            ? new ParserTreeHandlerCandidate<>(context, errorHandler, context.getWeight())
-            : null;
-      }
-      return new ParserTreeHandlerCandidate<>(context, executeHandler, context.getWeight());
-    }
+    return parse(context);
   }
 
   @Override
-  public ParserTreeHandlerCandidate<DATA> parse(String line, DATA data) {
+  public @NonNull ParserTreeResult<DATA> parse(String line, DATA data) {
     return parse(new DefaultParsedLine(line), data);
   }
 
   @Override
-  public ParserTreeHandlerCandidate<DATA> parse(ParserTreeContext<DATA> context)
-      throws EndOfLineException {
-
-    ParserTreeHandlerCandidate<DATA> childCandidate =
-        Stream.of(parseChildren(context), parseFallback(context))
-            .filter(Objects::nonNull)
-            .max(Comparator.comparingInt(ParserTreeHandlerCandidate::getWeight))
-            .orElse(null);
-
-    if (childCandidate != null) {
-      return childCandidate;
-    }
-
-    // Errors? Return an error candidate if possible, else we don't return anything
-    if (context.getErrors().size() > 0) {
-      return errorHandler != null
-          ? new ParserTreeHandlerCandidate<>(context, errorHandler, context.getWeight())
-          : null;
-    }
-
-    // Finally if we are at EOL and have an execute handler we return that
-    if (context.getLine().isEol()) {
-      return executeHandler != null
-          ? new ParserTreeHandlerCandidate<>(context, executeHandler, context.getWeight())
-          : null;
-    }
-
-    return null;
+  public @NonNull ParserTreeResult<DATA> parse(ParserTreeContext<DATA> context) {
+    return parseChildren(context.copy());
   }
 
-  protected ParserTreeHandlerCandidate<DATA> parseChildren(ParserTreeContext<DATA> context) {
+  protected @NonNull ParserTreeResult<DATA> parseChildren(ParserTreeContext<DATA> context) {
     context.setWeight(context.getWeight() + 1);
-    return children.stream()
-        .map(
-            c -> {
-              ParserTreeContext<DATA> childContext = context.copy();
-              childContext.getErrors().clear();
-              ParserTreeHandlerCandidate<DATA> candidate = null;
-              try {
-                candidate = c.parse(childContext);
-                context.getErrors().addAll(childContext.getErrors());
-              } catch (EndOfLineException e) {
-                if (executeHandler == null) {
-                  context
-                      .getErrors()
-                      .add(new InputExpectedError(), context.getLine(), context.getWeight());
-                }
-              }
-              return candidate;
-            })
-        .filter(Objects::nonNull)
-        .max(Comparator.comparingInt(ParserTreeHandlerCandidate::getWeight))
-        .orElse(null);
+    final List<CompletionCandidateGroup> completions = new ArrayList<>();
+    final CommandErrorCollection errors = new DefaultErrorCollection();
+    List<ParserTreeResult<DATA>> childResults =
+        Stream.concat(
+                children.stream().map(c -> c.parse(context.copy())),
+                Stream.of(parseFallback(context.copy())))
+            .peek(
+                c -> {
+                  completions.addAll(c.getCompletions());
+                  errors.addAll(c.getErrors());
+                })
+            .collect(Collectors.toList());
+
+    // Separate everything out
+    Map<ExecuteCandidate<DATA>, ParserTreeResult<DATA>> executeCandidates =
+        childResults.stream()
+            .filter(r -> r.getExecuteCandidate() != null)
+            .collect(Collectors.toMap(ParserTreeResult::getExecuteCandidate, r -> r));
+    Map<ErrorCandidate<DATA>, ParserTreeResult<DATA>> errorCandidates =
+        childResults.stream()
+            .filter(r -> r.getErrorCandidate() != null)
+            .collect(Collectors.toMap(ParserTreeResult::getErrorCandidate, r -> r));
+    Map<CompleteCandidate<DATA>, ParserTreeResult<DATA>> completeCandidates =
+        childResults.stream()
+            .filter(r -> r.getCompleteCandidate() != null)
+            .collect(Collectors.toMap(ParserTreeResult::getCompleteCandidate, r -> r));
+
+    // Find heaviest
+    int heaviestExecute =
+        executeCandidates.keySet().stream()
+            .map(ExecuteCandidate::getWeight)
+            .max(Integer::compare)
+            .orElse(0);
+    int heaviestError =
+        errorCandidates.keySet().stream()
+            .map(ErrorCandidate::getWeight)
+            .max(Integer::compare)
+            .orElse(0);
+    int heaviestComplete =
+        completeCandidates.keySet().stream()
+            .map(CompleteCandidate::getWeight)
+            .max(Integer::compare)
+            .orElse(0);
+
+    // Remove all lighter candidates
+    executeCandidates =
+        executeCandidates.entrySet().stream()
+            .filter(e -> e.getKey().getWeight() == heaviestExecute)
+            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+    errorCandidates =
+        errorCandidates.entrySet().stream()
+            .filter(e -> e.getKey().getWeight() == heaviestError)
+            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+    completeCandidates =
+        completeCandidates.entrySet().stream()
+            .filter(e -> e.getKey().getWeight() == heaviestComplete)
+            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+
+    ExecuteCandidate<DATA> executeCandidate = null;
+    ErrorCandidate<DATA> errorCandidate = null;
+    CompleteCandidate<DATA> completeCandidate = null;
+
+    // Check for ambiguous handlers
+    if (executeCandidates.size() > 1) {
+      errors.add(new AmbiguousExecuteHandlersError(), context.getLine(), context.getWeight());
+    } else if (executeCandidates.size() == 1) {
+      executeCandidate = executeCandidates.keySet().stream().findFirst().orElseThrow();
+    }
+
+    if (errorCandidates.size() == 1) {
+      errorCandidate = errorCandidates.keySet().stream().findFirst().orElseThrow();
+      errors.clear();
+      errors.addAll(errorCandidates.get(errorCandidate).getErrors());
+    }
+
+    if (completeCandidates.size() == 1) {
+      completeCandidate = completeCandidates.keySet().stream().findFirst().orElseThrow();
+      completions.clear();
+      ;
+      completions.addAll(completeCandidates.get(completeCandidate).getCompletions());
+    }
+
+    // Execution
+    if (executeCandidate == null) {
+      if (context.getLine().isEol()) {
+        if (executeHandler != null) {
+          executeCandidate = new ExecuteCandidate<>(context, executeHandler, context.getWeight());
+        } else {
+          errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
+        }
+      }
+    }
+
+    // Errors
+    if (errorCandidate == null && errors.size() > 0 && errorHandler != null) {
+      errorCandidate = new ErrorCandidate<>(context, errorHandler, errors, context.getWeight());
+    }
+
+    // Completions
+    if (completeCandidate == null && completions.size() > 0 && completeHandler != null) {
+      completeCandidate =
+          new CompleteCandidate<>(context, completeHandler, completions, context.getWeight());
+    }
+
+    return new ParserTreeResult<>(
+        executeCandidate, errorCandidate, completeCandidate, errors, completions);
   }
 
-  protected ParserTreeHandlerCandidate<DATA> parseFallback(ParserTreeContext<DATA> context) {
-    return fallbackHandler != null ? fallbackHandler.handle(context) : null;
+  protected ParserTreeResult<DATA> parseFallback(ParserTreeContext<DATA> context) {
+    return fallbackHandler != null
+        ? fallbackHandler.handle(context)
+        : new ParserTreeResult<>(null, null, null, new DefaultErrorCollection(), new ArrayList<>());
   }
 
   @Override

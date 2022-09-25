@@ -21,39 +21,11 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.completion;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.CompletionCandidate;
-import au.com.grieve.bcf.CompletionCandidateGroup;
-import au.com.grieve.bcf.Parser;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import lombok.Getter;
-import lombok.ToString;
 
-@Getter
-@ToString
-public class ParserCompletionCandidateGroup implements CompletionCandidateGroup {
-
-  private final List<CompletionCandidate> completionCandidates = new ArrayList<>();
-  private final Parser<?> parser;
-
-  protected String input;
-
-  public ParserCompletionCandidateGroup(Parser<?> parser, String input) {
-    this.parser = parser;
-    this.input = input;
-  }
-
-  public String getDescription() {
-    return parser.getParameters().get("description");
-  }
-
-  @Override
-  public List<CompletionCandidate> getMatchingCompletionCandidates() {
-    return getCompletionCandidates().stream()
-        .filter(c -> c.getValue().startsWith(getInput()))
-        .collect(Collectors.toList());
-  }
+@FunctionalInterface
+public interface CompleteHandler<DATA> {
+  List<CompletionCandidateGroup> handle(CompleteContext<DATA> context);
 }

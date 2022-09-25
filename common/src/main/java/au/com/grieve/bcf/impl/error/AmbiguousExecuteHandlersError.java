@@ -21,31 +21,24 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.error;
 
-import java.util.List;
+import au.com.grieve.bcf.CommandError;
+import lombok.Getter;
 
-public interface ExecutionContext extends ParserContext {
+@Getter
+public class AmbiguousExecuteHandlersError implements CommandError {
 
-//  /**
-//   * Return a list of arguments to prepend to the result
-//   *
-//   * @return List of arguments
-//   */
-//  List<Object> getPrependArguments();
-
-  /**
-   * Return the result so far
-   *
-   * @return List of parameters
-   */
-  List<Result> getResult();
-
-  /**
-   * Return a copy of ourselves
-   *
-   * @return Copy
-   */
   @Override
-  ExecutionContext copy();
+  public String getName() {
+    return "ambiguous_execute_handlers";
+  }
+
+  @Override
+  public void merge(CommandError error) {}
+
+  @Override
+  public String toString() {
+    return "Cannot determine which command to execute as multiple match input";
+  }
 }

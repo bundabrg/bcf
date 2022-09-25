@@ -23,9 +23,9 @@
 
 package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.exception.EndOfLineException;
 import java.util.Collection;
 import java.util.function.Consumer;
+import lombok.NonNull;
 
 /** A node in the argument tree */
 public interface ParserTree<DATA> {
@@ -53,7 +53,7 @@ public interface ParserTree<DATA> {
    * @param handler Execute handler
    * @return Ourself
    */
-  ParserTree<DATA> execute(ParserTreeHandler<DATA> handler);
+  ParserTree<DATA> execute(ExecuteHandler<DATA> handler);
 
   /**
    * Set Error Handler, called when an error occurs
@@ -61,7 +61,15 @@ public interface ParserTree<DATA> {
    * @param handler Error handler
    * @return Ourself
    */
-  ParserTree<DATA> error(ParserTreeHandler<DATA> handler);
+  ParserTree<DATA> error(ErrorHandler<DATA> handler);
+
+  /**
+   * Set a completion handler, called when any completions exist
+   *
+   * @param handler Completion handler
+   * @return Ourself
+   */
+  ParserTree<DATA> complete(CompleteHandler<DATA> handler);
 
   /**
    * Set Fallback handler, called when more input exists and no child nodes exist
@@ -77,9 +85,12 @@ public interface ParserTree<DATA> {
    * @param context Parser Tree Context
    * @return Best Candidate
    */
-  ParserTreeHandlerCandidate<DATA> parse(ParserTreeContext<DATA> context) throws EndOfLineException;
+  @NonNull
+  ParserTreeResult<DATA> parse(ParserTreeContext<DATA> context);
 
-  ParserTreeHandlerCandidate<DATA> parse(ParsedLine line, DATA data);
+  @NonNull
+  ParserTreeResult<DATA> parse(ParsedLine line, DATA data);
 
-  ParserTreeHandlerCandidate<DATA> parse(String line, DATA data);
+  @NonNull
+  ParserTreeResult<DATA> parse(String line, DATA data);
 }

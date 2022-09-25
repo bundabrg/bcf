@@ -23,7 +23,10 @@
 
 package au.com.grieve.bcf;
 
+import lombok.NonNull;
+
 @FunctionalInterface
 public interface ParserTreeFallbackHandler<DATA> {
-  ParserTreeHandlerCandidate<DATA> handle(ParserTreeContext<DATA> context);
+  @NonNull
+  ParserTreeResult<DATA> handle(ParserTreeContext<DATA> context);
 }

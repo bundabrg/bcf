@@ -25,15 +25,14 @@ package au.com.grieve.bcf;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 @AllArgsConstructor
 @Getter
-public class ParserTreeHandlerCandidate<DATA> {
-  ParserTreeContext<DATA> context;
-  ParserTreeHandler<DATA> handler;
-  int weight;
-
-  public void execute() {
-    handler.handle(context);
-  }
+@ToString
+public class ErrorCandidate<DATA> {
+  private final ParserTreeContext<DATA> context;
+  private final ErrorHandler<DATA> handler;
+  private final CommandErrorCollection errors;
+  private final int weight;
 }

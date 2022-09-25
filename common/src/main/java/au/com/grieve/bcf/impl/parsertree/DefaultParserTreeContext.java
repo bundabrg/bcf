@@ -23,10 +23,8 @@
 
 package au.com.grieve.bcf.impl.parsertree;
 
-import au.com.grieve.bcf.CommandErrorCollection;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.ParserTreeContext;
-import au.com.grieve.bcf.impl.error.DefaultErrorCollection;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -39,7 +37,6 @@ public class DefaultParserTreeContext<DATA> implements ParserTreeContext<DATA> {
   private final DATA data;
   private final ParsedLine line;
   private final List<Object> results = new ArrayList<>();
-  private final CommandErrorCollection errors = new DefaultErrorCollection();
   @Setter private int weight = 0;
 
   public DefaultParserTreeContext(ParsedLine line, DATA data) {
@@ -50,7 +47,6 @@ public class DefaultParserTreeContext<DATA> implements ParserTreeContext<DATA> {
   @Override
   public ParserTreeContext<DATA> copy() {
     DefaultParserTreeContext<DATA> clone = new DefaultParserTreeContext<>(line.copy(), data);
-    clone.errors.addAll(errors);
     clone.results.addAll(results);
     clone.weight = weight;
     return clone;

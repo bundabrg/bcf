@@ -41,6 +41,8 @@ public class StringParserGenerator<DATA> {
     if (!name.startsWith("@")) {
       parameters.put("options", name);
       name = "literal";
+    } else {
+      name = name.substring(1);
     }
     return new ParserNode<>(register.createParser(name, parameters));
   }

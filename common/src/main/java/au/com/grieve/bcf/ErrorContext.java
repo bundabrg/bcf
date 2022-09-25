@@ -23,10 +23,15 @@
 
 package au.com.grieve.bcf;
 
-/**
- * Provides the ability to execute something
- */
-@FunctionalInterface
-public interface Executor<RT> {
-  RT run(Object ... args);
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
+@AllArgsConstructor
+@Getter
+@ToString
+public class ErrorContext<DATA> {
+  private final ParsedLine line;
+  private final CommandErrorCollection errors;
+  private final DATA data;
 }

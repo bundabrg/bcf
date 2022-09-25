@@ -21,16 +21,9 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.execution;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.ExecutionCandidate;
-import au.com.grieve.bcf.Executor;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
-public class NodeExecutionCandidate implements ExecutionCandidate<Object> {
-  private final Executor<Object> executor;
-  private final int weight;
+@FunctionalInterface
+public interface ExecuteHandler<DATA> {
+  void handle(ExecuteContext<DATA> context);
 }

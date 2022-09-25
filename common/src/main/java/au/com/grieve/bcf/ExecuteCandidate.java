@@ -23,13 +23,15 @@
 
 package au.com.grieve.bcf;
 
-public interface CompletionContext extends ParserContext {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
-  /**
-   * Return a copy of ourselves
-   *
-   * @return Copy
-   */
-  @Override
-  CompletionContext copy();
+@AllArgsConstructor
+@Getter
+@ToString
+public class ExecuteCandidate<DATA> {
+  private final ParserTreeContext<DATA> context;
+  private final ExecuteHandler<DATA> handler;
+  private final int weight;
 }
