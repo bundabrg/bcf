@@ -32,11 +32,9 @@ import au.com.grieve.bcf.CommandError;
 import au.com.grieve.bcf.ErrorContext;
 import au.com.grieve.bcf.ExecuteContext;
 import au.com.grieve.bcf.Parser;
-import au.com.grieve.bcf.ParserTree;
 import au.com.grieve.bcf.ParserTreeResult;
 import au.com.grieve.bcf.StringParserClassRegister;
 import au.com.grieve.bcf.annotation.Arg;
-import au.com.grieve.bcf.annotation.Command;
 import au.com.grieve.bcf.annotation.Default;
 import au.com.grieve.bcf.annotation.Error;
 import au.com.grieve.bcf.impl.error.InputExpectedError;
@@ -46,17 +44,16 @@ import au.com.grieve.bcf.impl.parser.IntegerParser;
 import au.com.grieve.bcf.impl.parser.StringParser;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("unused")
 class AnnotationCommandTest {
-  Consumer<List<ParserTree<Object>>> debugWalker =
-      n -> {
-        System.err.printf("%" + n.size() + "s", "");
-        System.err.println(n.get(n.size() - 1));
-      };
+  //  Consumer<List<ParserTree<Object>>> debugWalker =
+  //      n -> {
+  //        System.err.printf("%" + n.size() + "s", "");
+  //        System.err.println(n.get(n.size() - 1));
+  //      };
 
   StringParserClassRegister<Object> register =
       (name, parameters) -> {
@@ -111,7 +108,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void noArgMatchOnClass_2() throws NoSuchMethodException {
+  void noArgMatchOnClass_2() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result = c2.buildCommand(register).getRoot().parse("bob", null);
 
@@ -128,7 +125,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void someArgMatchOnClass_1() throws NoSuchMethodException {
+  void someArgMatchOnClass_1() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2", null);
@@ -146,7 +143,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void someArgMatchOnClass_2() throws NoSuchMethodException {
+  void someArgMatchOnClass_2() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2 ", null);
@@ -164,7 +161,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void someArgMatchOnClass_3() throws NoSuchMethodException {
+  void someArgMatchOnClass_3() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2 bob", null);
@@ -182,7 +179,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void argMatchClassNotMethod_1() throws NoSuchMethodException {
+  void argMatchClassNotMethod_1() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2 c_arg3", null);
@@ -206,7 +203,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void argMatchClassNotMethod_2() throws NoSuchMethodException {
+  void argMatchClassNotMethod_2() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2 c_arg3 ", null);
@@ -230,7 +227,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void argMatchClassNotMethod_3() throws NoSuchMethodException {
+  void argMatchClassNotMethod_3() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2 c_arg3 bob", null);
@@ -254,7 +251,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void argMatchClassSomeMethod_1() throws NoSuchMethodException {
+  void argMatchClassSomeMethod_1() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2", null);
@@ -278,7 +275,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void argMatchClassSomeMethod_2() throws NoSuchMethodException {
+  void argMatchClassSomeMethod_2() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 ", null);
@@ -302,7 +299,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void argMatchClassSomeMethod_3() throws NoSuchMethodException {
+  void argMatchClassSomeMethod_3() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 bob", null);
@@ -326,7 +323,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void argMatchClassAndMethod_1() throws NoSuchMethodException {
+  void argMatchClassAndMethod_1() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -352,7 +349,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void argMatchClassAndMethod_2() throws NoSuchMethodException {
+  void argMatchClassAndMethod_2() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -378,7 +375,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void argMatchClassAndMethod_3() throws NoSuchMethodException {
+  void argMatchClassAndMethod_3() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -404,7 +401,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void noArgMatchOnMethod_1() throws NoSuchMethodException {
+  void noArgMatchOnMethod_1() {
     C3 c3 = new C3();
     ParserTreeResult<Object> result = c3.buildCommand(register).getRoot().parse("", null);
 
@@ -427,7 +424,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void noArgMatchOnMethod_2() throws NoSuchMethodException {
+  void noArgMatchOnMethod_2() {
     C3 c3 = new C3();
     ParserTreeResult<Object> result = c3.buildCommand(register).getRoot().parse("bob", null);
 
@@ -444,7 +441,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void someMatchOnMethod_1() throws NoSuchMethodException {
+  void someMatchOnMethod_1() {
     C3 c3 = new C3();
     ParserTreeResult<Object> result =
         c3.buildCommand(register).getRoot().parse("m_arg1 m_arg2", null);
@@ -468,7 +465,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void someMatchOnMethod_2() throws NoSuchMethodException {
+  void someMatchOnMethod_2() {
     C3 c3 = new C3();
     ParserTreeResult<Object> result =
         c3.buildCommand(register).getRoot().parse("m_arg1 m_arg2 bob", null);
@@ -492,7 +489,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void argMatchMethod_1() throws NoSuchMethodException {
+  void argMatchMethod_1() {
     C3 c3 = new C3();
     ParserTreeResult<Object> result =
         c3.buildCommand(register).getRoot().parse("m_arg1 m_arg2 m_arg3", null);
@@ -516,7 +513,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void argMatchMethod_2() throws NoSuchMethodException {
+  void argMatchMethod_2() {
     C3 c3 = new C3();
     ParserTreeResult<Object> result =
         c3.buildCommand(register).getRoot().parse("m_arg1 m_arg2 m_arg3_m2", null);
@@ -541,7 +538,7 @@ class AnnotationCommandTest {
 
   // Child Class Tests
   @Test
-  void noChildArgMatch_1() throws NoSuchMethodException {
+  void noChildArgMatch_1() {
     C2 c2 = new C2();
     Child1 child1 = new Child1();
     c2.getChildren().add(child1.buildCommand(register).getRoot());
@@ -568,7 +565,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void noChildArgMatch_2() throws NoSuchMethodException {
+  void noChildArgMatch_2() {
     C2 c2 = new C2();
     Child1 child1 = new Child1();
     c2.getChildren().add(child1.buildCommand(register).getRoot());
@@ -595,7 +592,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void noChildArgMatch_3() throws NoSuchMethodException {
+  void noChildArgMatch_3() {
     C2 c2 = new C2();
     Child1 child1 = new Child1();
     c2.getChildren().add(child1.buildCommand(register).getRoot());
@@ -622,7 +619,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void someChildArgMatch_1() throws NoSuchMethodException {
+  void someChildArgMatch_1() {
     C2 c2 = new C2();
     Child1 child1 = new Child1();
     c2.getChildren().add(child1.buildCommand(register).getRoot());
@@ -651,7 +648,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void someChildArgMatch_2() throws NoSuchMethodException {
+  void someChildArgMatch_2() {
     C2 c2 = new C2();
     Child1 child1 = new Child1();
     c2.getChildren().add(child1.buildCommand(register).getRoot());
@@ -680,7 +677,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void someChildArgMatch_3() throws NoSuchMethodException {
+  void someChildArgMatch_3() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
     c2.getChildren().add(child2.buildCommand(register).getRoot());
@@ -713,7 +710,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void someChildArgMatch_4() throws NoSuchMethodException {
+  void someChildArgMatch_4() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
     c2.getChildren().add(child2.buildCommand(register).getRoot());
@@ -746,7 +743,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void childArgMatch_1() throws NoSuchMethodException {
+  void childArgMatch_1() {
     C2 c2 = new C2();
     Child1 child1 = new Child1();
     c2.getChildren().add(child1.buildCommand(register).getRoot());
@@ -775,7 +772,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void childArgMatch_2() throws NoSuchMethodException {
+  void childArgMatch_2() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
     c2.getChildren().add(child2.buildCommand(register).getRoot());
@@ -808,7 +805,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void childArgMatchSomeMethod_1() throws NoSuchMethodException {
+  void childArgMatchSomeMethod_1() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
     c2.getChildren().add(child2.buildCommand(register).getRoot());
@@ -841,7 +838,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void childArgMatchSomeMethod_2() throws NoSuchMethodException {
+  void childArgMatchSomeMethod_2() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
     c2.getChildren().add(child2.buildCommand(register).getRoot());
@@ -874,7 +871,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void childArgMatchMethod_1() throws NoSuchMethodException {
+  void childArgMatchMethod_1() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
     c2.getChildren().add(child2.buildCommand(register).getRoot());
@@ -908,7 +905,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void childArgMatchMethod_2() throws NoSuchMethodException {
+  void childArgMatchMethod_2() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
     c2.getChildren().add(child2.buildCommand(register).getRoot());
@@ -943,7 +940,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void childArgMatchMethod_3() throws NoSuchMethodException {
+  void childArgMatchMethod_3() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
     c2.getChildren().add(child2.buildCommand(register).getRoot());
@@ -978,7 +975,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void extendedClass_1() throws NoSuchMethodException {
+  void extendedClass_1() {
     C2Extended c2 = new C2Extended();
 
     ParserTreeResult<Object> result = c2.buildCommand(register).getRoot().parse("bob", null);
@@ -996,7 +993,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void extendedClass_2() throws NoSuchMethodException {
+  void extendedClass_2() {
     C2 c2 = new C2();
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2 c_arg3", null);
@@ -1020,7 +1017,7 @@ class AnnotationCommandTest {
   }
 
   @Test
-  void parameters_1() throws NoSuchMethodException {
+  void parameters_1() {
     ParamClass c = new ParamClass();
     ParserTreeResult<Object> result =
         c.buildCommand(register).getRoot().parse("c_arg1 arg1 arg2 23", null);
@@ -1179,65 +1176,75 @@ class AnnotationCommandTest {
             .sum());
   }
 
-  //  @Test
-  //  void complete_9() {
-  //    CompletionClass c = new CompletionClass();
-  //    CompletionContext ctx = defaultCompletionContext("first marta ");
-  //    List<CompletionCandidateGroup> groups = c.complete(ctx);
-  //
-  //    assertEquals(1, groups.size());
-  //    assertEquals("art", groups.get(0).getMatchingCompletionCandidates().get(0).getValue());
-  //  }
-  //
-  //  @Test
-  //  void complete_10() {
-  //    CompletionClass c = new CompletionClass();
-  //    CompletionContext ctx = defaultCompletionContext("first mike");
-  //    List<CompletionCandidateGroup> groups = c.complete(ctx);
-  //
-  //    assertEquals(2, groups.size());
-  //    assertEquals("mike", groups.get(0).getMatchingCompletionCandidates().get(0).getValue());
-  //    assertEquals("mike", groups.get(1).getMatchingCompletionCandidates().get(0).getValue());
-  //  }
-  //
-  //  @Test
-  //  void complete_11() {
-  //    CompletionClass c = new CompletionClass();
-  //    CompletionContext ctx = defaultCompletionContext("first mike ");
-  //    List<CompletionCandidateGroup> groups = c.complete(ctx);
-  //
-  //    assertEquals(2, groups.size());
-  //    assertTrue(
-  //        groups.stream()
-  //            .map(g -> g.getMatchingCompletionCandidates().size() == 2)
-  //            .filter(b -> b)
-  //            .findFirst()
-  //            .orElse(false));
-  //    assertTrue(
-  //        groups.stream()
-  //            .map(g -> g.getMatchingCompletionCandidates().size() == 1)
-  //            .filter(b -> b)
-  //            .findFirst()
-  //            .orElse(false));
-  //  }
-  //
-  //  @Test
-  //  void complete_12() {
-  //    CompletionClass c = new CompletionClass();
-  //    CompletionContext ctx = defaultCompletionContext("first mike p");
-  //    List<CompletionCandidateGroup> groups = c.complete(ctx);
-  //
-  //    assertEquals(
-  //        1, groups.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
-  //    assertEquals(
-  //        "plate",
-  //        groups.stream()
-  //            .map(CompletionCandidateGroup::getMatchingCompletionCandidates)
-  //            .filter(g -> g.size() > 0)
-  //            .map(g -> g.get(0).getValue())
-  //            .findFirst()
-  //            .orElse(null));
-  //  }
+  @Test
+  void complete_9() {
+    CompletionClass c = new CompletionClass();
+    ParserTreeResult<Object> result =
+        c.buildCommand(register).getRoot().parse("first marta ", null);
+
+    assertNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(1, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+  }
+
+  @Test
+  void complete_10() {
+    CompletionClass c = new CompletionClass();
+    ParserTreeResult<Object> result = c.buildCommand(register).getRoot().parse("first mike", null);
+
+    assertNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InputExpectedError));
+    assertEquals(2, result.getCompletions().size());
+    assertEquals(
+        2,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+  }
+
+  @Test
+  void complete_11() {
+    CompletionClass c = new CompletionClass();
+    ParserTreeResult<Object> result = c.buildCommand(register).getRoot().parse("first mike ", null);
+
+    assertNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(2, result.getCompletions().size());
+    assertEquals(
+        3,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+  }
+
+  @Test
+  void complete_12() {
+    CompletionClass c = new CompletionClass();
+    ParserTreeResult<Object> result =
+        c.buildCommand(register).getRoot().parse("first mike p", null);
+
+    assertNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(2, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+  }
   //
   //  @Test
   //  void switchTest_1() {
@@ -1249,7 +1256,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchTest_2() throws NoSuchMethodException {
+  //  void switchTest_2() {
   //    SwitchClass1 c = new SwitchClass1();
   //    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw2 mike art");
   //
@@ -1260,7 +1267,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchTest_3() throws NoSuchMethodException {
+  //  void switchTest_3() {
   //    SwitchClass1 c = new SwitchClass1();
   //    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 art -m_sw2 mike");
   //
@@ -1271,7 +1278,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchTest_4() throws NoSuchMethodException {
+  //  void switchTest_4() {
   //    SwitchClass1 c = new SwitchClass1();
   //    ExecutionContext ctx = defaultExecutionContext("-m_sw2 mike art -c_sw1 opt1");
   //
@@ -1282,7 +1289,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchTest_5() throws NoSuchMethodException {
+  //  void switchTest_5() {
   //    SwitchClass1 c = new SwitchClass1();
   //    ExecutionContext ctx = defaultExecutionContext("art -c_sw1 opt1 -m_sw2 mike");
   //
@@ -1293,7 +1300,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchTest_6() throws NoSuchMethodException {
+  //  void switchTest_6() {
   //    SwitchClass1 c = new SwitchClass1();
   //    ExecutionContext ctx = defaultExecutionContext("art -m_sw2 mike -c_sw1 opt1");
   //
@@ -1313,7 +1320,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchTest_8() throws NoSuchMethodException {
+  //  void switchTest_8() {
   //    SwitchClass1 c = new SwitchClass1();
   //    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw1 milly art");
   //
@@ -1324,7 +1331,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchTest_9() throws NoSuchMethodException {
+  //  void switchTest_9() {
   //    SwitchClass1 c = new SwitchClass1();
   //    ExecutionContext ctx = defaultExecutionContext("art -c_sw1 opt1 -m_sw1 milly");
   //
@@ -1335,7 +1342,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchTest_10() throws NoSuchMethodException {
+  //  void switchTest_10() {
   //    SwitchClass1 c = new SwitchClass1();
   //    ExecutionContext ctx = defaultExecutionContext("art -m_sw1 zoe -c_sw1 opt2");
   //
@@ -1346,7 +1353,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchTest_11() throws NoSuchMethodException {
+  //  void switchTest_11() {
   //    SwitchClass1 c = new SwitchClass1();
   //    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw3 mike art plate");
   //
@@ -1357,7 +1364,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchTest_12() throws NoSuchMethodException {
+  //  void switchTest_12() {
   //    SwitchClass1 c = new SwitchClass1();
   //    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw3 mike art");
   //
@@ -1368,7 +1375,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchTest_13() throws NoSuchMethodException {
+  //  void switchTest_13() {
   //    SwitchClass1 c = new SwitchClass1();
   //    ExecutionContext ctx = defaultExecutionContext("art angel -m_sw3 mike -c_sw1 opt1");
   //
@@ -1379,7 +1386,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchWithDefault_1() throws NoSuchMethodException {
+  //  void switchWithDefault_1() {
   //    SwitchClassWithDefaults1 c = new SwitchClassWithDefaults1();
   //    ExecutionContext ctx = defaultExecutionContext("art -c_sw1 opt1");
   //
@@ -1390,7 +1397,7 @@ class AnnotationCommandTest {
   //  }
   //
   //  @Test
-  //  void switchWithDefault_2() throws NoSuchMethodException {
+  //  void switchWithDefault_2() {
   //    SwitchClassWithDefaults1 c = new SwitchClassWithDefaults1();
   //    ExecutionContext ctx = defaultExecutionContext("art -c_sw1 opt1 -m_sw1 milly");
   //
@@ -1409,15 +1416,6 @@ class AnnotationCommandTest {
   //    assertNull(e);
   //  }
   //
-  //  @Test
-  //  void classWithCommand_1() {
-  //    AnnotationCommand c = new ClassWithCommand();
-  //    assertNotNull(c.getCommandData());
-  //    assertEquals("cmd1", c.getCommandData().getName());
-  //    assertEquals(2, c.getCommandData().getAliases().length);
-  //    assertEquals("input", c.getCommandData().getInput());
-  //    assertNotNull(c.getCommandData().getParserChain());
-  //  }
 
   @Arg("c_arg1 c_arg2 c_arg3")
   static class C1 extends AnnotationCommand<Object> {}
@@ -1565,9 +1563,4 @@ class AnnotationCommandTest {
     public void onList(Integer pageNo, String processName) {}
   }
 
-  @Command(
-      value = "cmd1|cmd2|cmd3 c_arg1 c_arg2 c_arg3",
-      description = "description",
-      input = "input")
-  static class ClassWithCommand extends AnnotationCommand<Object> {}
 }

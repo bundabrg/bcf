@@ -83,15 +83,14 @@ public class AnnotationCommand<DATA> extends BaseCommand<DATA>
 
                               // Add a method execute at the tree leaves
                               node.forEachLeaf(
-                                  n -> {
-                                    n.execute(
-                                        ctx ->
-                                            executeMethod(
-                                                m,
-                                                Stream.concat(
-                                                        Stream.of(ctx), ctx.getResults().stream())
-                                                    .collect(Collectors.toList())));
-                                  });
+                                  n ->
+                                      n.execute(
+                                          ctx ->
+                                              executeMethod(
+                                                  m,
+                                                  Stream.concat(
+                                                          Stream.of(ctx), ctx.getResults().stream())
+                                                      .collect(Collectors.toList()))));
                               return node;
                             }))
             .collect(Collectors.toList());
@@ -130,9 +129,7 @@ public class AnnotationCommand<DATA> extends BaseCommand<DATA>
       String[] commandArgs = commandAnnotation.value().strip().split(" +", 2);
       String[] commandNames = commandArgs[0].split(("\\|"));
       ParserTree<DATA> commandRoot =
-          commandArgs.length == 1
-              ? null
-              : generator.from(commandArgs[1]).forEachLeaf(n -> n.then(root));
+          commandArgs.length == 1 ? null : generator.from(commandArgs[1]);
 
       commandRootData.add(
           new DefaultCommandRootData<>(
