@@ -23,22 +23,20 @@
 
 package au.com.grieve.bcf.platform.terminalconsole.impl;
 
-import au.com.grieve.bcf.ExecutionCandidate;
-import java.lang.reflect.InvocationTargetException;
 import lombok.Getter;
 import net.minecrell.terminalconsole.SimpleTerminalConsole;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 
 @Getter
-public abstract class TerminalCommandConsole extends SimpleTerminalConsole {
+public abstract class TerminalCommandConsole<DATA> extends SimpleTerminalConsole {
 
-  private final TerminalCommandManager manager;
-  private final TerminalCommandCompleter commandCompleter;
+  private final TerminalCommandManager<DATA> manager;
+  private final TerminalCommandCompleter<DATA> commandCompleter;
 
-  public TerminalCommandConsole(TerminalCommandManager manager) {
+  public TerminalCommandConsole(TerminalCommandManager<DATA> manager) {
     this.manager = manager;
-    this.commandCompleter = new TerminalCommandCompleter(manager);
+    this.commandCompleter = new TerminalCommandCompleter<>(manager);
   }
 
   @Override
@@ -48,17 +46,6 @@ public abstract class TerminalCommandConsole extends SimpleTerminalConsole {
 
   @Override
   protected void runCommand(String input) {
-    ExecutionCandidate executionCandidate = manager.execute(input);
-
-    if (executionCandidate == null) {
-      System.err.println("No such command");
-      return;
-    }
-
-    try {
-      executionCandidate.invoke();
-    } catch (InvocationTargetException | IllegalAccessException e) {
-      throw new RuntimeException(e);
-    }
+    manager.parse(input, null).execute();
   }
 }

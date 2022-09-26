@@ -23,6 +23,14 @@
 
 package au.com.grieve.bcf.platform.terminalconsole.impl;
 
-import au.com.grieve.bcf.impl.framework.base.BaseCommandManager;
+import au.com.grieve.bcf.ErrorContext;
+import au.com.grieve.bcf.ParserTreeHandler;
+import au.com.grieve.bcf.impl.command.BaseStandaloneCommandManager;
 
-public class TerminalCommandManager extends BaseCommandManager {}
+public class TerminalCommandManager<DATA> extends BaseStandaloneCommandManager<DATA> {
+
+  @Override
+  protected ParserTreeHandler<ErrorContext<DATA>> getBaseErrorHandler() {
+    return context -> System.err.println(context.getErrors().format());
+  }
+}

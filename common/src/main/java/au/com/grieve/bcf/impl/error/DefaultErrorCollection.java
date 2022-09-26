@@ -81,9 +81,9 @@ public class DefaultErrorCollection implements CommandErrorCollection {
   public String format() {
     return "Error: "
         + get().stream().map(CommandError::toString).collect(Collectors.joining("; or "))
-        + "; At: "
+        + " at: '"
         + String.join(" ", line.getWords().subList(0, line.getWordIndex()))
-        + "<--[HERE]";
+        + "'<--[HERE]";
   }
 
   @Override

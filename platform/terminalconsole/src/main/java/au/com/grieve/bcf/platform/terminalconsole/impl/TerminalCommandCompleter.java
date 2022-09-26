@@ -23,7 +23,6 @@
 
 package au.com.grieve.bcf.platform.terminalconsole.impl;
 
-import au.com.grieve.bcf.CompletionCandidateGroup;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jline.reader.Candidate;
@@ -31,34 +30,35 @@ import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
 
-public class TerminalCommandCompleter implements Completer {
-  private final TerminalCommandManager manager;
+public class TerminalCommandCompleter<DATA> implements Completer {
+  private final TerminalCommandManager<DATA> manager;
 
-  public TerminalCommandCompleter(TerminalCommandManager manager) {
+  public TerminalCommandCompleter(TerminalCommandManager<DATA> manager) {
     this.manager = manager;
   }
 
   @Override
   public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
-    List<CompletionCandidateGroup> completionCandidateGroups = manager.complete(line.line());
 
     // Convert to jline. We provide all the completions so jline can filter them and allow
     // typo completion as well.
-    for (CompletionCandidateGroup g : completionCandidateGroups) {
-      int key = g.hashCode();
-      candidates.addAll(
-          g.getCompletionCandidates().stream()
-              .map(
-                  c ->
-                      new Candidate(
-                          c.getValue(),
-                          c.getTitle(),
-                          null,
-                          g.getDescription(),
-                          "",
-                          String.valueOf(key),
-                          true))
-              .collect(Collectors.toList()));
-    }
+    candidates.addAll(
+        manager.parse(line.line(), null).complete().stream()
+            .flatMap(
+                g -> {
+                  int key = g.hashCode();
+                  return g.getCompletionCandidates().stream()
+                      .map(
+                          c ->
+                              new Candidate(
+                                  c.getValue(),
+                                  c.getTitle(),
+                                  null,
+                                  g.getDescription(),
+                                  "",
+                                  String.valueOf(key),
+                                  true));
+                })
+            .collect(Collectors.toList()));
   }
 }

@@ -49,10 +49,6 @@ public class ParserTreeResult<DATA> {
     this.completions = completions;
   }
 
-  public boolean canExecute() {
-    return executeCandidate != null || errorCandidate != null;
-  }
-
   public void execute() {
     if (executeCandidate != null) {
       executeCandidate
@@ -71,7 +67,7 @@ public class ParserTreeResult<DATA> {
     }
   }
 
-  public void complete() {
+  public List<CompletionCandidateGroup> complete() {
     if (completeCandidate != null) {
       completeCandidate
           .getHandler()
@@ -80,6 +76,8 @@ public class ParserTreeResult<DATA> {
                   completeCandidate.getLine(),
                   completeCandidate.getCompletions(),
                   completeCandidate.getData()));
+      return completeCandidate.getCompletions();
     }
+    return completions;
   }
 }
