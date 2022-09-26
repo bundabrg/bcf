@@ -24,23 +24,8 @@
 package au.com.grieve.bcf;
 
 public interface StandaloneCommandManager<DATA> extends CommandManager<DATA> {
-  //  /**
-  //   * Provide completion candidates for the input
-  //   *
-  //   * @param line The input
-  //   */
-  //  List<CompletionCandidateGroup> complete(String line, DATA data);
-  //
-  //  List<CompletionCandidateGroup> complete(ParsedLine line, DATA data);
-  //
-  //  /**
-  //   * Return the best execution candidate for the parsed input
-  //   *
-  //   * @param line The input
-  //   * @return best execution method
-  //   */
-  //  Executor<Object> execute(String line, DATA data);
-  //
-  //  Executor<Object> execute(ParsedLine line, DATA data);
 
+  ParserTreeResult<DATA> parse(ParsedLine line, DATA data);
+
+  ParserTreeResult<DATA> parse(String line, DATA data);
 }

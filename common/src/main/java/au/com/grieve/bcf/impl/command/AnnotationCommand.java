@@ -26,12 +26,15 @@ package au.com.grieve.bcf.impl.command;
 import au.com.grieve.bcf.CommandData;
 import au.com.grieve.bcf.CommandRootData;
 import au.com.grieve.bcf.ParserTree;
+import au.com.grieve.bcf.ParserTreeContext;
+import au.com.grieve.bcf.ParserTreeResult;
 import au.com.grieve.bcf.StringParserClassRegister;
 import au.com.grieve.bcf.StringParserCommand;
 import au.com.grieve.bcf.annotation.Arg;
 import au.com.grieve.bcf.annotation.Command;
 import au.com.grieve.bcf.annotation.Default;
 import au.com.grieve.bcf.annotation.Error;
+import au.com.grieve.bcf.impl.error.DefaultErrorCollection;
 import au.com.grieve.bcf.impl.parsertree.NullNode;
 import au.com.grieve.bcf.impl.parsertree.generator.StringParserGenerator;
 import au.com.grieve.bcf.utils.ReflectUtils;
@@ -114,10 +117,9 @@ public class AnnotationCommand<DATA> extends BaseCommand<DATA>
           if (errorMethod != null) {
             n.error(ctx -> executeMethod(errorMethod, List.of(ctx)));
           }
+          n.fallback(this::handleChildren);
 
-          // Add Method Args and Children
-          getChildren().forEach(n::then);
-
+          // Add Method Args
           methodNodes.forEach(n::then);
         });
 
@@ -129,7 +131,7 @@ public class AnnotationCommand<DATA> extends BaseCommand<DATA>
       String[] commandArgs = commandAnnotation.value().strip().split(" +", 2);
       String[] commandNames = commandArgs[0].split(("\\|"));
       ParserTree<DATA> commandRoot =
-          commandArgs.length == 1 ? null : generator.from(commandArgs[1]);
+          commandArgs.length == 1 ? new NullNode<>() : generator.from(commandArgs[1]);
 
       commandRootData.add(
           new DefaultCommandRootData<>(
@@ -144,6 +146,14 @@ public class AnnotationCommand<DATA> extends BaseCommand<DATA>
     }
 
     return new DefaultCommandData<>(commandRootData, root);
+  }
+
+  protected ParserTreeResult<DATA> handleChildren(ParserTreeContext<DATA> ctx) {
+    if (children.size() > 0) {
+      return children.parse(ctx);
+    }
+    return new ParserTreeResult<>(
+        null, null, null, new DefaultErrorCollection(), new ArrayList<>());
   }
 
   protected void executeMethod(Method method, List<Object> parameters) {

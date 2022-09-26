@@ -91,7 +91,7 @@ public class FloatParser extends BaseParser<Object, Float> implements ParserMinM
   protected void doComplete(
       ParserContext<Object> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
-    String input = line.getCurrentWord();
+    String input = line.next();
 
     CompletionCandidateGroup group = new StaticCompletionCandidateGroup(input, getDescription());
     group
@@ -100,7 +100,5 @@ public class FloatParser extends BaseParser<Object, Float> implements ParserMinM
             new DefaultCompletionCandidate(
                 "", getPlaceholder() != null ? getPlaceholder() : "<float>"));
     candidates.add(group);
-
-    line.next();
   }
 }

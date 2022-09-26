@@ -25,17 +25,15 @@ package au.com.grieve.bcf.impl.command;
 
 import au.com.grieve.bcf.Command;
 import au.com.grieve.bcf.ParserTree;
-import java.util.HashSet;
-import java.util.Set;
-import lombok.Getter;
+import au.com.grieve.bcf.impl.parsertree.NullNode;
 
-@Getter
 public abstract class BaseCommand<DATA> implements Command<DATA> {
-  private final Set<ParserTree<DATA>> children = new HashSet<>();
+  protected final ParserTree<DATA> children = new NullNode<>();
 
   @Override
   public Command<DATA> then(ParserTree<DATA> childRoot) {
-    children.add(childRoot);
+
+    children.then(childRoot);
     return this;
   }
 }

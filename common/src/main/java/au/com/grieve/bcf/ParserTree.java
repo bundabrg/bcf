@@ -83,8 +83,8 @@ public interface ParserTree<DATA> {
   /**
    * Walk over every node
    *
-   * @param consumer
-   * @return
+   * @param consumer Execute for every node
+   * @return Ourself
    */
   ParserTree<DATA> walk(Consumer<List<ParserTree<DATA>>> consumer);
 
@@ -105,4 +105,10 @@ public interface ParserTree<DATA> {
   @NonNull
   ParserTreeResult<DATA> parse(String line, DATA data);
 
+  /**
+   * Return the number of direct descendants we have
+   *
+   * @return number of children
+   */
+  int size();
 }

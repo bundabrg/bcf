@@ -79,7 +79,7 @@ public class StringParser extends BaseParser<Object, String> implements ParserOp
   protected void doComplete(
       ParserContext<Object> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
-    String input = line.getCurrentWord();
+    String input = line.next();
 
     if (getOptions().size() > 0) {
       CompletionCandidateGroup group = new StaticCompletionCandidateGroup(input, getDescription());
@@ -99,7 +99,5 @@ public class StringParser extends BaseParser<Object, String> implements ParserOp
                   "", getPlaceholder() != null ? getPlaceholder() : "<string>"));
       candidates.add(group);
     }
-
-    line.next();
   }
 }

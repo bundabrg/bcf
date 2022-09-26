@@ -93,12 +93,11 @@ public class IntegerParser extends BaseParser<Object, Integer> implements Parser
   protected void doComplete(
       ParserContext<Object> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
-    String input = line.getCurrentWord();
+    String input = line.next();
 
     // Show a number range if both min and max defined
+    CompletionCandidateGroup group = new StaticCompletionCandidateGroup(input, getDescription());
     if (getMin() != null && getMax() != null) {
-
-      CompletionCandidateGroup group = new StaticCompletionCandidateGroup(input, getDescription());
       group
           .getCompletionCandidates()
           .addAll(
@@ -107,17 +106,13 @@ public class IntegerParser extends BaseParser<Object, Integer> implements Parser
                   .limit(20)
                   .map(DefaultCompletionCandidate::new)
                   .collect(Collectors.toList()));
-      candidates.add(group);
     } else {
-      CompletionCandidateGroup group = new StaticCompletionCandidateGroup(input, getDescription());
       group
           .getCompletionCandidates()
           .add(
               new DefaultCompletionCandidate(
                   "", getPlaceholder() != null ? getPlaceholder() : "<number>"));
-      candidates.add(group);
     }
-
-    line.next();
+    candidates.add(group);
   }
 }

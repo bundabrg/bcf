@@ -77,10 +77,10 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
       return new ParserTreeResult<>(null, null, null, errors, completions);
     } catch (EndOfLineException e) {
       errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
-      //      try {
-      //        parser.complete(context, originalLine, completions);
-      //      } catch (EndOfLineException ignored) {
-      //      }
+      try {
+        parser.complete(context, originalLine, completions);
+      } catch (EndOfLineException ignored) {
+      }
       return new ParserTreeResult<>(null, null, null, errors, completions);
     }
 

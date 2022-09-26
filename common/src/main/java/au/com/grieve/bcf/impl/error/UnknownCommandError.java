@@ -21,18 +21,24 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.impl.error;
 
-import lombok.AllArgsConstructor;
+import au.com.grieve.bcf.CommandError;
 import lombok.Getter;
-import lombok.ToString;
 
-@AllArgsConstructor
 @Getter
-@ToString
-public class ErrorCandidate<DATA> {
-  private final ParserTreeContext<DATA> context;
-  private final ErrorHandler<DATA> handler;
-  private final CommandErrorCollection errors;
-  private final int weight;
+public class UnknownCommandError implements CommandError {
+
+  @Override
+  public String getName() {
+    return "unknown_command";
+  }
+
+  @Override
+  public void merge(CommandError error) {}
+
+  @Override
+  public String toString() {
+    return "Unknown Command";
+  }
 }

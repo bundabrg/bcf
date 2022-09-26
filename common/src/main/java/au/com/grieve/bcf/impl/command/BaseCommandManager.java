@@ -27,7 +27,6 @@ import au.com.grieve.bcf.Command;
 import au.com.grieve.bcf.CommandData;
 import au.com.grieve.bcf.CommandManager;
 import au.com.grieve.bcf.Parser;
-import au.com.grieve.bcf.ParserTree;
 import au.com.grieve.bcf.StringParserClassRegister;
 import au.com.grieve.bcf.StringParserCommand;
 import au.com.grieve.bcf.impl.parser.DoubleParser;
@@ -35,10 +34,10 @@ import au.com.grieve.bcf.impl.parser.FloatParser;
 import au.com.grieve.bcf.impl.parser.IntegerParser;
 import au.com.grieve.bcf.impl.parser.StringParser;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * BaseCommandManager provides many useful defaults
@@ -49,7 +48,7 @@ public abstract class BaseCommandManager<DATA>
     implements CommandManager<DATA>, StringParserClassRegister<DATA> {
 
   // Used so we can add children nodes to the command
-  private final Map<Class<?>, Set<ParserTree<DATA>>> commandParserLeafs = new HashMap<>();
+  private final Map<Class<?>, List<Command<DATA>>> commandClassMap = new HashMap<>();
   // Hold registered parsers to string names
   private final Map<String, Class<? extends Parser<DATA, ?>>> parserClassMap = new HashMap<>();
 
@@ -117,8 +116,7 @@ public abstract class BaseCommandManager<DATA>
 
     addCommand(commandData);
 
-    // Add Leafs of command, so we know where to add children to
-    commandParserLeafs.put(command.getClass(), new HashSet<>(commandData.getRoot().leafs()));
+    commandClassMap.computeIfAbsent(command.getClass(), k -> new ArrayList<>()).add(command);
   }
 
   protected abstract void addCommand(CommandData<DATA> commandData);
@@ -134,8 +132,8 @@ public abstract class BaseCommandManager<DATA>
     CommandData<DATA> commandData = buildCommandData(command);
 
     // Check if we know about parent
-    Set<ParserTree<DATA>> parentLeafs = commandParserLeafs.get(parent);
-    if (parentLeafs == null) {
+    List<Command<DATA>> parents = commandClassMap.get(parent);
+    if (parents == null) {
       throw new RuntimeException("Unable to find parent class. Have they registered yet?");
     }
 
@@ -144,10 +142,7 @@ public abstract class BaseCommandManager<DATA>
       addCommand(commandData);
     }
 
-    // Add Leafs of command, so we know where to add children to
-    commandParserLeafs.put(command.getClass(), new HashSet<>(commandData.getRoot().leafs()));
-
-    // Add to the parents leafs
-    parentLeafs.forEach(n -> n.then(commandData.getRoot()));
+    // Add as a child to command
+    parents.forEach(p -> p.then(commandData.getRoot()));
   }
 }

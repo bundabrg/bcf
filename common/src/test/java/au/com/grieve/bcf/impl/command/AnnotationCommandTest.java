@@ -541,7 +541,7 @@ class AnnotationCommandTest {
   void noChildArgMatch_1() {
     C2 c2 = new C2();
     Child1 child1 = new Child1();
-    c2.getChildren().add(child1.buildCommand(register).getRoot());
+    c2.then(child1.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2 c_arg3", null);
@@ -568,7 +568,7 @@ class AnnotationCommandTest {
   void noChildArgMatch_2() {
     C2 c2 = new C2();
     Child1 child1 = new Child1();
-    c2.getChildren().add(child1.buildCommand(register).getRoot());
+    c2.then(child1.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2 c_arg3 ", null);
@@ -595,7 +595,7 @@ class AnnotationCommandTest {
   void noChildArgMatch_3() {
     C2 c2 = new C2();
     Child1 child1 = new Child1();
-    c2.getChildren().add(child1.buildCommand(register).getRoot());
+    c2.then(child1.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register).getRoot().parse("c_arg1 c_arg2 c_arg3 bob", null);
@@ -622,7 +622,7 @@ class AnnotationCommandTest {
   void someChildArgMatch_1() {
     C2 c2 = new C2();
     Child1 child1 = new Child1();
-    c2.getChildren().add(child1.buildCommand(register).getRoot());
+    c2.then(child1.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -651,7 +651,7 @@ class AnnotationCommandTest {
   void someChildArgMatch_2() {
     C2 c2 = new C2();
     Child1 child1 = new Child1();
-    c2.getChildren().add(child1.buildCommand(register).getRoot());
+    c2.then(child1.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -680,7 +680,7 @@ class AnnotationCommandTest {
   void someChildArgMatch_3() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
-    c2.getChildren().add(child2.buildCommand(register).getRoot());
+    c2.then(child2.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -713,7 +713,7 @@ class AnnotationCommandTest {
   void someChildArgMatch_4() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
-    c2.getChildren().add(child2.buildCommand(register).getRoot());
+    c2.then(child2.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -746,7 +746,7 @@ class AnnotationCommandTest {
   void childArgMatch_1() {
     C2 c2 = new C2();
     Child1 child1 = new Child1();
-    c2.getChildren().add(child1.buildCommand(register).getRoot());
+    c2.then(child1.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -775,7 +775,7 @@ class AnnotationCommandTest {
   void childArgMatch_2() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
-    c2.getChildren().add(child2.buildCommand(register).getRoot());
+    c2.then(child2.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -808,7 +808,7 @@ class AnnotationCommandTest {
   void childArgMatchSomeMethod_1() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
-    c2.getChildren().add(child2.buildCommand(register).getRoot());
+    c2.then(child2.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -841,7 +841,7 @@ class AnnotationCommandTest {
   void childArgMatchSomeMethod_2() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
-    c2.getChildren().add(child2.buildCommand(register).getRoot());
+    c2.then(child2.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -874,7 +874,7 @@ class AnnotationCommandTest {
   void childArgMatchMethod_1() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
-    c2.getChildren().add(child2.buildCommand(register).getRoot());
+    c2.then(child2.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -908,7 +908,7 @@ class AnnotationCommandTest {
   void childArgMatchMethod_2() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
-    c2.getChildren().add(child2.buildCommand(register).getRoot());
+    c2.then(child2.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register)
@@ -943,7 +943,7 @@ class AnnotationCommandTest {
   void childArgMatchMethod_3() {
     C2 c2 = new C2();
     Child2 child2 = new Child2();
-    c2.getChildren().add(child2.buildCommand(register).getRoot());
+    c2.then(child2.buildCommand(register).getRoot());
 
     ParserTreeResult<Object> result =
         c2.buildCommand(register)

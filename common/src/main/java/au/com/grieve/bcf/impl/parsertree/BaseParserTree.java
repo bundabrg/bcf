@@ -47,6 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -55,7 +56,7 @@ import lombok.ToString;
 
 @ToString
 public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
-  @ToString.Exclude protected final Collection<ParserTree<DATA>> children = new HashSet<>();
+  @ToString.Exclude protected final Set<ParserTree<DATA>> children = new HashSet<>();
   protected ParserTreeHandler<ExecuteContext<DATA>> executeHandler;
   protected ParserTreeHandler<ErrorContext<DATA>> errorHandler;
   protected ParserTreeHandler<CompleteContext<DATA>> completeHandler;
@@ -203,7 +204,6 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
     if (completeCandidates.size() == 1) {
       completeCandidate = completeCandidates.keySet().stream().findFirst().orElseThrow();
       completions.clear();
-      ;
       completions.addAll(completeCandidates.get(completeCandidate).getCompletions());
     }
 
@@ -286,5 +286,9 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
     chain.add(this);
     consumer.accept(chain);
     children.forEach(c -> c.walk(consumer, chain));
+  }
+
+  public int size() {
+    return children.size();
   }
 }
