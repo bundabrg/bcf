@@ -35,6 +35,7 @@ import au.com.grieve.bcf.ParserTreeContext;
 import au.com.grieve.bcf.ParserTreeFallbackHandler;
 import au.com.grieve.bcf.ParserTreeHandler;
 import au.com.grieve.bcf.ParserTreeResult;
+import au.com.grieve.bcf.Result;
 import au.com.grieve.bcf.exception.ResultNotSetException;
 import au.com.grieve.bcf.impl.error.AmbiguousExecuteHandlersError;
 import au.com.grieve.bcf.impl.error.DefaultErrorCollection;
@@ -44,6 +45,7 @@ import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -120,19 +122,31 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
   protected @NonNull List<ParserTreeResult<DATA>> parseFutureResults(
       ParserTreeContext<DATA> context) {
     // Look backwards through output for a non-completed future result
-    //noinspection unchecked
-    return context.getResults().stream()
-        .collect(
-            Collectors.collectingAndThen(
-                Collectors.toList(),
-                l -> {
-                  Collections.reverse(l);
-                  return l;
-                }))
-        .stream()
-        .filter(r -> !r.isSet())
-        .filter(r -> r instanceof FutureResult)
-        .map(r -> ((FutureResult<DATA>) r).handle(context))
+    Map<Result, List<ParserTreeResult<DATA>>> data = new HashMap<>();
+    int wordIndex;
+    do {
+      wordIndex = context.getLine().getWordIndex();
+      context.getResults().stream()
+          .collect(
+              Collectors.collectingAndThen(
+                  Collectors.toList(),
+                  l -> {
+                    Collections.reverse(l);
+                    return l;
+                  }))
+          .stream()
+          .filter(r -> !r.isSet())
+          .filter(r -> r instanceof FutureResult)
+          .forEach(
+              r -> {
+                //noinspection unchecked
+                data.computeIfAbsent(r, k -> new ArrayList<>())
+                    .add(((FutureResult<DATA>) r).handle(context));
+              });
+    } while (wordIndex != context.getLine().getWordIndex());
+
+    return data.entrySet().stream()
+        .flatMap(d -> d.getValue().stream())
         .collect(Collectors.toList());
   }
 

@@ -1304,156 +1304,468 @@ class AnnotationCommandTest {
     assertNull(c1.m6_arg2);
   }
 
-  //  @Test
-  //  void switchTest_3() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 art -m_sw2 mike");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m2"), e.getMethod());
-  //    assertEquals("opt1", e.getParameters().get(0));
-  //    assertEquals("mike", e.getParameters().get(1));
-  //  }
-  //
-  //  @Test
-  //  void switchTest_4() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("-m_sw2 mike art -c_sw1 opt1");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m2"), e.getMethod());
-  //    assertEquals("opt1", e.getParameters().get(0));
-  //    assertEquals("mike", e.getParameters().get(1));
-  //  }
-  //
-  //  @Test
-  //  void switchTest_5() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("art -c_sw1 opt1 -m_sw2 mike");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m2"), e.getMethod());
-  //    assertEquals("opt1", e.getParameters().get(0));
-  //    assertEquals("mike", e.getParameters().get(1));
-  //  }
-  //
-  //  @Test
-  //  void switchTest_6() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("art -m_sw2 mike -c_sw1 opt1");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m2"), e.getMethod());
-  //    assertEquals("opt1", e.getParameters().get(0));
-  //    assertEquals("mike", e.getParameters().get(1));
-  //  }
-  //
-  //  @Test
-  //  void switchTest_7() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw1 bob art");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertNull(e);
-  //  }
-  //
-  //  @Test
-  //  void switchTest_8() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw1 milly art");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m1"), e.getMethod());
-  //    assertEquals("opt1", e.getParameters().get(0));
-  //    assertEquals("milly", e.getParameters().get(1));
-  //  }
-  //
-  //  @Test
-  //  void switchTest_9() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("art -c_sw1 opt1 -m_sw1 milly");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m1"), e.getMethod());
-  //    assertEquals("opt1", e.getParameters().get(0));
-  //    assertEquals("milly", e.getParameters().get(1));
-  //  }
-  //
-  //  @Test
-  //  void switchTest_10() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("art -m_sw1 zoe -c_sw1 opt2");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m3"), e.getMethod());
-  //    assertEquals("opt2", e.getParameters().get(0));
-  //    assertEquals("zoe", e.getParameters().get(1));
-  //  }
-  //
-  //  @Test
-  //  void switchTest_11() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw3 mike art plate");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m4"), e.getMethod());
-  //    assertEquals("opt1", e.getParameters().get(0));
-  //    assertEquals("mike", e.getParameters().get(1));
-  //  }
-  //
-  //  @Test
-  //  void switchTest_12() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw3 mike art");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m6"), e.getMethod());
-  //    assertEquals("opt1", e.getParameters().get(0));
-  //    assertEquals("mike", e.getParameters().get(1));
-  //  }
-  //
-  //  @Test
-  //  void switchTest_13() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("art angel -m_sw3 mike -c_sw1 opt1");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m5"), e.getMethod());
-  //    assertEquals("opt1", e.getParameters().get(0));
-  //    assertEquals("mike", e.getParameters().get(1));
-  //  }
-  //
-  //  @Test
-  //  void switchWithDefault_1() {
-  //    SwitchClassWithDefaults1 c = new SwitchClassWithDefaults1();
-  //    ExecutionContext ctx = defaultExecutionContext("art -c_sw1 opt1");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m1"), e.getMethod());
-  //    assertEquals("opt1", e.getParameters().get(0));
-  //    assertEquals("marta", e.getParameters().get(1));
-  //  }
-  //
-  //  @Test
-  //  void switchWithDefault_2() {
-  //    SwitchClassWithDefaults1 c = new SwitchClassWithDefaults1();
-  //    ExecutionContext ctx = defaultExecutionContext("art -c_sw1 opt1 -m_sw1 milly");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m2"), e.getMethod());
-  //    assertEquals("opt1", e.getParameters().get(0));
-  //    assertEquals("milly", e.getParameters().get(1));
-  //  }
-  //
-  //  @Test
-  //  void complexSwitch_1() {
-  //    ComplexSwitchClass1 c = new ComplexSwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("list 4 bob");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertNull(e);
-  //  }
-  //
+  @Test
+  void switchTest_3() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("-c_sw1 opt1 art -m_sw2 mike", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(1, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(0, c1.m1_count);
+    assertEquals(1, c1.m2_count);
+    assertEquals(0, c1.m3_count);
+    assertEquals(0, c1.m4_count);
+    assertEquals(0, c1.m5_count);
+    assertEquals(0, c1.m6_count);
+    assertNull(c1.m1_arg1);
+    assertEquals("opt1", c1.m2_arg1);
+    assertNull(c1.m3_arg1);
+    assertNull(c1.m4_arg1);
+    assertNull(c1.m5_arg1);
+    assertNull(c1.m6_arg1);
+    assertNull(c1.m1_arg2);
+    assertEquals("mike", c1.m2_arg2);
+    assertNull(c1.m3_arg2);
+    assertNull(c1.m4_arg2);
+    assertNull(c1.m5_arg2);
+    assertNull(c1.m6_arg2);
+  }
+
+  @Test
+  void switchTest_4() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("-m_sw2 mike art -c_sw1 opt1", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(1, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(0, c1.m1_count);
+    assertEquals(1, c1.m2_count);
+    assertEquals(0, c1.m3_count);
+    assertEquals(0, c1.m4_count);
+    assertEquals(0, c1.m5_count);
+    assertEquals(0, c1.m6_count);
+    assertNull(c1.m1_arg1);
+    assertEquals("opt1", c1.m2_arg1);
+    assertNull(c1.m3_arg1);
+    assertNull(c1.m4_arg1);
+    assertNull(c1.m5_arg1);
+    assertNull(c1.m6_arg1);
+    assertNull(c1.m1_arg2);
+    assertEquals("mike", c1.m2_arg2);
+    assertNull(c1.m3_arg2);
+    assertNull(c1.m4_arg2);
+    assertNull(c1.m5_arg2);
+    assertNull(c1.m6_arg2);
+  }
+
+  @Test
+  void switchTest_5() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("art -c_sw1 opt1 -m_sw2 mike", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(1, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(0, c1.m1_count);
+    assertEquals(1, c1.m2_count);
+    assertEquals(0, c1.m3_count);
+    assertEquals(0, c1.m4_count);
+    assertEquals(0, c1.m5_count);
+    assertEquals(0, c1.m6_count);
+    assertNull(c1.m1_arg1);
+    assertEquals("opt1", c1.m2_arg1);
+    assertNull(c1.m3_arg1);
+    assertNull(c1.m4_arg1);
+    assertNull(c1.m5_arg1);
+    assertNull(c1.m6_arg1);
+    assertNull(c1.m1_arg2);
+    assertEquals("mike", c1.m2_arg2);
+    assertNull(c1.m3_arg2);
+    assertNull(c1.m4_arg2);
+    assertNull(c1.m5_arg2);
+    assertNull(c1.m6_arg2);
+  }
+
+  @Test
+  void switchTest_6() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("art -m_sw2 mike -c_sw1 opt1", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(1, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(0, c1.m1_count);
+    assertEquals(1, c1.m2_count);
+    assertEquals(0, c1.m3_count);
+    assertEquals(0, c1.m4_count);
+    assertEquals(0, c1.m5_count);
+    assertEquals(0, c1.m6_count);
+    assertNull(c1.m1_arg1);
+    assertEquals("opt1", c1.m2_arg1);
+    assertNull(c1.m3_arg1);
+    assertNull(c1.m4_arg1);
+    assertNull(c1.m5_arg1);
+    assertNull(c1.m6_arg1);
+    assertNull(c1.m1_arg2);
+    assertEquals("mike", c1.m2_arg2);
+    assertNull(c1.m3_arg2);
+    assertNull(c1.m4_arg2);
+    assertNull(c1.m5_arg2);
+    assertNull(c1.m6_arg2);
+  }
+
+  @Test
+  void switchTest_7() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("-c_sw1 opt1 -m_sw1 bob art", null);
+
+    assertNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(0, result.getCompletions().size());
+    assertEquals(
+        0,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+  }
+
+  @Test
+  void switchTest_8() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("-c_sw1 opt1 -m_sw1 milly art", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(1, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(1, c1.m1_count);
+    assertEquals(0, c1.m2_count);
+    assertEquals(0, c1.m3_count);
+    assertEquals(0, c1.m4_count);
+    assertEquals(0, c1.m5_count);
+    assertEquals(0, c1.m6_count);
+    assertEquals("opt1", c1.m1_arg1);
+    assertNull(c1.m2_arg1);
+    assertNull(c1.m3_arg1);
+    assertNull(c1.m4_arg1);
+    assertNull(c1.m5_arg1);
+    assertNull(c1.m6_arg1);
+    assertEquals("milly", c1.m1_arg2);
+    assertNull(c1.m2_arg2);
+    assertNull(c1.m3_arg2);
+    assertNull(c1.m4_arg2);
+    assertNull(c1.m5_arg2);
+    assertNull(c1.m6_arg2);
+  }
+
+  @Test
+  void switchTest_9() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("art -c_sw1 opt1 -m_sw1 milly", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(2, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(1, c1.m1_count);
+    assertEquals(0, c1.m2_count);
+    assertEquals(0, c1.m3_count);
+    assertEquals(0, c1.m4_count);
+    assertEquals(0, c1.m5_count);
+    assertEquals(0, c1.m6_count);
+    assertEquals("opt1", c1.m1_arg1);
+    assertNull(c1.m2_arg1);
+    assertNull(c1.m3_arg1);
+    assertNull(c1.m4_arg1);
+    assertNull(c1.m5_arg1);
+    assertNull(c1.m6_arg1);
+    assertEquals("milly", c1.m1_arg2);
+    assertNull(c1.m2_arg2);
+    assertNull(c1.m3_arg2);
+    assertNull(c1.m4_arg2);
+    assertNull(c1.m5_arg2);
+    assertNull(c1.m6_arg2);
+  }
+
+  @Test
+  void switchTest_10() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("art -m_sw1 zoe -c_sw1 opt2", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(1, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(0, c1.m1_count);
+    assertEquals(0, c1.m2_count);
+    assertEquals(1, c1.m3_count);
+    assertEquals(0, c1.m4_count);
+    assertEquals(0, c1.m5_count);
+    assertEquals(0, c1.m6_count);
+    assertNull(c1.m1_arg1);
+    assertNull(c1.m2_arg1);
+    assertEquals("opt2", c1.m3_arg1);
+    assertNull(c1.m4_arg1);
+    assertNull(c1.m5_arg1);
+    assertNull(c1.m6_arg1);
+    assertNull(c1.m1_arg2);
+    assertNull(c1.m2_arg2);
+    assertEquals("zoe", c1.m3_arg2);
+    assertNull(c1.m4_arg2);
+    assertNull(c1.m5_arg2);
+    assertNull(c1.m6_arg2);
+  }
+
+  @Test
+  void switchTest_11() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("-c_sw1 opt1 -m_sw3 mike art plate", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(2, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(0, c1.m1_count);
+    assertEquals(0, c1.m2_count);
+    assertEquals(0, c1.m3_count);
+    assertEquals(1, c1.m4_count);
+    assertEquals(0, c1.m5_count);
+    assertEquals(0, c1.m6_count);
+    assertNull(c1.m1_arg1);
+    assertNull(c1.m2_arg1);
+    assertNull(c1.m3_arg1);
+    assertEquals("opt1", c1.m4_arg1);
+    assertNull(c1.m5_arg1);
+    assertNull(c1.m6_arg1);
+    assertNull(c1.m1_arg2);
+    assertNull(c1.m2_arg2);
+    assertNull(c1.m3_arg2);
+    assertEquals("mike", c1.m4_arg2);
+    assertNull(c1.m5_arg2);
+    assertNull(c1.m6_arg2);
+  }
+
+  @Test
+  void switchTest_12() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("-c_sw1 opt1 -m_sw3 mike art", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InputExpectedError));
+    assertEquals(3, result.getCompletions().size());
+    assertEquals(
+        3,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(0, c1.m1_count);
+    assertEquals(0, c1.m2_count);
+    assertEquals(0, c1.m3_count);
+    assertEquals(0, c1.m4_count);
+    assertEquals(0, c1.m5_count);
+    assertEquals(1, c1.m6_count);
+    assertNull(c1.m1_arg1);
+    assertNull(c1.m2_arg1);
+    assertNull(c1.m3_arg1);
+    assertNull(c1.m4_arg1);
+    assertNull(c1.m5_arg1);
+    assertEquals("opt1", c1.m6_arg1);
+    assertNull(c1.m1_arg2);
+    assertNull(c1.m2_arg2);
+    assertNull(c1.m3_arg2);
+    assertNull(c1.m4_arg2);
+    assertNull(c1.m5_arg2);
+    assertEquals("mike", c1.m6_arg2);
+  }
+
+  @Test
+  void switchTest_13() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("art angel -m_sw3 mike -c_sw1 opt1", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(1, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(0, c1.m1_count);
+    assertEquals(0, c1.m2_count);
+    assertEquals(0, c1.m3_count);
+    assertEquals(0, c1.m4_count);
+    assertEquals(1, c1.m5_count);
+    assertEquals(0, c1.m6_count);
+    assertNull(c1.m1_arg1);
+    assertNull(c1.m2_arg1);
+    assertNull(c1.m3_arg1);
+    assertNull(c1.m4_arg1);
+    assertEquals("opt1", c1.m5_arg1);
+    assertNull(c1.m6_arg1);
+    assertNull(c1.m1_arg2);
+    assertNull(c1.m2_arg2);
+    assertNull(c1.m3_arg2);
+    assertNull(c1.m4_arg2);
+    assertEquals("mike", c1.m5_arg2);
+    assertNull(c1.m6_arg2);
+  }
+
+  @Test
+  void switchWithDefault_1() {
+    SwitchClassWithDefaults1 c1 = new SwitchClassWithDefaults1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("art -c_sw1 opt1", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InputExpectedError));
+    assertEquals(2, result.getCompletions().size());
+    assertEquals(
+        2,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(1, c1.m1_count);
+    assertEquals(0, c1.m2_count);
+    assertEquals("opt1", c1.m1_arg1);
+    assertNull(c1.m2_arg1);
+    assertEquals("marta", c1.m1_arg2);
+    assertNull(c1.m2_arg2);
+  }
+
+  @Test
+  void switchWithDefault_2() {
+    SwitchClassWithDefaults1 c1 = new SwitchClassWithDefaults1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("art -c_sw1 opt1 -m_sw1 milly", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(2, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(0, c1.m1_count);
+    assertEquals(1, c1.m2_count);
+    assertNull(c1.m1_arg1);
+    assertEquals("opt1", c1.m2_arg1);
+    assertNull(c1.m1_arg2);
+    assertEquals("milly", c1.m2_arg2);
+  }
 
   @Arg("c_arg1 c_arg2 c_arg3")
   static class C1 extends AnnotationCommand<Object> {}
@@ -1631,17 +1943,26 @@ class AnnotationCommandTest {
 
   @Arg("opt1|opt2|opt3(switch=c_sw1, suppress=false)")
   static class SwitchClassWithDefaults1 extends AnnotationCommand<Object> {
+    int m1_count = 0;
+    int m2_count = 0;
+    String m1_arg1 = null;
+    String m2_arg1 = null;
+    String m1_arg2 = null;
+    String m2_arg2 = null;
+
     @Arg("mike|marta(switch=m_sw1, suppress=false, default=marta) art")
-    public void m1() {}
+    public void m1(ExecuteContext<Object> ctx, String arg1, String arg2) {
+      m1_count++;
+      m1_arg1 = arg1;
+      m1_arg2 = arg2;
+    }
 
     @Arg("mike|milly(switch=m_sw1, suppress=false) art")
-    public void m2() {}
-  }
-
-  static class ComplexSwitchClass1 extends AnnotationCommand<Object> {
-    @Arg(
-        "list(description=List Process) @int(min=1,max=6,switch=page,default=1,description=Page Number) @string(description=Process Name)")
-    public void onList(Integer pageNo, String processName) {}
+    public void m2(ExecuteContext<Object> ctx, String arg1, String arg2) {
+      m2_count++;
+      m2_arg1 = arg1;
+      m2_arg2 = arg2;
+    }
   }
 
 }

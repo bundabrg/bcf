@@ -26,6 +26,7 @@ package au.com.grieve.bcf.impl.error;
 import au.com.grieve.bcf.CommandError;
 import au.com.grieve.bcf.CommandErrorCollection;
 import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +39,7 @@ import lombok.ToString;
 @ToString
 public class DefaultErrorCollection implements CommandErrorCollection {
   private final Map<Class<? extends CommandError>, CommandError> errorMap = new HashMap<>();
-  @Getter private ParsedLine line;
+  @Getter private ParsedLine line = new DefaultParsedLine("");
   @Getter private int weight = 0;
 
   /**

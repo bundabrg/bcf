@@ -62,12 +62,26 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
 
   protected ParserTreeResult<DATA> switchHandler(
       FutureResult<DATA> result, ParserTreeContext<DATA> context) {
-    if (!context.getLine().getCurrentWord().startsWith("-")) {
-      return ParserTreeResult.EMPTY_RESULT();
-    }
 
     CommandErrorCollection errors = new DefaultErrorCollection();
     List<CompletionCandidateGroup> completions = new ArrayList<>();
+
+    // If we are at the end of line then try return a default
+    if (context.getLine().isEol()) {
+      try {
+        result.setValue(parser.parse(context, context.getLine()));
+        return ParserTreeResult.EMPTY_RESULT();
+      } catch (EndOfLineException e) {
+        errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
+      } catch (ParserSyntaxException e) {
+        errors.add(e.getError(), e.getLine(), context.getWeight());
+      }
+      return new ParserTreeResult<>(null, null, null, errors, completions);
+    }
+
+    if (!context.getLine().getCurrentWord().startsWith("-")) {
+      return ParserTreeResult.EMPTY_RESULT();
+    }
 
     ParsedLine lineCopy = context.getLine().copy();
     String switchName;
@@ -101,6 +115,7 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
       return new ParserTreeResult<>(null, null, null, errors, completions);
     }
 
+    context.setWeight(context.getWeight() + 1);
     // Parse it - TODO: Fix duplication below
     try {
       context.getLine().next();
@@ -108,13 +123,15 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
       return ParserTreeResult.EMPTY_RESULT();
     }
 
+    ParsedLine originalLine = lineCopy.copy();
+
     try {
-      result.setValue(parser.parse(context, context.getLine()));
+      result.setValue(parser.parse(context, lineCopy));
     } catch (ParserSyntaxException e) {
       errors.add(e.getError(), e.getLine(), context.getWeight());
       if (e.getLine().isEol()) {
         try {
-          parser.complete(context, lineCopy, completions);
+          parser.complete(context, originalLine, completions);
         } catch (EndOfLineException ignored) {
         }
       }
@@ -122,16 +139,16 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
     } catch (EndOfLineException e) {
       errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
       try {
-        parser.complete(context, lineCopy, completions);
+        parser.complete(context, originalLine, completions);
       } catch (EndOfLineException ignored) {
       }
       return new ParserTreeResult<>(null, null, null, errors, completions);
     }
 
     // If we are at the EOL then return completions as well
-    if (context.getLine().isEol()) {
+    if (lineCopy.isEol()) {
       try {
-        parser.complete(context, lineCopy, completions);
+        parser.complete(context, originalLine, completions);
       } catch (EndOfLineException ignored) {
       }
     }
@@ -140,6 +157,11 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
     // This needs to be addressed
     // and as I pass through the original context in `result` I should be able to give it the
     // appropriate weight here
+
+    try {
+      context.getLine().next();
+    } catch (EndOfLineException ignored) {
+    }
 
     return new ParserTreeResult<>(null, null, null, errors, completions);
   }
