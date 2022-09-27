@@ -59,8 +59,9 @@ public class StringParser extends BaseParser<Object, String> implements ParserOp
       boolean suppress,
       boolean required,
       String placeholder,
+      List<String> switchValue,
       List<String> options) {
-    super(description, defaultValue, suppress, required, placeholder);
+    super(description, defaultValue, suppress, required, placeholder, switchValue);
     this.options.addAll(options);
   }
 

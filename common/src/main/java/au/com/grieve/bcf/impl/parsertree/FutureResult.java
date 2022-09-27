@@ -23,33 +23,52 @@
 
 package au.com.grieve.bcf.impl.parsertree;
 
-import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.FutureResultHandler;
 import au.com.grieve.bcf.ParserTreeContext;
+import au.com.grieve.bcf.ParserTreeResult;
 import au.com.grieve.bcf.Result;
-import au.com.grieve.bcf.ResultCollection;
-import java.util.stream.Collectors;
+import au.com.grieve.bcf.exception.ResultNotSetException;
+import au.com.grieve.bcf.impl.line.DefaultParsedLine;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 @Getter
-@ToString
-public class DefaultParserTreeContext<DATA> implements ParserTreeContext<DATA> {
-  private final DATA data;
-  private final ParsedLine line;
-  private final ResultCollection results = new ResultCollection();
-  @Setter private int weight = 0;
+public class FutureResult<DATA> extends Result {
+  private final FutureResultHandler<DATA> handler;
+  private final ParserTreeContext<DATA> context;
 
-  public DefaultParserTreeContext(ParsedLine line, DATA data) {
-    this.line = line;
-    this.data = data;
+  public FutureResult(
+      ParserTreeContext<DATA> context, FutureResultHandler<DATA> handler, boolean suppress) {
+    super(suppress);
+    this.context = context.copy();
+    this.handler = handler;
+  }
+
+  public ParserTreeResult<DATA> handle(ParserTreeContext<DATA> context) {
+    return handler.handle(this, context);
   }
 
   @Override
-  public ParserTreeContext<DATA> copy() {
-    DefaultParserTreeContext<DATA> clone = new DefaultParserTreeContext<>(line.copy(), data);
-    clone.results.addAll(results.stream().map(Result::copy).collect(Collectors.toList()));
-    clone.weight = weight;
+  public Object getValue() throws ResultNotSetException {
+    // If a value is set we return that
+    if (isSet()) {
+      return super.getValue();
+    }
+
+    // Else we try get a default value
+    ParserTreeContext<DATA> contextCopy =
+        new DefaultParserTreeContext<>(new DefaultParsedLine(""), context.getData());
+    ParserTreeResult<DATA> result = handler.handle(this, contextCopy);
+    if (isSet()) {
+      return super.getValue();
+    }
+    throw new ResultNotSetException(result.getErrors());
+  }
+
+  @Override
+  public FutureResult<DATA> copy() {
+    FutureResult<DATA> clone = new FutureResult<>(context, handler, suppress);
+    clone.set = set;
+    clone.value = value;
     return clone;
   }
 }

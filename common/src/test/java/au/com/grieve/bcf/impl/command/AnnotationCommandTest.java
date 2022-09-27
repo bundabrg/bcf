@@ -1245,27 +1245,65 @@ class AnnotationCommandTest {
             .mapToLong(g -> g.getMatchingCompletionCandidates().size())
             .sum());
   }
-  //
-  //  @Test
-  //  void switchTest_1() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("opt1 mike art");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertNull(e);
-  //  }
-  //
-  //  @Test
-  //  void switchTest_2() {
-  //    SwitchClass1 c = new SwitchClass1();
-  //    ExecutionContext ctx = defaultExecutionContext("-c_sw1 opt1 -m_sw2 mike art");
-  //
-  //    OldExecutionCandidate e = c.execute(ctx);
-  //    assertEquals(c.getClass().getMethod("m2"), e.getMethod());
-  //    assertEquals("opt1", e.getParameters().get(0));
-  //    assertEquals("mike", e.getParameters().get(1));
-  //  }
-  //
+
+  @Test
+  void switchTest_1() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("opt1 mike art", null);
+
+    assertNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(0, result.getCompletions().size());
+    assertEquals(
+        0,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+  }
+
+  @Test
+  void switchTest_2() {
+    SwitchClass1 c1 = new SwitchClass1();
+
+    ParserTreeResult<Object> result =
+        c1.buildCommand(register).getRoot().parse("-c_sw1 opt1 -m_sw2 mike art", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(1, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(0, c1.m1_count);
+    assertEquals(1, c1.m2_count);
+    assertEquals(0, c1.m3_count);
+    assertEquals(0, c1.m4_count);
+    assertEquals(0, c1.m5_count);
+    assertEquals(0, c1.m6_count);
+    assertNull(c1.m1_arg1);
+    assertEquals("opt1", c1.m2_arg1);
+    assertNull(c1.m3_arg1);
+    assertNull(c1.m4_arg1);
+    assertNull(c1.m5_arg1);
+    assertNull(c1.m6_arg1);
+    assertNull(c1.m1_arg2);
+    assertEquals("mike", c1.m2_arg2);
+    assertNull(c1.m3_arg2);
+    assertNull(c1.m4_arg2);
+    assertNull(c1.m5_arg2);
+    assertNull(c1.m6_arg2);
+  }
+
   //  @Test
   //  void switchTest_3() {
   //    SwitchClass1 c = new SwitchClass1();
@@ -1529,23 +1567,66 @@ class AnnotationCommandTest {
 
   @Arg("opt1|opt2|opt3(switch=c_sw1, suppress=false)")
   static class SwitchClass1 extends AnnotationCommand<Object> {
+    int m1_count = 0;
+    int m2_count = 0;
+    int m3_count = 0;
+    int m4_count = 0;
+    int m5_count = 0;
+    int m6_count = 0;
+    String m1_arg1 = null;
+    String m2_arg1 = null;
+    String m3_arg1 = null;
+    String m4_arg1 = null;
+    String m5_arg1 = null;
+    String m6_arg1 = null;
+    String m1_arg2 = null;
+    String m2_arg2 = null;
+    String m3_arg2 = null;
+    String m4_arg2 = null;
+    String m5_arg2 = null;
+    String m6_arg2 = null;
+
     @Arg("mike|milly|marta(switch=m_sw1, suppress=false) art")
-    public void m1() {}
+    public void m1(ExecuteContext<Object> context, String arg1, String arg2) {
+      m1_count++;
+      m1_arg1 = arg1;
+      m1_arg2 = arg2;
+    }
 
     @Arg("mike|milly(switch=m_sw2, suppress=false) art")
-    public void m2() {}
+    public void m2(ExecuteContext<Object> context, String arg1, String arg2) {
+      m2_count++;
+      m2_arg1 = arg1;
+      m2_arg2 = arg2;
+    }
 
     @Arg("sue|zoe(switch=m_sw1, suppress=false) art")
-    public void m3() {}
+    public void m3(ExecuteContext<Object> context, String arg1, String arg2) {
+      m3_count++;
+      m3_arg1 = arg1;
+      m3_arg2 = arg2;
+    }
 
     @Arg("mike|milly(switch=m_sw3, suppress=false) art plate")
-    public void m4() {}
+    public void m4(ExecuteContext<Object> context, String arg1, String arg2) {
+      m4_count++;
+      m4_arg1 = arg1;
+      m4_arg2 = arg2;
+    }
 
     @Arg("mike|zoe(switch=m_sw3, suppress=false) art angel")
-    public void m5() {}
+    public void m5(ExecuteContext<Object> context, String arg1, String arg2) {
+      m5_count++;
+      m5_arg1 = arg1;
+      m5_arg2 = arg2;
+    }
 
     @Arg("mike|zoe(switch=m_sw3, suppress=false) art")
-    public void m6() {}
+    public void m6(ExecuteContext<Object> context, String arg1, String arg2) {
+      m6_count++;
+      m6_arg1 = arg1;
+      m6_arg2 = arg2;
+    }
   }
 
   @Arg("opt1|opt2|opt3(switch=c_sw1, suppress=false)")

@@ -57,9 +57,10 @@ public class FloatParser extends BaseParser<Object, Float> implements ParserMinM
       boolean suppress,
       boolean required,
       String placeholder,
+      List<String> switchValue,
       Float min,
       Float max) {
-    super(description, defaultValue, suppress, required, placeholder);
+    super(description, defaultValue, suppress, required, placeholder, switchValue);
     this.min = min;
     this.max = max;
   }

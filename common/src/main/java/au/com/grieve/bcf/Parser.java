@@ -38,6 +38,8 @@ public interface Parser<DATA, RT> {
 
   String getPlaceholder();
 
+  List<String> getSwitch();
+
   RT parse(ParserContext<DATA> context, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException;
 

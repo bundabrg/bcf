@@ -21,12 +21,22 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.exception;
 
-public interface CommandErrorCandidate {
-  ParsedLine getParsedLine();
+import au.com.grieve.bcf.CommandErrorCollection;
+import lombok.Getter;
 
-  CommandError getError();
+@Getter
+public class ResultNotSetException extends BCFException {
+  private final CommandErrorCollection errors;
 
-  int getWeight();
+  public ResultNotSetException(CommandErrorCollection errors, Throwable cause) {
+    super(errors.format(), cause);
+    this.errors = errors;
+  }
+
+  public ResultNotSetException(CommandErrorCollection errors) {
+    super(errors.format());
+    this.errors = errors;
+  }
 }

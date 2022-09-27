@@ -59,9 +59,10 @@ public class IntegerParser extends BaseParser<Object, Integer> implements Parser
       boolean suppress,
       boolean required,
       String placeholder,
+      List<String> switchValue,
       Integer min,
       Integer max) {
-    super(description, defaultValue, suppress, required, placeholder);
+    super(description, defaultValue, suppress, required, placeholder, switchValue);
     this.min = min;
     this.max = max;
   }

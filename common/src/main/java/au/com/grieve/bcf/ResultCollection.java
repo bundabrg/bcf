@@ -21,53 +21,21 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.result;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.Parser;
-import au.com.grieve.bcf.Result;
-import lombok.Getter;
+import au.com.grieve.bcf.exception.ResultNotSetException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class SwitchParserResult implements Result {
-
-  @Getter private final Parser<?> parser;
-
-  @Getter private boolean complete;
-
-  private Object value;
-
-  public SwitchParserResult(Parser<?> parser) {
-    this.parser = parser;
-  }
-
-  public SwitchParserResult(Parser<?> parser, Object value) {
-    this(parser);
-    setValue(value);
-  }
-
-  @Override
-  public Object getValue() {
-    if (complete) {
-      return value;
+public class ResultCollection extends ArrayList<Result> {
+  public List<Object> toObjects() throws ResultNotSetException {
+    List<Object> result = new ArrayList<>();
+    for (Result r : this) {
+      Object o = r.getValue();
+      if (!r.isSuppress()) {
+        result.add(o);
+      }
     }
-
-    throw new IllegalArgumentException("Value not set");
-  }
-
-  public void setValue(Object value) {
-    this.complete = true;
-    this.value = value;
-  }
-
-  @Override
-  public boolean isSuppressed() {
-    return parser.getParameters().getOrDefault("suppress", "false").equals("true");
-  }
-
-  @Override
-  public Result copy() {
-    SwitchParserResult result = new SwitchParserResult(parser);
-    result.value = value;
-    result.complete = complete;
     return result;
   }
 }

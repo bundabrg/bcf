@@ -58,9 +58,10 @@ public class DoubleParser extends BaseParser<Object, Double> implements ParserMi
       boolean suppress,
       boolean required,
       String placeholder,
+      List<String> switchValue,
       Double min,
       Double max) {
-    super(description, defaultValue, suppress, required, placeholder);
+    super(description, defaultValue, suppress, required, placeholder, switchValue);
     this.min = min;
     this.max = max;
   }

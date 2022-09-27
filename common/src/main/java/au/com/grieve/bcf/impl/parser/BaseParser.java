@@ -30,6 +30,7 @@ import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,6 +44,7 @@ public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
   @Getter private final boolean required;
   @Getter private final String description;
   @Getter private final String placeholder;
+  private final List<String> switchValue = new ArrayList<>();
 
   public BaseParser(Map<String, String> parameters) {
     suppress = parameters.getOrDefault("suppress", "false").equals("true");
@@ -50,6 +52,10 @@ public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
     required = parameters.getOrDefault("required", "true").equals("true");
     description = parameters.get("description");
     placeholder = parameters.get("placeholder");
+    switchValue.addAll(
+        Arrays.stream(parameters.getOrDefault("switch", "").split("\\|"))
+            .filter(s -> !s.isEmpty())
+            .collect(Collectors.toList()));
   }
 
   public BaseParser(
@@ -57,16 +63,22 @@ public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
       String defaultValue,
       boolean suppress,
       boolean required,
-      String placeholder) {
+      String placeholder,
+      List<String> switchValue) {
     this.suppress = suppress;
     this.defaultValue = defaultValue;
     this.required = required;
     this.description = description;
     this.placeholder = placeholder;
+    this.switchValue.addAll(switchValue);
   }
 
   public String getDefault() {
     return defaultValue;
+  }
+
+  public List<String> getSwitch() {
+    return switchValue;
   }
 
   /**

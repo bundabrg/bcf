@@ -23,8 +23,6 @@
 
 package au.com.grieve.bcf;
 
-import java.util.List;
-
 public interface ParserTreeContext<DATA> extends ParserContext<DATA> {
   /**
    * Return the weight so far
@@ -41,7 +39,7 @@ public interface ParserTreeContext<DATA> extends ParserContext<DATA> {
    *
    * @return list of results
    */
-  List<Object> getResults();
+  ResultCollection getResults();
 
   /**
    * Return the parsed line so far

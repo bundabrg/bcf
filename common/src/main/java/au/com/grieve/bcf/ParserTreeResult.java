@@ -23,6 +23,8 @@
 
 package au.com.grieve.bcf;
 
+import au.com.grieve.bcf.impl.error.DefaultErrorCollection;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.ToString;
@@ -35,7 +37,6 @@ public class ParserTreeResult<DATA> {
   private final ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate;
   private final CommandErrorCollection errors;
   private final List<CompletionCandidateGroup> completions;
-
   public ParserTreeResult(
       ParserTreeCandidate<ExecuteContext<DATA>, DATA> executeCandidate,
       ParserTreeCandidate<ErrorContext<DATA>, DATA> errorCandidate,
@@ -47,6 +48,11 @@ public class ParserTreeResult<DATA> {
     this.completeCandidate = completeCandidate;
     this.errors = errors;
     this.completions = completions;
+  }
+
+  public static <DATA> ParserTreeResult<DATA> EMPTY_RESULT() {
+    return new ParserTreeResult<>(
+        null, null, null, new DefaultErrorCollection(), new ArrayList<>());
   }
 
   public void execute() {

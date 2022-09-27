@@ -21,35 +21,39 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.parsertree;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.ParserTreeContext;
-import au.com.grieve.bcf.Result;
-import au.com.grieve.bcf.ResultCollection;
-import java.util.stream.Collectors;
+import au.com.grieve.bcf.exception.ResultNotSetException;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 @Getter
-@ToString
-public class DefaultParserTreeContext<DATA> implements ParserTreeContext<DATA> {
-  private final DATA data;
-  private final ParsedLine line;
-  private final ResultCollection results = new ResultCollection();
-  @Setter private int weight = 0;
+public class Result {
+  protected final boolean suppress;
+  protected Object value = null;
+  protected boolean set = false;
 
-  public DefaultParserTreeContext(ParsedLine line, DATA data) {
-    this.line = line;
-    this.data = data;
+  public Result(Object value, boolean suppress) {
+    this.suppress = suppress;
+    setValue(value);
   }
 
-  @Override
-  public ParserTreeContext<DATA> copy() {
-    DefaultParserTreeContext<DATA> clone = new DefaultParserTreeContext<>(line.copy(), data);
-    clone.results.addAll(results.stream().map(Result::copy).collect(Collectors.toList()));
-    clone.weight = weight;
+  public Result(boolean suppress) {
+    this.suppress = suppress;
+  }
+
+  public Object getValue() throws ResultNotSetException {
+    return value;
+  }
+
+  public void setValue(Object newValue) {
+    set = true;
+    value = newValue;
+  }
+
+  public Result copy() {
+    Result clone = new Result(suppress);
+    clone.value = value;
+    clone.set = set;
     return clone;
   }
 }

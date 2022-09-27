@@ -21,35 +21,11 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.parsertree;
+package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.ParserTreeContext;
-import au.com.grieve.bcf.Result;
-import au.com.grieve.bcf.ResultCollection;
-import java.util.stream.Collectors;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import au.com.grieve.bcf.impl.parsertree.FutureResult;
 
-@Getter
-@ToString
-public class DefaultParserTreeContext<DATA> implements ParserTreeContext<DATA> {
-  private final DATA data;
-  private final ParsedLine line;
-  private final ResultCollection results = new ResultCollection();
-  @Setter private int weight = 0;
-
-  public DefaultParserTreeContext(ParsedLine line, DATA data) {
-    this.line = line;
-    this.data = data;
-  }
-
-  @Override
-  public ParserTreeContext<DATA> copy() {
-    DefaultParserTreeContext<DATA> clone = new DefaultParserTreeContext<>(line.copy(), data);
-    clone.results.addAll(results.stream().map(Result::copy).collect(Collectors.toList()));
-    clone.weight = weight;
-    return clone;
-  }
+@FunctionalInterface
+public interface FutureResultHandler<DATA> {
+  ParserTreeResult<DATA> handle(FutureResult<DATA> result, ParserTreeContext<DATA> context);
 }
