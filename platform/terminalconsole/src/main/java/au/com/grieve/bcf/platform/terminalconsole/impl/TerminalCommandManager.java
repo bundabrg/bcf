@@ -31,6 +31,9 @@ public class TerminalCommandManager<DATA> extends BaseStandaloneCommandManager<D
 
   @Override
   protected ParserTreeHandler<ErrorContext<DATA>> getBaseErrorHandler() {
-    return context -> System.err.println(context.getErrors().format());
+    return context -> {
+      System.err.println(context);
+      System.err.println(context.getErrors().format());
+    };
   }
 }

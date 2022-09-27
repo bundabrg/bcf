@@ -160,7 +160,6 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
     // No children or fallback and extra input is an error
     if (children.size() == 0
         && fallbackHandler == null
-        && futureResults.size() == 0
         && !context.getLine().isEol()) {
       errors.add(new UnexpectedInputError(), context.getLine(), context.getWeight());
     }

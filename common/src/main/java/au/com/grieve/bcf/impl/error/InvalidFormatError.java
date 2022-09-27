@@ -50,7 +50,7 @@ public class InvalidFormatError implements CommandError {
   @Override
   public String toString() {
     return "Invalid format, should be"
-        + (format.size() > 0 ? " one of" : "")
+        + (format.size() > 1 ? " one of" : "")
         + ": "
         + String.join(", ", format);
   }

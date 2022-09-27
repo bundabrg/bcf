@@ -66,8 +66,9 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
     CommandErrorCollection errors = new DefaultErrorCollection();
     List<CompletionCandidateGroup> completions = new ArrayList<>();
 
-    // If we are at the end of line then try return a default
+    // If we are at the end of line then try return a default and switch completions
     if (context.getLine().isEol()) {
+
       try {
         result.setValue(parser.parse(context, context.getLine()));
         return ParserTreeResult.EMPTY_RESULT();
@@ -76,6 +77,25 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
       } catch (ParserSyntaxException e) {
         errors.add(e.getError(), e.getLine(), context.getWeight());
       }
+      try {
+        parser.complete(context, context.getLine(), completions);
+      } catch (EndOfLineException ignored) {
+      }
+      return new ParserTreeResult<>(null, null, null, errors, completions);
+    }
+
+    // If at EOL then return completions on switch names
+    if (context.getLine().size() == 1) {
+      CompletionCandidateGroup group =
+          new StaticCompletionCandidateGroup(
+              context.getLine().getCurrentWord(), parser.getDescription());
+      group
+          .getCompletionCandidates()
+          .addAll(
+              parser.getSwitch().stream()
+                  .map(s -> new DefaultCompletionCandidate("-" + s))
+                  .collect(Collectors.toList()));
+      completions.add(group);
       return new ParserTreeResult<>(null, null, null, errors, completions);
     }
 
@@ -91,20 +111,6 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
       return ParserTreeResult.EMPTY_RESULT();
     }
 
-    // If at EOL then return completions on switch names
-    if (lineCopy.isEol()) {
-      CompletionCandidateGroup group =
-          new StaticCompletionCandidateGroup(switchName, parser.getDescription());
-      group
-          .getCompletionCandidates()
-          .addAll(
-              parser.getSwitch().stream()
-                  .map(DefaultCompletionCandidate::new)
-                  .collect(Collectors.toList()));
-      completions.add(group);
-      return new ParserTreeResult<>(null, null, null, errors, completions);
-    }
-
     // If it doesn't match us, return an error
     if (parser.getSwitch().stream().noneMatch(s -> s.equals(switchName))) {
       errors.add(
@@ -117,11 +123,11 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
 
     context.setWeight(context.getWeight() + 1);
     // Parse it - TODO: Fix duplication below
-    try {
-      context.getLine().next();
-    } catch (EndOfLineException e) {
-      return ParserTreeResult.EMPTY_RESULT();
-    }
+    //    try {
+    //      context.getLine().next();
+    //    } catch (EndOfLineException e) {
+    //      return ParserTreeResult.EMPTY_RESULT();
+    //    }
 
     ParsedLine originalLine = lineCopy.copy();
 
@@ -159,6 +165,7 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
     // appropriate weight here
 
     try {
+      context.getLine().next();
       context.getLine().next();
     } catch (EndOfLineException ignored) {
     }
