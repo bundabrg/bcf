@@ -32,4 +32,12 @@ public interface Command<DATA> {
    * @param childRoot Child Root Node
    */
   Command<DATA> then(ParserTree<DATA> childRoot);
+
+  /**
+   * Remove a child parser tree
+   *
+   * @param childRoot Child Root Node
+   * @return Ourselves
+   */
+  Command<DATA> remove(ParserTree<DATA> childRoot);
 }

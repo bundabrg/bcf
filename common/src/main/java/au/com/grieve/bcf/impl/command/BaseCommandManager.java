@@ -47,10 +47,14 @@ import java.util.Map;
 public abstract class BaseCommandManager<DATA>
     implements CommandManager<DATA>, StringParserClassRegister<DATA> {
 
-  // Used so we can add children nodes to the command
-  private final Map<Class<?>, List<Command<DATA>>> commandClassMap = new HashMap<>();
+  // List of instances of a particular command class.
+  protected final Map<Class<?>, List<Command<DATA>>> classCommandMap = new HashMap<>();
+
+  // The CommandData for each command
+  protected final Map<Command<DATA>, CommandData<DATA>> commandDataMap = new HashMap<>();
+
   // Hold registered parsers to string names
-  private final Map<String, Class<? extends Parser<DATA, ?>>> parserClassMap = new HashMap<>();
+  protected final Map<String, Class<? extends Parser<DATA, ?>>> parserClassMap = new HashMap<>();
 
   public BaseCommandManager() {
     registerDefaultParsers();
@@ -114,12 +118,39 @@ public abstract class BaseCommandManager<DATA>
           "Unable to add non-root command. Did you mean to add as a child of another command?");
     }
 
-    addCommand(commandData);
+    commandDataMap.put(command, commandData);
+    addCommand(command);
 
-    commandClassMap.computeIfAbsent(command.getClass(), k -> new ArrayList<>()).add(command);
+    classCommandMap.computeIfAbsent(command.getClass(), k -> new ArrayList<>()).add(command);
   }
 
-  protected abstract void addCommand(CommandData<DATA> commandData);
+  @Override
+  public void unregisterCommand(Command<DATA> command) {
+    if (!classCommandMap.containsKey(command.getClass())) {
+      return;
+    }
+    classCommandMap.get(command.getClass()).remove(command);
+    if (classCommandMap.get(command.getClass()).size() == 0) {
+      classCommandMap.remove(command.getClass());
+    }
+
+    removeCommand(command);
+    commandDataMap.remove(command);
+  }
+
+  @Override
+  public void unregisterCommand(Class<? extends Command<DATA>> commandClass) {
+    if (!classCommandMap.containsKey(commandClass)) {
+      return;
+    }
+
+    List<Command<DATA>> commands = new ArrayList<>(classCommandMap.get(commandClass));
+    commands.forEach(this::unregisterCommand);
+  }
+
+  protected abstract void addCommand(Command<DATA> command);
+
+  protected abstract void removeCommand(Command<DATA> command);
 
   /**
    * Register subcommand
@@ -132,14 +163,16 @@ public abstract class BaseCommandManager<DATA>
     CommandData<DATA> commandData = buildCommandData(command);
 
     // Check if we know about parent
-    List<Command<DATA>> parents = commandClassMap.get(parent);
+    List<Command<DATA>> parents = classCommandMap.get(parent);
     if (parents == null) {
       throw new RuntimeException("Unable to find parent class. Have they registered yet?");
     }
 
+    commandDataMap.put(command, commandData);
+
     // If a root command, add it as a command
     if (commandData.getCommandRootData().size() > 0) {
-      addCommand(commandData);
+      addCommand(command);
     }
 
     // Add as a child to command

@@ -39,6 +39,14 @@ public interface ParserTree<DATA> {
    */
   ParserTree<DATA> then(ParserTree<DATA> node);
 
+  /**
+   * Remove a child node from this one
+   *
+   * @param node Node to remove
+   * @return Ourself
+   */
+  ParserTree<DATA> remove(ParserTree<DATA> node);
+
   ParserTree<DATA> forEachLeaf(Consumer<ParserTree<DATA>> consumer);
 
   /**

@@ -36,4 +36,10 @@ public abstract class BaseCommand<DATA> implements Command<DATA> {
     children.then(childRoot);
     return this;
   }
+
+  @Override
+  public Command<DATA> remove(ParserTree<DATA> childRoot) {
+    children.remove(childRoot);
+    return this;
+  }
 }

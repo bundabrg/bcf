@@ -80,6 +80,12 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
   }
 
   @Override
+  public ParserTree<DATA> remove(ParserTree<DATA> node) {
+    children.remove(node);
+    return this;
+  }
+
+  @Override
   public ParserTree<DATA> execute(ParserTreeHandler<ExecuteContext<DATA>> handler) {
     executeHandler = handler;
     return this;

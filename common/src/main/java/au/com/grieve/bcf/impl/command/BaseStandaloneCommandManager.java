@@ -23,6 +23,7 @@
 
 package au.com.grieve.bcf.impl.command;
 
+import au.com.grieve.bcf.Command;
 import au.com.grieve.bcf.CommandData;
 import au.com.grieve.bcf.CommandErrorCollection;
 import au.com.grieve.bcf.CommandRootData;
@@ -68,7 +69,8 @@ public class BaseStandaloneCommandManager<DATA> extends BaseCommandManager<DATA>
   }
 
   @Override
-  protected void addCommand(CommandData<DATA> commandData) {
+  protected void addCommand(Command<DATA> command) {
+    CommandData<DATA> commandData = commandDataMap.get(command);
     commandData
         .getCommandRootData()
         .forEach(
@@ -92,6 +94,25 @@ public class BaseStandaloneCommandManager<DATA> extends BaseCommandManager<DATA>
                 // itself?)
                 c.getRoot().forEachLeaf(l -> l.then(commandData.getRoot()));
               }
+            });
+  }
+
+  @Override
+  protected void removeCommand(Command<DATA> command) {
+    CommandData<DATA> commandData = commandDataMap.get(command);
+
+    commandData
+        .getCommandRootData()
+        .forEach(
+            crd -> {
+              List<String> aliases =
+                  commandAliases.entrySet().stream()
+                      .filter(es -> es.getValue().equals(crd.getName()))
+                      .map(Entry::getKey)
+                      .collect(Collectors.toList());
+
+              aliases.forEach(commandAliases::remove);
+              commandsByName.remove(crd.getName());
             });
   }
 

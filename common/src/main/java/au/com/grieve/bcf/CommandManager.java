@@ -39,4 +39,18 @@ public interface CommandManager<DATA> {
    * @param command Command to register
    */
   void registerCommand(Class<? extends Command<DATA>> parent, Command<DATA> command);
+
+  /**
+   * Unregister a command
+   *
+   * @param command Command to unregister
+   */
+  void unregisterCommand(Command<DATA> command);
+
+  /**
+   * Unregister a command using its class
+   *
+   * @param command Command class to unregister
+   */
+  void unregisterCommand(Class<? extends Command<DATA>> command);
 }

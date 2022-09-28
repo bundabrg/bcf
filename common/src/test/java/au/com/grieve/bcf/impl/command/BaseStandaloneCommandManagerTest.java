@@ -1068,6 +1068,100 @@ class BaseStandaloneCommandManagerTest {
     assertEquals(1, c2.m1_count);
   }
 
+  @Test
+  public void unregisterCommand_1() {
+    ClassWithMultiCommand c1 = new ClassWithMultiCommand();
+    TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
+    manager.registerCommand(c1);
+    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNotNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(1, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(0, manager.e_count);
+    assertEquals(0, c1.d_count);
+    assertEquals(0, c1.e_count);
+    assertEquals(1, c1.m1_count);
+    assertEquals(0, c1.m2_count);
+
+    manager.unregisterCommand(c1);
+    result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+
+    assertNull(result.getExecuteCandidate());
+    assertNotNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof UnknownCommandError));
+    assertEquals(0, result.getCompletions().size());
+    assertEquals(
+        0,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(1, manager.e_count);
+    assertEquals(0, c1.d_count);
+    assertEquals(0, c1.e_count);
+    assertEquals(1, c1.m1_count); // From the previous run
+    assertEquals(0, c1.m2_count);
+  }
+
+  @Test
+  public void unregisterCommand_2() {
+    ClassWithMultiCommand c1 = new ClassWithMultiCommand();
+    TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
+    manager.registerCommand(c1);
+    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+
+    assertNotNull(result.getExecuteCandidate());
+    assertNotNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
+    assertEquals(1, result.getCompletions().size());
+    assertEquals(
+        1,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(0, manager.e_count);
+    assertEquals(0, c1.d_count);
+    assertEquals(0, c1.e_count);
+    assertEquals(1, c1.m1_count);
+    assertEquals(0, c1.m2_count);
+
+    manager.unregisterCommand(ClassWithMultiCommand.class);
+    result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+
+    assertNull(result.getExecuteCandidate());
+    assertNotNull(result.getErrorCandidate());
+    assertNull(result.getCompleteCandidate());
+    assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof UnknownCommandError));
+    assertEquals(0, result.getCompletions().size());
+    assertEquals(
+        0,
+        result.getCompletions().stream()
+            .mapToLong(g -> g.getMatchingCompletionCandidates().size())
+            .sum());
+
+    result.execute();
+    assertEquals(1, manager.e_count);
+    assertEquals(0, c1.d_count);
+    assertEquals(0, c1.e_count);
+    assertEquals(1, c1.m1_count); // From the previous run
+    assertEquals(0, c1.m2_count);
+  }
+
   static class TestBaseStandaloneCommandManager extends BaseStandaloneCommandManager<Object> {
     int e_count = 0;
 
