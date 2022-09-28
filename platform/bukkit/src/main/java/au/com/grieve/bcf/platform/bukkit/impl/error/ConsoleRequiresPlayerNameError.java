@@ -21,17 +21,24 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.platform.terminalconsole.impl.command;
+package au.com.grieve.bcf.platform.bukkit.impl.error;
 
-import au.com.grieve.bcf.ExecutionError;
-import au.com.grieve.bcf.framework.annotation.annotations.Error;
-import au.com.grieve.bcf.impl.framework.annotation.AnnotationCommand;
-import java.util.List;
+import au.com.grieve.bcf.CommandError;
+import lombok.Getter;
 
-public class TerminalAnnotationCommand extends AnnotationCommand {
-  @Error
-  public void onError(List<ExecutionError> errors) {
-    // TODO
-    System.err.println(buildErrorMessage(errors));
+@Getter
+public class ConsoleRequiresPlayerNameError implements CommandError {
+
+  @Override
+  public String getName() {
+    return "console_requires_playername";
+  }
+
+  @Override
+  public void merge(CommandError error) {}
+
+  @Override
+  public String toString() {
+    return "When console a player name is required";
   }
 }

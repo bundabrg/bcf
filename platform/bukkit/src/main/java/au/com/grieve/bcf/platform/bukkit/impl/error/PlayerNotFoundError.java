@@ -21,36 +21,34 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.impl.result;
+package au.com.grieve.bcf.platform.bukkit.impl.error;
 
-import au.com.grieve.bcf.Parser;
-import au.com.grieve.bcf.Result;
+import au.com.grieve.bcf.CommandError;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Getter;
 
 @Getter
-public class ParserResult implements Result {
+public class PlayerNotFoundError implements CommandError {
+  private final Set<String> players = new HashSet<>();
 
-  private final Parser<?> parser;
-
-  private final Object value;
-
-  public ParserResult(Parser<?> parser, Object value) {
-    this.parser = parser;
-    this.value = value;
+  public PlayerNotFoundError(String player) {
+    this.players.add(player);
   }
 
   @Override
-  public boolean isSuppressed() {
-    return parser.getParameters().getOrDefault("suppress", "false").equals("true");
+  public String getName() {
+    return "player_not_found";
   }
 
   @Override
-  public boolean isComplete() {
-    return true;
+  public void merge(CommandError error) {
+    assert (error instanceof PlayerNotFoundError);
+    this.players.addAll(((PlayerNotFoundError) error).getPlayers());
   }
 
   @Override
-  public Result copy() {
-    return new ParserResult(parser, value);
+  public String toString() {
+    return "Player not found: " + String.join(", ", players);
   }
 }

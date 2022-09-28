@@ -21,7 +21,7 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.framework.annotation.annotations;
+package au.com.grieve.bcf.platform.bukkit.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;

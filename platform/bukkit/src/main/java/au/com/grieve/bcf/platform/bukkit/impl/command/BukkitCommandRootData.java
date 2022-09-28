@@ -21,27 +21,33 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.platform.bukkit;
+package au.com.grieve.bcf.platform.bukkit.impl.command;
 
-import au.com.grieve.bcf.core.CommandContext;
+import au.com.grieve.bcf.ParserTree;
+import au.com.grieve.bcf.impl.command.BaseCommandRootData;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.command.CommandSender;
 
 @Getter
-public class BukkitCommandContext extends CommandContext {
+@ToString
+public class BukkitCommandRootData extends BaseCommandRootData<CommandSender> {
 
-    // Bukkit Command Sender
-    private final CommandSender sender;
+  private final String[] permissions;
 
-    public BukkitCommandContext(CommandSender sender) {
-        super();
+  @Builder(builderMethodName = "bukkitBuilder")
+  public BukkitCommandRootData(
+      String name,
+      String[] aliases,
+      String description,
+      ParserTree<CommandSender> root,
+      String input,
+      String[] permissions) {
+    super(name, aliases, description, root, input);
+    this.permissions = permissions;
+  }
 
-        this.sender = sender;
-    }
-
-    @SuppressWarnings("unused")
-    public BukkitCommandContext(BukkitCommandContext original) {
-        super(original);
-        this.sender = original.getSender();
-    }
+  public static class BukkitCommandRootDataBuilder
+      implements CommandRootDataBuilder<CommandSender> {}
 }
