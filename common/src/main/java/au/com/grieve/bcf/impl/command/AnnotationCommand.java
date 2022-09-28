@@ -25,6 +25,7 @@ package au.com.grieve.bcf.impl.command;
 
 import au.com.grieve.bcf.CommandData;
 import au.com.grieve.bcf.CommandRootData;
+import au.com.grieve.bcf.CommandRootData.CommandRootDataBuilder;
 import au.com.grieve.bcf.ParserTree;
 import au.com.grieve.bcf.ParserTreeContext;
 import au.com.grieve.bcf.ParserTreeResult;
@@ -34,6 +35,7 @@ import au.com.grieve.bcf.annotation.Arg;
 import au.com.grieve.bcf.annotation.Command;
 import au.com.grieve.bcf.annotation.Default;
 import au.com.grieve.bcf.annotation.Error;
+import au.com.grieve.bcf.impl.command.DefaultCommandRootData.DefaultCommandRootDataBuilder;
 import au.com.grieve.bcf.impl.error.DefaultErrorCollection;
 import au.com.grieve.bcf.impl.parsertree.NullNode;
 import au.com.grieve.bcf.impl.parsertree.generator.StringParserGenerator;
@@ -55,10 +57,42 @@ import lombok.Getter;
 public class AnnotationCommand<DATA> extends BaseCommand<DATA>
     implements StringParserCommand<DATA> {
 
-  @Override
-  public CommandData<DATA> buildCommand(StringParserClassRegister<DATA> register) {
-    StringParserGenerator<DATA> generator = new StringParserGenerator<>(register);
+  protected List<ParserTree<DATA>> buildMethodNodes(StringParserGenerator<DATA> generator) {
+    return Arrays.stream(getClass().getMethods())
+        .filter(m -> m.isAnnotationPresent(Arg.class))
+        .flatMap(
+            m ->
+                Arrays.stream(m.getAnnotationsByType(Arg.class))
+                    .map(
+                        a -> {
+                          // Generate the TreeNode
+                          ParserTree<DATA> node = generator.from(String.join(" ", a.value()));
 
+                          // Add a method execute at the tree leaves
+                          node.forEachLeaf(
+                              n ->
+                                  n.execute(
+                                      ctx ->
+                                          executeMethod(
+                                              m,
+                                              Stream.concat(
+                                                      ctx.getData() != null
+                                                          ? Stream.of(ctx.getData())
+                                                          : Stream.empty(),
+                                                      ctx.getResults().stream())
+                                                  .collect(Collectors.toList()))));
+                          return node;
+                        }))
+        .collect(Collectors.toList());
+  }
+
+  protected List<ParserTree<DATA>> buildClassNodes(StringParserGenerator<DATA> generator) {
+    return ReflectUtils.getAllAnnotationsByType(getClass(), Arg.class).stream()
+        .map(a -> generator.from(String.join(" ", a.value())))
+        .collect(Collectors.toList());
+  }
+
+  protected ParserTree<DATA> buildRootNode(StringParserGenerator<DATA> generator) {
     // Check for special methods
     Method defaultMethod =
         Arrays.stream(getClass().getMethods())
@@ -72,42 +106,9 @@ public class AnnotationCommand<DATA> extends BaseCommand<DATA>
             .findFirst()
             .orElse(null);
 
-    // Build method nodes
-    List<ParserTree<DATA>> methodNodes =
-        Arrays.stream(getClass().getMethods())
-            .filter(m -> m.isAnnotationPresent(Arg.class))
-            .flatMap(
-                m ->
-                    Arrays.stream(m.getAnnotationsByType(Arg.class))
-                        .map(
-                            a -> {
-                              // Generate the TreeNode
-                              ParserTree<DATA> node = generator.from(String.join(" ", a.value()));
+    List<ParserTree<DATA>> methodNodes = buildMethodNodes(generator);
+    List<ParserTree<DATA>> classNodes = buildClassNodes(generator);
 
-                              // Add a method execute at the tree leaves
-                              node.forEachLeaf(
-                                  n ->
-                                      n.execute(
-                                          ctx ->
-                                              executeMethod(
-                                                  m,
-                                                  Stream.concat(
-                                                          ctx.getData() != null
-                                                              ? Stream.of(ctx.getData())
-                                                              : Stream.empty(),
-                                                          ctx.getResults().stream())
-                                                      .collect(Collectors.toList()))));
-                              return node;
-                            }))
-            .collect(Collectors.toList());
-
-    // Build Class Nodes
-    List<ParserTree<DATA>> classNodes =
-        ReflectUtils.getAllAnnotationsByType(getClass(), Arg.class).stream()
-            .map(a -> generator.from(String.join(" ", a.value())))
-            .collect(Collectors.toList());
-
-    // Add to root node
     NullNode<DATA> root = new NullNode<>();
     classNodes.forEach(root::then);
 
@@ -130,30 +131,54 @@ public class AnnotationCommand<DATA> extends BaseCommand<DATA>
           // Add Method Args
           methodNodes.forEach(n::then);
         });
+    return root;
+  }
 
+  protected List<CommandRootData<DATA>> buildCommandRootDataList(
+      StringParserGenerator<DATA> generator) {
     List<CommandRootData<DATA>> commandRootData = new ArrayList<>();
+    Arrays.stream(getClass().getAnnotationsByType(Command.class))
+        .forEach(a -> commandRootData.add(buildCommandRootData(generator, a)));
 
-    // If we have any command annotations then build CommandRootData
-    Command commandAnnotation = getClass().getAnnotation(Command.class);
-    if (commandAnnotation != null) {
-      String[] commandArgs = commandAnnotation.value().strip().split(" +", 2);
-      String[] commandNames = commandArgs[0].split(("\\|"));
-      ParserTree<DATA> commandRoot =
-          commandArgs.length == 1 ? new NullNode<>() : generator.from(commandArgs[1]);
+    return commandRootData;
+  }
 
-      commandRootData.add(
-          new DefaultCommandRootData<>(
-              commandNames[0],
-              Arrays.stream(commandNames).skip(1).toArray(String[]::new),
-              commandAnnotation.description() != null
-                      && commandAnnotation.description().length() > 0
-                  ? commandAnnotation.description()
-                  : null,
-              commandRoot,
-              commandAnnotation.input()));
-    }
+  protected CommandRootDataBuilder<DATA> buildCommandRootData(
+      CommandRootDataBuilder<DATA> builder,
+      StringParserGenerator<DATA> generator,
+      Command commandAnnotation) {
+    String[] commandArgs = commandAnnotation.value().strip().split(" +", 2);
+    String[] commandNames = commandArgs[0].split(("\\|"));
+    ParserTree<DATA> commandRoot =
+        commandArgs.length == 1 ? new NullNode<>() : generator.from(commandArgs[1]);
 
-    return new DefaultCommandData<>(commandRootData, root);
+    return builder
+        .name(commandNames[0])
+        .aliases(Arrays.stream(commandNames).skip(1).toArray(String[]::new))
+        .description(
+            commandAnnotation.description() != null && commandAnnotation.description().length() > 0
+                ? commandAnnotation.description()
+                : null)
+        .root(commandRoot)
+        .input(commandAnnotation.input());
+  }
+
+  protected CommandRootData<DATA> buildCommandRootData(
+      StringParserGenerator<DATA> generator, Command commandAnnotation) {
+    return buildCommandRootData(
+            new DefaultCommandRootDataBuilder<DATA>(), generator, commandAnnotation)
+        .build();
+  }
+
+  @Override
+  public CommandData<DATA> buildCommand(StringParserClassRegister<DATA> register) {
+    StringParserGenerator<DATA> generator = new StringParserGenerator<>(register);
+
+    // Build Root Node
+    ParserTree<DATA> rootNode = buildRootNode(generator);
+    List<CommandRootData<DATA>> commandRootData = buildCommandRootDataList(generator);
+
+    return new DefaultCommandData<>(commandRootData, rootNode);
   }
 
   protected ParserTreeResult<DATA> handleChildren(ParserTreeContext<DATA> ctx) {

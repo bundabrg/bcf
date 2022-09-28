@@ -25,7 +25,6 @@ package au.com.grieve.bcf.impl.parser;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.ParserOptions;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
@@ -42,7 +41,7 @@ import lombok.ToString;
 
 @Getter
 @ToString(callSuper = true)
-public class StringParser extends BaseParser<Object, String> implements ParserOptions<String> {
+public class StringParser extends BaseParser<Void, String> implements ParserOptions<String> {
   private final List<String> options = new ArrayList<>();
 
   public StringParser(Map<String, String> parameters) {
@@ -66,7 +65,7 @@ public class StringParser extends BaseParser<Object, String> implements ParserOp
   }
 
   @Override
-  protected String doParse(ParserContext<Object> context, ParsedLine line)
+  protected String doParse(Void data, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException {
     String result = line.next();
     if (getOptions().size() > 0 && !getOptions().contains(result)) {
@@ -77,8 +76,7 @@ public class StringParser extends BaseParser<Object, String> implements ParserOp
   }
 
   @Override
-  protected void doComplete(
-      ParserContext<Object> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
+  protected void doComplete(Void data, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
     String input = line.next();
 

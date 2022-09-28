@@ -40,10 +40,8 @@ public interface Parser<DATA, RT> {
 
   List<String> getSwitch();
 
-  RT parse(ParserContext<DATA> context, ParsedLine line)
-      throws EndOfLineException, ParserSyntaxException;
+  RT parse(DATA data, ParsedLine line) throws EndOfLineException, ParserSyntaxException;
 
-  void complete(
-      ParserContext<DATA> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
+  void complete(DATA data, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException;
 }

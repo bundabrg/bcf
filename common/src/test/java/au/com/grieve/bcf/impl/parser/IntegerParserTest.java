@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
@@ -45,7 +44,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("");
 
-    assertThrows(EndOfLineException.class, () -> integerParser.parse(new DummyContext(), line));
+    assertThrows(EndOfLineException.class, () -> integerParser.parse(null, line));
   }
 
   @Test
@@ -53,7 +52,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a");
 
-    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(new DummyContext(), line));
+    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(null, line));
   }
 
   @Test
@@ -61,7 +60,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1");
 
-    assertEquals(1, integerParser.parse(new DummyContext(), line));
+    assertEquals(1, integerParser.parse(null, line));
   }
 
   @Test
@@ -69,7 +68,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1 a");
 
-    assertEquals(1, integerParser.parse(new DummyContext(), line));
+    assertEquals(1, integerParser.parse(null, line));
   }
 
   @Test
@@ -77,7 +76,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a 1");
 
-    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(new DummyContext(), line));
+    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(null, line));
   }
 
   @Test
@@ -87,7 +86,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("5");
 
-    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(new DummyContext(), line));
+    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(null, line));
   }
 
   @Test
@@ -97,7 +96,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("100");
 
-    assertEquals(100, integerParser.parse(new DummyContext(), line));
+    assertEquals(100, integerParser.parse(null, line));
   }
 
   @Test
@@ -107,7 +106,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("13");
 
-    assertEquals(13, integerParser.parse(new DummyContext(), line));
+    assertEquals(13, integerParser.parse(null, line));
   }
 
   @Test
@@ -117,7 +116,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("100");
 
-    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(new DummyContext(), line));
+    assertThrows(ParserSyntaxException.class, () -> integerParser.parse(null, line));
   }
 
   @Test
@@ -127,7 +126,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("5");
 
-    assertEquals(5, integerParser.parse(new DummyContext(), line));
+    assertEquals(5, integerParser.parse(null, line));
   }
 
   @Test
@@ -137,7 +136,7 @@ class IntegerParserTest {
     IntegerParser integerParser = new IntegerParser(parameters);
     ParsedLine line = new DefaultParsedLine("13");
 
-    assertEquals(13, integerParser.parse(new DummyContext(), line));
+    assertEquals(13, integerParser.parse(null, line));
   }
 
   @Test
@@ -149,8 +148,7 @@ class IntegerParserTest {
     List<CompletionCandidateGroup> groups = new ArrayList<>();
     IntegerParser integerParser = new IntegerParser(parameters);
 
-    assertThrows(
-        EndOfLineException.class, () -> integerParser.complete(new DummyContext(), line, groups));
+    assertThrows(EndOfLineException.class, () -> integerParser.complete(null, line, groups));
     assertEquals(0, groups.size());
     //    assertEquals(9, groups.get(0).getMatchingCompletionCandidates().size());
   }
@@ -164,7 +162,7 @@ class IntegerParserTest {
     List<CompletionCandidateGroup> groups = new ArrayList<>();
     IntegerParser integerParser = new IntegerParser(parameters);
 
-    integerParser.complete(new DummyContext(), line, groups);
+    integerParser.complete(null, line, groups);
     assertEquals(1, groups.size());
     assertEquals(4, groups.get(0).getMatchingCompletionCandidates().size());
   }
@@ -178,20 +176,8 @@ class IntegerParserTest {
     List<CompletionCandidateGroup> groups = new ArrayList<>();
     IntegerParser integerParser = new IntegerParser(parameters);
 
-    integerParser.complete(new DummyContext(), line, groups);
+    integerParser.complete(null, line, groups);
     assertEquals(0, groups.size());
   }
 
-  static class DummyContext implements ParserContext<Object> {
-
-    @Override
-    public Object getData() {
-      return null;
-    }
-
-    @Override
-    public ParserContext<Object> copy() {
-      return new DoubleParserTest.DummyContext();
-    }
-  }
 }

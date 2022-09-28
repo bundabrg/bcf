@@ -58,4 +58,18 @@ public interface CommandRootData<DATA> {
    * @return input to prepend
    */
   String getInput();
+
+  interface CommandRootDataBuilder<DATA> {
+    CommandRootDataBuilder<DATA> name(String name);
+
+    CommandRootDataBuilder<DATA> aliases(String[] aliases);
+
+    CommandRootDataBuilder<DATA> description(String description);
+
+    CommandRootDataBuilder<DATA> root(ParserTree<DATA> root);
+
+    CommandRootDataBuilder<DATA> input(String input);
+
+    CommandRootData<DATA> build();
+  }
 }

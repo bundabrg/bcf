@@ -53,21 +53,23 @@ import org.junit.jupiter.api.Test;
 
 class ParserNodeTest {
 
-  StringParserGenerator<Object> generator =
+  StringParserGenerator<Void> generator =
       new StringParserGenerator<>(
           (name, parameters) -> {
-            Map<String, Class<? extends Parser<Object, ?>>> parserClassMap = new HashMap<>();
+            Map<String, Class<? extends Parser<?, ?>>> parserClassMap = new HashMap<>();
             parserClassMap.put("literal", StringParser.class);
             parserClassMap.put("string", StringParser.class);
             parserClassMap.put("int", IntegerParser.class);
 
-            Class<? extends Parser<Object, ?>> parserClass = parserClassMap.get(name);
+            Class<? extends Parser<?, ?>> parserClass = parserClassMap.get(name);
             if (parserClass == null) {
               throw new RuntimeException("Unknown parser: " + name);
             }
 
             try {
-              return parserClass.getConstructor(Map.class).newInstance(parameters);
+              //noinspection unchecked
+              return (Parser<Void, ?>)
+                  parserClass.getConstructor(Map.class).newInstance(parameters);
             } catch (InstantiationException
                 | NoSuchMethodException
                 | InvocationTargetException
@@ -78,17 +80,17 @@ class ParserNodeTest {
 
   @Test
   void parse_1() {
-    ParserTree<Object> node = generator.from("");
+    ParserTree<Void> node = generator.from("");
 
-    ParserTreeResult<Object> e = node.parse("", null);
+    ParserTreeResult<Void> e = node.parse("", null);
     assertNull(e.getExecuteCandidate());
   }
 
   @Test
   void parse_2() {
-    ParserTree<Object> node = generator.from("");
+    ParserTree<Void> node = generator.from("");
 
-    ParserTreeResult<Object> e = node.parse("bob", null);
+    ParserTreeResult<Void> e = node.parse("bob", null);
     assertNull(e.getExecuteCandidate());
   }
 
@@ -98,13 +100,13 @@ class ParserNodeTest {
     TestErrorHandler errorHandler = new TestErrorHandler();
     TestParserTreeFallbackHandler fallbackHandler = new TestParserTreeFallbackHandler();
 
-    ParserTree<Object> node =
+    ParserTree<Void> node =
         generator
             .from("")
             .forEachLeaf(
                 n -> n.execute(executeHandler).error(errorHandler).fallback(fallbackHandler));
 
-    ParserTreeResult<Object> e = node.parse("bob", null);
+    ParserTreeResult<Void> e = node.parse("bob", null);
     assertNull(e.getExecuteCandidate());
   }
 
@@ -115,14 +117,14 @@ class ParserNodeTest {
     TestParserTreeFallbackHandler fallbackHandler = new TestParserTreeFallbackHandler();
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node =
+    ParserTree<Void> node =
         generator
             .from("literal1")
             .forEachLeaf(
                 n -> n.execute(executeHandler).error(errorHandler).fallback(fallbackHandler))
             .error(rootErrorHandler);
 
-    ParserTreeResult<Object> e = node.parse("", null);
+    ParserTreeResult<Void> e = node.parse("", null);
     assertNotNull(e);
     assertNull(e.getExecuteCandidate());
     assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
@@ -137,14 +139,14 @@ class ParserNodeTest {
     TestParserTreeFallbackHandler fallbackHandler = new TestParserTreeFallbackHandler();
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node =
+    ParserTree<Void> node =
         generator
             .from("literal1")
             .forEachLeaf(
                 n -> n.execute(executeHandler).error(errorHandler).fallback(fallbackHandler))
             .error(rootErrorHandler);
 
-    ParserTreeResult<Object> e = node.parse("bob", null);
+    ParserTreeResult<Void> e = node.parse("bob", null);
     assertNotNull(e);
     assertNull(e.getExecuteCandidate());
     assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
@@ -159,14 +161,14 @@ class ParserNodeTest {
     TestParserTreeFallbackHandler fallbackHandler = new TestParserTreeFallbackHandler();
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node =
+    ParserTree<Void> node =
         generator
             .from("literal1")
             .forEachLeaf(
                 n -> n.execute(executeHandler).error(errorHandler).fallback(fallbackHandler))
             .error(rootErrorHandler);
 
-    ParserTreeResult<Object> e = node.parse("literal1", null);
+    ParserTreeResult<Void> e = node.parse("literal1", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler);
     assertEquals(1, fallbackHandler.count);
@@ -179,14 +181,14 @@ class ParserNodeTest {
     TestParserTreeFallbackHandler fallbackHandler = new TestParserTreeFallbackHandler();
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node =
+    ParserTree<Void> node =
         generator
             .from("literal1 literal2 literal3")
             .forEachLeaf(
                 n -> n.execute(executeHandler).error(errorHandler).fallback(fallbackHandler))
             .error(rootErrorHandler);
 
-    ParserTreeResult<Object> e = node.parse("literal1", null);
+    ParserTreeResult<Void> e = node.parse("literal1", null);
     assertNotNull(e);
     assertNull(e.getExecuteCandidate());
     assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
@@ -201,14 +203,14 @@ class ParserNodeTest {
     TestParserTreeFallbackHandler fallbackHandler = new TestParserTreeFallbackHandler();
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node =
+    ParserTree<Void> node =
         generator
             .from("literal1 literal2 literal3")
             .forEachLeaf(
                 n -> n.execute(executeHandler).error(errorHandler).fallback(fallbackHandler))
             .error(rootErrorHandler);
 
-    ParserTreeResult<Object> e = node.parse("literal1 bob", null);
+    ParserTreeResult<Void> e = node.parse("literal1 bob", null);
     assertNotNull(e);
     assertNull(e.getExecuteCandidate());
     assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
@@ -223,14 +225,14 @@ class ParserNodeTest {
     TestParserTreeFallbackHandler fallbackHandler = new TestParserTreeFallbackHandler();
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node =
+    ParserTree<Void> node =
         generator
             .from("literal1 literal2 literal3")
             .forEachLeaf(
                 n -> n.execute(executeHandler).error(errorHandler).fallback(fallbackHandler))
             .error(rootErrorHandler);
 
-    ParserTreeResult<Object> e = node.parse("literal1 literal2", null);
+    ParserTreeResult<Void> e = node.parse("literal1 literal2", null);
     assertNotNull(e);
     assertNull(e.getExecuteCandidate());
     assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
@@ -245,14 +247,14 @@ class ParserNodeTest {
     TestParserTreeFallbackHandler fallbackHandler = new TestParserTreeFallbackHandler();
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node =
+    ParserTree<Void> node =
         generator
             .from("literal1 literal2 literal3")
             .forEachLeaf(
                 n -> n.execute(executeHandler).error(errorHandler).fallback(fallbackHandler))
             .error(rootErrorHandler);
 
-    ParserTreeResult<Object> e = node.parse("literal1 literal2 literal3", null);
+    ParserTreeResult<Void> e = node.parse("literal1 literal2 literal3", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler);
     assertEquals(1, fallbackHandler.count);
@@ -265,14 +267,14 @@ class ParserNodeTest {
     TestParserTreeFallbackHandler fallbackHandler = new TestParserTreeFallbackHandler();
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node =
+    ParserTree<Void> node =
         generator
             .from("literal1 literal2 literal3")
             .forEachLeaf(
                 n -> n.execute(executeHandler).error(errorHandler).fallback(fallbackHandler))
             .error(rootErrorHandler);
 
-    ParserTreeResult<Object> e = node.parse("literal1 literal2 literal3 bob", null);
+    ParserTreeResult<Void> e = node.parse("literal1 literal2 literal3 bob", null);
     assertNull(e.getExecuteCandidate());
     assertEquals(1, fallbackHandler.count);
   }
@@ -284,14 +286,14 @@ class ParserNodeTest {
     TestParserTreeFallbackHandler fallbackHandler = new TestParserTreeFallbackHandler();
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node =
+    ParserTree<Void> node =
         generator
             .from("literal1|literal2|literal3")
             .forEachLeaf(
                 n -> n.execute(executeHandler).error(errorHandler).fallback(fallbackHandler))
             .error(rootErrorHandler);
 
-    ParserTreeResult<Object> e = node.parse("bob", null);
+    ParserTreeResult<Void> e = node.parse("bob", null);
     assertNotNull(e);
     assertNull(e.getExecuteCandidate());
     assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
@@ -306,14 +308,14 @@ class ParserNodeTest {
     TestParserTreeFallbackHandler fallbackHandler = new TestParserTreeFallbackHandler();
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node =
+    ParserTree<Void> node =
         generator
             .from("literal1|literal2|literal3")
             .forEachLeaf(
                 n -> n.execute(executeHandler).error(errorHandler).fallback(fallbackHandler))
             .error(rootErrorHandler);
 
-    ParserTreeResult<Object> e = node.parse("literal1", null);
+    ParserTreeResult<Void> e = node.parse("literal1", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler);
     assertEquals(1, fallbackHandler.count);
@@ -326,14 +328,14 @@ class ParserNodeTest {
     TestParserTreeFallbackHandler fallbackHandler = new TestParserTreeFallbackHandler();
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node =
+    ParserTree<Void> node =
         generator
             .from("literal1 literal2(default=literal2) literal3(default=literal3)")
             .forEachLeaf(
                 n -> n.execute(executeHandler).error(errorHandler).fallback(fallbackHandler))
             .error(rootErrorHandler);
 
-    ParserTreeResult<Object> e = node.parse("literal1", null);
+    ParserTreeResult<Void> e = node.parse("literal1", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler);
     assertEquals(1, fallbackHandler.count);
@@ -343,7 +345,7 @@ class ParserNodeTest {
   void multi_1() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     node.then(generator.from("milly|marta|mike").forEachLeaf(n -> n.execute(executeHandler1)));
@@ -351,7 +353,7 @@ class ParserNodeTest {
     TestExecuteHandler executeHandler2 = new TestExecuteHandler();
     node.then(generator.from("alice|bob").forEachLeaf(n -> n.execute(executeHandler2)));
 
-    ParserTreeResult<Object> e = node.parse("zoe", null);
+    ParserTreeResult<Void> e = node.parse("zoe", null);
     assertNotNull(e);
     assertNull(e.getExecuteCandidate());
     assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
@@ -362,7 +364,7 @@ class ParserNodeTest {
   void multi_2() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     node.then(generator.from("milly|marta|mike").forEachLeaf(n -> n.execute(executeHandler1)));
@@ -370,7 +372,7 @@ class ParserNodeTest {
     TestExecuteHandler executeHandler2 = new TestExecuteHandler();
     node.then(generator.from("alice|bob").forEachLeaf(n -> n.execute(executeHandler2)));
 
-    ParserTreeResult<Object> e = node.parse("bob", null);
+    ParserTreeResult<Void> e = node.parse("bob", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler2);
   }
@@ -379,7 +381,7 @@ class ParserNodeTest {
   void multi_3() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     node.then(generator.from("milly|marta|mike").forEachLeaf(n -> n.execute(executeHandler1)));
@@ -387,7 +389,7 @@ class ParserNodeTest {
     TestExecuteHandler executeHandler2 = new TestExecuteHandler();
     node.then(generator.from("alice|bob").forEachLeaf(n -> n.execute(executeHandler2)));
 
-    ParserTreeResult<Object> e = node.parse("marta", null);
+    ParserTreeResult<Void> e = node.parse("marta", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler1);
   }
@@ -396,7 +398,7 @@ class ParserNodeTest {
   void multi_4() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     node.then(
@@ -406,7 +408,7 @@ class ParserNodeTest {
     node.then(
         generator.from("alice|bob|mike charles").forEachLeaf(n -> n.execute(executeHandler2)));
 
-    ParserTreeResult<Object> e = node.parse("mike", null);
+    ParserTreeResult<Void> e = node.parse("mike", null);
     assertNotNull(e);
     assertNull(e.getExecuteCandidate());
     assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
@@ -417,7 +419,7 @@ class ParserNodeTest {
   void multi_5() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     node.then(
@@ -429,7 +431,7 @@ class ParserNodeTest {
             .from("alice|bob|mike charles(default=charles)")
             .forEachLeaf(n -> n.execute(executeHandler2)));
 
-    ParserTreeResult<Object> e = node.parse("mike peter", null);
+    ParserTreeResult<Void> e = node.parse("mike peter", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler1);
   }
@@ -438,7 +440,7 @@ class ParserNodeTest {
   void multi_6() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     node.then(
@@ -450,7 +452,7 @@ class ParserNodeTest {
             .from("alice|bob|mike charles(default=charles)")
             .forEachLeaf(n -> n.execute(executeHandler2)));
 
-    ParserTreeResult<Object> e = node.parse("mike", null);
+    ParserTreeResult<Void> e = node.parse("mike", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler2);
   }
@@ -459,7 +461,7 @@ class ParserNodeTest {
   void results_1() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     node.then(
@@ -473,7 +475,7 @@ class ParserNodeTest {
             .from("alice|bob|mike(suppress=false) charles(suppress=false, default=charles)")
             .forEachLeaf(n -> n.execute(executeHandler2)));
 
-    ParserTreeResult<Object> e = node.parse("mike", null);
+    ParserTreeResult<Void> e = node.parse("mike", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler2);
     assertEquals(2, e.getExecuteCandidate().getResults().size());
@@ -485,7 +487,7 @@ class ParserNodeTest {
   void results_2() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     node.then(
@@ -501,7 +503,7 @@ class ParserNodeTest {
                 "alice|bob|mike(suppress=false) @int(min=1,max=10) charles(suppress=false,default=charles)")
             .forEachLeaf(n -> n.execute(executeHandler2)));
 
-    ParserTreeResult<Object> e = node.parse("mike 1", null);
+    ParserTreeResult<Void> e = node.parse("mike 1", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler2);
     assertEquals(3, e.getExecuteCandidate().getResults().size());
@@ -514,7 +516,7 @@ class ParserNodeTest {
   void results_3() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     node.then(
@@ -530,7 +532,7 @@ class ParserNodeTest {
                 "alice|bob|mike(suppress=false) @int(min=1,max=10) charles(suppress=false,default=charles)")
             .forEachLeaf(n -> n.execute(executeHandler2)));
 
-    ParserTreeResult<Object> e = node.parse("mike 11", null);
+    ParserTreeResult<Void> e = node.parse("mike 11", null);
     assertNotNull(e);
     assertEquals(e.getExecuteCandidate().getHandler(), executeHandler1);
     assertEquals(3, e.getExecuteCandidate().getResults().size());
@@ -543,7 +545,7 @@ class ParserNodeTest {
   void results_4() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     node.then(
@@ -559,7 +561,7 @@ class ParserNodeTest {
                 "alice|bob|mike(suppress=false) @int(min=1,max=10) charles(suppress=false,default=charles)")
             .forEachLeaf(n -> n.execute(executeHandler2)));
 
-    ParserTreeResult<Object> e = node.parse("mike 111", null);
+    ParserTreeResult<Void> e = node.parse("mike 111", null);
     assertNotNull(e);
     assertNull(e.getExecuteCandidate());
     assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
@@ -570,7 +572,7 @@ class ParserNodeTest {
   void completeHandler_1() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     node.then(
@@ -590,7 +592,7 @@ class ParserNodeTest {
                             .from("@int(min=1,max=10) charles(suppress=false,default=charles)")
                             .forEachLeaf(n2 -> n2.execute(executeHandler2)))));
 
-    ParserTreeResult<Object> e = node.parse("mike 111", null);
+    ParserTreeResult<Void> e = node.parse("mike 111", null);
     assertNotNull(e);
     assertNull(e.getExecuteCandidate());
     assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
@@ -605,7 +607,7 @@ class ParserNodeTest {
   void completeHandler_2() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     node.then(
@@ -627,7 +629,7 @@ class ParserNodeTest {
                                 .from("@int(min=1,max=10) charles(suppress=false,default=charles)")
                                 .forEachLeaf(n2 -> n2.execute(executeHandler2)))));
 
-    ParserTreeResult<Object> e = node.parse("mike 111", null);
+    ParserTreeResult<Void> e = node.parse("mike 111", null);
     assertNotNull(e);
 
     assertNull(e.getExecuteCandidate());
@@ -642,7 +644,7 @@ class ParserNodeTest {
   void ambiguousExecute_1() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
 
-    ParserTree<Object> node = new NullNode<>().error(rootErrorHandler);
+    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
 
     TestExecuteHandler executeHandler1 = new TestExecuteHandler();
     TestExecuteHandler executeHandler2 = new TestExecuteHandler();
@@ -655,7 +657,7 @@ class ParserNodeTest {
                 .from("alice|bob|mike(suppress=false) @int(min=1,max=7) peter|mark(suppress=false)")
                 .forEachLeaf(n -> n.execute(executeHandler2)));
 
-    ParserTreeResult<Object> e = node.parse("mike 5 peter", null);
+    ParserTreeResult<Void> e = node.parse("mike 5 peter", null);
     assertNotNull(e);
     assertNull(e.getExecuteCandidate());
     assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
@@ -664,29 +666,29 @@ class ParserNodeTest {
             .anyMatch(err -> err.getClass() == AmbiguousExecuteHandlersError.class));
   }
 
-  static class TestExecuteHandler implements ParserTreeHandler<ExecuteContext<Object>> {
+  static class TestExecuteHandler implements ParserTreeHandler<ExecuteContext<Void>> {
 
     @Override
-    public void handle(ExecuteContext<Object> context) {}
+    public void handle(ExecuteContext<Void> context) {}
   }
 
-  static class TestErrorHandler implements ParserTreeHandler<ErrorContext<Object>> {
+  static class TestErrorHandler implements ParserTreeHandler<ErrorContext<Void>> {
 
     @Override
-    public void handle(ErrorContext<Object> context) {}
+    public void handle(ErrorContext<Void> context) {}
   }
 
-  static class TestCompleteHandler implements ParserTreeHandler<CompleteContext<Object>> {
+  static class TestCompleteHandler implements ParserTreeHandler<CompleteContext<Void>> {
 
     @Override
-    public void handle(CompleteContext<Object> context) {}
+    public void handle(CompleteContext<Void> context) {}
   }
 
-  static class TestParserTreeFallbackHandler implements ParserTreeFallbackHandler<Object> {
+  static class TestParserTreeFallbackHandler implements ParserTreeFallbackHandler<Void> {
     public int count = 0;
 
     @Override
-    public @NotNull ParserTreeResult<Object> handle(ParserTreeContext<Object> context) {
+    public @NotNull ParserTreeResult<Void> handle(ParserTreeContext<Void> context) {
       count++;
       return new ParserTreeResult<>(
           null, null, null, new DefaultErrorCollection(), new ArrayList<>());

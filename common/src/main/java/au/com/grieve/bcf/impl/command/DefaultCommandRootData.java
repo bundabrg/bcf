@@ -26,10 +26,12 @@ package au.com.grieve.bcf.impl.command;
 import au.com.grieve.bcf.CommandRootData;
 import au.com.grieve.bcf.ParserTree;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 @AllArgsConstructor
+@Builder
 @Getter
 @ToString
 public class DefaultCommandRootData<DATA> implements CommandRootData<DATA> {
@@ -47,4 +49,6 @@ public class DefaultCommandRootData<DATA> implements CommandRootData<DATA> {
 
   // Input to prepend to any supplied input
   private final String input;
+
+  public static class DefaultCommandRootDataBuilder<DATA> implements CommandRootDataBuilder<DATA> {}
 }

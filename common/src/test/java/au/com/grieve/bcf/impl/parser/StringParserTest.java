@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
@@ -45,7 +44,7 @@ class StringParserTest {
     StringParser stringParser = new StringParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("");
 
-    assertThrows(EndOfLineException.class, () -> stringParser.parse(new DummyContext(), line));
+    assertThrows(EndOfLineException.class, () -> stringParser.parse(null, line));
   }
 
   @Test
@@ -56,7 +55,7 @@ class StringParserTest {
     StringParser stringParser = new StringParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1");
 
-    assertEquals("1", stringParser.parse(new DummyContext(), line));
+    assertEquals("1", stringParser.parse(null, line));
   }
 
   @Test
@@ -64,7 +63,7 @@ class StringParserTest {
     StringParser stringParser = new StringParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1 a");
 
-    assertEquals("1", stringParser.parse(new DummyContext(), line));
+    assertEquals("1", stringParser.parse(null, line));
   }
 
   @Test
@@ -72,7 +71,7 @@ class StringParserTest {
     StringParser stringParser = new StringParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a 1");
 
-    assertEquals("a", stringParser.parse(new DummyContext(), line));
+    assertEquals("a", stringParser.parse(null, line));
   }
 
   @Test
@@ -82,7 +81,7 @@ class StringParserTest {
     StringParser sp1 = new StringParser(parameters);
     ParsedLine line = new DefaultParsedLine("option1");
 
-    assertEquals("option1", sp1.parse(new DummyContext(), line));
+    assertEquals("option1", sp1.parse(null, line));
   }
 
   @Test
@@ -92,7 +91,7 @@ class StringParserTest {
     StringParser sp1 = new StringParser(parameters);
     ParsedLine line = new DefaultParsedLine("bob");
 
-    assertThrows(ParserSyntaxException.class, () -> sp1.parse(new DummyContext(), line));
+    assertThrows(ParserSyntaxException.class, () -> sp1.parse(null, line));
   }
 
   @Test
@@ -102,10 +101,10 @@ class StringParserTest {
     StringParser sp2 = new StringParser(parameters);
     ParsedLine line = new DefaultParsedLine("option1 option2 option3 bob");
 
-    assertEquals("option1", sp2.parse(new DummyContext(), line));
-    assertEquals("option2", sp2.parse(new DummyContext(), line));
-    assertEquals("option3", sp2.parse(new DummyContext(), line));
-    assertThrows(ParserSyntaxException.class, () -> sp2.parse(new DummyContext(), line));
+    assertEquals("option1", sp2.parse(null, line));
+    assertEquals("option2", sp2.parse(null, line));
+    assertEquals("option3", sp2.parse(null, line));
+    assertThrows(ParserSyntaxException.class, () -> sp2.parse(null, line));
   }
 
   @Test
@@ -116,7 +115,7 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine("");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> p.complete(new DummyContext(), line, result));
+    assertThrows(EndOfLineException.class, () -> p.complete(null, line, result));
   }
 
   @Test
@@ -127,7 +126,7 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine(" ");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    assertThrows(EndOfLineException.class, () -> p.complete(new DummyContext(), line, result));
+    assertThrows(EndOfLineException.class, () -> p.complete(null, line, result));
   }
 
   @Test
@@ -138,7 +137,7 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine("b");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    p.complete(new DummyContext(), line, result);
+    p.complete(null, line, result);
     assertEquals(
         0, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
   }
@@ -151,7 +150,7 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine("o");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    p.complete(new DummyContext(), line, result);
+    p.complete(null, line, result);
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
@@ -165,7 +164,7 @@ class StringParserTest {
     ParsedLine line = new DefaultParsedLine("option2");
     List<CompletionCandidateGroup> result = new ArrayList<>();
 
-    p.complete(new DummyContext(), line, result);
+    p.complete(null, line, result);
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(1, result.get(0).getMatchingCompletionCandidates().size());
@@ -180,7 +179,7 @@ class StringParserTest {
     List<CompletionCandidateGroup> result = new ArrayList<>();
     line.next();
 
-    assertThrows(EndOfLineException.class, () -> p.complete(new DummyContext(), line, result));
+    assertThrows(EndOfLineException.class, () -> p.complete(null, line, result));
   }
 
   @Test
@@ -192,22 +191,10 @@ class StringParserTest {
     List<CompletionCandidateGroup> result = new ArrayList<>();
     line.next();
 
-    p.complete(new DummyContext(), line, result);
+    p.complete(null, line, result);
     assertEquals(
         1, result.stream().filter(g -> g.getMatchingCompletionCandidates().size() > 0).count());
     assertEquals(3, result.get(0).getMatchingCompletionCandidates().size());
   }
 
-  static class DummyContext implements ParserContext<Object> {
-
-    @Override
-    public Object getData() {
-      return null;
-    }
-
-    @Override
-    public ParserContext<Object> copy() {
-      return new DoubleParserTest.DummyContext();
-    }
-  }
 }

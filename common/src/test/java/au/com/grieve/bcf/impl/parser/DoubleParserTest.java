@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.line.DefaultParsedLine;
@@ -42,7 +41,7 @@ class DoubleParserTest {
     DoubleParser doubleParser = new DoubleParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("");
 
-    assertThrows(EndOfLineException.class, () -> doubleParser.parse(new DummyContext(), line));
+    assertThrows(EndOfLineException.class, () -> doubleParser.parse(null, line));
   }
 
   @Test
@@ -50,7 +49,7 @@ class DoubleParserTest {
     DoubleParser doubleParser = new DoubleParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a");
 
-    assertThrows(ParserSyntaxException.class, () -> doubleParser.parse(new DummyContext(), line));
+    assertThrows(ParserSyntaxException.class, () -> doubleParser.parse(null, line));
   }
 
   @Test
@@ -58,7 +57,7 @@ class DoubleParserTest {
     DoubleParser doubleParser = new DoubleParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1");
 
-    assertEquals(1, doubleParser.parse(new DummyContext(), line));
+    assertEquals(1, doubleParser.parse(null, line));
   }
 
   @Test
@@ -66,7 +65,7 @@ class DoubleParserTest {
     DoubleParser doubleParser = new DoubleParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("1 a");
 
-    assertEquals(1, doubleParser.parse(new DummyContext(), line));
+    assertEquals(1, doubleParser.parse(null, line));
   }
 
   @Test
@@ -74,7 +73,7 @@ class DoubleParserTest {
     DoubleParser doubleParser = new DoubleParser(new HashMap<>());
     ParsedLine line = new DefaultParsedLine("a 1");
 
-    assertThrows(ParserSyntaxException.class, () -> doubleParser.parse(new DummyContext(), line));
+    assertThrows(ParserSyntaxException.class, () -> doubleParser.parse(null, line));
   }
 
   @Test
@@ -84,7 +83,7 @@ class DoubleParserTest {
     DoubleParser doubleParser = new DoubleParser(parameters);
     ParsedLine line = new DefaultParsedLine("5");
 
-    assertThrows(ParserSyntaxException.class, () -> doubleParser.parse(new DummyContext(), line));
+    assertThrows(ParserSyntaxException.class, () -> doubleParser.parse(null, line));
   }
 
   @Test
@@ -94,7 +93,7 @@ class DoubleParserTest {
     DoubleParser doubleParser = new DoubleParser(parameters);
     ParsedLine line = new DefaultParsedLine("100");
 
-    assertEquals(100, doubleParser.parse(new DummyContext(), line));
+    assertEquals(100, doubleParser.parse(null, line));
   }
 
   @Test
@@ -104,7 +103,7 @@ class DoubleParserTest {
     DoubleParser doubleParser = new DoubleParser(parameters);
     ParsedLine line = new DefaultParsedLine("13");
 
-    assertEquals(13, doubleParser.parse(new DummyContext(), line));
+    assertEquals(13, doubleParser.parse(null, line));
   }
 
   @Test
@@ -114,7 +113,7 @@ class DoubleParserTest {
     DoubleParser doubleParser = new DoubleParser(parameters);
     ParsedLine line = new DefaultParsedLine("100");
 
-    assertThrows(ParserSyntaxException.class, () -> doubleParser.parse(new DummyContext(), line));
+    assertThrows(ParserSyntaxException.class, () -> doubleParser.parse(null, line));
   }
 
   @Test
@@ -124,7 +123,7 @@ class DoubleParserTest {
     DoubleParser doubleParser = new DoubleParser(parameters);
     ParsedLine line = new DefaultParsedLine("5");
 
-    assertEquals(5, doubleParser.parse(new DummyContext(), line));
+    assertEquals(5, doubleParser.parse(null, line));
   }
 
   @Test
@@ -134,19 +133,6 @@ class DoubleParserTest {
     DoubleParser doubleParser = new DoubleParser(parameters);
     ParsedLine line = new DefaultParsedLine("13");
 
-    assertEquals(13, doubleParser.parse(new DummyContext(), line));
-  }
-
-  static class DummyContext implements ParserContext<Object> {
-
-    @Override
-    public Object getData() {
-      return null;
-    }
-
-    @Override
-    public ParserContext<Object> copy() {
-      return new DummyContext();
-    }
+    assertEquals(13, doubleParser.parse(null, line));
   }
 }

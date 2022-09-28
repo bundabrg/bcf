@@ -25,7 +25,6 @@ package au.com.grieve.bcf.impl.parser;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
-import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.ParserMinMax;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
@@ -41,7 +40,7 @@ import lombok.ToString;
 
 @Getter
 @ToString(callSuper = true)
-public class DoubleParser extends BaseParser<Object, Double> implements ParserMinMax<Double> {
+public class DoubleParser extends BaseParser<Void, Double> implements ParserMinMax<Double> {
 
   private final Double min;
   private final Double max;
@@ -67,7 +66,7 @@ public class DoubleParser extends BaseParser<Object, Double> implements ParserMi
   }
 
   @Override
-  protected Double doParse(ParserContext<Object> context, ParsedLine line)
+  protected Double doParse(Void data, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException {
     String input = line.next();
     double result;
@@ -90,8 +89,7 @@ public class DoubleParser extends BaseParser<Object, Double> implements ParserMi
   }
 
   @Override
-  protected void doComplete(
-      ParserContext<Object> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
+  protected void doComplete(Void data, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
     String input = line.next();
 
