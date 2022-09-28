@@ -92,7 +92,10 @@ public class AnnotationCommand<DATA> extends BaseCommand<DATA>
                                               executeMethod(
                                                   m,
                                                   Stream.concat(
-                                                          Stream.of(ctx), ctx.getResults().stream())
+                                                          ctx.getData() != null
+                                                              ? Stream.of(ctx.getData())
+                                                              : Stream.empty(),
+                                                          ctx.getResults().stream())
                                                       .collect(Collectors.toList()))));
                               return node;
                             }))
@@ -112,7 +115,12 @@ public class AnnotationCommand<DATA> extends BaseCommand<DATA>
         n -> {
           // Add Special Methods
           if (defaultMethod != null) {
-            n.execute(ctx -> executeMethod(defaultMethod, List.of(ctx)));
+            n.execute(
+                ctx ->
+                    executeMethod(
+                        defaultMethod,
+                        (ctx.getData() != null ? Stream.of(ctx.getData()) : Stream.empty())
+                            .collect(Collectors.toList())));
           }
           if (errorMethod != null) {
             n.error(ctx -> executeMethod(errorMethod, List.of(ctx)));

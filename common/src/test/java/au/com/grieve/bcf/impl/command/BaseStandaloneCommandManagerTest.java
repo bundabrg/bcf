@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import au.com.grieve.bcf.ErrorContext;
-import au.com.grieve.bcf.ExecuteContext;
 import au.com.grieve.bcf.ParserTree;
 import au.com.grieve.bcf.ParserTreeHandler;
 import au.com.grieve.bcf.ParserTreeResult;
@@ -49,7 +48,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("unused")
 class BaseStandaloneCommandManagerTest {
 
-  Consumer<List<ParserTree<Object>>> debugWalker =
+  Consumer<List<ParserTree<Void>>> debugWalker =
       n -> {
         System.err.printf("%" + n.size() + "s", "");
         System.err.println(n.get(n.size() - 1));
@@ -73,7 +72,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommand c1 = new ClassWithSingleCommand();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("", null);
+    ParserTreeResult<Void> result = manager.parse("", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -98,7 +97,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommand c1 = new ClassWithSingleCommand();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("bob", null);
+    ParserTreeResult<Void> result = manager.parse("bob", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -123,7 +122,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommand c1 = new ClassWithSingleCommand();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -148,7 +147,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommand c1 = new ClassWithSingleCommand();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 bob", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 bob", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -173,7 +172,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommand c1 = new ClassWithSingleCommand();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg1 m_arg2", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -198,7 +197,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommand c1 = new ClassWithSingleCommand();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -223,7 +222,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommand c1 = new ClassWithSingleCommand();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3 bob", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3 bob", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -248,7 +247,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandSingleInput c1 = new ClassWithSingleCommandSingleInput();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -273,7 +272,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandSingleInput c1 = new ClassWithSingleCommandSingleInput();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -298,7 +297,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandMultiInput c1 = new ClassWithSingleCommandMultiInput();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -323,7 +322,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandSingleParam c1 = new ClassWithSingleCommandSingleParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("", null);
+    ParserTreeResult<Void> result = manager.parse("", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -348,7 +347,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandSingleParam c1 = new ClassWithSingleCommandSingleParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("bob", null);
+    ParserTreeResult<Void> result = manager.parse("bob", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -373,7 +372,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandSingleParam c1 = new ClassWithSingleCommandSingleParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -398,7 +397,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandSingleParam c1 = new ClassWithSingleCommandSingleParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 bob", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 bob", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -423,7 +422,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandSingleParam c1 = new ClassWithSingleCommandSingleParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg1 m_arg2", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -448,7 +447,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandSingleParam c1 = new ClassWithSingleCommandSingleParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -473,7 +472,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandSingleParam c1 = new ClassWithSingleCommandSingleParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg2 m_arg3", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -498,7 +497,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandSingleParam c1 = new ClassWithSingleCommandSingleParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 c_arg1 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 c_arg1 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -524,7 +523,7 @@ class BaseStandaloneCommandManagerTest {
         new ClassWithSingleCommandSingleParamSingleInput();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -550,7 +549,7 @@ class BaseStandaloneCommandManagerTest {
         new ClassWithSingleCommandSingleParamMultipleInput();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -575,7 +574,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandMultiParam c1 = new ClassWithSingleCommandMultiParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("", null);
+    ParserTreeResult<Void> result = manager.parse("", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -600,7 +599,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithSingleCommandMultiParam c1 = new ClassWithSingleCommandMultiParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result =
+    ParserTreeResult<Void> result =
         manager.parse("cmd1 c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
@@ -627,8 +626,7 @@ class BaseStandaloneCommandManagerTest {
         new ClassWithSingleCommandMultiParamSingleInput();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result =
-        manager.parse("cmd1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -654,7 +652,7 @@ class BaseStandaloneCommandManagerTest {
         new ClassWithSingleCommandMultiParamMultiInput();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -679,7 +677,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithMultiCommand c1 = new ClassWithMultiCommand();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -705,7 +703,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithMultiCommand c1 = new ClassWithMultiCommand();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd2 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd2 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -731,7 +729,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithMultiCommand c1 = new ClassWithMultiCommand();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("bob m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("bob m_arg1 m_arg2 m_arg3", null);
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -757,7 +755,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithMultiCommandSingleParam c1 = new ClassWithMultiCommandSingleParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 c_arg1 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 c_arg1 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -783,7 +781,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithMultiCommandSingleParam c1 = new ClassWithMultiCommandSingleParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd2 c_arg1 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd2 c_arg1 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -809,7 +807,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithMultiCommandMultiParam c1 = new ClassWithMultiCommandMultiParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result =
+    ParserTreeResult<Void> result =
         manager.parse("cmd1 c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
@@ -835,7 +833,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithMultiCommandMultiParam c1 = new ClassWithMultiCommandMultiParam();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result =
+    ParserTreeResult<Void> result =
         manager.parse("cmd2 c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
@@ -863,7 +861,7 @@ class BaseStandaloneCommandManagerTest {
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
     manager.registerCommand(c2);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -893,7 +891,7 @@ class BaseStandaloneCommandManagerTest {
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
     manager.registerCommand(c2);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -923,7 +921,7 @@ class BaseStandaloneCommandManagerTest {
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
     manager.registerCommand(c2);
-    ParserTreeResult<Object> result = manager.parse("cmd5 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd5 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -953,7 +951,7 @@ class BaseStandaloneCommandManagerTest {
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
     manager.registerCommand(c2);
-    ParserTreeResult<Object> result = manager.parse("cmd4 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd4 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -983,7 +981,7 @@ class BaseStandaloneCommandManagerTest {
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
     manager.registerCommand(ParentCommand.class, c2);
-    ParserTreeResult<Object> result =
+    ParserTreeResult<Void> result =
         manager.parse("cmd1 c_arg1 c_arg2 c_arg3 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
@@ -1014,7 +1012,7 @@ class BaseStandaloneCommandManagerTest {
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
     manager.registerCommand(ParentCommand.class, c2);
-    ParserTreeResult<Object> result =
+    ParserTreeResult<Void> result =
         manager.parse("cmd1 c_arg1 c_arg2 c_arg3 child m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
@@ -1045,7 +1043,7 @@ class BaseStandaloneCommandManagerTest {
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
     manager.registerCommand(ParentCommand.class, c2);
-    ParserTreeResult<Object> result = manager.parse("cmd2 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd2 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
@@ -1073,7 +1071,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithMultiCommand c1 = new ClassWithMultiCommand();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -1120,7 +1118,7 @@ class BaseStandaloneCommandManagerTest {
     ClassWithMultiCommand c1 = new ClassWithMultiCommand();
     TestBaseStandaloneCommandManager manager = new TestBaseStandaloneCommandManager();
     manager.registerCommand(c1);
-    ParserTreeResult<Object> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
+    ParserTreeResult<Void> result = manager.parse("cmd1 m_arg1 m_arg2 m_arg3", null);
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
@@ -1162,343 +1160,343 @@ class BaseStandaloneCommandManagerTest {
     assertEquals(0, c1.m2_count);
   }
 
-  static class TestBaseStandaloneCommandManager extends BaseStandaloneCommandManager<Object> {
+  static class TestBaseStandaloneCommandManager extends BaseStandaloneCommandManager<Void> {
     int e_count = 0;
 
     @Override
-    protected ParserTreeHandler<ErrorContext<Object>> getBaseErrorHandler() {
+    protected ParserTreeHandler<ErrorContext<Void>> getBaseErrorHandler() {
       return context -> e_count++;
     }
   }
 
-  static class ClassNoCommand extends AnnotationCommand<Object> {}
+  static class ClassNoCommand extends AnnotationCommand<Void> {}
 
   @Command("")
-  static class ClassWithEmptyCommand extends AnnotationCommand<Object> {}
+  static class ClassWithEmptyCommand extends AnnotationCommand<Void> {}
 
   @Command("cmd1")
-  static class ClassWithSingleCommand extends AnnotationCommand<Object> {
+  static class ClassWithSingleCommand extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command("cmd1")
-  static class ClassWithSingleCommand2 extends AnnotationCommand<Object> {
+  static class ClassWithSingleCommand2 extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command("cmd1 c_arg1 c_arg2 c_arg3")
-  static class ParentCommand extends AnnotationCommand<Object> {
+  static class ParentCommand extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command(value = "cmd2 c_arg1 c_arg2 c_arg3", input = "c_arg1 c_arg2 c_arg3 child")
   @Arg("child")
-  static class ChildCommand extends AnnotationCommand<Object> {
+  static class ChildCommand extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command(value = "cmd1", input = "m_arg1")
-  static class ClassWithSingleCommandSingleInput extends AnnotationCommand<Object> {
+  static class ClassWithSingleCommandSingleInput extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command(value = "cmd1", input = "m_arg1 m_arg2 m_arg3")
-  static class ClassWithSingleCommandMultiInput extends AnnotationCommand<Object> {
+  static class ClassWithSingleCommandMultiInput extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command("cmd1 c_arg1")
-  static class ClassWithSingleCommandSingleParam extends AnnotationCommand<Object> {
+  static class ClassWithSingleCommandSingleParam extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command(value = "cmd1 c_arg1", input = "c_arg1")
-  static class ClassWithSingleCommandSingleParamSingleInput extends AnnotationCommand<Object> {
+  static class ClassWithSingleCommandSingleParamSingleInput extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command(value = "cmd1 c_arg1", input = "c_arg1 m_arg1 m_arg2")
-  static class ClassWithSingleCommandSingleParamMultipleInput extends AnnotationCommand<Object> {
+  static class ClassWithSingleCommandSingleParamMultipleInput extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command("cmd1 c_arg1 c_arg2 c_arg3")
-  static class ClassWithSingleCommandMultiParam extends AnnotationCommand<Object> {
+  static class ClassWithSingleCommandMultiParam extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command(value = "cmd1 c_arg1 c_arg2 c_arg3", input = "c_arg1")
-  static class ClassWithSingleCommandMultiParamSingleInput extends AnnotationCommand<Object> {
+  static class ClassWithSingleCommandMultiParamSingleInput extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command(value = "cmd1 c_arg1 c_arg2 c_arg3", input = "c_arg1 c_arg2 c_arg3 m_arg1 m_arg2")
-  static class ClassWithSingleCommandMultiParamMultiInput extends AnnotationCommand<Object> {
+  static class ClassWithSingleCommandMultiParamMultiInput extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command("cmd1|cmd2|cmd3")
-  static class ClassWithMultiCommand extends AnnotationCommand<Object> {
+  static class ClassWithMultiCommand extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
     int m2_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
 
     @Arg("m_arg2|m_arg1 m_arg3")
-    public void m2(ExecuteContext<Object> ctx) {
+    public void m2() {
       m2_count++;
     }
   }
 
   @Command("cmd1|cmd2|cmd3 c_arg1")
-  static class ClassWithMultiCommandSingleParam extends AnnotationCommand<Object> {
+  static class ClassWithMultiCommandSingleParam extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
     int m2_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
 
     @Arg("m_arg2|m_arg1 m_arg3")
-    public void m2(ExecuteContext<Object> ctx) {
+    public void m2() {
       m2_count++;
     }
   }
 
   @Command(value = "cmd1|cmd2|cmd3 c_arg1", input = "c_arg1")
-  static class ClassWithMultiCommandSingleParamSingleInput extends AnnotationCommand<Object> {
+  static class ClassWithMultiCommandSingleParamSingleInput extends AnnotationCommand<Void> {
     @Default
     public void d() {}
 
@@ -1513,7 +1511,7 @@ class BaseStandaloneCommandManagerTest {
   }
 
   @Command(value = "cmd1|cmd2|cmd3 c_arg1", input = "c_arg1 m_arg1")
-  static class ClassWithMultiCommandSingleParamMultiInput extends AnnotationCommand<Object> {
+  static class ClassWithMultiCommandSingleParamMultiInput extends AnnotationCommand<Void> {
     @Default
     public void d() {}
 
@@ -1528,67 +1526,67 @@ class BaseStandaloneCommandManagerTest {
   }
 
   @Command("cmd1|cmd2|cmd3 c_arg1 c_arg2 c_arg3")
-  static class ClassWithMultiCommandMultiParam extends AnnotationCommand<Object> {
+  static class ClassWithMultiCommandMultiParam extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command("cmd1|cmd4|cmd5")
-  static class ClassWithOverlappingName extends AnnotationCommand<Object> {
+  static class ClassWithOverlappingName extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
 
   @Command("cmd4|cmd2|cmd5")
-  static class ClassWithOverlappingAlias extends AnnotationCommand<Object> {
+  static class ClassWithOverlappingAlias extends AnnotationCommand<Void> {
     int d_count = 0;
     int e_count = 0;
     int m1_count = 0;
 
     @Default
-    public void d(ExecuteContext<Object> ctx) {
+    public void d() {
       d_count++;
     }
 
     @Error
-    public void e(ErrorContext<Object> ctx) {
+    public void e(ErrorContext<Void> ctx) {
       e_count++;
     }
 
     @Arg("m_arg1 m_arg2 m_arg3")
-    public void m1(ExecuteContext<Object> ctx) {
+    public void m1() {
       m1_count++;
     }
   }
