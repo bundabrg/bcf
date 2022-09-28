@@ -42,7 +42,7 @@ import lombok.ToString;
 
 @Getter
 @ToString(callSuper = true)
-public class IntegerParser extends BaseParser<Void, Integer> implements ParserMinMax<Integer> {
+public class IntegerParser extends BaseParser<Object, Integer> implements ParserMinMax<Integer> {
   private final Integer min;
   private final Integer max;
 
@@ -67,7 +67,7 @@ public class IntegerParser extends BaseParser<Void, Integer> implements ParserMi
   }
 
   @Override
-  protected Integer doParse(Void data, ParsedLine line)
+  protected Integer doParse(Object data, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException {
     String input = line.next();
     int result;
@@ -90,7 +90,7 @@ public class IntegerParser extends BaseParser<Void, Integer> implements ParserMi
   }
 
   @Override
-  protected void doComplete(Void data, ParsedLine line, List<CompletionCandidateGroup> candidates)
+  protected void doComplete(Object data, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
     String input = line.next();
 

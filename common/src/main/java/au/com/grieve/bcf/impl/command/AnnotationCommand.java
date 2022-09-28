@@ -35,7 +35,7 @@ import au.com.grieve.bcf.annotation.Arg;
 import au.com.grieve.bcf.annotation.Command;
 import au.com.grieve.bcf.annotation.Default;
 import au.com.grieve.bcf.annotation.Error;
-import au.com.grieve.bcf.impl.command.DefaultCommandRootData.DefaultCommandRootDataBuilder;
+import au.com.grieve.bcf.impl.command.BaseCommandRootData.BaseCommandRootDataBuilder;
 import au.com.grieve.bcf.impl.error.DefaultErrorCollection;
 import au.com.grieve.bcf.impl.parsertree.NullNode;
 import au.com.grieve.bcf.impl.parsertree.generator.StringParserGenerator;
@@ -165,9 +165,11 @@ public class AnnotationCommand<DATA> extends BaseCommand<DATA>
 
   protected CommandRootData<DATA> buildCommandRootData(
       StringParserGenerator<DATA> generator, Command commandAnnotation) {
-    return buildCommandRootData(
-            new DefaultCommandRootDataBuilder<DATA>(), generator, commandAnnotation)
-        .build();
+
+    BaseCommandRootDataBuilder<DATA> builder = BaseCommandRootData.builder();
+
+    buildCommandRootData(builder, generator, commandAnnotation);
+    return builder.build();
   }
 
   @Override

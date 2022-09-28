@@ -34,7 +34,7 @@ import lombok.ToString;
 @Builder
 @Getter
 @ToString
-public class DefaultCommandRootData<DATA> implements CommandRootData<DATA> {
+public class BaseCommandRootData<DATA> implements CommandRootData<DATA> {
   // Name of the command
   private final String name;
 
@@ -50,5 +50,5 @@ public class DefaultCommandRootData<DATA> implements CommandRootData<DATA> {
   // Input to prepend to any supplied input
   private final String input;
 
-  public static class DefaultCommandRootDataBuilder<DATA> implements CommandRootDataBuilder<DATA> {}
+  public static class BaseCommandRootDataBuilder<DATA> implements CommandRootDataBuilder<DATA> {}
 }

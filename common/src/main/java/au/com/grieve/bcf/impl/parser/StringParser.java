@@ -41,7 +41,7 @@ import lombok.ToString;
 
 @Getter
 @ToString(callSuper = true)
-public class StringParser extends BaseParser<Void, String> implements ParserOptions<String> {
+public class StringParser extends BaseParser<Object, String> implements ParserOptions<String> {
   private final List<String> options = new ArrayList<>();
 
   public StringParser(Map<String, String> parameters) {
@@ -65,7 +65,7 @@ public class StringParser extends BaseParser<Void, String> implements ParserOpti
   }
 
   @Override
-  protected String doParse(Void data, ParsedLine line)
+  protected String doParse(Object data, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException {
     String result = line.next();
     if (getOptions().size() > 0 && !getOptions().contains(result)) {
@@ -76,7 +76,7 @@ public class StringParser extends BaseParser<Void, String> implements ParserOpti
   }
 
   @Override
-  protected void doComplete(Void data, ParsedLine line, List<CompletionCandidateGroup> candidates)
+  protected void doComplete(Object data, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
     String input = line.next();
 

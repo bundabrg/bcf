@@ -69,7 +69,5 @@ public interface CommandRootData<DATA> {
     CommandRootDataBuilder<DATA> root(ParserTree<DATA> root);
 
     CommandRootDataBuilder<DATA> input(String input);
-
-    CommandRootData<DATA> build();
   }
 }
