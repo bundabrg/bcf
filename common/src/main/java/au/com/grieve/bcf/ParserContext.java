@@ -23,6 +23,11 @@
 
 package au.com.grieve.bcf;
 
+/**
+ * Context for Parsers
+ *
+ * @param <DATA>
+ */
 public interface ParserContext<DATA> {
   /**
    * Return data object
@@ -30,6 +35,13 @@ public interface ParserContext<DATA> {
    * @return data object
    */
   DATA getData();
+
+  /**
+   * Get history of results from previous parsers
+   *
+   * @return history
+   */
+  ResultCollection getHistory();
 
   /**
    * Return a copy of ourselves

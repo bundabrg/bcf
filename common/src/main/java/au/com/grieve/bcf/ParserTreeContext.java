@@ -23,7 +23,7 @@
 
 package au.com.grieve.bcf;
 
-public interface ParserTreeContext<DATA> extends ParserContext<DATA> {
+public interface ParserTreeContext<DATA> {
   /**
    * Return the weight so far
    *
@@ -47,6 +47,13 @@ public interface ParserTreeContext<DATA> extends ParserContext<DATA> {
    * @return parsed line
    */
   ParsedLine getLine();
+
+  /**
+   * Return data object
+   *
+   * @return data object
+   */
+  DATA getData();
 
   /**
    * Return a copy of ourselves

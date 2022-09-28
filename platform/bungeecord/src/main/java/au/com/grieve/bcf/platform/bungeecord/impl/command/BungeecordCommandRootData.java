@@ -21,42 +21,33 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.platform.bungeecord.impl.command;
 
-import au.com.grieve.bcf.exception.ResultNotSetException;
-import java.util.ArrayList;
-import java.util.List;
+import au.com.grieve.bcf.ParserTree;
+import au.com.grieve.bcf.impl.command.BaseCommandRootData;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
+import net.md_5.bungee.api.CommandSender;
 
-public class ResultCollection extends ArrayList<Result> {
+@Getter
+@ToString
+public class BungeecordCommandRootData extends BaseCommandRootData<CommandSender> {
 
-  public List<Object> toObjects() throws ResultNotSetException {
-    List<Object> result = new ArrayList<>();
-    for (Result r : this) {
-      Object o = r.getValue();
-      if (!r.isSuppress()) {
-        result.add(o);
-      }
-    }
-    return result;
+  private final String[] permissions;
+
+  @Builder(builderMethodName = "bungeecordBuilder")
+  public BungeecordCommandRootData(
+      String name,
+      String[] aliases,
+      String description,
+      ParserTree<CommandSender> root,
+      String input,
+      String[] permissions) {
+    super(name, aliases, description, root, input);
+    this.permissions = permissions;
   }
 
-  /**
-   * Return all objects that we can, even suppressed
-   *
-   * @return All objects
-   */
-  public List<Object> allObjects() {
-    List<Object> result = new ArrayList<>();
-    for (Result r : this) {
-
-      Object o;
-      try {
-        o = r.getValue();
-      } catch (ResultNotSetException e) {
-        continue;
-      }
-      result.add(o);
-    }
-    return result;
-  }
+  public static class BungeecordCommandRootDataBuilder
+      implements CommandRootDataBuilder<CommandSender> {}
 }

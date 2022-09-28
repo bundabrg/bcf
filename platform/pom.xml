@@ -37,7 +37,7 @@
 
     <modules>
         <module>bukkit</module>
-<!--        <module>bungeecord</module>-->
+        <module>bungeecord</module>
         <module>terminalconsole</module>
     </modules>
 

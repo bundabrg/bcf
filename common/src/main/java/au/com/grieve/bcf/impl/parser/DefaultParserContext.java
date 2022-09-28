@@ -21,33 +21,28 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.platform.bukkit;
+package au.com.grieve.bcf.impl.parser;
 
-import au.com.grieve.bcf.core.BaseCommand;
-import au.com.grieve.bcf.framework.annotation.annotations.Default;
-import au.com.grieve.bcf.framework.annotation.annotations.Error;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.command.CommandSender;
+import au.com.grieve.bcf.ParserContext;
+import au.com.grieve.bcf.Result;
+import au.com.grieve.bcf.ResultCollection;
+import java.util.List;
+import lombok.Getter;
+import lombok.ToString;
 
-public class BukkitCommand extends BaseCommand {
+@Getter
+@ToString
+public class DefaultParserContext<DATA> implements ParserContext<DATA> {
+  private final ResultCollection history = new ResultCollection();
+  private final DATA data;
 
-    // Default Error
-    @SuppressWarnings("unused")
-    @Error
-    void onError(CommandSender sender, String message) {
-        sender.spigot().sendMessage(
-                new ComponentBuilder(message).color(ChatColor.RED).create()
-        );
-    }
+  public DefaultParserContext(List<Result> history, DATA data) {
+    this.history.addAll(history);
+    this.data = data;
+  }
 
-    // Default Default
-    @SuppressWarnings("unused")
-    @Default
-    void onDefault(CommandSender sender) {
-        sender.spigot().sendMessage(
-                new ComponentBuilder("Invalid Command").color(ChatColor.RED).create()
-        );
-    }
-
+  @Override
+  public DefaultParserContext<DATA> copy() {
+    return new DefaultParserContext<>(history, data);
+  }
 }

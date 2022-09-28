@@ -21,42 +21,24 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.platform.bungeecord.impl.error;
 
-import au.com.grieve.bcf.exception.ResultNotSetException;
-import java.util.ArrayList;
-import java.util.List;
+import au.com.grieve.bcf.CommandError;
+import lombok.Getter;
 
-public class ResultCollection extends ArrayList<Result> {
+@Getter
+public class ConsoleRequiresPlayerNameError implements CommandError {
 
-  public List<Object> toObjects() throws ResultNotSetException {
-    List<Object> result = new ArrayList<>();
-    for (Result r : this) {
-      Object o = r.getValue();
-      if (!r.isSuppress()) {
-        result.add(o);
-      }
-    }
-    return result;
+  @Override
+  public String getName() {
+    return "console_requires_playername";
   }
 
-  /**
-   * Return all objects that we can, even suppressed
-   *
-   * @return All objects
-   */
-  public List<Object> allObjects() {
-    List<Object> result = new ArrayList<>();
-    for (Result r : this) {
+  @Override
+  public void merge(CommandError error) {}
 
-      Object o;
-      try {
-        o = r.getValue();
-      } catch (ResultNotSetException e) {
-        continue;
-      }
-      result.add(o);
-    }
-    return result;
+  @Override
+  public String toString() {
+    return "When console a player name is required";
   }
 }

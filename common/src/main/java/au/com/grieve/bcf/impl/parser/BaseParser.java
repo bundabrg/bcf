@@ -26,6 +26,7 @@ package au.com.grieve.bcf.impl.parser;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
+import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import java.util.ArrayList;
@@ -83,16 +84,17 @@ public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
   /**
    * Call doComplete and make sure that errors don't mutate line
    *
-   * @param data The data
+   * @param context The context
    * @param candidates List of candidates
    */
   @Override
-  public void complete(DATA data, ParsedLine line, List<CompletionCandidateGroup> candidates)
+  public void complete(
+      ParserContext<DATA> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
 
     List<CompletionCandidateGroup> groups = new ArrayList<>();
     try {
-      doComplete(data, line, groups);
+      doComplete(context, line, groups);
     } finally {
       // Only add groups that actually have any candidates
       candidates.addAll(
@@ -105,23 +107,24 @@ public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
   /**
    * Call doParse
    *
-   * @param data The Data
+   * @param context The context
    * @return Return Object
    * @throws EndOfLineException Ran out of input
    * @throws IllegalArgumentException Invalid input
    */
   @Override
-  public RT parse(DATA data, ParsedLine line) throws EndOfLineException, ParserSyntaxException {
+  public RT parse(ParserContext<DATA> context, ParsedLine line)
+      throws EndOfLineException, ParserSyntaxException {
     RT result;
     try {
-      result = doParse(data, line);
+      result = doParse(context, line);
     } catch (EndOfLineException e) {
       // Handle default
       if (!isRequired() || getDefault() != null) {
         if (getDefault() != null) {
           ParsedLine lineCopy = line.copy();
           lineCopy.insert(getDefault());
-          result = doParse(data, lineCopy);
+          result = doParse(context, lineCopy);
         } else {
           result = null;
         }
@@ -141,10 +144,10 @@ public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
    * @throws EndOfLineException Ran out of input
    * @throws ParserSyntaxException Invalid input
    */
-  protected abstract RT doParse(DATA data, ParsedLine line)
+  protected abstract RT doParse(ParserContext<DATA> context, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException;
 
   protected abstract void doComplete(
-      DATA data, ParsedLine line, List<CompletionCandidateGroup> candidates)
+      ParserContext<DATA> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException;
 }

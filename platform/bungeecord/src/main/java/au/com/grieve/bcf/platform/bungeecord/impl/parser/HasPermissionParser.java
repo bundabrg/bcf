@@ -21,21 +21,21 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf.platform.bukkit.impl.parser;
+package au.com.grieve.bcf.platform.bungeecord.impl.parser;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.parser.BaseParser;
-import au.com.grieve.bcf.platform.bukkit.impl.error.InsufficientPermissionError;
+import au.com.grieve.bcf.platform.bungeecord.impl.error.InsufficientPermissionError;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.ToString;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 
 /**
  * This is a special parser that allows one to prevent access to a specific pathway based on the
@@ -70,7 +70,7 @@ public class HasPermissionParser extends BaseParser<CommandSender, Void> {
   protected Void doParse(ParserContext<CommandSender> context, ParsedLine line)
       throws ParserSyntaxException {
 
-    if (context.getData() instanceof ConsoleCommandSender
+    if (ProxyServer.getInstance().getConfig().equals(context.getData())
         || permission.stream().anyMatch(context.getData()::hasPermission)) {
       return null;
     }

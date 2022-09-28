@@ -25,6 +25,7 @@ package au.com.grieve.bcf.impl.parser;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.ParserOptions;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
@@ -65,7 +66,7 @@ public class StringParser extends BaseParser<Object, String> implements ParserOp
   }
 
   @Override
-  protected String doParse(Object data, ParsedLine line)
+  protected String doParse(ParserContext<Object> context, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException {
     String result = line.next();
     if (getOptions().size() > 0 && !getOptions().contains(result)) {
@@ -76,7 +77,8 @@ public class StringParser extends BaseParser<Object, String> implements ParserOp
   }
 
   @Override
-  protected void doComplete(Object data, ParsedLine line, List<CompletionCandidateGroup> candidates)
+  protected void doComplete(
+      ParserContext<Object> context, ParsedLine line, List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
     String input = line.next();
 

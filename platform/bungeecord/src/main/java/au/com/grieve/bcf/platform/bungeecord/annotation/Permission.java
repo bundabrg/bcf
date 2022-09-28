@@ -21,42 +21,17 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package au.com.grieve.bcf;
+package au.com.grieve.bcf.platform.bungeecord.annotation;
 
-import au.com.grieve.bcf.exception.ResultNotSetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class ResultCollection extends ArrayList<Result> {
-
-  public List<Object> toObjects() throws ResultNotSetException {
-    List<Object> result = new ArrayList<>();
-    for (Result r : this) {
-      Object o = r.getValue();
-      if (!r.isSuppress()) {
-        result.add(o);
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Return all objects that we can, even suppressed
-   *
-   * @return All objects
-   */
-  public List<Object> allObjects() {
-    List<Object> result = new ArrayList<>();
-    for (Result r : this) {
-
-      Object o;
-      try {
-        o = r.getValue();
-      } catch (ResultNotSetException e) {
-        continue;
-      }
-      result.add(o);
-    }
-    return result;
-  }
+@Repeatable(Permissions.class)
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface Permission {
+  String value();
 }

@@ -25,6 +25,7 @@ package au.com.grieve.bcf.platform.bukkit.impl.parser;
 
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
+import au.com.grieve.bcf.ParserContext;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
 import au.com.grieve.bcf.impl.completion.DefaultCompletionCandidate;
@@ -69,16 +70,16 @@ public class PlayerParser extends BaseParser<CommandSender, Player> {
   }
 
   @Override
-  protected Player doParse(CommandSender sender, ParsedLine line)
+  protected Player doParse(ParserContext<CommandSender> context, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException {
     String input = line.next();
 
     if (input.equals("%self")) {
-      if (sender instanceof ConsoleCommandSender) {
+      if (context.getData() instanceof ConsoleCommandSender) {
         throw new ParserSyntaxException(line, new ConsoleRequiresPlayerNameError());
       }
 
-      return (Player) sender; // TODO what if we're running as /execute ?
+      return (Player) context.getData(); // TODO what if we're running as /execute ?
     }
 
     if (getMode().equals("online")) {
@@ -98,7 +99,9 @@ public class PlayerParser extends BaseParser<CommandSender, Player> {
 
   @Override
   protected void doComplete(
-      CommandSender sender, ParsedLine line, List<CompletionCandidateGroup> candidates)
+      ParserContext<CommandSender> context,
+      ParsedLine line,
+      List<CompletionCandidateGroup> candidates)
       throws EndOfLineException {
     String input = line.getCurrentWord();
 
