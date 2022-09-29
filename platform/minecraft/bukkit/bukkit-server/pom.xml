@@ -34,7 +34,7 @@
           <execution>
             <configuration>
               <createDependencyReducedPom>true</createDependencyReducedPom>
-              <finalName>bcf-${project.artifactId}-${project.version}</finalName>
+              <finalName>../../target/bcf-${parent.artifactId}-${project.version}</finalName>
             </configuration>
             <goals>
               <goal>shade</goal>
@@ -74,7 +74,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>minecraft</artifactId>
+    <artifactId>bukkit</artifactId>
     <groupId>au.com.grieve.bcf</groupId>
     <version>2.0.0-SNAPSHOT</version>
   </parent>

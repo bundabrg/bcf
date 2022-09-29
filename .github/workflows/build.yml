@@ -49,7 +49,7 @@ jobs:
         run: |
           mkdir -p build/output
           mvn -B package --file pom.xml && \
-            cp platform/minecraft/bukkit/bukkit-server/target/bcf-bukkit-*.jar build/output/ && \
+            cp platform/minecraft/bukkit/target/bcf-bukkit-*.jar build/output/ && \
             cp platform/minecraft/bungeecord/target/bcf-bungeecord-*.jar build/output/ && \
             cp platform/terminalconsole/target/bcf-terminalconsole-*.jar build/output
 
