@@ -38,7 +38,7 @@
       <artifactId>spigot</artifactId>
       <groupId>org.spigotmc</groupId>
       <scope>provided</scope>
-      <!--            <classifier>remapped-mojang</classifier>-->
+      <classifier>remapped-mojang</classifier>
       <version>${spigot.version}</version>
     </dependency>
   </dependencies>

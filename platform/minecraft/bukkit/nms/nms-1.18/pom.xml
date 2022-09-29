@@ -26,6 +26,70 @@
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>nms-1.18</artifactId>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <configuration>
+              <classifier>mojang-mapped</classifier>
+            </configuration>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <id>Mojang-Mapped</id>
+          </execution>
+        </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+      </plugin>
+      <plugin>
+        <artifactId>specialsource-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <configuration>
+              <remappedArtifactAttached>true</remappedArtifactAttached>
+              <remappedClassifierName>remapped-obf</remappedClassifierName>
+              <remappedDependencies>org.spigotmc:spigot:${minecraft.mappings}:jar:remapped-mojang
+              </remappedDependencies>
+              <reverse>true</reverse>
+              <srgIn>org.spigotmc:minecraft-server:${minecraft.mappings}:txt:maps-mojang</srgIn>
+            </configuration>
+            <goals>
+              <goal>remap</goal>
+            </goals>
+            <id>remap-obf</id>
+            <phase>package</phase>
+          </execution>
+          <execution>
+            <configuration>
+              <inputFile>
+                ${project.build.directory}/${project.artifactId}-${project.version}-remapped-obf.jar
+              </inputFile>
+              <remappedDependencies>org.spigotmc:spigot:${minecraft.mappings}:jar:remapped-obf
+              </remappedDependencies>
+              <srgIn>org.spigotmc:minecraft-server:${minecraft.mappings}:csrg:maps-spigot</srgIn>
+            </configuration>
+            <goals>
+              <goal>remap</goal>
+            </goals>
+            <id>remap-spigot</id>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <groupId>net.md-5</groupId>
+        <version>1.2.4</version>
+      </plugin>
+    </plugins>
+  </build>
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>nms</artifactId>
+    <groupId>au.com.grieve.bcf</groupId>
+    <version>2.0.0-SNAPSHOT</version>
+  </parent>
+
   <dependencies>
     <dependency>
       <artifactId>spigot-api</artifactId>
@@ -38,7 +102,7 @@
       <artifactId>spigot</artifactId>
       <groupId>org.spigotmc</groupId>
       <scope>provided</scope>
-      <!--            <classifier>remapped-mojang</classifier>-->
+      <classifier>remapped-mojang</classifier>
       <version>${spigot.version}</version>
     </dependency>
 
@@ -49,17 +113,11 @@
     </dependency>
   </dependencies>
 
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>nms</artifactId>
-    <groupId>au.com.grieve.bcf</groupId>
-    <version>2.0.0-SNAPSHOT</version>
-  </parent>
-
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <minecraft.mappings>1.18-R0.1-SNAPSHOT</minecraft.mappings>
     <spigot.version>1.18-R0.1-SNAPSHOT</spigot.version>
   </properties>
 
