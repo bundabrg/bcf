@@ -25,18 +25,23 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>minecraft</artifactId>
+  <artifactId>nms-version</artifactId>
+  <dependencies>
+    <dependency>
+      <artifactId>nms-1.19</artifactId>
+      <groupId>au.com.grieve.bcf</groupId>
+      <version>${parent.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>nms-1.18</artifactId>
+      <groupId>au.com.grieve.bcf</groupId>
+      <version>${parent.version}</version>
+    </dependency>
+  </dependencies>
+
   <modelVersion>4.0.0</modelVersion>
-
-  <modules>
-    <module>bukkit</module>
-    <module>bungeecord</module>
-    <module>bukkit</module>
-  </modules>
-  <packaging>pom</packaging>
-
   <parent>
-    <artifactId>platform</artifactId>
+    <artifactId>nms</artifactId>
     <groupId>au.com.grieve.bcf</groupId>
     <version>2.0.0-SNAPSHOT</version>
   </parent>

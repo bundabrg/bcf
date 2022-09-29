@@ -25,18 +25,27 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>minecraft</artifactId>
+  <artifactId>nms-common</artifactId>
+  <dependencies>
+    <dependency>
+      <artifactId>spigot-api</artifactId>
+      <groupId>org.spigotmc</groupId>
+      <scope>provided</scope>
+      <version>${spigot.version}</version>
+    </dependency>
+
+    <dependency>
+      <artifactId>spigot</artifactId>
+      <groupId>org.spigotmc</groupId>
+      <scope>provided</scope>
+      <!--            <classifier>remapped-mojang</classifier>-->
+      <version>${spigot.version}</version>
+    </dependency>
+  </dependencies>
+
   <modelVersion>4.0.0</modelVersion>
-
-  <modules>
-    <module>bukkit</module>
-    <module>bungeecord</module>
-    <module>bukkit</module>
-  </modules>
-  <packaging>pom</packaging>
-
   <parent>
-    <artifactId>platform</artifactId>
+    <artifactId>nms</artifactId>
     <groupId>au.com.grieve.bcf</groupId>
     <version>2.0.0-SNAPSHOT</version>
   </parent>
@@ -45,6 +54,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <spigot.version>1.19-R0.1-SNAPSHOT</spigot.version>
   </properties>
 
 </project>
