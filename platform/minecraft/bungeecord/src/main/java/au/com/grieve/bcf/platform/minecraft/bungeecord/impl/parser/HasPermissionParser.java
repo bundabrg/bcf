@@ -41,7 +41,7 @@ import net.md_5.bungee.api.ProxyServer;
  * This is a special parser that allows one to prevent access to a specific pathway based on the
  * player's permission.
  *
- * <p>Normally you would use the @Permission annotation which does this using a ParserNode but is a
+ * <p>Normally you would use the @Permission annotation which does this using a require tag but is a
  * blunt instrument. If you require fine-grained control you can add this parser to the chain
  */
 @Getter
