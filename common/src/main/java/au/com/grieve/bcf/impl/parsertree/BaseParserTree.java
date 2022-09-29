@@ -35,6 +35,7 @@ import au.com.grieve.bcf.ParserTreeContext;
 import au.com.grieve.bcf.ParserTreeFallbackHandler;
 import au.com.grieve.bcf.ParserTreeHandler;
 import au.com.grieve.bcf.ParserTreeResult;
+import au.com.grieve.bcf.RequiresContext;
 import au.com.grieve.bcf.Result;
 import au.com.grieve.bcf.exception.ResultNotSetException;
 import au.com.grieve.bcf.impl.error.AmbiguousExecuteHandlersError;
@@ -52,6 +53,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.NonNull;
@@ -64,6 +66,7 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
   protected ParserTreeHandler<ErrorContext<DATA>> errorHandler;
   protected ParserTreeHandler<CompleteContext<DATA>> completeHandler;
   protected ParserTreeFallbackHandler<DATA> fallbackHandler;
+  protected Predicate<RequiresContext<DATA>> requirement;
 
   /**
    * Add a child node
@@ -110,6 +113,12 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
   }
 
   @Override
+  public ParserTree<DATA> requires(Predicate<RequiresContext<DATA>> requirement) {
+    this.requirement = requirement;
+    return this;
+  }
+
+  @Override
   public @NonNull ParserTreeResult<DATA> parse(ParsedLine line, DATA data) {
     DefaultParserTreeContext<DATA> context = new DefaultParserTreeContext<>(line, data);
     return parse(context);
@@ -122,6 +131,12 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
 
   @Override
   public @NonNull ParserTreeResult<DATA> parse(ParserTreeContext<DATA> context) {
+    if (requirement != null
+        && !requirement.test(
+            new RequiresContext<>(context.getLine(), context.getResults(), context.getData()))) {
+      return ParserTreeResult.EMPTY_RESULT();
+    }
+
     return parseChildren(context.copy());
   }
 

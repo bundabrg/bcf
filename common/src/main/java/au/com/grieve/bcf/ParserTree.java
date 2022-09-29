@@ -26,6 +26,7 @@ package au.com.grieve.bcf;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import lombok.NonNull;
 
 /** A node in the argument tree */
@@ -87,6 +88,8 @@ public interface ParserTree<DATA> {
    * @return Ourself
    */
   ParserTree<DATA> fallback(ParserTreeFallbackHandler<DATA> handler);
+
+  ParserTree<DATA> requires(Predicate<RequiresContext<DATA>> requirement);
 
   /**
    * Walk over every node

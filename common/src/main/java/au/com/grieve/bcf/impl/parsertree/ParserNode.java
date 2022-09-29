@@ -29,6 +29,7 @@ import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
 import au.com.grieve.bcf.ParserTreeContext;
 import au.com.grieve.bcf.ParserTreeResult;
+import au.com.grieve.bcf.RequiresContext;
 import au.com.grieve.bcf.Result;
 import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ParserSyntaxException;
@@ -193,6 +194,12 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
 
   @Override
   public @NotNull ParserTreeResult<DATA> parse(ParserTreeContext<DATA> context) {
+    if (requirement != null
+        && !requirement.test(
+            new RequiresContext<>(context.getLine(), context.getResults(), context.getData()))) {
+      return ParserTreeResult.EMPTY_RESULT();
+    }
+
     CommandErrorCollection errors = new DefaultErrorCollection();
     List<CompletionCandidateGroup> completions = new ArrayList<>();
 
