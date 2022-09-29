@@ -109,7 +109,7 @@
     <dependency>
       <artifactId>nms-common</artifactId>
       <groupId>au.com.grieve.bcf</groupId>
-      <version>${parent.version}</version>
+      <version>${project.parent.version}</version>
     </dependency>
   </dependencies>
 

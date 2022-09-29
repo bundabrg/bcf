@@ -30,12 +30,12 @@
     <dependency>
       <artifactId>nms-1.19</artifactId>
       <groupId>au.com.grieve.bcf</groupId>
-      <version>${parent.version}</version>
+      <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <artifactId>nms-1.18</artifactId>
       <groupId>au.com.grieve.bcf</groupId>
-      <version>${parent.version}</version>
+      <version>${project.parent.version}</version>
     </dependency>
   </dependencies>
 

@@ -34,7 +34,8 @@
           <execution>
             <configuration>
               <createDependencyReducedPom>true</createDependencyReducedPom>
-              <finalName>../../target/bcf-${parent.artifactId}-${project.version}</finalName>
+              <finalName>../../target/bcf-${project.parent.artifactId}-${project.version}
+              </finalName>
             </configuration>
             <goals>
               <goal>shade</goal>
