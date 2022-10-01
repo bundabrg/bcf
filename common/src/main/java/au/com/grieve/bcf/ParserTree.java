@@ -102,6 +102,21 @@ public interface ParserTree<DATA> {
   void walk(Consumer<List<ParserTree<DATA>>> consumer, List<ParserTree<DATA>> chain);
 
   /**
+   * Return list of direct decendents
+   *
+   * @return Direct Children
+   */
+  Collection<ParserTree<DATA>> children();
+
+  /**
+   * Execute on each of our children
+   *
+   * @param consumer What to execute
+   * @return Ourself
+   */
+  ParserTree<DATA> forEach(Consumer<ParserTree<DATA>> consumer);
+
+  /**
    * Return the best candidate for the supplied context
    *
    * @param context Parser Tree Context

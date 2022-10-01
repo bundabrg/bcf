@@ -341,6 +341,17 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
   }
 
   @Override
+  public Collection<ParserTree<DATA>> children() {
+    return children;
+  }
+
+  @Override
+  public ParserTree<DATA> forEach(Consumer<ParserTree<DATA>> consumer) {
+    children.forEach(consumer);
+    return this;
+  }
+
+  @Override
   public Collection<ParserTree<DATA>> leafs() {
     if (children.isEmpty()) {
       return Collections.singleton(this);
