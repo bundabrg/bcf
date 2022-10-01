@@ -57,32 +57,36 @@ import lombok.Getter;
 public class AnnotationCommand<DATA> extends BaseCommand<DATA>
     implements StringParserCommand<DATA> {
 
+  protected List<ParserTree<DATA>> buildMethodNodes(
+      Method method, StringParserGenerator<DATA> generator) {
+    return Arrays.stream(method.getAnnotationsByType(Arg.class))
+        .map(
+            a -> {
+              // Generate the TreeNode
+              ParserTree<DATA> node = generator.from(String.join(" ", a.value()));
+
+              // Add a method execute at the tree leaves
+              node.forEachLeaf(
+                  n ->
+                      n.execute(
+                          ctx ->
+                              executeMethod(
+                                  method,
+                                  Stream.concat(
+                                          ctx.getData() != null
+                                              ? Stream.of(ctx.getData())
+                                              : Stream.empty(),
+                                          ctx.getResults().stream())
+                                      .collect(Collectors.toList()))));
+              return node;
+            })
+        .collect(Collectors.toList());
+  }
+
   protected List<ParserTree<DATA>> buildMethodNodes(StringParserGenerator<DATA> generator) {
     return Arrays.stream(getClass().getMethods())
         .filter(m -> m.isAnnotationPresent(Arg.class))
-        .flatMap(
-            m ->
-                Arrays.stream(m.getAnnotationsByType(Arg.class))
-                    .map(
-                        a -> {
-                          // Generate the TreeNode
-                          ParserTree<DATA> node = generator.from(String.join(" ", a.value()));
-
-                          // Add a method execute at the tree leaves
-                          node.forEachLeaf(
-                              n ->
-                                  n.execute(
-                                      ctx ->
-                                          executeMethod(
-                                              m,
-                                              Stream.concat(
-                                                      ctx.getData() != null
-                                                          ? Stream.of(ctx.getData())
-                                                          : Stream.empty(),
-                                                      ctx.getResults().stream())
-                                                  .collect(Collectors.toList()))));
-                          return node;
-                        }))
+        .flatMap(m -> buildMethodNodes(m, generator).stream())
         .collect(Collectors.toList());
   }
 

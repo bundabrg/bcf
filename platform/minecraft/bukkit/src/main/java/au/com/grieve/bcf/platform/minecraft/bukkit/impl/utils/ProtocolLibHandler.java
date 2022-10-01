@@ -89,10 +89,9 @@ public class ProtocolLibHandler {
                                                 new StringRange(
                                                     startRange, startRange + c.getValue().length()),
                                                 c.getValue(),
-                                                () ->
-                                                    cg.getDescription() != null
-                                                        ? cg.getDescription()
-                                                        : null)))
+                                                cg.getDescription() != null
+                                                    ? cg::getDescription
+                                                    : null)))
                         .collect(Collectors.toList());
 
                 if (suggestions.size() > 0) {
