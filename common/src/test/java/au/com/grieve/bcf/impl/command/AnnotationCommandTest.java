@@ -1562,6 +1562,7 @@ class AnnotationCommandTest {
     ParserTreeResult<Void> result =
         c1.buildCommand(register).getRoot().parse("art -m_sw1 zoe -c_sw1 opt2", null);
 
+
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
     assertNull(result.getCompleteCandidate());

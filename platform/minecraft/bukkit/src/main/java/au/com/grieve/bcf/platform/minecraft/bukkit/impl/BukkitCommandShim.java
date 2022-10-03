@@ -78,7 +78,7 @@ public class BukkitCommandShim extends Command {
 
   @Override
   public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
-    ParsedLine line = new DefaultParsedLine(args, "/" + alias);
+    ParsedLine line = new DefaultParsedLine(args, "/" + alias + " ");
     parse(line, sender).execute();
     return true;
   }

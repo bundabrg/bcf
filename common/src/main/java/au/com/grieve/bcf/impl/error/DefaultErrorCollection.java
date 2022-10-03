@@ -83,6 +83,7 @@ public class DefaultErrorCollection implements CommandErrorCollection {
     return "Error: "
         + get().stream().map(CommandError::toString).collect(Collectors.joining("; or "))
         + " at: '"
+        + line.getPrefix()
         + String.join(" ", line.getWords().subList(0, line.getWordIndex()))
         + "'<--[HERE]";
   }

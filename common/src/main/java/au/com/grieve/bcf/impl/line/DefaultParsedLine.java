@@ -44,7 +44,7 @@ public class DefaultParsedLine implements ParsedLine {
   }
 
   public DefaultParsedLine(String[] args, String prefix) {
-    this(List.of(args), "");
+    this(List.of(args), prefix);
   }
 
   public DefaultParsedLine(String line) {

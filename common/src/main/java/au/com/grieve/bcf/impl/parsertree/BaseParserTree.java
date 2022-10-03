@@ -37,6 +37,7 @@ import au.com.grieve.bcf.ParserTreeHandler;
 import au.com.grieve.bcf.ParserTreeResult;
 import au.com.grieve.bcf.RequiresContext;
 import au.com.grieve.bcf.Result;
+import au.com.grieve.bcf.exception.EndOfLineException;
 import au.com.grieve.bcf.exception.ResultNotSetException;
 import au.com.grieve.bcf.impl.error.AmbiguousExecuteHandlersError;
 import au.com.grieve.bcf.impl.error.DefaultErrorCollection;
@@ -129,15 +130,120 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
     return parse(new DefaultParsedLine(line), data);
   }
 
+  protected @NonNull ParserTreeResult<DATA> parseHere(ParserTreeContext<DATA> context) {
+    return ParserTreeResult.EMPTY_RESULT();
+  }
+
   @Override
   public @NonNull ParserTreeResult<DATA> parse(ParserTreeContext<DATA> context) {
+    final List<CompletionCandidateGroup> completions = new ArrayList<>();
+    final CommandErrorCollection errors = new DefaultErrorCollection();
+
+    // If a requirement is set, and we fail it then process things differently
     if (requirement != null
         && !requirement.test(
             new RequiresContext<>(context.getLine(), context.getResults(), context.getData()))) {
-      return ParserTreeResult.EMPTY_RESULT();
+
+      // If we have more input, then add an error
+      if (!context.getLine().isEol()) {
+        errors.add(new UnexpectedInputError(), context.getLine(), context.getWeight());
+      }
+      return new ParserTreeResult<>(null, null, null, errors, completions);
     }
 
-    return parseChildren(context.copy());
+    ParserTreeResult<DATA> result = parseHere(context);
+    completions.addAll(result.getCompletions());
+    errors.addAll(result.getErrors());
+
+    if (result.getErrors().size() > 0) {
+      return result;
+    }
+
+    ParserTreeResult<DATA> childResult = parseChildren(context);
+    completions.addAll(childResult.getCompletions());
+    errors.addAll(childResult.getErrors());
+
+    result =
+        new ParserTreeResult<>(
+            childResult.getExecuteCandidate() != null
+                ? childResult.getExecuteCandidate()
+                : result.getExecuteCandidate(),
+            childResult.getErrorCandidate() != null
+                ? childResult.getErrorCandidate()
+                : result.getErrorCandidate(),
+            childResult.getCompleteCandidate() != null
+                ? childResult.getCompleteCandidate()
+                : result.getCompleteCandidate(),
+            errors,
+            completions);
+    //      // If we have more input, then add an error
+    //      if (!context.getLine().isEol()) {
+    //        errors.add(new UnexpectedInputError(), context.getLine(), context.getWeight());
+    //      }
+
+    //    final List<CompletionCandidateGroup> completions = new ArrayList<>();
+    //    final CommandErrorCollection errors = new DefaultErrorCollection();
+
+    ParserTreeCandidate<ExecuteContext<DATA>, DATA> executeCandidate = result.getExecuteCandidate();
+    ParserTreeCandidate<ErrorContext<DATA>, DATA> errorCandidate = result.getErrorCandidate();
+    ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate =
+        result.getCompleteCandidate();
+
+    if (context.getLine().isEol()) {
+      if (executeCandidate == null && executeHandler != null) {
+        try {
+          executeCandidate =
+              new ParserTreeCandidate<>(
+                  context.getLine(),
+                  executeHandler,
+                  context.getResults().toObjects(),
+                  errors,
+                  completions,
+                  context.getData(),
+                  context.getWeight());
+        } catch (ResultNotSetException e) {
+          errors.addAll(e.getErrors());
+        }
+      } else {
+        errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
+      }
+    }
+
+    if (errorCandidate == null && errorHandler != null && errors.size() > 0) {
+      try {
+        errorCandidate =
+            new ParserTreeCandidate<>(
+                context.getLine(),
+                errorHandler,
+                context.getResults().toObjects(),
+                errors,
+                completions,
+                context.getData(),
+                context.getWeight());
+      } catch (ResultNotSetException e) {
+        errors.addAll(e.getErrors());
+      }
+    }
+
+    // Completions
+    if (completeCandidate == null && completeHandler != null) {
+      try {
+        completeCandidate =
+            new ParserTreeCandidate<>(
+                context.getLine(),
+                completeHandler,
+                context.getResults().toObjects(),
+                errors,
+                completions,
+                context.getData(),
+                context.getWeight());
+      } catch (ResultNotSetException e) {
+        errors.addAll(e.getErrors());
+      }
+    }
+
+    return new ParserTreeResult<>(
+        executeCandidate, errorCandidate, completeCandidate, errors, completions);
   }
 
   protected @NonNull List<ParserTreeResult<DATA>> parseFutureResults(
@@ -173,43 +279,45 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
 
   protected @NonNull ParserTreeResult<DATA> parseChildren(ParserTreeContext<DATA> context) {
     context.setWeight(context.getWeight() + 1);
-
     final List<CompletionCandidateGroup> completions = new ArrayList<>();
     final CommandErrorCollection errors = new DefaultErrorCollection();
-    final List<ParserTreeResult<DATA>> futureResults = parseFutureResults(context);
 
-    // No children or fallback and extra input is an error
-    if (children.size() == 0
-        && fallbackHandler == null
-        && !context.getLine().isEol()) {
-      errors.add(new UnexpectedInputError(), context.getLine(), context.getWeight());
-    }
-
-    List<ParserTreeResult<DATA>> childResults =
+    List<ParserTreeResult<DATA>> results =
         Stream.concat(
-                futureResults.stream(),
+                parseFutureResults(context).stream(),
                 Stream.concat(
                     children.stream().map(c -> c.parse(context.copy())),
                     Stream.of(parseFallback(context.copy()))))
-            .peek(
-                c -> {
-                  completions.addAll(c.getCompletions());
-                  errors.addAll(c.getErrors());
-                })
             .collect(Collectors.toList());
+
+    if (results.size() == 1 && !context.getLine().isEol()) {
+      try {
+        ParsedLine lineCopy = context.getLine().copy();
+        lineCopy.next();
+        errors.add(new UnexpectedInputError(), lineCopy, context.getWeight());
+      } catch (EndOfLineException ignored) {
+      }
+    }
+
+    // Extract errors and Completions
+    results.forEach(
+        r -> {
+          completions.addAll(r.getCompletions());
+          errors.addAll(r.getErrors());
+        });
 
     // Separate everything out
     Map<ParserTreeCandidate<ExecuteContext<DATA>, DATA>, ParserTreeResult<DATA>> executeCandidates =
-        childResults.stream()
+        results.stream()
             .filter(r -> r.getExecuteCandidate() != null)
             .collect(Collectors.toMap(ParserTreeResult::getExecuteCandidate, r -> r));
     Map<ParserTreeCandidate<ErrorContext<DATA>, DATA>, ParserTreeResult<DATA>> errorCandidates =
-        childResults.stream()
+        results.stream()
             .filter(r -> r.getErrorCandidate() != null)
             .collect(Collectors.toMap(ParserTreeResult::getErrorCandidate, r -> r));
     Map<ParserTreeCandidate<CompleteContext<DATA>, DATA>, ParserTreeResult<DATA>>
         completeCandidates =
-            childResults.stream()
+            results.stream()
                 .filter(r -> r.getCompleteCandidate() != null)
                 .collect(Collectors.toMap(ParserTreeResult::getCompleteCandidate, r -> r));
 
@@ -265,63 +373,6 @@ public abstract class BaseParserTree<DATA> implements ParserTree<DATA> {
       completeCandidate = completeCandidates.keySet().stream().findFirst().orElseThrow();
       completions.clear();
       completions.addAll(completeCandidates.get(completeCandidate).getCompletions());
-    }
-
-    // Execution
-    if (executeCandidate == null) {
-      if (context.getLine().isEol()) {
-        if (executeHandler != null) {
-          try {
-            executeCandidate =
-                new ParserTreeCandidate<>(
-                    context.getLine(),
-                    executeHandler,
-                    context.getResults().toObjects(),
-                    errors,
-                    completions,
-                    context.getData(),
-                    context.getWeight());
-          } catch (ResultNotSetException e) {
-            errors.addAll(e.getErrors());
-          }
-        } else {
-          errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
-        }
-      }
-    }
-
-    // Errors
-    if (errorCandidate == null && errors.size() > 0 && errorHandler != null) {
-      try {
-        errorCandidate =
-            new ParserTreeCandidate<>(
-                context.getLine(),
-                errorHandler,
-                context.getResults().toObjects(),
-                errors,
-                completions,
-                context.getData(),
-                context.getWeight());
-      } catch (ResultNotSetException e) {
-        errors.addAll(e.getErrors());
-      }
-    }
-
-    // Completions
-    if (completeCandidate == null && completions.size() > 0 && completeHandler != null) {
-      try {
-        completeCandidate =
-            new ParserTreeCandidate<>(
-                context.getLine(),
-                completeHandler,
-                context.getResults().toObjects(),
-                errors,
-                completions,
-                context.getData(),
-                context.getWeight());
-      } catch (ResultNotSetException e) {
-        errors.addAll(e.getErrors());
-      }
     }
 
     return new ParserTreeResult<>(

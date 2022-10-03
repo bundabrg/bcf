@@ -82,7 +82,7 @@ public class BukkitAnnotationCommand extends AnnotationCommand<CommandSender> {
                                   .filter(p -> ctx.getData().hasPermission(p.value()))
                                   .map(p -> true)
                                   .findFirst()
-                                  .orElse(null))));
+                                  .orElse(false))));
     }
 
     return nodes;
