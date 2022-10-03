@@ -25,12 +25,15 @@ package au.com.grieve.bcf.platform.minecraft.bungeecord.impl.command;
 
 import au.com.grieve.bcf.CommandRootData;
 import au.com.grieve.bcf.CommandRootData.CommandRootDataBuilder;
+import au.com.grieve.bcf.ParserTree;
 import au.com.grieve.bcf.annotation.Command;
 import au.com.grieve.bcf.impl.command.AnnotationCommand;
 import au.com.grieve.bcf.impl.parsertree.generator.StringParserGenerator;
 import au.com.grieve.bcf.platform.minecraft.bungeecord.annotation.Permission;
 import au.com.grieve.bcf.platform.minecraft.bungeecord.impl.command.BungeecordCommandRootData.BungeecordCommandRootDataBuilder;
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 import net.md_5.bungee.api.CommandSender;
 
 public class BungeecordAnnotationCommand extends AnnotationCommand<CommandSender> {
@@ -59,5 +62,51 @@ public class BungeecordAnnotationCommand extends AnnotationCommand<CommandSender
 
     buildCommandRootData(builder, generator, commandAnnotation);
     return builder.build();
+  }
+
+  @Override
+  protected List<ParserTree<CommandSender>> buildMethodNodes(
+      Method method, StringParserGenerator<CommandSender> generator) {
+    List<ParserTree<CommandSender>> nodes = super.buildMethodNodes(method, generator);
+
+    // Add permissions if any - TODO what to do if require already exists?
+    Permission[] permissions = method.getAnnotationsByType(Permission.class);
+    if (permissions.length > 0) {
+      nodes.forEach(
+          n ->
+              n.requires(
+                  ctx ->
+                      Boolean.TRUE.equals(
+                          Arrays.stream(permissions)
+                              .filter(p -> ctx.getData().hasPermission(p.value()))
+                              .map(p -> true)
+                              .findFirst()
+                              .orElse(false))));
+    }
+
+    return nodes;
+  }
+
+  @Override
+  protected List<ParserTree<CommandSender>> buildClassNodes(
+      StringParserGenerator<CommandSender> generator) {
+    List<ParserTree<CommandSender>> nodes = super.buildClassNodes(generator);
+
+    // Add permissions if any - TODO what to do if require already exists?
+    Permission[] permissions = getClass().getAnnotationsByType(Permission.class);
+    if (permissions.length > 0) {
+      nodes.forEach(
+          n ->
+              n.requires(
+                  ctx ->
+                      Boolean.TRUE.equals(
+                          Arrays.stream(permissions)
+                              .filter(p -> ctx.getData().hasPermission(p.value()))
+                              .map(p -> true)
+                              .findFirst()
+                              .orElse(null))));
+    }
+
+    return nodes;
   }
 }
