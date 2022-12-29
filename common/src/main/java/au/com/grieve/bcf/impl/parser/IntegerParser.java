@@ -41,6 +41,7 @@ import java.util.stream.IntStream;
 import lombok.Getter;
 import lombok.ToString;
 
+@SuppressWarnings("unused")
 @Getter
 @ToString(callSuper = true)
 public class IntegerParser extends BaseParser<Object, Integer> implements ParserMinMax<Integer> {
@@ -58,11 +59,12 @@ public class IntegerParser extends BaseParser<Object, Integer> implements Parser
       String defaultValue,
       boolean suppress,
       boolean required,
+      boolean complete,
       String placeholder,
       List<String> switchValue,
       Integer min,
       Integer max) {
-    super(description, defaultValue, suppress, required, placeholder, switchValue);
+    super(description, defaultValue, suppress, required, complete, placeholder, switchValue);
     this.min = min;
     this.max = max;
   }

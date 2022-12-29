@@ -42,6 +42,7 @@ public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
   @Getter private final boolean suppress;
   private final String defaultValue;
   @Getter private final boolean required;
+  @Getter private final boolean complete;
   @Getter private final String description;
   @Getter private final String placeholder;
   private final List<String> switchValue = new ArrayList<>();
@@ -56,6 +57,7 @@ public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
         Arrays.stream(parameters.getOrDefault("switch", "").split("\\|"))
             .filter(s -> !s.isEmpty())
             .collect(Collectors.toList()));
+    complete = parameters.getOrDefault("complete", "true").equals("true");
   }
 
   public BaseParser(
@@ -63,6 +65,7 @@ public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
       String defaultValue,
       boolean suppress,
       boolean required,
+      boolean complete,
       String placeholder,
       List<String> switchValue) {
     this.suppress = suppress;
@@ -70,7 +73,8 @@ public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
     this.required = required;
     this.description = description;
     this.placeholder = placeholder;
-    this.switchValue.addAll(switchValue);
+    if (switchValue != null) this.switchValue.addAll(switchValue);
+    this.complete = complete;
   }
 
   public String getDefault() {
@@ -93,14 +97,17 @@ public abstract class BaseParser<DATA, RT> implements Parser<DATA, RT> {
       throws EndOfLineException {
 
     List<CompletionCandidateGroup> groups = new ArrayList<>();
-    try {
-      doComplete(context, line, groups);
-    } finally {
-      // Only add groups that actually have any candidates
-      candidates.addAll(
-          groups.stream()
-              .filter(g -> g.getCompletionCandidates().size() > 0)
-              .collect(Collectors.toList()));
+
+    if (this.complete) {
+      try {
+        doComplete(context, line, groups);
+      } finally {
+        // Only add groups that actually have any candidates
+        candidates.addAll(
+            groups.stream()
+                .filter(g -> g.getCompletionCandidates().size() > 0)
+                .collect(Collectors.toList()));
+      }
     }
   }
 

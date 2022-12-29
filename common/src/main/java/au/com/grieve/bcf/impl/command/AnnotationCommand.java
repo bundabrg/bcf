@@ -191,8 +191,7 @@ public class AnnotationCommand<DATA> extends BaseCommand<DATA>
     if (children.size() > 0) {
       return children.parse(ctx);
     }
-    return new ParserTreeResult<>(
-        null, null, null, new DefaultErrorCollection(), new ArrayList<>());
+    return new ParserTreeResult<>(null, null, new DefaultErrorCollection(), new ArrayList<>());
   }
 
   protected void executeMethod(Method method, List<Object> parameters) {

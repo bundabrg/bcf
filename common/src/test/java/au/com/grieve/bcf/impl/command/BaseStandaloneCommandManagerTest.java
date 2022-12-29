@@ -76,7 +76,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InputExpectedError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -101,7 +100,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof UnknownCommandError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -126,7 +124,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InputExpectedError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -151,7 +148,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -176,7 +172,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InputExpectedError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -201,7 +196,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -226,7 +220,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof UnexpectedInputError));
     assertEquals(0, result.getCompletions().size());
     assertEquals(
@@ -251,7 +244,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(0, result.getCompletions().size());
     assertEquals(
@@ -276,7 +268,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -301,7 +292,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -326,7 +316,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InputExpectedError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -351,7 +340,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof UnknownCommandError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -376,7 +364,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InputExpectedError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -401,7 +388,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -426,7 +412,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(0, result.getCompletions().size());
     assertEquals(
@@ -451,7 +436,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(0, result.getCompletions().size());
     assertEquals(
@@ -476,7 +460,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(0, result.getCompletions().size());
     assertEquals(
@@ -501,7 +484,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -527,7 +509,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -553,7 +534,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -578,7 +558,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InputExpectedError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -604,7 +583,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -630,7 +608,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -656,7 +633,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -681,7 +657,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -707,7 +682,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -733,7 +707,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof UnknownCommandError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -759,7 +732,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -785,7 +757,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -812,7 +783,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -838,7 +808,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -865,7 +834,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -895,7 +863,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -925,7 +892,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -955,7 +921,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -986,7 +951,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -1017,7 +981,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -1047,7 +1010,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertEquals(0, result.getErrors().size());
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -1075,7 +1037,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -1096,7 +1057,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof UnknownCommandError));
     assertEquals(0, result.getCompletions().size());
     assertEquals(
@@ -1122,7 +1082,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNotNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof InvalidOptionError));
     assertEquals(1, result.getCompletions().size());
     assertEquals(
@@ -1143,7 +1102,6 @@ class BaseStandaloneCommandManagerTest {
 
     assertNull(result.getExecuteCandidate());
     assertNotNull(result.getErrorCandidate());
-    assertNull(result.getCompleteCandidate());
     assertTrue(result.getErrors().stream().anyMatch(e -> e instanceof UnknownCommandError));
     assertEquals(0, result.getCompletions().size());
     assertEquals(

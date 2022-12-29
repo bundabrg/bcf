@@ -45,6 +45,7 @@ import org.bukkit.command.ConsoleCommandSender;
  * but is a blunt instrument. If you require fine-grained control you can add this parser to the
  * chain
  */
+@SuppressWarnings("unused")
 @Getter
 @ToString(callSuper = true)
 public class HasPermissionParser extends BaseParser<CommandSender, Void> {
@@ -60,10 +61,11 @@ public class HasPermissionParser extends BaseParser<CommandSender, Void> {
       String defaultValue,
       boolean suppress,
       boolean required,
+      boolean complete,
       String placeholder,
       List<String> switchValue,
       List<String> permission) {
-    super(description, defaultValue, suppress, required, placeholder, switchValue);
+    super(description, defaultValue, suppress, required, complete, placeholder, switchValue);
     this.permission.addAll(permission);
   }
 

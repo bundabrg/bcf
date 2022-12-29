@@ -39,6 +39,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.ToString;
 
+@SuppressWarnings("unused")
 @Getter
 @ToString(callSuper = true)
 public class FloatParser extends BaseParser<Object, Float> implements ParserMinMax<Float> {
@@ -56,11 +57,12 @@ public class FloatParser extends BaseParser<Object, Float> implements ParserMinM
       String defaultValue,
       boolean suppress,
       boolean required,
+      boolean complete,
       String placeholder,
       List<String> switchValue,
       Float min,
       Float max) {
-    super(description, defaultValue, suppress, required, placeholder, switchValue);
+    super(description, defaultValue, suppress, required, complete, placeholder, switchValue);
     this.min = min;
     this.max = max;
   }

@@ -47,6 +47,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
+@SuppressWarnings("unused")
 @Getter
 @ToString(callSuper = true)
 public class PlayerParser extends BaseParser<CommandSender, Player> {
@@ -62,10 +63,11 @@ public class PlayerParser extends BaseParser<CommandSender, Player> {
       String defaultValue,
       boolean suppress,
       boolean required,
+      boolean complete,
       String placeholder,
       List<String> switchValue,
       String mode) {
-    super(description, defaultValue, suppress, required, placeholder, switchValue);
+    super(description, defaultValue, suppress, required, complete, placeholder, switchValue);
     this.mode = mode != null ? mode : "offline";
   }
 

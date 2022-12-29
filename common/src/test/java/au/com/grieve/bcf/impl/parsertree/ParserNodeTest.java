@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import au.com.grieve.bcf.CompleteContext;
 import au.com.grieve.bcf.ErrorContext;
 import au.com.grieve.bcf.ExecuteContext;
 import au.com.grieve.bcf.Parser;
@@ -567,79 +566,6 @@ class ParserNodeTest {
     assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
   }
 
-  /** No Handler, so all completions should return */
-  @Test
-  void completeHandler_1() {
-    TestErrorHandler rootErrorHandler = new TestErrorHandler();
-
-    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
-
-    TestExecuteHandler executeHandler1 = new TestExecuteHandler();
-    node.then(
-        generator
-            .from(
-                "milly|marta|mike(suppress=false) @int(min=3, max=13) peter(suppress=false,default=peter)")
-            .forEachLeaf(n -> n.execute(executeHandler1)));
-
-    TestExecuteHandler executeHandler2 = new TestExecuteHandler();
-    node.then(
-        generator
-            .from("alice|bob|mike(suppress=false)")
-            .forEachLeaf(
-                n ->
-                    n.then(
-                        generator
-                            .from("@int(min=1,max=10) charles(suppress=false,default=charles)")
-                            .forEachLeaf(n2 -> n2.execute(executeHandler2)))));
-
-    ParserTreeResult<Void> e = node.parse("mike 111", null);
-    assertNotNull(e);
-    assertNull(e.getExecuteCandidate());
-    assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
-    assertNull(e.getCompleteCandidate());
-    assertEquals(2, e.getCompletions().size());
-    assertEquals(
-        21, e.getCompletions().stream().mapToLong(c -> c.getCompletionCandidates().size()).sum());
-  }
-
-  /** Complete handler exists so only completions under it should be returned */
-  @Test
-  void completeHandler_2() {
-    TestErrorHandler rootErrorHandler = new TestErrorHandler();
-
-    ParserTree<Void> node = new NullNode<Void>().error(rootErrorHandler);
-
-    TestExecuteHandler executeHandler1 = new TestExecuteHandler();
-    node.then(
-        generator
-            .from(
-                "milly|marta|mike(suppress=false) @int(min=3, max=13) peter(suppress=false,default=peter)")
-            .forEachLeaf(n -> n.execute(executeHandler1)));
-
-    TestExecuteHandler executeHandler2 = new TestExecuteHandler();
-    TestCompleteHandler completeHandler = new TestCompleteHandler();
-    node.then(
-        generator
-            .from("alice|bob|mike(suppress=false)")
-            .forEachLeaf(
-                n ->
-                    n.complete(completeHandler)
-                        .then(
-                            generator
-                                .from("@int(min=1,max=10) charles(suppress=false,default=charles)")
-                                .forEachLeaf(n2 -> n2.execute(executeHandler2)))));
-
-    ParserTreeResult<Void> e = node.parse("mike 111", null);
-    assertNotNull(e);
-
-    assertNull(e.getExecuteCandidate());
-    assertEquals(e.getErrorCandidate().getHandler(), rootErrorHandler);
-    assertEquals(e.getCompleteCandidate().getHandler(), completeHandler);
-    assertEquals(1, e.getCompletions().size());
-    assertEquals(
-        10, e.getCompletions().stream().mapToLong(c -> c.getCompletionCandidates().size()).sum());
-  }
-
   @Test
   void ambiguousExecute_1() {
     TestErrorHandler rootErrorHandler = new TestErrorHandler();
@@ -678,20 +604,13 @@ class ParserNodeTest {
     public void handle(ErrorContext<Void> context) {}
   }
 
-  static class TestCompleteHandler implements ParserTreeHandler<CompleteContext<Void>> {
-
-    @Override
-    public void handle(CompleteContext<Void> context) {}
-  }
-
   static class TestParserTreeFallbackHandler implements ParserTreeFallbackHandler<Void> {
     public int count = 0;
 
     @Override
     public @NotNull ParserTreeResult<Void> handle(ParserTreeContext<Void> context) {
       count++;
-      return new ParserTreeResult<>(
-          null, null, null, new DefaultErrorCollection(), new ArrayList<>());
+      return new ParserTreeResult<>(null, null, new DefaultErrorCollection(), new ArrayList<>());
     }
   }
 }

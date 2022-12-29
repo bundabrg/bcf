@@ -44,6 +44,7 @@ import net.md_5.bungee.api.ProxyServer;
  * <p>Normally you would use the @Permission annotation which does this using a require tag but is a
  * blunt instrument. If you require fine-grained control you can add this parser to the chain
  */
+@SuppressWarnings("unused")
 @Getter
 @ToString(callSuper = true)
 public class HasPermissionParser extends BaseParser<CommandSender, Void> {
@@ -59,10 +60,11 @@ public class HasPermissionParser extends BaseParser<CommandSender, Void> {
       String defaultValue,
       boolean suppress,
       boolean required,
+      boolean complete,
       String placeholder,
       List<String> switchValue,
       List<String> permission) {
-    super(description, defaultValue, suppress, required, placeholder, switchValue);
+    super(description, defaultValue, suppress, required, complete, placeholder, switchValue);
     this.permission.addAll(permission);
   }
 
@@ -70,7 +72,7 @@ public class HasPermissionParser extends BaseParser<CommandSender, Void> {
   protected Void doParse(ParserContext<CommandSender> context, ParsedLine line)
       throws ParserSyntaxException {
 
-    if (ProxyServer.getInstance().getConfig().equals(context.getData())
+    if (ProxyServer.getInstance().getConsole().equals(context.getData())
         || permission.stream().anyMatch(context.getData()::hasPermission)) {
       return null;
     }

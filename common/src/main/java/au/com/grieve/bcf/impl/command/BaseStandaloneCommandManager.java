@@ -27,7 +27,6 @@ import au.com.grieve.bcf.Command;
 import au.com.grieve.bcf.CommandData;
 import au.com.grieve.bcf.CommandErrorCollection;
 import au.com.grieve.bcf.CommandRootData;
-import au.com.grieve.bcf.CompleteContext;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ErrorContext;
 import au.com.grieve.bcf.ParsedLine;
@@ -64,9 +63,9 @@ public class BaseStandaloneCommandManager<DATA> extends BaseCommandManager<DATA>
     return null;
   }
 
-  protected ParserTreeHandler<CompleteContext<DATA>> getBaseCompleteHandler() {
-    return null;
-  }
+  //  protected ParserTreeHandler<CompleteContext<DATA>> getBaseCompleteHandler() {
+  //    return null;
+  //  }
 
   @Override
   protected void addCommand(Command<DATA> command) {
@@ -170,19 +169,18 @@ public class BaseStandaloneCommandManager<DATA> extends BaseCommandManager<DATA>
                   data,
                   0)
               : null;
-      ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate =
-          getBaseCompleteHandler() != null
-              ? new ParserTreeCandidate<>(
-                  line,
-                  getBaseCompleteHandler(),
-                  new ArrayList<>(),
-                  errors,
-                  getCommandCompletions(""),
-                  data,
-                  0)
-              : null;
-      return new ParserTreeResult<>(
-          null, errorCandidate, completeCandidate, errors, getCommandCompletions(""));
+      //      ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate =
+      //          getBaseCompleteHandler() != null
+      //              ? new ParserTreeCandidate<>(
+      //                  line,
+      //                  getBaseCompleteHandler(),
+      //                  new ArrayList<>(),
+      //                  errors,
+      //                  getCommandCompletions(""),
+      //                  data,
+      //                  0)
+      //              : null;
+      return new ParserTreeResult<>(null, errorCandidate, errors, getCommandCompletions(""));
     }
 
     CommandRootData<DATA> command = findCommand(commandName);
@@ -201,24 +199,23 @@ public class BaseStandaloneCommandManager<DATA> extends BaseCommandManager<DATA>
                   data,
                   0)
               : null;
-      ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate =
-          getBaseCompleteHandler() != null
-              ? new ParserTreeCandidate<>(
-                  line,
-                  getBaseCompleteHandler(),
-                  new ArrayList<>(),
-                  errors,
-                  getCommandCompletions(commandName),
-                  data,
-                  0)
-              : null;
+      //      ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate =
+      //          getBaseCompleteHandler() != null
+      //              ? new ParserTreeCandidate<>(
+      //                  line,
+      //                  getBaseCompleteHandler(),
+      //                  new ArrayList<>(),
+      //                  errors,
+      //                  getCommandCompletions(commandName),
+      //                  data,
+      //                  0)
+      //              : null;
       return new ParserTreeResult<>(
-          null, errorCandidate, completeCandidate, errors, getCommandCompletions(commandName));
+          null, errorCandidate, errors, getCommandCompletions(commandName));
     }
 
     ParserTree<DATA> root =
         new NullNode<DATA>()
-            .complete(getBaseCompleteHandler())
             .error(getBaseErrorHandler())
             .then(command.getRoot());
 

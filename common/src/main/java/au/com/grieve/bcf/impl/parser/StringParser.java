@@ -43,7 +43,9 @@ import lombok.ToString;
 @Getter
 @ToString(callSuper = true)
 public class StringParser extends BaseParser<Object, String> implements ParserOptions<String> {
+
   private final List<String> options = new ArrayList<>();
+  private final Mode mode;
 
   public StringParser(Map<String, String> parameters) {
     super(parameters);
@@ -51,6 +53,7 @@ public class StringParser extends BaseParser<Object, String> implements ParserOp
         Stream.of(parameters.getOrDefault("options", "").split("\\|"))
             .filter(r -> !r.isEmpty())
             .collect(Collectors.toList()));
+    mode = Mode.valueOf(parameters.getOrDefault("mode", "WORD").toUpperCase());
   }
 
   public StringParser(
@@ -58,22 +61,38 @@ public class StringParser extends BaseParser<Object, String> implements ParserOp
       String defaultValue,
       boolean suppress,
       boolean required,
+      boolean complete,
       String placeholder,
       List<String> switchValue,
-      List<String> options) {
-    super(description, defaultValue, suppress, required, placeholder, switchValue);
-    this.options.addAll(options);
+      List<String> options,
+      Mode mode) {
+    super(description, defaultValue, suppress, required, complete, placeholder, switchValue);
+    if (options != null) this.options.addAll(options);
+    this.mode = mode != null ? mode : Mode.WORD;
   }
 
   @Override
   protected String doParse(ParserContext<Object> context, ParsedLine line)
       throws EndOfLineException, ParserSyntaxException {
-    String result = line.next();
-    if (getOptions().size() > 0 && !getOptions().contains(result)) {
+
+    String input = null;
+
+    switch (mode) {
+      case WORD:
+        input = line.next();
+        break;
+      case GREEDY:
+        while (!line.isEol()) {
+          input = (input != null ? input + " " : "") + line.next();
+        }
+        break;
+    }
+
+    if (getOptions().size() > 0 && !getOptions().contains(input)) {
       throw new ParserSyntaxException(line, new InvalidOptionError(options));
     }
 
-    return result;
+    return input;
   }
 
   @Override
@@ -100,5 +119,10 @@ public class StringParser extends BaseParser<Object, String> implements ParserOp
                   "", getPlaceholder() != null ? getPlaceholder() : "<string>"));
       candidates.add(group);
     }
+  }
+
+  public enum Mode {
+    WORD,
+    GREEDY
   }
 }

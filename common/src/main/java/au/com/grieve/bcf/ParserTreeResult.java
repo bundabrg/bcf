@@ -34,25 +34,25 @@ import lombok.ToString;
 public class ParserTreeResult<DATA> {
   private final ParserTreeCandidate<ExecuteContext<DATA>, DATA> executeCandidate;
   private final ParserTreeCandidate<ErrorContext<DATA>, DATA> errorCandidate;
-  private final ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate;
+  //  private final ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate;
   private final CommandErrorCollection errors;
   private final List<CompletionCandidateGroup> completions;
+
   public ParserTreeResult(
       ParserTreeCandidate<ExecuteContext<DATA>, DATA> executeCandidate,
       ParserTreeCandidate<ErrorContext<DATA>, DATA> errorCandidate,
-      ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate,
+      //      ParserTreeCandidate<CompleteContext<DATA>, DATA> completeCandidate,
       CommandErrorCollection errors,
       List<CompletionCandidateGroup> completions) {
     this.executeCandidate = executeCandidate;
     this.errorCandidate = errorCandidate;
-    this.completeCandidate = completeCandidate;
+    //    this.completeCandidate = completeCandidate;
     this.errors = errors;
     this.completions = completions;
   }
 
   public static <DATA> ParserTreeResult<DATA> EMPTY_RESULT() {
-    return new ParserTreeResult<>(
-        null, null, null, new DefaultErrorCollection(), new ArrayList<>());
+    return new ParserTreeResult<>(null, null, new DefaultErrorCollection(), new ArrayList<>());
   }
 
   public void execute() {
@@ -74,16 +74,16 @@ public class ParserTreeResult<DATA> {
   }
 
   public List<CompletionCandidateGroup> complete() {
-    if (completeCandidate != null) {
-      completeCandidate
-          .getHandler()
-          .handle(
-              new CompleteContext<>(
-                  completeCandidate.getLine(),
-                  completeCandidate.getCompletions(),
-                  completeCandidate.getData()));
-      return completeCandidate.getCompletions();
-    }
+    //    if (completeCandidate != null) {
+    //      completeCandidate
+    //          .getHandler()
+    //          .handle(
+    //              new CompleteContext<>(
+    //                  completeCandidate.getLine(),
+    //                  completeCandidate.getCompletions(),
+    //                  completeCandidate.getData()));
+    //      return completeCandidate.getCompletions();
+    //    }
     return completions;
   }
 }

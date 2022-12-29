@@ -24,6 +24,7 @@
 package au.com.grieve.bcf.impl.parsertree;
 
 import au.com.grieve.bcf.CommandErrorCollection;
+import au.com.grieve.bcf.CompleteContext;
 import au.com.grieve.bcf.CompletionCandidateGroup;
 import au.com.grieve.bcf.ParsedLine;
 import au.com.grieve.bcf.Parser;
@@ -83,13 +84,18 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
         errors.add(e.getError(), e.getLine(), context.getWeight());
       }
       try {
-        parser.complete(
-            new DefaultParserContext<>(context.getResults(), context.getData()),
-            context.getLine(),
-            completions);
+        if (completeHandler != null) {
+          completeHandler.handle(
+              new CompleteContext<>(context.getLine(), completions, context.getData()));
+        } else {
+          parser.complete(
+              new DefaultParserContext<>(context.getResults(), context.getData()),
+              context.getLine(),
+              completions);
+        }
       } catch (EndOfLineException ignored) {
       }
-      return new ParserTreeResult<>(null, null, null, errors, completions);
+      return new ParserTreeResult<>(null, null, errors, completions);
     }
 
     // If at EOL then return completions on switch names
@@ -104,7 +110,7 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
                   .map(s -> new DefaultCompletionCandidate("-" + s))
                   .collect(Collectors.toList()));
       completions.add(group);
-      return new ParserTreeResult<>(null, null, null, errors, completions);
+      return new ParserTreeResult<>(null, null, errors, completions);
     }
 
     if (!context.getLine().getCurrentWord().startsWith("-")) {
@@ -126,7 +132,7 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
               parser.getSwitch().stream().map(s -> "-" + s).collect(Collectors.toList())),
           lineCopy,
           context.getWeight());
-      return new ParserTreeResult<>(null, null, null, errors, completions);
+      return new ParserTreeResult<>(null, null, errors, completions);
     }
 
     context.setWeight(context.getWeight() + 1);
@@ -147,33 +153,48 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
       errors.add(e.getError(), e.getLine(), context.getWeight());
       if (e.getLine().isEol()) {
         try {
+          if (completeHandler != null) {
+            completeHandler.handle(
+                new CompleteContext<>(originalLine, completions, context.getData()));
+          } else {
+            parser.complete(
+                new DefaultParserContext<>(context.getResults(), context.getData()),
+                originalLine,
+                completions);
+          }
+        } catch (EndOfLineException ignored) {
+        }
+      }
+      return new ParserTreeResult<>(null, null, errors, completions);
+    } catch (EndOfLineException e) {
+      errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
+      try {
+        if (completeHandler != null) {
+          completeHandler.handle(
+              new CompleteContext<>(originalLine, completions, context.getData()));
+        } else {
           parser.complete(
               new DefaultParserContext<>(context.getResults(), context.getData()),
               originalLine,
               completions);
-        } catch (EndOfLineException ignored) {
         }
-      }
-      return new ParserTreeResult<>(null, null, null, errors, completions);
-    } catch (EndOfLineException e) {
-      errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
-      try {
-        parser.complete(
-            new DefaultParserContext<>(context.getResults(), context.getData()),
-            originalLine,
-            completions);
       } catch (EndOfLineException ignored) {
       }
-      return new ParserTreeResult<>(null, null, null, errors, completions);
+      return new ParserTreeResult<>(null, null, errors, completions);
     }
 
     // If we are at the EOL then return completions as well
     if (lineCopy.isEol()) {
       try {
-        parser.complete(
-            new DefaultParserContext<>(context.getResults(), context.getData()),
-            originalLine,
-            completions);
+        if (completeHandler != null) {
+          completeHandler.handle(
+              new CompleteContext<>(originalLine, completions, context.getData()));
+        } else {
+          parser.complete(
+              new DefaultParserContext<>(context.getResults(), context.getData()),
+              originalLine,
+              completions);
+        }
       } catch (EndOfLineException ignored) {
       }
     }
@@ -189,7 +210,7 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
     } catch (EndOfLineException ignored) {
     }
 
-    return new ParserTreeResult<>(null, null, null, errors, completions);
+    return new ParserTreeResult<>(null, null, errors, completions);
     //
     //    @NonNull ParserTreeResult<DATA> ret = super.parseHere(context);
     //    ret.getErrors().addAll(errors);
@@ -223,33 +244,48 @@ public class ParserNode<DATA> extends BaseParserTree<DATA> {
       errors.add(e.getError(), e.getLine(), context.getWeight());
       if (e.getLine().isEol()) {
         try {
+          if (completeHandler != null) {
+            completeHandler.handle(
+                new CompleteContext<>(originalLine, completions, context.getData()));
+          } else {
+            parser.complete(
+                new DefaultParserContext<>(context.getResults(), context.getData()),
+                originalLine,
+                completions);
+          }
+        } catch (EndOfLineException ignored) {
+        }
+      }
+      return new ParserTreeResult<>(null, null, errors, completions);
+    } catch (EndOfLineException e) {
+      errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
+      try {
+        if (completeHandler != null) {
+          completeHandler.handle(
+              new CompleteContext<>(originalLine, completions, context.getData()));
+        } else {
           parser.complete(
               new DefaultParserContext<>(context.getResults(), context.getData()),
               originalLine,
               completions);
-        } catch (EndOfLineException ignored) {
         }
-      }
-      return new ParserTreeResult<>(null, null, null, errors, completions);
-    } catch (EndOfLineException e) {
-      errors.add(new InputExpectedError(), context.getLine(), context.getWeight());
-      try {
-        parser.complete(
-            new DefaultParserContext<>(context.getResults(), context.getData()),
-            originalLine,
-            completions);
       } catch (EndOfLineException ignored) {
       }
-      return new ParserTreeResult<>(null, null, null, errors, completions);
+      return new ParserTreeResult<>(null, null, errors, completions);
     }
 
     // If we are at the EOL then return completions as well
     if (context.getLine().isEol()) {
       try {
-        parser.complete(
-            new DefaultParserContext<>(context.getResults(), context.getData()),
-            originalLine,
-            completions);
+        if (completeHandler != null) {
+          completeHandler.handle(
+              new CompleteContext<>(originalLine, completions, context.getData()));
+        } else {
+          parser.complete(
+              new DefaultParserContext<>(context.getResults(), context.getData()),
+              originalLine,
+              completions);
+        }
       } catch (EndOfLineException ignored) {
       }
     }
