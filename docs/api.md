@@ -80,7 +80,7 @@ Shade the library into your own code by adding in your `pom.xml`
 
 ## Command Class
 
-To create a command extend from an appropriate BaseCommand class and annotate with @Command. For a Bukkit plugin use `BukkitCommand`, Bungeecord
+To create a command extend from an appropriate au.com.grieve.bcf.Command class and annotate with @Command. For a Bukkit plugin use `BukkitCommand`, Bungeecord
 uses `BungeeCommand` and Standalone Console uses `TerminalCommand`.
 
 !!! example

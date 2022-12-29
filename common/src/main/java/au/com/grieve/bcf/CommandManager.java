@@ -23,107 +23,34 @@
 
 package au.com.grieve.bcf;
 
-import au.com.grieve.bcf.annotations.Command;
-import au.com.grieve.bcf.parsers.*;
-import lombok.Getter;
-import lombok.Setter;
+public interface CommandManager<DATA> {
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+  /**
+   * Register a command
+   *
+   * @param command Command to register
+   */
+  void registerCommand(Command<DATA> command);
 
-@Getter
-public abstract class CommandManager<
-        BC extends BaseCommand,
-        RT extends CommandRoot
-        > {
+  /**
+   * Register a Sub-Command to all existing instances of a parent class
+   *
+   * @param parent Parent command class
+   * @param command Command to register
+   */
+  void registerCommand(Class<? extends Command<DATA>> parent, Command<DATA> command);
 
-    protected final Map<Class<? extends BaseCommand>, CommandConfig<RT>> commands = new HashMap<>();
-    protected final Map<String, Class<? extends Parser>> parsers = new HashMap<>();
+  /**
+   * Unregister a command
+   *
+   * @param command Command to unregister
+   */
+  void unregisterCommand(Command<DATA> command);
 
-    public CommandManager() {
-        // Register Default Parsers
-        registerParser("string", StringParser.class);
-        registerParser("int", IntegerParser.class);
-        registerParser("double", DoubleParser.class);
-        registerParser("float", FloatParser.class);
-    }
-
-    @SuppressWarnings("unused")
-    public void registerCommand(BC cmd) {
-        // As a root command cmd needs to have a @Command annotation
-        if (cmd.getClass().getAnnotation(Command.class) == null) {
-            throw new RuntimeException("Missing required @Command");
-        }
-
-        CommandConfig<RT> commandConfig = commands.getOrDefault(cmd.getClass(), new CommandConfig<>());
-
-        commandConfig.setCommandRoot(createCommandRoot(cmd));
-
-        commandConfig.getInstances().add(cmd);
-        commands.put(cmd.getClass(), commandConfig);
-    }
-
-    @SuppressWarnings("unused")
-    public void registerSubCommand(Class<? extends BC> parentClass, BC cmd) {
-        // Make sure parentClass is registered
-        CommandConfig<RT> parentCommandConfig = commands.get(parentClass);
-
-        if (parentCommandConfig == null) {
-            throw new RuntimeException("Parent class is not registered");
-        }
-
-        parentCommandConfig.getChildren().add(cmd);
-
-        // If cmd has @Command, it is a CommandRoot
-        CommandConfig<RT> commandConfig = commands.getOrDefault(cmd.getClass(), new CommandConfig<>());
-        if (cmd.getClass().getAnnotation(Command.class) != null) {
-            commandConfig.setCommandRoot(createCommandRoot(cmd));
-        }
-
-        commandConfig.getInstances().add(cmd);
-        commands.put(cmd.getClass(), commandConfig);
-    }
-
-    protected abstract RT createCommandRoot(BaseCommand cmd);
-
-    public Parser getParser(ArgNode argNode, CommandContext context) {
-        Class<? extends Parser> cls;
-        if (argNode.getName().startsWith("@")) {
-            cls = getParsers().getOrDefault(argNode.getName().substring(1), LiteralParser.class);
-        } else {
-            cls = LiteralParser.class;
-        }
-
-        try {
-            return cls
-                    .getConstructor(CommandManager.class, ArgNode.class, CommandContext.class)
-                    .newInstance(this, argNode, context);
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
-                 IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void registerParser(String name, Class<? extends Parser> parser) {
-        this.parsers.put(name, parser);
-    }
-
-    @SuppressWarnings("unused")
-    public void unregisterParser(String name) {
-        this.parsers.remove(name);
-    }
-
-    @Getter
-    protected static class CommandConfig<RT> {
-        private final List<BaseCommand> instances = new ArrayList<>();
-        private final List<BaseCommand> children = new ArrayList<>();
-        @Setter
-        private RT commandRoot;
-    }
-
-
+  /**
+   * Unregister a command using its class
+   *
+   * @param command Command class to unregister
+   */
+  void unregisterCommand(Class<? extends Command<DATA>> command);
 }
